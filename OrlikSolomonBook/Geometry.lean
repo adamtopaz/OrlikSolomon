@@ -55,9 +55,10 @@ The geometry needed by the proof consists of a category of smooth affine objects
 This is a list of geometric constructions and identities, and it contains no cohomological conclusion.
 :::
 
-:::node "lem:geometry-adapter" (decl := OrlikSolomon.DivisorPair.standardPair) (decl := OrlikSolomon.DivisorPair.standardMap) (decl := OrlikSolomon.SmoothAlg.laurentSection) (decl := OrlikSolomon.Arrangement.ComplementRing) (decl := OrlikSolomon.Arrangement.ComplementRing.isLocalizationAway) (decl := OrlikSolomon.SmoothAlg.complementLift) (decl := OrlikSolomon.SmoothAlg.complementMap) (decl := OrlikSolomon.SmoothAlg.complementMap_comp) (decl := OrlikSolomon.SmoothAlg.complementMap_id) (remaining := "the deletion pairs (issue 10), maps to affine images and normalized slices (issue 15), and the cone and decone isomorphism (issue 19)")
+:::node "lem:geometry-adapter" (decl := OrlikSolomon.DivisorPair.standardPair) (decl := OrlikSolomon.DivisorPair.standardMap) (decl := OrlikSolomon.SmoothAlg.laurentSection) (decl := OrlikSolomon.Arrangement.ComplementRing) (decl := OrlikSolomon.Arrangement.ComplementRing.isLocalizationAway) (decl := OrlikSolomon.SmoothAlg.complementLift) (decl := OrlikSolomon.SmoothAlg.complementMap) (decl := OrlikSolomon.SmoothAlg.complementMap_comp) (decl := OrlikSolomon.SmoothAlg.complementMap_id) (decl := OrlikSolomon.SmoothAlg.coneIso) (decl := OrlikSolomon.SmoothAlg.deconeIso) (remaining := "the deletion pairs (issue 10), and maps to affine images and normalized slices (issue 15)")
 Localizations of polynomial algebras realize all of this.
 The obligations are the standard pair $`(\mathbb{A}^1,0,\mathbb{G}_m)` and its products, the deletion pairs, the maps $`x` and $`xy` on $`\mathbb{A}^1\times\mathbb{G}_m` with the section $`x=1`, maps to affine images and normalized slices, affine coordinate changes, and the cone and decone isomorphism.
 The declarations below cover the standard pair and its products, the maps $`x` and $`xy`, which are `standardMap` at the units $`1` and $`y`, and the section.
 They also cover the complements themselves, which are displayed as the localization $`k[x_1,\ldots,x_n,1/P]`, with their universal property, and the affine coordinate changes, which are `complementMap` at an affine automorphism and its inverse.
+The cone and decone isomorphisms are `coneIso` and `deconeIso`.
 :::
