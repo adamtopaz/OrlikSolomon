@@ -15,7 +15,7 @@ public import OrlikSolomon.Cohomology.DeletionPair
 public import OrlikSolomon.Cohomology.Logarithms
 public import OrlikSolomon.Combinatorics.AlternatingSum
 public import OrlikSolomon.Combinatorics.Betti
-public import OrlikSolomon.Combinatorics.Mobius
+public import OrlikSolomon.Combinatorics.Moebius
 public import OrlikSolomon.Combinatorics.Multiplicities
 public import OrlikSolomon.Combinatorics.ProjectiveBetti
 public import OrlikSolomon.DeRham.Exterior
@@ -29,6 +29,7 @@ public import OrlikSolomon.Examples.Cokernel
 public import OrlikSolomon.Examples.CoordinatePolynomials
 public import OrlikSolomon.Examples.Degenerate
 public import OrlikSolomon.Examples.Exterior
+public import OrlikSolomon.Examples.Moebius
 public import OrlikSolomon.Examples.Ordinary
 public import OrlikSolomon.Examples.Parallel
 public import OrlikSolomon.Examples.Polynomials

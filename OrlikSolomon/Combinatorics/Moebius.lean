@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Codex
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
@@ -17,11 +17,11 @@ inclusion, with the ambient space as its least element. Grouping the alternating
 intersection identifies its coefficients with Mathlib's incidence-algebra Möbius function.
 
 * `Arrangement.IntersectionPoset` is the poset of nonempty intersections.
-* `Arrangement.IntersectionPoset.mobius` is the integer Möbius function from the ambient space.
-* `Arrangement.intersectionCoefficient_eq_mobius` identifies grouped subset coefficients.
-* `Arrangement.intersectionSum_eq_sum_mobius` holds for any additive intersection weight.
-* `Arrangement.characteristicPolynomial_eq_sum_mobius` and
-  `Arrangement.natCast_bettiNumber_eq_sum_mobius` are the two blueprint formulas.
+* `Arrangement.IntersectionPoset.moebius` is the integer Möbius function from the ambient space.
+* `Arrangement.intersectionCoefficient_eq_moebius` identifies grouped subset coefficients.
+* `Arrangement.intersectionSum_eq_sum_moebius` holds for any additive intersection weight.
+* `Arrangement.characteristicPolynomial_eq_sum_moebius` and
+  `Arrangement.natCast_bettiNumber_eq_sum_moebius` are the two blueprint formulas.
 
 Blueprint: `lem:mobius`.
 -/
@@ -91,6 +91,7 @@ instance : LocallyFiniteOrder 𝒜.IntersectionPoset := by
   classical
   exact Fintype.toLocallyFiniteOrder
 
+variable {𝒜} in
 /-- The affine subspace represented by an intersection-poset element. -/
 def carrier (X : 𝒜.IntersectionPoset) : AffineSubspace k V := X.1
 
@@ -112,6 +113,11 @@ theorem carrier_mem_intersectionFlats (X : 𝒜.IntersectionPoset) :
 /-- The order on flats is reverse inclusion of their affine subspaces. -/
 @[simp]
 theorem le_iff {X Y : 𝒜.IntersectionPoset} : X ≤ Y ↔ Y.carrier ≤ X.carrier := Iff.rfl
+
+/-- Strict order on flats is strict reverse inclusion of their affine subspaces. -/
+@[simp]
+theorem lt_iff {X Y : 𝒜.IntersectionPoset} : X < Y ↔ Y.carrier < X.carrier := by
+  simp only [lt_iff_le_not_ge, le_iff]
 
 /-- All elements represent nonempty affine subspaces. -/
 theorem carrier_ne_bot (X : 𝒜.IntersectionPoset) : X.carrier ≠ ⊥ :=
@@ -149,23 +155,31 @@ theorem carrier_ofSubset (S : Finset (AffineSubspace k V)) (hS : S ⊆ 𝒜.hype
     (hne : sInf (S : Set (AffineSubspace k V)) ≠ ⊥) :
     (ofSubset S hS hne).carrier = sInf (S : Set _) := rfl
 
-/-- The integer Möbius function from the ambient space to a nonempty intersection.
+/-- The integer Möbius function from the ambient space to a nonempty intersection:
+Mathlib's `IncidenceAlgebra.mu ℤ ⊥ X`, as recorded by `moebius_eq_mu`.
 Blueprint: `lem:mobius`. -/
-def mobius (X : 𝒜.IntersectionPoset) : ℤ := by
+def moebius (X : 𝒜.IntersectionPoset) : ℤ := by
   classical
   exact IncidenceAlgebra.mu ℤ ⊥ X
 
+/-- The intersection-poset coefficient is Mathlib's incidence-algebra Möbius function, evaluated
+from the ambient flat to `X`. Blueprint: `lem:mobius`. -/
+theorem moebius_eq_mu [DecidableEq 𝒜.IntersectionPoset] (X : 𝒜.IntersectionPoset) :
+    X.moebius = IncidenceAlgebra.mu ℤ (⊥ : 𝒜.IntersectionPoset) X := by
+  unfold moebius
+  congr!
+
 /-- The ambient Möbius coefficient is one. -/
 @[simp]
-theorem mobius_bot : mobius (⊥ : 𝒜.IntersectionPoset) = 1 := by
+theorem moebius_bot : moebius (⊥ : 𝒜.IntersectionPoset) = 1 := by
   classical
   exact IncidenceAlgebra.mu_self _
 
 /-- The usual Möbius recursion on proper flats. -/
-theorem mobius_eq_neg_sum_Iio {X : 𝒜.IntersectionPoset} (hX : X ≠ ⊥) :
-    X.mobius = -∑ Y ∈ Iio X, Y.mobius := by
+theorem moebius_eq_neg_sum_Iio {X : 𝒜.IntersectionPoset} (hX : X ≠ ⊥) :
+    X.moebius = -∑ Y ∈ Iio X, Y.moebius := by
   classical
-  simpa only [Ico_bot, mobius] using
+  simpa only [Ico_bot, moebius] using
     (IncidenceAlgebra.mu_eq_neg_sum_Ico_of_ne (𝕜 := ℤ) hX.symm)
 
 end IntersectionPoset
@@ -256,14 +270,14 @@ theorem sum_Iic_intersectionCoefficient (𝒜 : Arrangement k V) (X : 𝒜.Inter
 
 /-- The coefficient obtained by grouping subsets by their intersection is the usual Möbius
 function on the finite nonempty intersection poset. Blueprint: `lem:mobius`. -/
-theorem intersectionCoefficient_eq_mobius (𝒜 : Arrangement k V) (X : 𝒜.IntersectionPoset) :
-    𝒜.intersectionCoefficient X.carrier = X.mobius := by
+theorem intersectionCoefficient_eq_moebius (𝒜 : Arrangement k V) (X : 𝒜.IntersectionPoset) :
+    𝒜.intersectionCoefficient X.carrier = X.moebius := by
   classical
   have h := IncidenceAlgebra.moebius_inversion_bot
     (fun Y : 𝒜.IntersectionPoset => 𝒜.intersectionCoefficient Y.carrier)
     (fun Y => if Y = ⊥ then (1 : ℤ) else 0)
     (fun Y => (sum_Iic_intersectionCoefficient 𝒜 Y).symm) X
-  simpa [IntersectionPoset.mobius] using h
+  simpa [IntersectionPoset.moebius] using h
 
 /-- Group an arbitrary intersection weight by its nonempty intersection. The value at the empty
 affine subspace must vanish, as it does in the defining polynomial sums. -/
@@ -293,39 +307,38 @@ theorem intersectionSum_eq_sum_intersectionCoefficient {M : Type*} [AddCommGroup
 
 /-- The intersection-weight form of the Möbius formula. It holds without finite-dimensionality
 and for weights in any additive commutative group. Blueprint: `lem:mobius`. -/
-theorem intersectionSum_eq_sum_mobius {M : Type*} [AddCommGroup M]
+theorem intersectionSum_eq_sum_moebius {M : Type*} [AddCommGroup M]
     (𝒜 : Arrangement k V) (w : AffineSubspace k V → M) (hw : w ⊥ = 0) :
-    𝒜.intersectionSum w = ∑ X : 𝒜.IntersectionPoset, X.mobius • w X.carrier := by
+    𝒜.intersectionSum w = ∑ X : 𝒜.IntersectionPoset, X.moebius • w X.carrier := by
   rw [intersectionSum_eq_sum_intersectionCoefficient 𝒜 w hw]
-  simp_rw [intersectionCoefficient_eq_mobius]
+  simp_rw [intersectionCoefficient_eq_moebius]
 
 /-- The characteristic polynomial is the dimension-weighted sum of the intersection-poset
 Möbius coefficients. Blueprint: `lem:mobius`. -/
-theorem characteristicPolynomial_eq_sum_mobius (𝒜 : Arrangement k V) :
+theorem characteristicPolynomial_eq_sum_moebius (𝒜 : Arrangement k V) :
     𝒜.characteristicPolynomial = ∑ X : 𝒜.IntersectionPoset,
-      Polynomial.C X.mobius * Polynomial.X ^ finrank k X.carrier.direction := by
-  rw [characteristicPolynomial, intersectionSum_eq_sum_mobius 𝒜 _ characteristicWeight_bot]
+      Polynomial.C X.moebius * Polynomial.X ^ finrank k X.carrier.direction := by
+  rw [characteristicPolynomial, intersectionSum_eq_sum_moebius 𝒜 _ characteristicWeight_bot]
   apply sum_congr rfl
   intro X _
   simp [characteristicWeight_of_ne_bot X.carrier_ne_bot, zsmul_eq_mul]
 
 /-- The Poincaré polynomial is the signed codimension-weighted sum of Möbius coefficients.
 Blueprint: `lem:mobius`. -/
-theorem poincarePolynomial_eq_sum_mobius (𝒜 : Arrangement k V) :
+theorem poincarePolynomial_eq_sum_moebius (𝒜 : Arrangement k V) :
     𝒜.poincarePolynomial = ∑ X : 𝒜.IntersectionPoset,
-      Polynomial.C X.mobius * (-Polynomial.X) ^ codim X.carrier := by
-  rw [poincarePolynomial, intersectionSum_eq_sum_mobius 𝒜 _ poincareWeight_bot]
+      Polynomial.C X.moebius * (-Polynomial.X) ^ codim X.carrier := by
+  rw [poincarePolynomial, intersectionSum_eq_sum_moebius 𝒜 _ poincareWeight_bot]
   apply sum_congr rfl
   intro X _
   simp [poincareWeight_of_ne_bot X.carrier_ne_bot, zsmul_eq_mul]
 
-open scoped Classical in
 /-- The integer Betti coefficient is the signed sum of the Möbius coefficients of flats of the
 given codimension. Blueprint: `lem:mobius`. -/
-theorem poincarePolynomial_coeff_eq_sum_mobius (𝒜 : Arrangement k V) (q : ℕ) :
+theorem poincarePolynomial_coeff_eq_sum_moebius (𝒜 : Arrangement k V) (q : ℕ) :
     𝒜.poincarePolynomial.coeff q = (-1 : ℤ) ^ q *
-      ∑ X : 𝒜.IntersectionPoset with codim X.carrier = q, X.mobius := by
-  rw [poincarePolynomial_eq_sum_mobius, Polynomial.finsetSum_coeff, Finset.mul_sum, sum_filter]
+      ∑ X : 𝒜.IntersectionPoset with codim X.carrier = q, X.moebius := by
+  rw [poincarePolynomial_eq_sum_moebius, Polynomial.finsetSum_coeff, Finset.mul_sum, sum_filter]
   have hpow (n : ℕ) : (-Polynomial.X : Polynomial ℤ) ^ n =
       Polynomial.C ((-1 : ℤ) ^ n) * Polynomial.X ^ n := by
     rw [neg_pow]
@@ -338,22 +351,20 @@ theorem poincarePolynomial_coeff_eq_sum_mobius (𝒜 : Arrangement k V) (q : ℕ
   · rw [hpow, ← mul_assoc, ← Polynomial.C_mul, Polynomial.coeff_C_mul_X_pow]
     simp only [Ne.symm h, ite_false, h]
 
-open scoped Classical in
 /-- The natural Betti number, cast back to integers, is the signed Möbius sum. Its equality with
 the integer coefficient uses the already proved nonnegativity, never a rank argument.
 Blueprint: `lem:mobius`. -/
-theorem natCast_bettiNumber_eq_sum_mobius [FiniteDimensional k V]
+theorem natCast_bettiNumber_eq_sum_moebius [FiniteDimensional k V]
     (𝒜 : Arrangement k V) (q : ℕ) :
     (𝒜.bettiNumber q : ℤ) = (-1 : ℤ) ^ q *
-      ∑ X : 𝒜.IntersectionPoset with codim X.carrier = q, X.mobius := by
-  rw [natCast_bettiNumber, poincarePolynomial_coeff_eq_sum_mobius]
+      ∑ X : 𝒜.IntersectionPoset with codim X.carrier = q, X.moebius := by
+  rw [natCast_bettiNumber, poincarePolynomial_coeff_eq_sum_moebius]
 
-open scoped Classical in
 /-- No flats contribute above the ambient dimension. This includes degree-positive sums in
 dimension zero and does not require choosing a point in a complement. -/
-theorem sum_mobius_eq_zero_of_finrank_lt [FiniteDimensional k V]
+theorem sum_moebius_eq_zero_of_finrank_lt [FiniteDimensional k V]
     (𝒜 : Arrangement k V) {q : ℕ} (hq : finrank k V < q) :
-    (∑ X : 𝒜.IntersectionPoset with codim X.carrier = q, X.mobius) = 0 := by
+    (∑ X : 𝒜.IntersectionPoset with codim X.carrier = q, X.moebius) = 0 := by
   apply sum_eq_zero
   intro X hX
   have hcodim := (mem_filter.1 hX).2
@@ -362,8 +373,8 @@ theorem sum_mobius_eq_zero_of_finrank_lt [FiniteDimensional k V]
 
 /-- The Möbius coefficient of the only flat in an empty arrangement is one. -/
 @[simp]
-theorem IntersectionPoset.mobius_empty (X : (∅ : Arrangement k V).IntersectionPoset) :
-    X.mobius = 1 := by
-  rw [IntersectionPoset.empty_eq_bot X, IntersectionPoset.mobius_bot]
+theorem IntersectionPoset.moebius_empty (X : (∅ : Arrangement k V).IntersectionPoset) :
+    X.moebius = 1 := by
+  rw [IntersectionPoset.empty_eq_bot X, IntersectionPoset.moebius_bot]
 
 end OrlikSolomon.Arrangement
