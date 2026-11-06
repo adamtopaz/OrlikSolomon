@@ -53,9 +53,9 @@ the type is a `def`, and its API is the universal property `ComplementRing.lift`
 recognizes the ring as a localization at the image of another submonoid, which is what compares the
 complements in a deletion pair.
 
-Build a map whose target is a complement on the ring level, with target `𝒜.ComplementRing`, and apply
-`SmoothAlg.ofHom` last. If `ofHom` comes first, then the target is elaborated as the carrier of
-`SmoothAlg.complement 𝒜`, and lemmas on the ring level no longer match it syntactically.
+Build a map whose target is a complement on the ring level, with target `𝒜.ComplementRing`, and
+apply `SmoothAlg.ofHom` last. If `ofHom` comes first, then the target is elaborated as the carrier
+of `SmoothAlg.complement 𝒜`, and lemmas on the ring level no longer match it syntactically.
 
 ## Blueprint
 
