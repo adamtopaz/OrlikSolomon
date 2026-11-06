@@ -367,7 +367,7 @@ noncomputable def powerQuotientEquiv (N : Submodule A M) (n : ℕ) :
 
 @[simp]
 theorem powerQuotientEquiv_mk (N : Submodule A M) (n : ℕ) (x : ⋀[A]^n M) :
-    powerQuotientEquiv N n ((wedgeSubmodule N n).mkQ x) = exteriorPower.map n N.mkQ x :=
+    powerQuotientEquiv N n (Submodule.Quotient.mk x) = exteriorPower.map n N.mkQ x :=
   rfl
 
 end OrlikSolomon.DeRham

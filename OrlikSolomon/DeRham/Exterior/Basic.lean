@@ -119,7 +119,7 @@ theorem exteriorPower_induction {n : ℕ} {p : (x : ExteriorAlgebra A M) → x �
   exact (key x (span_word_ι_length A M n ▸ hx)).2
 
 /-- Homogeneous elements of an exterior algebra commute up to the sign `(-1)^(pq)`, over any
-commutative ring. The second factor is homogeneous too, unlike in the product rule for contraction.
+commutative ring.
 
 Blueprint: `lem:dr-exterior`. -/
 theorem mul_comm_of_mem_exteriorPower {p q : ℕ} {x y : ExteriorAlgebra A M}
@@ -254,7 +254,8 @@ theorem exteriorMap_ιMulti (g : M →ₗ[A] M') {n : ℕ} (m : Fin n → M) :
     exteriorMap S g (ιMulti A n m) = ιMulti S n (g ∘ m) := by
   simp [ExteriorAlgebra.ιMulti_apply, map_list_prod, List.map_ofFn, Function.comp_def]
 
-@[simp]
+/-- `exteriorMap` sends a word to the word along the image of its letters. As a simp lemma this is
+already covered by `map_word` and `exteriorMap_ι`, which give the reindexed family instead. -/
 theorem exteriorMap_word (g : M →ₗ[A] M') (l : List M) :
     exteriorMap S g (word (ι A) l) = word (ι S) (l.map g) := by
   simp [word_map]

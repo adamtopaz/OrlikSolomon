@@ -131,8 +131,8 @@ theorem isBaseChange_powerMap {g : M →ₗ[A] M'} (hg : IsBaseChange S g) (n : 
     fun x => (hΨ 1 x).trans (one_smul _ _)
 
 /-- If `g : M → M'` localizes `M` at a submonoid `T` of `A`, and `S` is the localization of `A` at
-`T`, then `⋀_A^n M → ⋀_S^n M'` localizes `⋀_A^n M` at `T`. The kernel of a localization map is
-therefore known here: an element dies when a member of `T` kills it.
+`T`, then `⋀_A^n M → ⋀_S^n M'` localizes `⋀_A^n M` at `T`. So an element of `⋀_A^n M` maps to zero
+exactly when a member of `T` kills it, by `IsLocalizedModule.eq_zero_iff`.
 
 Blueprint: `lem:dr-exterior`, in the form used by `lem:dr-localization`. -/
 theorem isLocalizedModule_powerMap (T : Submonoid A) [IsLocalization T S] {g : M →ₗ[A] M'}

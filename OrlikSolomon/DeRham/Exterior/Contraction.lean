@@ -51,9 +51,9 @@ variable {A : Type*} [CommRing A] {M : Type*} [AddCommGroup M] [Module A M]
 
 /-! ### Contraction by a functional -/
 
-/-- Contraction `ι_ℓ` of the exterior algebra by a functional `ℓ : M → A`. It kills `1` and satisfies
-`ι_ℓ (m ∧ x) = ℓ m • x - m ∧ ι_ℓ x`, and it is linear in `ℓ`. It is a graded antiderivation of degree
-`-1`, not a derivation in the sense of Mathlib.
+/-- Contraction `ι_ℓ` of the exterior algebra by a functional `ℓ : M → A`. It kills `1` and
+satisfies `ι_ℓ (m ∧ x) = ℓ m • x - m ∧ ι_ℓ x`, and it is linear in `ℓ`. It is a graded
+antiderivation of degree `-1`, not a derivation in the sense of Mathlib.
 
 This is Mathlib's `CliffordAlgebra.contractLeft` for the zero quadratic form.
 
@@ -262,8 +262,9 @@ section Naturality
 variable (S : Type*) [CommRing S] [Algebra A S]
   {M' : Type*} [AddCommGroup M'] [Module A M'] [Module S M'] [IsScalarTower A S M']
 
-/-- Contraction is compatible with `exteriorMap`, when the functionals are. This covers functoriality
-in the module, for `S = A`, and the extension of a contraction to a base change or a localization.
+/-- Contraction is compatible with `exteriorMap`, when the functionals are. This covers
+functoriality in the module, for `S = A`, and the extension of a contraction to a base change or a
+localization.
 
 Blueprint: `lem:dr-cartan`, where contractions extend to localizations. -/
 theorem exteriorMap_exteriorContraction {g : M →ₗ[A] M'} {ℓ : Module.Dual A M}
