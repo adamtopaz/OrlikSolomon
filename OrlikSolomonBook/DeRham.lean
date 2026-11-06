@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 import OrlikSolomonBook.Node
 import OrlikSolomon
@@ -18,8 +18,9 @@ htmlSplit := .never
 
 *The de Rham instance is being formalized.*
 This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
-The exterior calculus and the de Rham dg algebra of an arbitrary algebra are formalized.
-Localization and quotients of forms, the algebra of a smooth pair, the cohomology and comparison arguments, and the final instance remain planned.
+The exterior calculus and the de Rham dg algebra of an arbitrary algebra, including its differential, are formalized.
+The conormal splitting, global and localized normal derivations, and wedge exactness modulo the divisor are also formalized.
+Localization and quotient formulas for forms, higher-form projectivity, regular-element injectivity and injectivity into localization remain planned, as do the cohomology and comparison arguments and the final instance.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
@@ -222,7 +223,7 @@ If $`A` is formally smooth over $`k`, then $`\Omega_A^1` and every $`\Omega_A^n`
 If $`f` is a non-zero-divisor, then multiplication by $`f` is injective on each $`\Omega_A^n`, and $`\Omega_A^n\to\Omega_{A_f}^n` is injective.
 :::
 
-:::node "lem:dr-conormal"
+:::node "lem:dr-conormal" (decl := OrlikSolomon.DeRham.principalCotangentEquiv) (decl := OrlikSolomon.DeRham.conormalFunctional) (decl := OrlikSolomon.DeRham.conormalFunctional_df) (decl := OrlikSolomon.DeRham.conormalMap_apply) (decl := OrlikSolomon.DeRham.exact_conormalMap) (decl := OrlikSolomon.DeRham.conormalMap_injective) (decl := OrlikSolomon.DeRham.splitConormalSequence) (decl := OrlikSolomon.DeRham.splitConormalSequence_apply) (decl := OrlikSolomon.DeRham.splitConormalSequence_symm_apply_zero)
 Put $`\overline{M}=\Omega_A^1\otimes_AS` and $`e=df\bmod f`.
 There is an $`S`-linear map $`\lambda:\overline{M}\to S` with $`\lambda(e)=1`, so
 $$`0\longrightarrow S\xrightarrow{\ 1\mapsto e\ }\overline{M}\longrightarrow\Omega_S^1\longrightarrow0`
@@ -232,12 +233,12 @@ The non-zero-divisor hypothesis identifies the conormal line, and smoothness of 
 Smoothness of $`A` is not needed for this lemma, and no basis or constant rank is assumed.
 :::
 
-:::node "lem:dr-normal-derivation"
+:::node "lem:dr-normal-derivation" (decl := OrlikSolomon.DeRham.exists_normalDerivation_modulo) (decl := OrlikSolomon.DeRham.span_pair_eq_top_of_normalDerivationModulo) (decl := OrlikSolomon.DeRham.exists_localized_normalDerivation)
 There exist a $`k`-derivation $`v:A\to A` and an element $`h\in A` with $`v(f)=1+fh`.
 If $`g=v(f)`, then $`(f,g)=A`, and on $`A_g` the extended derivation $`v/g` takes $`f` to $`1`.
 :::
 
-:::node "lem:dr-modf-koszul"
+:::node "lem:dr-modf-koszul" (decl := OrlikSolomon.DeRham.ker_wedgeLeft_df_mod_succ) (decl := OrlikSolomon.DeRham.ker_wedgeLeft_df_mod_zero) (decl := OrlikSolomon.DeRham.powerMap_eq_zero_of_wedgeLeft_df_eq_smul) (decl := OrlikSolomon.DeRham.powerMap_eq_zero_of_wedgeLeft_df_mem_smul)
 If $`\eta\in\Omega_A^q` satisfies $`df\wedge\eta\in f\Omega_A^{q+1}`, then its image in $`\Omega_S^q` is zero.
 Equivalently, modulo $`f`, the kernel of $`e\wedge-` on $`\bigwedge_S^q\overline{M}` is the image of $`e\wedge-` from the preceding degree.
 
@@ -441,13 +442,13 @@ For $`A=k[x]` and $`f=x`, we have $`H^0_{\mathrm{dR}}(A_f)=k`, $`H^1_{\mathrm{dR
 Moreover $`r([dx/x])=1`, and the twisted normalized class is $`[dx/x]\,t`.
 :::
 
-:::node "prop:dr-unit-example"
+:::node "prop:dr-unit-example" (decl := OrlikSolomon.Sanity.unit_quotient_subsingleton) (decl := OrlikSolomon.Sanity.zeroDerivation_unit_normal) (decl := OrlikSolomon.Sanity.unit_exists_normalDerivation_modulo) (remaining := "The differential forms, localization, logarithmic complex, cohomology, residue and Gysin calculations.")
 If $`f` is a unit in a smooth $`A`, then $`S=0`, $`A_f\simeq A` and $`L^\bullet=\Omega_A^\bullet`.
 Residue and Gysin are both zero, and all the exactness fields reduce to the identity isomorphism on $`C(A)`.
 In the contraction one may take $`v=0` and $`h=-f^{-1}`, which confirms that no step assumed a nonempty divisor.
 :::
 
-:::node "prop:dr-product-example"
+:::node "prop:dr-product-example" (decl := OrlikSolomon.Sanity.productPolynomialEquation_regular) (decl := OrlikSolomon.Sanity.productPolynomialQuotientEquiv) (decl := OrlikSolomon.Sanity.productPolynomialNormal) (decl := OrlikSolomon.Sanity.productPolynomialNormal_equation) (decl := OrlikSolomon.Sanity.productPolynomial_conormalFunctional_df) (decl := OrlikSolomon.Sanity.productPolynomial_splitConormalSequence_df) (decl := OrlikSolomon.Sanity.productPolynomial_exists_normalDerivation_modulo) (decl := OrlikSolomon.Sanity.productPolynomial_no_global_normal) (remaining := "The localization and de Rham cohomology of the product, and its residue calculation.")
 For $`A=k\times k[z]` and $`f=(1,z)`, we have $`S\simeq k`, $`A_f\simeq k\times k[z,z^{-1}]`, $`H^0_{\mathrm{dR}}(A_f)=k\times k` and $`H^1_{\mathrm{dR}}(A_f)=k[(0,dz/z)]`.
 All higher groups vanish, and the residue takes $`(0,dz/z)` to $`1` on $`S`.
 
@@ -455,7 +456,7 @@ This divisor lies on one connected component, and it is why the derivation is on
 Taking $`v=(0,\partial_z)` gives $`v(f)=(0,1)=1+f(-1,0)`, while $`df=(0,dz)` is not unimodular on all of $`A`.
 :::
 
-:::node "prop:dr-zero-example"
+:::node "prop:dr-zero-example" (decl := OrlikSolomon.smooth_punit) (decl := OrlikSolomon.SmoothAlg.zero) (decl := OrlikSolomon.Sanity.zero_exists_normalDerivation_modulo) (remaining := "Vanishing of forms and de Rham cohomology, the twisted theory and its pair axioms.")
 For $`A=0`, every form and cohomology module is zero, $`C(A)` is the zero $`B`-algebra, and the fields for divisor pairs hold for its unique equation.
 The zero algebra is formally smooth and finitely presented, so it really is an object of the category, and no nontriviality can be imposed on general objects.
 :::
