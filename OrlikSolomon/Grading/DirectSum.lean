@@ -130,6 +130,25 @@ theorem reindexedDirectSumEquiv_lof (e : ι ≃ κ) (f : ∀ i, M i ≃ₗ[R] N 
 
 end ReindexEquivalences
 
+section ShiftEquivalences
+
+variable {R ι : Type*} [Semiring R] [DecidableEq ι] [AddGroup ι]
+  (M N : ι → Type*) [∀ i, AddCommMonoid (M i)] [∀ i, Module R (M i)]
+  [∀ i, AddCommMonoid (N i)] [∀ i, Module R (N i)]
+
+/-- Sum a degreewise family of linear equivalences of fixed shift. The literal shifted types
+keep the API independent of the implementation of translation as an index equivalence. -/
+def shiftedDirectSumEquiv (a : ι) (f : ∀ i, M i ≃ₗ[R] N (i + a)) :
+    (⨁ i, M i) ≃ₗ[R] ⨁ i, N i :=
+  reindexedDirectSumEquiv M N (Equiv.addRight a) f
+
+@[simp]
+theorem shiftedDirectSumEquiv_lof (a : ι) (f : ∀ i, M i ≃ₗ[R] N (i + a)) (i : ι) (x : M i) :
+    shiftedDirectSumEquiv M N a f (lof R ι M i x) = lof R ι N (i + a) (f i x) :=
+  reindexedDirectSumEquiv_lof M N (Equiv.addRight a) f i x
+
+end ShiftEquivalences
+
 section Exactness
 
 variable {R ι : Type*} [Semiring R] [DecidableEq ι] [AddGroup ι]
