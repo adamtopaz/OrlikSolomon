@@ -5,7 +5,6 @@ Authors: Adam Topaz, Claude
 -/
 module
 
-public import Mathlib.Algebra.Field.ZMod
 public import OrlikSolomon.Geometry.Arrangement
 public import OrlikSolomon.Geometry.CoordinateRing
 
@@ -14,7 +13,8 @@ public import OrlikSolomon.Geometry.CoordinateRing
 
 This file defines the coordinate ring `O(U_𝒜)` of the complement of an arrangement `𝒜`, as a
 localization of `O(V)` at the equations of its hyperplanes. **It is never a subset of `V`**: a
-complement can have no `k`-points while its ring is nonzero, see `Arrangement.twoPoints`.
+complement can have no `k`-points while its ring is nonzero, see `Sanity.twoPoints` in
+`OrlikSolomon/Examples/Sanity.lean`.
 
 ## Main definitions
 
@@ -39,8 +39,6 @@ complement can have no `k`-points while its ring is nonzero, see `Arrangement.tw
   scaling an equation by a nonzero constant changes its unit by that constant.
 * `SmoothAlg.complementEmptyIso`, `SmoothAlg.complement_empty_induction`: the ring of the empty
   arrangement is `O(V)`, and it reduces to iterated polynomial rings.
-* `Arrangement.nontrivial_complementRing_twoPoints`, `Arrangement.isEmpty_algHom_twoPoints`: the
-  regression example of two points of `𝔸¹` over `F₂`.
 
 ## Implementation notes
 
@@ -218,7 +216,7 @@ variable (𝒜)
 all equations of all hyperplanes of `𝒜`.
 
 This is never a subset of `V`: over a finite field the complement can have no `k`-points while this
-ring is nonzero, see `Arrangement.twoPoints`. The definition involves no chosen equation. Use
+ring is nonzero, see `Sanity.twoPoints`. The definition involves no chosen equation. Use
 `ComplementRing.isLocalizationAway` to see it as `O(V)[1/P]` for `P` a product of any equations, one
 for each hyperplane.
 
@@ -597,58 +595,5 @@ theorem complement_empty_induction {motive : SmoothAlg k → Prop} (point : moti
 end Empty
 
 end SmoothAlg
-
-/-! ### Two points of the line over the field with two elements -/
-
-namespace Arrangement
-
-open scoped Classical in
-/-- The two rational points of the affine line over the field with two elements: the blueprint's
-example of a complement with no `k`-points whose coordinate ring is nonzero. -/
-def twoPoints : Arrangement (ZMod 2) (ZMod 2) :=
-  ofFinset {zeroLocus (AffineMap.id _ _), zeroLocus (AffineMap.id _ _ - AffineMap.const _ _ 1)}
-
-theorem zeroLocus_id_mem_twoPoints :
-    zeroLocus (AffineMap.id (ZMod 2) (ZMod 2)) ∈ twoPoints := by
-  refine mem_ofFinset.2 ⟨by simp, isHyperplane_zeroLocus_iff.2 ?_⟩
-  simpa using fun h ↦ one_ne_zero (LinearMap.congr_fun h (1 : ZMod 2))
-
-theorem zeroLocus_id_sub_one_mem_twoPoints :
-    zeroLocus (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1) ∈ twoPoints := by
-  refine mem_ofFinset.2 ⟨by simp, isHyperplane_zeroLocus_iff.2 ?_⟩
-  simpa using fun h ↦ one_ne_zero (LinearMap.congr_fun h (1 : ZMod 2))
-
-/-- Every `F₂`-point of the line lies on one of the two hyperplanes. -/
-theorem exists_mem_twoPoints (v : ZMod 2) : ∃ H ∈ twoPoints, v ∈ H := by
-  obtain rfl | rfl : v = 0 ∨ v = 1 := by revert v; decide
-  · exact ⟨_, zeroLocus_id_mem_twoPoints, by simp⟩
-  · exact ⟨_, zeroLocus_id_sub_one_mem_twoPoints, by simp⟩
-
-/-- The complement of the two points of the line over `F₂` has no `F₂`-points, even as a scheme: its
-coordinate ring has no `F₂`-algebra map to `F₂`. -/
-theorem isEmpty_algHom_twoPoints : IsEmpty (twoPoints.ComplementRing →ₐ[ZMod 2] ZMod 2) := by
-  refine ⟨fun φ ↦ ?_⟩
-  have h₀ := (ComplementRing.isUnit_coord (𝒜 := twoPoints)
-    (.of_mem zeroLocus_id_mem_twoPoints)).map φ
-  have h₁ := (ComplementRing.isUnit_coord (𝒜 := twoPoints)
-    (.of_mem zeroLocus_id_sub_one_mem_twoPoints)).map φ
-  rw [map_sub, map_sub, map_sub, coord_const] at h₁
-  set a := φ (algebraMap _ _ (coord (AffineMap.id (ZMod 2) (ZMod 2))))
-  have h1 : φ (algebraMap _ _ (algebraMap (ZMod 2) (CoordinateRing (ZMod 2) (ZMod 2)) 1)) = 1 := by
-    simp
-  rw [h1] at h₁
-  obtain h | h := (by decide : ∀ a : ZMod 2, a = 0 ∨ a = 1) a
-  · simp [h] at h₀
-  · simp [h] at h₁
-
-/-- The coordinate ring of the complement of the two points of the line over `F₂` is nonzero, even
-though the complement has no `F₂`-points, see `isEmpty_algHom_twoPoints`. This is why `O(U_𝒜)` is a
-localization, and never a subset of `V`.
-
-Blueprint: the regression list, "the two rational points in `𝔸¹` over `F₂`". -/
-theorem nontrivial_complementRing_twoPoints : Nontrivial twoPoints.ComplementRing :=
-  inferInstance
-
-end Arrangement
 
 end OrlikSolomon
