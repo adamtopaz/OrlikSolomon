@@ -7,8 +7,8 @@ module
 
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.MonoidAlgebra.Grading
-public import OrlikSolomon.Cohomology.Logarithms
-public import OrlikSolomon.Geometry.Deletion
+public import OrlikSolomon.Cohomology.Deletion
+public import OrlikSolomon.Geometry.Projective
 public import OrlikSolomon.Geometry.RelationTargets
 
 /-!
@@ -17,8 +17,10 @@ public import OrlikSolomon.Geometry.RelationTargets
 This file collects consistency checks of the definitions against the blueprint's regression list.
 At present it covers the structure `OrdinaryTheory` of `def:cohomology`, in particular the
 blueprint's "zero coefficient ring" case and the case `R = B`, the logarithmic classes with
-coefficients in `ℤ/2`, and the example of two points of `𝔸¹` over `F₂`. The other arrangement
-examples of that list will be added here as the modules they test appear.
+coefficients in `ℤ/2`, the example of two points of `𝔸¹` over `F₂` and its projective analogue, and
+the first induction with zero coefficients and in dimension zero. The other arrangement examples of
+that list will be added here as the modules they test appear. The example of one projective
+hyperplane is `SmoothAlg.projectiveComplementIsoAffineSpace`.
 
 ## Main definitions
 
@@ -32,6 +34,15 @@ examples of that list will be added here as the modules they test appear.
 * `OrlikSolomon.Sanity.twoPointsPair`: the deletion pair of one of them. Here `H` is a point, the
   restriction is empty (`restriction_twoPoints_eq_empty`), the open part has no `F₂`-points, and the
   other point restricts to the constant `1` (`mapUnits_complementRestriction_twoPoints`).
+* `OrlikSolomon.Sanity.threePoints`: the three rational points of `P¹` over `F₂`. Their complement
+  has no `F₂`-points (`isEmpty_algHom_threePoints`), and its ring is nonzero
+  (`nontrivial_complementRing_threePoints`).
+
+## Main results
+
+* `OrlikSolomon.Sanity.exists_logMonomialBasis_zeroTheory_twoPoints`: the first induction with zero
+  coefficients on a complement with no rational points. The recursive basis has two words of length
+  one, although over the zero ring every family is a basis.
 
 ## What these checks show, and what they do not
 
@@ -399,7 +410,106 @@ theorem mapUnits_complementRestriction_twoPoints :
   obtain rfl : c = 1 := Units.ext ((by decide : ∀ a : ZMod 2, a ≠ 0 → a = 1) c c.ne_zero)
   simpa using hc
 
+/-- The two points have `b₁ = 2`, and this is what `thm:cohom-basis` counts. -/
+theorem bettiNumber_one_twoPoints : twoPoints.bettiNumber 1 = 2 := by
+  classical
+  have hne : zeroLocus (AffineMap.id (ZMod 2) (ZMod 2)) ≠
+      zeroLocus (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1) := fun h ↦
+    (mem_deletion.1 zeroLocus_id_sub_one_mem_deletion).1 h.symm
+  have h𝒜 : twoPoints.hyperplanes = {zeroLocus (AffineMap.id (ZMod 2) (ZMod 2)),
+      zeroLocus (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1)} := by
+    ext K
+    simp only [mem_hyperplanes, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨fun hK ↦ ?_, ?_⟩
+    · simpa using (mem_ofFinset.1 hK).1
+    · rintro (rfl | rfl)
+      exacts [zeroLocus_id_mem_twoPoints, zeroLocus_id_sub_one_mem_twoPoints]
+  simp [bettiNumber, poincarePolynomial_pair_disjoint twoPoints hne h𝒜 inf_zeroLocus_id_twoPoints,
+    Polynomial.coeff_one]
+
+/-- The first induction with zero coefficients, on a complement with no rational points. Over the
+zero ring every family is a basis, and yet the recursive basis of the two points has exactly two
+words of length one, so the count of `exists_logMonomialBasis` does not come from a rank. -/
+theorem exists_logMonomialBasis_zeroTheory_twoPoints :
+    ∃ b : (zeroTheory.{0, v, w, z} (ZMod 2)).LogMonomialBasis twoPoints, b.wordCount 1 = 2 :=
+  let ⟨b, hb⟩ := (zeroTheory.{0, v, w, z} (ZMod 2)).exists_logMonomialBasis twoPoints
+  ⟨b, (hb 1).trans bettiNumber_one_twoPoints⟩
+
+/-- The bound above the dimension holds on a complement with no rational points. -/
+example {R : Type v} [CommRing R] {B : Type w} [CommRing B] [Algebra R B]
+    {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ] (T : OrdinaryTheory.{0, v, w, z} (ZMod 2) ℬ) {w' : ℤ}
+    {x : T.C.obj (complement twoPoints)} (hx : x ∈ T.grading (complement twoPoints) (2, w')) :
+    x = 0 :=
+  T.eq_zero_of_mem_grading_of_finrank_lt twoPoints (by simp) hx
+
+/-- In dimension zero, there are no hyperplanes, and the bound says that all classes are in degree
+zero. -/
+example {k : Type u} [Field k] {R : Type v} [CommRing R] {B : Type w} [CommRing B] [Algebra R B]
+    {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ] (T : OrdinaryTheory.{u, v, w, z} k ℬ)
+    (𝒜 : Arrangement k PUnit.{u + 1}) {p w' : ℤ} (hp : p ≠ 0)
+    {x : T.C.obj (complement 𝒜)} (hx : x ∈ T.grading (complement 𝒜) (p, w')) : x = 0 := by
+  obtain hp | hp := hp.lt_or_gt
+  · exact T.eq_zero_of_mem_grading_of_neg 𝒜 hp hx
+  · exact T.eq_zero_of_mem_grading_of_finrank_lt 𝒜
+      (by simpa [Module.finrank_zero_of_subsingleton] using hp) hx
+
 end TwoPoints
+
+section ThreePoints
+
+open ProjectiveArrangement ProjectiveArrangement.ComplementRing
+
+/-- The linear form `x` on `F₂²`. -/
+def formX : Module.Dual (ZMod 2) (Fin 2 → ZMod 2) := LinearMap.proj 0
+
+/-- The linear form `y` on `F₂²`. -/
+def formY : Module.Dual (ZMod 2) (Fin 2 → ZMod 2) := LinearMap.proj 1
+
+theorem formX_ne_zero : formX ≠ 0 := fun h ↦
+  one_ne_zero (α := ZMod 2) (by simpa [formX] using LinearMap.congr_fun h ![1, 0])
+
+theorem formY_ne_zero : formY ≠ 0 := fun h ↦
+  one_ne_zero (α := ZMod 2) (by simpa [formY] using LinearMap.congr_fun h ![0, 1])
+
+theorem formX_add_formY_ne_zero : formX + formY ≠ 0 := fun h ↦
+  one_ne_zero (α := ZMod 2) (by simpa [formX, formY] using LinearMap.congr_fun h ![1, 0])
+
+open scoped Classical in
+/-- The three rational points of the projective line over the field with two elements: the zeros of
+`x`, of `y` and of `x + y`. -/
+def threePoints : ProjectiveArrangement (ZMod 2) (Fin 2 → ZMod 2) :=
+  ofForms {formX, formY, formX + formY} <| by
+    simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+    exact ⟨formX_ne_zero, formY_ne_zero, formX_add_formY_ne_zero⟩
+
+/-- The complement of the three points of the projective line over `F₂` has no `F₂`-points, even as
+a scheme: its coordinate ring has no `F₂`-algebra map to `F₂`. Both `x / y` and
+`(x + y) / y = x / y + 1` are units, and no element of `F₂` has that property. -/
+theorem isEmpty_algHom_threePoints : IsEmpty (threePoints.ComplementRing →ₐ[ZMod 2] ZMod 2) := by
+  classical
+  refine ⟨fun φ ↦ ?_⟩
+  have hx : LinearMap.ker formX ∈ threePoints := ker_mem_ofForms (by simp)
+  have hy : LinearMap.ker formY ∈ threePoints := ker_mem_ofForms (by simp)
+  have hxy : LinearMap.ker (formX + formY) ∈ threePoints := ker_mem_ofForms (by simp)
+  have h₀ := (ratioUnit hx hy).isUnit.map φ
+  have h₁ := (ratioUnit hxy hy).isUnit.map φ
+  rw [coe_ratioUnit] at h₀ h₁
+  rw [ratio_add, ratio_self, map_add, map_one] at h₁
+  obtain h | h := (by decide : ∀ a : ZMod 2, a = 0 ∨ a = 1) (φ (ratio formX hy))
+  · simp [h] at h₀
+  · rw [h, show (1 + 1 : ZMod 2) = 0 by decide] at h₁
+    simp at h₁
+
+/-- The coordinate ring of the complement of the three points of the projective line over `F₂` is
+nonzero, even though the complement has no `F₂`-points, see `isEmpty_algHom_threePoints`. So it does
+not matter that no hyperplane at infinity can be chosen to make the complement have a point.
+
+Blueprint: the regression list, the projective form of "the two rational points in `𝔸¹` over `F₂`".
+-/
+theorem nontrivial_complementRing_threePoints : Nontrivial threePoints.ComplementRing :=
+  inferInstance
+
+end ThreePoints
 
 end Sanity
 
