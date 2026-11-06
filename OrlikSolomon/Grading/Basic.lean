@@ -6,7 +6,6 @@ Authors: Adam Topaz, Claude
 module
 
 public import Mathlib.Algebra.Exact.Basic
-public import Mathlib.Algebra.GradedFunLike
 public import Mathlib.Algebra.Ring.NegOnePow
 public import Mathlib.RingTheory.GradedAlgebra.Basic
 
@@ -34,7 +33,8 @@ of the grading pieces:
 
 Degrees are matched by an equation `i + a = j` rather than by computing `j - a`, so that the
 statements can be used at literal bidegrees such as `(1, 1) + (-1, -1) = (0, 0)` with no
-transport along an equality of degrees.
+transport along an equality of degrees. Degrees need only right cancellation for homogeneous
+preimages, and form an additive group where every degree must be reached by the shift.
 
 ## Main definitions
 
@@ -135,22 +135,8 @@ theorem isHomogeneousOfShift_prod_iff [Add ι] [Add κ] {ℳ : ι × κ → σ} 
 theorem isHomogeneousOfShift_id [AddZeroClass ι] : IsHomogeneousOfShift ℳ ℳ 0 (id : M → M) :=
   isHomogeneousOfShift_zero_iff.2 fun _ _ hx ↦ hx
 
-/-- Mathlib's grading-preserving maps have shift `0`. -/
-theorem isHomogeneousOfShift_of_gradedFunLike [AddZeroClass ι] [FunLike F M N]
-    [GradedFunLike F ℳ 𝒩] (f : F) : IsHomogeneousOfShift ℳ 𝒩 0 f :=
-  isHomogeneousOfShift_zero_iff.2 fun _ _ hx ↦ Graded.map_mem f hx
-
-/-- The zero map has every shift. -/
-theorem isHomogeneousOfShift_zero_fun [Add ι] [Zero N] [ZeroMemClass τ N] :
-    IsHomogeneousOfShift ℳ 𝒩 a (0 : M → N) :=
-  fun _ _ _ ↦ zero_mem _
-
-/-- Right multiplication by an element of degree `a` has shift `a`. -/
-theorem isHomogeneousOfShift_mul_right [Add ι] [Mul T] [SetLike σ T] {𝒜 : ι → σ}
-    [SetLike.GradedMul 𝒜] {t : T} (ht : t ∈ 𝒜 a) : IsHomogeneousOfShift 𝒜 𝒜 a (· * t) :=
-  fun _ _ hx ↦ SetLike.mul_mem_graded hx ht
-
-/-- Left multiplication by an element of degree `a` has shift `a`, when degrees commute. -/
+/-- Left multiplication by an element of degree `a` has shift `a`, when degrees commute. This is
+how logarithmic classes act in `lem:gm` and `lem:ses`, and `e_H` in `def:lift-map`. -/
 theorem isHomogeneousOfShift_mul_left [AddCommMagma ι] [Mul T] [SetLike σ T] {𝒜 : ι → σ}
     [SetLike.GradedMul 𝒜] {t : T} (ht : t ∈ 𝒜 a) : IsHomogeneousOfShift 𝒜 𝒜 a (t * ·) :=
   fun i _ hx ↦ add_comm a i ▸ SetLike.mul_mem_graded ht hx
@@ -180,21 +166,11 @@ protected theorem add [Add ι] [Add N] [AddMemClass τ N] {f₁ f₂ : M → N}
     IsHomogeneousOfShift ℳ 𝒩 a (f₁ + f₂) :=
   fun _ _ hx ↦ add_mem (hf₁ hx) (hf₂ hx)
 
-/-- The negative of a map of shift `a` has shift `a`. -/
-protected theorem neg [Add ι] [InvolutiveNeg N] [NegMemClass τ N]
-    (hf : IsHomogeneousOfShift ℳ 𝒩 a f) : IsHomogeneousOfShift ℳ 𝒩 a (-f) :=
-  fun _ _ hx ↦ neg_mem (hf hx)
-
 /-- A difference of maps of shift `a` has shift `a`. -/
 protected theorem sub [Add ι] [AddGroup N] [AddSubgroupClass τ N] {f₁ f₂ : M → N}
     (hf₁ : IsHomogeneousOfShift ℳ 𝒩 a f₁) (hf₂ : IsHomogeneousOfShift ℳ 𝒩 a f₂) :
     IsHomogeneousOfShift ℳ 𝒩 a (f₁ - f₂) :=
   fun _ _ hx ↦ sub_mem (hf₁ hx) (hf₂ hx)
-
-/-- A scalar multiple of a map of shift `a` has shift `a`, for scalars preserving each piece. -/
-protected theorem smul [Add ι] {R : Type*} [SMul R N] [SMulMemClass τ R N] (r : R)
-    (hf : IsHomogeneousOfShift ℳ 𝒩 a f) : IsHomogeneousOfShift ℳ 𝒩 a (r • f) :=
-  fun _ _ hx ↦ SMulMemClass.smul_mem r (hf hx)
 
 end IsHomogeneousOfShift
 
@@ -212,7 +188,7 @@ variable (ℳ) in
 /-- Two additive maps out of an internally graded module are equal if they agree on homogeneous
 elements. This applies to `B`-linear maps, unlike `DirectSum.decompose_lhom_ext`, which asks
 for linearity over the ring of the grading pieces. -/
-theorem eq_of_forall_mem {f f' : F} (h : ∀ i, ∀ x ∈ ℳ i, f x = f' x) : f = f' := by
+theorem decompose_hom_ext {f f' : F} (h : ∀ i, ∀ x ∈ ℳ i, f x = f' x) : f = f' := by
   refine DFunLike.ext _ _ fun x ↦ ?_
   induction x using Decomposition.inductionOn ℳ with
   | zero => simp
@@ -230,12 +206,12 @@ theorem mem_range_of_forall_decompose_mem [Decomposition 𝒩] {f : F} {y : N}
 
 namespace IsHomogeneousOfShift
 
-variable [AddGroup ι] {f : F} {a b c : ι} {i j k : ι}
+variable {f : F} {a b c : ι} {i j k : ι}
 
 omit [AddSubmonoidClass τ N] in
 /-- A map of shift `a` vanishes if, in each degree, its source or its target is zero. This is how
 Gysin maps out of the point are shown to vanish in `lem:gm`. -/
-theorem map_eq_zero_of_forall (hf : IsHomogeneousOfShift ℳ 𝒩 a f)
+theorem map_eq_zero_of_forall [Add ι] (hf : IsHomogeneousOfShift ℳ 𝒩 a f)
     (h : ∀ i, (∀ x ∈ ℳ i, x = 0) ∨ ∀ y ∈ 𝒩 (i + a), y = 0) (x : M) : f x = 0 := by
   induction x using Decomposition.inductionOn ℳ with
   | zero => simp
@@ -246,6 +222,10 @@ theorem map_eq_zero_of_forall (hf : IsHomogeneousOfShift ℳ 𝒩 a f)
   | add x y hx hy => simp [hx, hy]
 
 variable [Decomposition 𝒩]
+
+section RightCancel
+
+variable [Add ι] [IsRightCancelAdd ι]
 
 /-- A homogeneous map commutes with taking homogeneous components, up to its shift. This is the
 fact from which everything else in `lem:extraction` follows. -/
@@ -296,11 +276,29 @@ theorem mem_of_map_mem (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hinj : Function
   obtain ⟨x', hx', h⟩ := hf.exists_mem_preimage hij hx ⟨x, rfl⟩
   exact hinj h ▸ hx'
 
-/-- For an injective homogeneous map, an element has degree `i` exactly when its image has degree
-`i` shifted. -/
-theorem map_mem_iff (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hinj : Function.Injective f)
-    (hij : i + a = j) {x : M} : f x ∈ 𝒩 j ↔ x ∈ ℳ i :=
-  ⟨hf.mem_of_map_mem hinj hij, hf.map_mem hij⟩
+/-- A homogeneous map is injective exactly when it is injective in each degree. -/
+theorem injective_iff_forall_injOn (hf : IsHomogeneousOfShift ℳ 𝒩 a f) :
+    Function.Injective f ↔ ∀ i, Set.InjOn f (ℳ i) := by
+  refine ⟨fun h _ ↦ h.injOn, fun h x y hxy ↦ (decompose ℳ).injective ?_⟩
+  refine DFinsupp.ext fun i ↦ Subtype.ext (h i (SetLike.coe_mem _) (SetLike.coe_mem _) ?_)
+  rw [← hf.decompose_map rfl, ← hf.decompose_map rfl, hxy]
+
+end RightCancel
+
+/-- If `f` is an injective homogeneous map and `f ∘ h` is homogeneous, then so is `h`. In
+`thm:projective`, this shows that the equivalence obtained by restricting the cone equivalence
+preserves degrees, because the pullback from `U_𝒫` is injective. -/
+theorem of_comp_of_injective [AddRightCancelSemigroup ι] [SetLike υ Q] {𝒬 : ι → υ} {h : Q → M}
+    (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hinj : Function.Injective f)
+    (hh : IsHomogeneousOfShift 𝒬 𝒩 c (f ∘ h)) (hba : b + a = c) :
+    IsHomogeneousOfShift 𝒬 ℳ b h := by
+  intro i x hx
+  refine hf.mem_of_map_mem hinj rfl (hh.map_mem ?_ hx)
+  rw [← hba, add_assoc]
+
+section Group
+
+variable [AddGroup ι]
 
 /-- A two-sided inverse of a homogeneous map of shift `a` is homogeneous of shift `-a`. Blueprint:
 `lem:extraction`. -/
@@ -317,8 +315,9 @@ theorem ofBijective_symm (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hb : Function
     IsHomogeneousOfShift 𝒩 ℳ (-a) (Equiv.ofBijective f hb).symm :=
   hf.inverse (Equiv.ofBijective f hb).left_inv (Equiv.ofBijective f hb).right_inv
 
-/-- If `h ∘ f` is homogeneous and `f` is a surjective homogeneous map, then so is `h`. This
-descends homogeneity along a graded quotient map, as in `def:lift-map`. -/
+/-- If `f` is a surjective homogeneous map and `h ∘ f` is homogeneous, then so is `h`. This needs
+a decomposition of `N`. When the pieces of `N` are by construction the images of those of `M`, as
+for `RelationQuotient.grading`, that description gives the conclusion directly. -/
 theorem of_comp_of_surjective [SetLike υ Q] {𝒬 : ι → υ} {h : N → Q}
     (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hs : Function.Surjective f)
     (hh : IsHomogeneousOfShift ℳ 𝒬 c (h ∘ f)) (hab : a + b = c) :
@@ -328,22 +327,6 @@ theorem of_comp_of_surjective [SetLike υ Q] {𝒬 : ι → υ} {h : N → Q}
   refine hh.map_mem ?_ hx
   rw [← hab, ← add_assoc, neg_add_cancel_right]
 
-/-- If `f` is an injective homogeneous map and `f ∘ h` is homogeneous, then so is `h`. -/
-theorem of_comp_of_injective [SetLike υ Q] {𝒬 : ι → υ} {h : Q → M}
-    (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hinj : Function.Injective f)
-    (hh : IsHomogeneousOfShift 𝒬 𝒩 c (f ∘ h)) (hba : b + a = c) :
-    IsHomogeneousOfShift 𝒬 ℳ b h := by
-  intro i x hx
-  refine hf.mem_of_map_mem hinj rfl (hh.map_mem ?_ hx)
-  rw [← hba, add_assoc]
-
-/-- A homogeneous map is injective exactly when it is injective in each degree. -/
-theorem injective_iff_forall_injOn (hf : IsHomogeneousOfShift ℳ 𝒩 a f) :
-    Function.Injective f ↔ ∀ i, Set.InjOn f (ℳ i) := by
-  refine ⟨fun h _ ↦ h.injOn, fun h x y hxy ↦ (decompose ℳ).injective ?_⟩
-  refine DFinsupp.ext fun i ↦ Subtype.ext (h i (SetLike.coe_mem _) (SetLike.coe_mem _) ?_)
-  rw [← hf.decompose_map rfl, ← hf.decompose_map rfl, hxy]
-
 /-- A homogeneous map is surjective exactly when it is surjective in each shifted degree. -/
 theorem surjective_iff_forall_surjOn (hf : IsHomogeneousOfShift ℳ 𝒩 a f) :
     Function.Surjective f ↔ ∀ ⦃i j : ι⦄, i + a = j → Set.SurjOn f (ℳ i) (𝒩 j) := by
@@ -352,6 +335,8 @@ theorem surjective_iff_forall_surjOn (hf : IsHomogeneousOfShift ℳ 𝒩 a f) :
   obtain ⟨x, -, hx⟩ := h (neg_add_cancel_right j a) (decompose 𝒩 y j).2
   exact ⟨x, hx⟩
 
+end Group
+
 section Exact
 
 variable [AddCommMonoid Q] [SetLike υ Q] [AddSubmonoidClass υ Q] {𝒬 : ι → υ}
@@ -359,7 +344,8 @@ variable [AddCommMonoid Q] [SetLike υ Q] [AddSubmonoidClass υ Q] {𝒬 : ι �
 
 omit [Decomposition ℳ] in
 /-- A homogeneous map kills an element exactly when it kills every homogeneous component. -/
-theorem map_eq_zero_iff_forall_decompose (hg : IsHomogeneousOfShift 𝒩 𝒬 b g) {y : N} :
+theorem map_eq_zero_iff_forall_decompose [Add ι] [IsRightCancelAdd ι]
+    (hg : IsHomogeneousOfShift 𝒩 𝒬 b g) {y : N} :
     g y = 0 ↔ ∀ j, g (decompose 𝒩 y j : N) = 0 := by
   classical
   refine ⟨fun h j ↦ ?_, fun h ↦ ?_⟩
@@ -369,7 +355,7 @@ theorem map_eq_zero_iff_forall_decompose (hg : IsHomogeneousOfShift 𝒩 𝒬 b 
 
 /-- Total exactness is equivalent to exactness at each homogeneous element, with the shift
 recorded by `i + a = j`. Blueprint: `lem:extraction`. -/
-theorem exact_iff_forall_mem (hf : IsHomogeneousOfShift ℳ 𝒩 a f)
+theorem exact_iff_forall_mem [AddGroup ι] (hf : IsHomogeneousOfShift ℳ 𝒩 a f)
     (hg : IsHomogeneousOfShift 𝒩 𝒬 b g) :
     Function.Exact f g ↔ ∀ ⦃i j : ι⦄, i + a = j → ∀ ⦃y : N⦄, y ∈ 𝒩 j →
       (g y = 0 ↔ ∃ x ∈ ℳ i, f x = y) := by
@@ -440,11 +426,11 @@ variable {R B : Type*} [Semiring R] [Semiring B] [AddCommMonoid M] [AddCommMonoi
   [LinearMap.CompatibleSMul M N R B] [LinearMap.CompatibleSMul N Q R B]
   {ℳ : ι → Submodule R M} {𝒩 : ι → Submodule R N} {𝒬 : ι → Submodule R Q}
   [FunLike F M N] [LinearMapClass F B M N] [FunLike G N Q] [LinearMapClass G B N Q]
-  {f : F} {g : G} {i j k : ι}
+  {f : F} {g : G} {a b : ι} {i j k : ι}
 
 /-- The `R`-linear map `ℳ i →ₗ[R] 𝒩 j` induced by a homogeneous `B`-linear map of shift `a`, where
 `i + a = j`. This applies to linear maps, linear equivalences and algebra maps over `B`. -/
-def component [Add ι] {a : ι} (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hij : i + a = j) :
+def component [Add ι] (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hij : i + a = j) :
     ℳ i →ₗ[R] 𝒩 j where
   toFun x := ⟨f x, hf.map_mem hij x.2⟩
   map_add' x y := Subtype.ext (map_add f (x : M) (y : M))
@@ -452,23 +438,16 @@ def component [Add ι] {a : ι} (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hij : 
 
 /-- The component of `f` is `f`, on underlying elements. -/
 @[simp]
-theorem coe_component_apply [Add ι] {a : ι} (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hij : i + a = j)
+theorem coe_component_apply [Add ι] (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hij : i + a = j)
     (x : ℳ i) : (hf.component hij x : N) = f x :=
   rfl
 
-/-- The component of a composite is the composite of the components. -/
-theorem component_comp [Add ι] {a b c : ι} {H : Type*} [FunLike H M Q] [LinearMapClass H B M Q]
-    [LinearMap.CompatibleSMul M Q R B] {h : H} (hh : ∀ x, h x = g (f x))
-    (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hg : IsHomogeneousOfShift 𝒩 𝒬 b g)
-    (hgf : IsHomogeneousOfShift ℳ 𝒬 c h) (hij : i + a = j) (hjk : j + b = k) (hik : i + c = k) :
-    hgf.component hik = (hg.component hjk).comp (hf.component hij) :=
-  LinearMap.ext fun x ↦ Subtype.ext (hh x)
-
-variable [DecidableEq ι] [AddGroup ι] [Decomposition ℳ] [Decomposition 𝒩] {a b : ι}
+variable [DecidableEq ι] [Decomposition ℳ] [Decomposition 𝒩]
 
 /-- A homogeneous linear map is injective exactly when each of its components is. Blueprint:
 `lem:extraction`. -/
-theorem injective_iff_forall_component (hf : IsHomogeneousOfShift ℳ 𝒩 a f) :
+theorem injective_iff_forall_component [Add ι] [IsRightCancelAdd ι]
+    (hf : IsHomogeneousOfShift ℳ 𝒩 a f) :
     Function.Injective f ↔
       ∀ ⦃i j : ι⦄ (hij : i + a = j), Function.Injective (hf.component hij) := by
   rw [hf.injective_iff_forall_injOn]
@@ -481,7 +460,7 @@ theorem injective_iff_forall_component (hf : IsHomogeneousOfShift ℳ 𝒩 a f) 
 
 /-- A homogeneous linear map is surjective exactly when each of its components is. Blueprint:
 `lem:extraction`. -/
-theorem surjective_iff_forall_component (hf : IsHomogeneousOfShift ℳ 𝒩 a f) :
+theorem surjective_iff_forall_component [AddGroup ι] (hf : IsHomogeneousOfShift ℳ 𝒩 a f) :
     Function.Surjective f ↔
       ∀ ⦃i j : ι⦄ (hij : i + a = j), Function.Surjective (hf.component hij) := by
   rw [hf.surjective_iff_forall_surjOn]
@@ -494,8 +473,8 @@ theorem surjective_iff_forall_component (hf : IsHomogeneousOfShift ℳ 𝒩 a f)
 /-- Total exactness of a pair of homogeneous linear maps is equivalent to exactness of the
 components `ℳ i → 𝒩 j → 𝒬 k` for all degrees with `i + a = j` and `j + b = k`. Blueprint:
 `lem:extraction`. -/
-theorem exact_iff_forall_component [Decomposition 𝒬] (hf : IsHomogeneousOfShift ℳ 𝒩 a f)
-    (hg : IsHomogeneousOfShift 𝒩 𝒬 b g) :
+theorem exact_iff_forall_component [AddGroup ι] [Decomposition 𝒬]
+    (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hg : IsHomogeneousOfShift 𝒩 𝒬 b g) :
     Function.Exact f g ↔ ∀ ⦃i j k : ι⦄ (hij : i + a = j) (hjk : j + b = k),
       Function.Exact (hf.component hij) (hg.component hjk) := by
   rw [hf.exact_iff_forall_mem hg]
@@ -511,23 +490,26 @@ theorem exact_iff_forall_component [Decomposition 𝒬] (hf : IsHomogeneousOfShi
 /-- A homogeneous linear equivalence of shift `a` restricts to an `R`-linear equivalence
 `ℳ i ≃ₗ[R] 𝒩 j` of each pair of pieces with `i + a = j`. For an algebra equivalence `e`, use
 `(e := e.toLinearEquiv)`. -/
-def componentEquiv {e : M ≃ₗ[B] N} (he : IsHomogeneousOfShift ℳ 𝒩 a e) (hij : i + a = j) :
-    ℳ i ≃ₗ[R] 𝒩 j :=
+def componentEquiv [Add ι] [IsRightCancelAdd ι] {e : M ≃ₗ[B] N}
+    (he : IsHomogeneousOfShift ℳ 𝒩 a e) (hij : i + a = j) : ℳ i ≃ₗ[R] 𝒩 j :=
   { he.component hij with
-    invFun y := ⟨e.symm y, he.linearEquiv_symm.map_mem (by rw [← hij, add_neg_cancel_right]) y.2⟩
+    invFun y := ⟨e.symm y, he.mem_of_map_mem e.injective hij
+      (by rw [e.apply_symm_apply]; exact y.2)⟩
     left_inv x := Subtype.ext (e.symm_apply_apply x)
     right_inv y := Subtype.ext (e.apply_symm_apply y) }
 
 /-- The component equivalence of `e` is `e`, on underlying elements. -/
 @[simp]
-theorem coe_componentEquiv_apply {e : M ≃ₗ[B] N} (he : IsHomogeneousOfShift ℳ 𝒩 a e)
-    (hij : i + a = j) (x : ℳ i) : (he.componentEquiv hij x : N) = e x :=
+theorem coe_componentEquiv_apply [Add ι] [IsRightCancelAdd ι] {e : M ≃ₗ[B] N}
+    (he : IsHomogeneousOfShift ℳ 𝒩 a e) (hij : i + a = j) (x : ℳ i) :
+    (he.componentEquiv hij x : N) = e x :=
   rfl
 
 /-- The inverse of the component equivalence of `e` is `e.symm`, on underlying elements. -/
 @[simp]
-theorem coe_componentEquiv_symm_apply {e : M ≃ₗ[B] N} (he : IsHomogeneousOfShift ℳ 𝒩 a e)
-    (hij : i + a = j) (y : 𝒩 j) : ((he.componentEquiv hij).symm y : M) = e.symm y :=
+theorem coe_componentEquiv_symm_apply [Add ι] [IsRightCancelAdd ι] {e : M ≃ₗ[B] N}
+    (he : IsHomogeneousOfShift ℳ 𝒩 a e) (hij : i + a = j) (y : 𝒩 j) :
+    ((he.componentEquiv hij).symm y : M) = e.symm y :=
   rfl
 
 end Component
@@ -536,42 +518,23 @@ end IsHomogeneousOfShift
 
 /-! ### Signs
 
-The sign of graded commutativity is `Int.negOnePow`, acting by scalars on any additive group. The
-action already commutes with scalars (`smul_comm`) and distributes over sums (`smul_add`); the
-lemmas here cover what Mathlib does not state or does not make `simp`. -/
+The sign of graded commutativity is `Int.negOnePow`, acting by scalars on any additive group.
+Mathlib already covers most of what this action needs: `map_zsmul_unit` for additive maps,
+`zsmul_mem` for grading pieces, and `smul_comm` and `smul_add` for the module structure. This
+section adds the blueprint's two cases of `ε`, its comparison with scalars in `R`, and `simp` lemmas
+for products, since `smul_mul_assoc` and `mul_smul_comm` are not `simp` lemmas. -/
 
 section Signs
 
-variable [AddCommGroup M] [AddCommGroup N]
+variable [AddCommGroup M]
 
-/-- The sign of an even integer acts trivially. -/
+/-- The sign of an even integer acts trivially. This is one case of the blueprint's `ε`. -/
 theorem negOnePow_smul_of_even {n : ℤ} (hn : Even n) (x : M) : n.negOnePow • x = x := by
   rw [Int.negOnePow_even n hn, one_smul]
 
-/-- The sign of an odd integer acts by negation. -/
+/-- The sign of an odd integer acts by negation. This is the other case of the blueprint's `ε`. -/
 theorem negOnePow_smul_of_odd {n : ℤ} (hn : Odd n) (x : M) : n.negOnePow • x = -x := by
   rw [Int.negOnePow_odd n hn, Units.neg_smul, one_smul]
-
-/-- The sign is additive in the exponent. -/
-theorem negOnePow_add_smul (m n : ℤ) (x : M) :
-    (m + n).negOnePow • x = m.negOnePow • n.negOnePow • x := by
-  rw [Int.negOnePow_add, mul_smul]
-
-/-- Acting by the same sign twice is the identity. -/
-@[simp]
-theorem negOnePow_smul_smul_self (n : ℤ) (x : M) : n.negOnePow • n.negOnePow • x = x := by
-  rw [smul_smul, Int.units_mul_self, one_smul]
-
-/-- Additive maps commute with signs. -/
-@[simp]
-theorem map_negOnePow_smul [FunLike F M N] [AddMonoidHomClass F M N] (f : F) (n : ℤ) (x : M) :
-    f (n.negOnePow • x) = n.negOnePow • f x := by
-  simp only [Units.smul_def, map_zsmul]
-
-/-- Additive subgroups, and hence grading pieces, are stable under signs. -/
-theorem negOnePow_smul_mem [SetLike σ M] [AddSubgroupClass σ M] {S : σ} (n : ℤ) {x : M}
-    (hx : x ∈ S) : n.negOnePow • x ∈ S :=
-  zsmul_mem hx _
 
 /-- The sign acts as the image of `±1` in any coefficient ring. This is the blueprint's `ε(p)`,
 with values in `R`. -/
@@ -579,16 +542,16 @@ theorem negOnePow_smul_eq_smul (R : Type*) [Ring R] [Module R M] (n : ℤ) (x : 
     n.negOnePow • x = (((n.negOnePow : ℤˣ) : ℤ) : R) • x := by
   rw [Units.smul_def, Int.cast_smul_eq_zsmul]
 
-/-- Signs move out of a product on the left. -/
+/-- Signs move out of a product on the left. This is stated for every unit of `ℤ`, so that it also
+applies to a product of signs, as produced by `Int.negOnePow_add`. -/
 @[simp]
-theorem negOnePow_smul_mul [Ring T] (n : ℤ) (x y : T) :
-    n.negOnePow • x * y = n.negOnePow • (x * y) :=
+theorem zsmul_unit_mul [Ring T] (u : ℤˣ) (x y : T) : u • x * y = u • (x * y) :=
   smul_mul_assoc _ _ _
 
-/-- Signs move out of a product on the right. -/
+/-- Signs move out of a product on the right. This is stated for every unit of `ℤ`, so that it also
+applies to a product of signs, as produced by `Int.negOnePow_add`. -/
 @[simp]
-theorem mul_negOnePow_smul [Ring T] (n : ℤ) (x y : T) :
-    x * n.negOnePow • y = n.negOnePow • (x * y) :=
+theorem mul_zsmul_unit [Ring T] (u : ℤˣ) (x y : T) : x * u • y = u • (x * y) :=
   mul_smul_comm _ _ _
 
 end Signs
@@ -597,57 +560,17 @@ end Signs
 
 /-- The internally graded ring `𝒜` is *graded commutative along `d : ι → ℤ`* if
 `x * y = (d i * d j).negOnePow • (y * x)` for `x ∈ 𝒜 i` and `y ∈ 𝒜 j`. The sign of the cohomology
-of an arrangement depends only on the cohomological degree, which is the case `d = Prod.fst`.
-Blueprint: item C2 of `def:cohomology`. -/
+of an arrangement depends only on the cohomological degree, which is the case `d = Prod.fst`: for
+`h : IsGradedCommutative 𝒜 Prod.fst`, `x ∈ 𝒜 (p, w)` and `y ∈ 𝒜 (q, v)`, the term `h hx hy` proves
+`x * y = (p * q).negOnePow • (y * x)`. Blueprint: item C2 of `def:cohomology`. -/
 def IsGradedCommutative [Ring T] [SetLike σ T] (𝒜 : ι → σ) (d : ι → ℤ) : Prop :=
   ∀ ⦃i j : ι⦄ ⦃x y : T⦄, x ∈ 𝒜 i → y ∈ 𝒜 j → x * y = (d i * d j).negOnePow • (y * x)
 
-/-- Graded commutativity for a bigrading, with sign given by the first degree. -/
-theorem isGradedCommutative_fst_iff [Ring T] [SetLike σ T] {𝒜 : ℤ × κ → σ} :
-    IsGradedCommutative 𝒜 Prod.fst ↔
-      ∀ ⦃p : ℤ⦄ ⦃w : κ⦄ ⦃q : ℤ⦄ ⦃v : κ⦄ ⦃x y : T⦄, x ∈ 𝒜 (p, w) → y ∈ 𝒜 (q, v) →
-        x * y = (p * q).negOnePow • (y * x) :=
-  ⟨fun h _ _ _ _ _ _ hx hy ↦ h hx hy, fun h _ _ _ _ hx hy ↦ h hx hy⟩
-
-namespace IsGradedCommutative
-
-variable [Ring T] [SetLike σ T] {𝒜 : ι → σ} {d : ι → ℤ} {i j : ι} {x y : T}
-
-/-- An element of even degree commutes with a homogeneous element. -/
-theorem mul_eq_of_even_left (h : IsGradedCommutative 𝒜 d) (hi : Even (d i)) (hx : x ∈ 𝒜 i)
-    (hy : y ∈ 𝒜 j) : x * y = y * x := by
-  rw [h hx hy, negOnePow_smul_of_even (hi.mul_right _)]
-
-/-- A homogeneous element commutes with an element of even degree. -/
-theorem mul_eq_of_even_right (h : IsGradedCommutative 𝒜 d) (hj : Even (d j)) (hx : x ∈ 𝒜 i)
-    (hy : y ∈ 𝒜 j) : x * y = y * x := by
-  rw [h hx hy, negOnePow_smul_of_even (hj.mul_left _)]
-
-/-- Elements of odd degree anticommute. -/
-theorem mul_eq_neg_of_odd (h : IsGradedCommutative 𝒜 d) (hi : Odd (d i)) (hj : Odd (d j))
+/-- Elements of odd degree anticommute. Logarithmic classes have degree `(1, 1)`, and this is what
+makes them satisfy the anticommutation of the exterior generators. -/
+theorem IsGradedCommutative.mul_eq_neg_of_odd [Ring T] [SetLike σ T] {𝒜 : ι → σ} {d : ι → ℤ}
+    {i j : ι} {x y : T} (h : IsGradedCommutative 𝒜 d) (hi : Odd (d i)) (hj : Odd (d j))
     (hx : x ∈ 𝒜 i) (hy : y ∈ 𝒜 j) : x * y = -(y * x) := by
   rw [h hx hy, negOnePow_smul_of_odd (hi.mul hj)]
-
-/-- An element of even degree commutes with every element, homogeneous or not. -/
-theorem commute_of_even [DecidableEq ι] [AddSubmonoidClass σ T] [Decomposition 𝒜]
-    (h : IsGradedCommutative 𝒜 d) (hi : Even (d i)) (hx : x ∈ 𝒜 i) (y : T) : Commute x y := by
-  induction y using Decomposition.inductionOn 𝒜 with
-  | zero => exact Commute.zero_right x
-  | homogeneous m => exact h.mul_eq_of_even_left hi hx m.2
-  | add y z hy hz => exact hy.add_right hz
-
-/-- Graded commutativity descends along a surjective degree-preserving ring homomorphism, such as
-the map from an exterior algebra to a graded quotient. -/
-theorem of_surjective [DecidableEq ι] [AddGroup ι] [Ring T'] [SetLike τ T']
-    [AddSubmonoidClass σ T] [AddSubmonoidClass τ T'] {𝒜' : ι → τ} [Decomposition 𝒜]
-    [Decomposition 𝒜'] [FunLike F T T'] [RingHomClass F T T'] {φ : F}
-    (h : IsGradedCommutative 𝒜 d) (hφ : IsHomogeneousOfShift 𝒜 𝒜' 0 φ)
-    (hs : Function.Surjective φ) : IsGradedCommutative 𝒜' d := by
-  intro i j x y hx hy
-  obtain ⟨x', hx', rfl⟩ := hφ.exists_mem_preimage_of_surjective hs (add_zero i) hx
-  obtain ⟨y', hy', rfl⟩ := hφ.exists_mem_preimage_of_surjective hs (add_zero j) hy
-  rw [← map_mul, h hx' hy', map_negOnePow_smul, map_mul]
-
-end IsGradedCommutative
 
 end OrlikSolomon
