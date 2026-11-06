@@ -5,12 +5,16 @@ cohomology of complements of hyperplane arrangements in affine and projective sp
 
 The cohomology theory is not fixed. It is a structure whose fields are the standard
 axioms: products, a dimension axiom at the point, affine-line invariance, and compatible
-localization and divisor purity. From these, the library will construct a canonical
+localization and divisor purity. From these, the library constructs a canonical
 bigraded algebra isomorphism between the Orlik–Solomon algebra and the cohomology of the
 complement. The base field is arbitrary, coefficients need not form a field, and Tate
 twists stay explicit.
 
-**Status:** under active development. Nothing is proved yet.
+**Status:** the affine structure theorem and its corollaries are proved, for any structure
+satisfying the axioms. No nonzero instance of that structure is constructed in Lean, so the
+library is not yet a theorem about any named cohomology theory. The projective theorem is in
+progress. The [status page](https://adamtopaz.github.io/OrlikSolomon/status/) of the book
+has the details.
 
 - Exposition, tied to the code: <https://adamtopaz.github.io/OrlikSolomon/>
 - Mathematical plan: [`blueprint/`](blueprint/arrangement_cohomology_lean_blueprint.tex)

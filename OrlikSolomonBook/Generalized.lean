@@ -15,14 +15,15 @@ tag := "generalized"
 file := "generalized"
 %%%
 
-The blueprint also describes a separate theorem for theories that fail the point dimension axiom or lack an orientation, such as motivic or Milnor–Witt theories.
-It is outside the current scope of this project, so nothing in this chapter is being formalized for now.
-It is included so that the book accounts for every node of the blueprint.
+Nothing in this chapter is formalized, and nothing in it is being worked on.
+The blueprint also describes a separate theorem, the _stable extension_, for theories that fail the point dimension axiom or lack an orientation, such as motivic or Milnor–Witt theories.
+It is outside the current scope of this project, and it is included here so that the book accounts for every node of the blueprint.
 
 The result is additive rather than multiplicative.
 In a stable setting, the motive of the complement splits as a finite sum of diagonal spheres, because the middle map of each deletion triangle vanishes for connectivity reasons.
 This computes generalized cohomology groups, but it does not give a ring presentation, and it does not say that a splitting preserves diagonals or products.
 For those theories, constant unit classes and quadratic information can change the ring relations, so the exterior presentation is not imposed on them.
+The ordinary main theorem of this book does not apply to them either, because its hypothesis includes the dimension axiom.
 
 :::node "def:stable-realization" +deferred
 An additive triangulated category with finite biproducts and coherent invertible bigraded shifts, together with an object $`M(\mathcal{A})` for each arrangement, such that $`M(\varnothing)` is the unit for affine spaces, deletion gives distinguished triangles, and the connectivity consequence $`\operatorname{Hom}(S^{i,i},S^{j+2,j+1})=0` holds for $`i,j\ge0`.
