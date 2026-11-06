@@ -18,8 +18,8 @@ htmlSplit := .never
 
 *The de Rham instance is being formalized.*
 This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
-The exterior calculus and the de Rham dg algebra of an arbitrary algebra are formalized.
-Localization and quotients of forms, the algebra of a smooth pair, the cohomology and comparison arguments, and the final instance remain planned.
+The exterior calculus, the de Rham dg algebra of an arbitrary algebra and its cohomology algebra are formalized.
+Localization and quotients of forms, polynomial homotopy invariance, the algebra of a smooth pair, the comparison arguments and the final instance remain planned.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
@@ -185,11 +185,12 @@ $$`(f)/(f^2)\longrightarrow\Omega_A^1\otimes_AS\longrightarrow\Omega_S^1\longrig
 Injectivity on the left is not claimed at this stage.
 :::
 
-:::node "def:dr-cohomology"
+:::node "def:dr-cohomology" (decl := OrlikSolomon.DeRham.cycles) (decl := OrlikSolomon.DeRham.boundaries) (decl := OrlikSolomon.DeRham.mem_boundaries) (decl := OrlikSolomon.DeRham.Cohomology) (decl := OrlikSolomon.DeRham.Cohomology.mk) (decl := OrlikSolomon.DeRham.Cohomology.mk_eq_mk_iff) (decl := OrlikSolomon.DeRham.Cohomology.mk_mul) (decl := OrlikSolomon.DeRham.Cohomology.mk_one) (decl := OrlikSolomon.DeRham.Cohomology.degree) (decl := OrlikSolomon.DeRham.Cohomology.mem_degree_iff) (decl := OrlikSolomon.DeRham.Cohomology.gradedAlgebraDegree) (decl := OrlikSolomon.DeRham.Cohomology.rangeD) (decl := OrlikSolomon.DeRham.Cohomology.degreeEquiv) (decl := OrlikSolomon.DeRham.Cohomology.coe_degreeEquiv_mk) (decl := OrlikSolomon.DeRham.homologyIso) (decl := OrlikSolomon.DeRham.coe_homologyIso_hom_homologyπ) (decl := OrlikSolomon.DeRham.Cohomology.isGradedCommutative_degree) (decl := OrlikSolomon.DeRham.Cohomology.map) (decl := OrlikSolomon.DeRham.Cohomology.map_mk) (decl := OrlikSolomon.DeRham.Cohomology.map_id) (decl := OrlikSolomon.DeRham.Cohomology.map_comp) (decl := OrlikSolomon.DeRham.Cohomology.map_mem_degree) (decl := OrlikSolomon.DeRham.cohomologyFunctor)
 Define $`H^n_{\mathrm{dR}}(A/k)=\ker(d:\Omega_A^n\to\Omega_A^{n+1})/\operatorname{im}(d:\Omega_A^{n-1}\to\Omega_A^n)`.
 The wedge product induces a unital, graded-commutative $`k`-algebra structure on the direct sum, covariantly functorial in $`A`.
 
 Boundaries form an ideal in the algebra of cycles, not in the algebra of all forms, so the quotient has to be built from the cycles.
+The library builds the total algebra first, as the quotient of the closed forms by the exact forms, and then identifies each degree piece with this quotient of $`\Omega_A^n` and with the homology of the de Rham complex.
 :::
 
 # Polynomial homotopy invariance

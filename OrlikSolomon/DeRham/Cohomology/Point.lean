@@ -14,9 +14,9 @@ Projecting a closed form to its component in degree zero gives a `k`-algebra map
 cohomology of `A` to `A`, whose image is the closed functions. On `H⁰` it is injective, since degree
 `-1` is zero.
 
-If `k → A` is surjective, then `Ω[A⁄k]` is zero, so the de Rham complex of `A` is `A` in degree zero,
-and that map is an equivalence. For `A = k` this is the point fact `H^*(k) = k`. It uses no hypothesis
-on `k`: over a field of characteristic zero it is what `lem:dr-ordinary-basic` needs.
+If `k → A` is surjective, then `Ω[A⁄k]` is zero, so the de Rham complex of `A` is `A` in degree
+zero, and that map is an equivalence. For `A = k` this is the point fact `H^*(k) = k`. It uses no
+hypothesis on `k`: over a field of characteristic zero it is what `lem:dr-ordinary-basic` needs.
 
 ## Main definitions
 
@@ -26,6 +26,7 @@ on `k`: over a field of characteristic zero it is what `lem:dr-ordinary-basic` n
 
 ## Main results
 
+* `OrlikSolomon.DeRham.Cohomology.toDegreeZero_map`: that map is natural in `A`.
 * `OrlikSolomon.DeRham.Cohomology.bijective_algebraMap_point`: `k → H^*(k/k)` is bijective.
 * `OrlikSolomon.DeRham.Cohomology.eq_zero_of_mem_grading_point`: `H^p(k/k) = 0` for every integer
   `p ≠ 0`.
@@ -35,8 +36,7 @@ on `k`: over a field of characteristic zero it is what `lem:dr-ordinary-basic` n
 
 noncomputable section
 
-open DirectSum
-open ExteriorAlgebra (algebraMapInv ι)
+open ExteriorAlgebra (algebraMapInv)
 open KaehlerDifferential (D)
 
 namespace OrlikSolomon.DeRham
@@ -45,13 +45,28 @@ universe u v
 
 variable {k : Type u} [CommRing k] {A : Type v} [CommRing A] [Algebra k A]
 
+/-- The part of a differential in degree zero is zero. -/
+@[simp]
+theorem algebraMapInv_diff (a : A) : algebraMapInv (diff k a) = 0 := by
+  simp [-ι_D, diff_apply, algebraMapInv]
+
 /-- An exact form has no part in degree zero. This is `decompose_d_zero`, for the projection of the
 exterior algebra to its coefficients. -/
 @[simp]
 theorem algebraMapInv_d (y : Forms k A) : algebraMapInv (d k y) = 0 := by
   induction y using Forms.induction with
-  | word a l => rw [d_smul_word, map_mul, diff_apply]; simp [algebraMapInv]
+  | word a l => rw [d_smul_word, map_mul, algebraMapInv_diff, zero_mul]
   | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+
+/-- A form of positive degree has no part in degree zero. -/
+theorem algebraMapInv_eq_zero_of_mem_exteriorPower_succ {n : ℕ} {x : Forms k A}
+    (hx : x ∈ ⋀[A]^(n + 1) Ω[A⁄k]) : algebraMapInv x = 0 := by
+  induction hx using Forms.induction_exteriorPower with
+  | word a l hl =>
+    cases l with
+    | nil => exact absurd hl (by simp)
+    | cons b l => rw [word_cons, map_smul, map_mul, algebraMapInv_diff, zero_mul, smul_zero]
+  | add x _ y _ hx hy => rw [map_add, hx, hy, add_zero]
 
 /-- A function is closed as a form exactly when its differential is zero. -/
 theorem d_algebraMap_eq_zero_iff {a : A} : d k (algebraMap A (Forms k A) a) = 0 ↔ diff k a = 0 := by
@@ -73,6 +88,10 @@ theorem toDegreeZero_mk (x : Forms k A) (hx : d k x = 0) :
     toDegreeZero k A (mk x hx) = algebraMapInv x :=
   rfl
 
+/-- Cohomology of a nonzero algebra is nonzero, since the unit is sent to the unit of `A`. -/
+instance [Nontrivial A] : Nontrivial (Cohomology k A) :=
+  (toDegreeZero k A).toRingHom.domain_nontrivial
+
 /-- The class of a closed function is sent to that function. -/
 theorem toDegreeZero_mk_algebraMap (a : A) (h : d k (algebraMap A (Forms k A) a) = 0) :
     toDegreeZero k A (mk (algebraMap A (Forms k A) a) h) = a := by
@@ -82,7 +101,8 @@ theorem toDegreeZero_mk_algebraMap (a : A) (h : d k (algebraMap A (Forms k A) a)
 /-- `H⁰` consists of the classes of the closed functions. -/
 theorem mem_degree_zero_iff {c : Cohomology k A} :
     c ∈ degree k A 0 ↔
-      ∃ (a : A) (h : d k (algebraMap A (Forms k A) a) = 0), mk (algebraMap A (Forms k A) a) h = c := by
+      ∃ (a : A) (h : d k (algebraMap A (Forms k A) a) = 0),
+        mk (algebraMap A (Forms k A) a) h = c := by
   rw [mem_degree_iff]
   constructor
   · rintro ⟨x, hx, hxn, rfl⟩
@@ -90,6 +110,23 @@ theorem mem_degree_zero_iff {c : Cohomology k A} :
     exact ⟨a, hx, rfl⟩
   · rintro ⟨a, h, rfl⟩
     exact ⟨_, h, algebraMap_mem_exteriorPower_zero k a, rfl⟩
+
+/-- The map to `A` is natural in `A`. -/
+@[simp]
+theorem toDegreeZero_map {A' : Type*} [CommRing A'] [Algebra k A'] (φ : A →ₐ[k] A')
+    (c : Cohomology k A) : toDegreeZero k A' (map φ c) = φ (toDegreeZero k A c) := by
+  induction c using induction_degree with
+  | mk n x hxn hx =>
+    cases n with
+    | zero =>
+      obtain ⟨a, rfl⟩ := (mem_exteriorPower_zero_iff k).1 hxn
+      rw [map_mk, toDegreeZero_mk_algebraMap, mk_congr (Forms.map_algebraMap φ a),
+        toDegreeZero_mk_algebraMap]
+    | succ n =>
+      rw [map_mk, toDegreeZero_mk, toDegreeZero_mk,
+        algebraMapInv_eq_zero_of_mem_exteriorPower_succ hxn, map_zero,
+        algebraMapInv_eq_zero_of_mem_exteriorPower_succ (Forms.map_mem_exteriorPower φ hxn)]
+  | add c c' hc hc' => simp only [map_add, hc, hc']
 
 /-- A class in `H⁰` is the class of its value in `A`, viewed as a function. -/
 theorem exists_eq_mk_toDegreeZero {c : Cohomology k A} (hc : c ∈ degree k A 0) :
@@ -117,8 +154,7 @@ theorem diff_toDegreeZero (c : Cohomology k A) : diff k (toDegreeZero k A c) = 0
       rw [toDegreeZero_mk_algebraMap, ← d_algebraMap]
       exact hx
     | succ n =>
-      rw [toDegreeZero_mk, ← map_zero (diff k (A := A))]
-      sorry
+      rw [toDegreeZero_mk, algebraMapInv_eq_zero_of_mem_exteriorPower_succ hxn, map_zero]
   | add c c' hc hc' => rw [map_add, map_add, hc, hc', add_zero]
 
 variable (k A) in
@@ -128,14 +164,13 @@ Blueprint: `def:dr-cohomology`. -/
 def degreeZeroEquiv :
     degree k A 0 ≃ₗ[k] LinearMap.ker ((diff k : Derivation k A (Forms k A)) : A →ₗ[k] Forms k A) :=
   LinearEquiv.ofBijective
-    { toFun := fun c => ⟨toDegreeZero k A c, diff_toDegreeZero c⟩
-      map_add' := fun _ _ => Subtype.ext (map_add (toDegreeZero k A) _ _)
-      map_smul' := fun _ _ => Subtype.ext (map_smul (toDegreeZero k A) _ _) }
+    (LinearMap.codRestrict _ ((toDegreeZero k A).toLinearMap ∘ₗ (degree k A 0).subtype)
+      fun c => diff_toDegreeZero (c : Cohomology k A))
     ⟨fun _ _ h => Subtype.ext (toDegreeZero_injOn (Subtype.coe_prop _) (Subtype.coe_prop _)
         (congrArg Subtype.val h)),
       fun ⟨a, ha⟩ => ⟨⟨mk (algebraMap A (Forms k A) a) (d_algebraMap_eq_zero_iff.2 ha),
         mk_mem_degree (algebraMap_mem_exteriorPower_zero k a) _⟩,
-          Subtype.ext (toDegreeZero_mk_algebraMap a _)⟩⟩
+          Subtype.ext (toDegreeZero_mk_algebraMap a (d_algebraMap_eq_zero_iff.2 ha))⟩⟩
 
 @[simp]
 theorem coe_degreeZeroEquiv (c : degree k A 0) :
@@ -219,11 +254,9 @@ theorem bijective_algebraMap_point : Function.Bijective (algebraMap k (Cohomolog
   have hs : Function.Surjective (algebraMap k k) := Function.surjective_id
   have h : Function.LeftInverse (toDegreeZero k k) (algebraMap k (Cohomology k k)) :=
     fun c => (toDegreeZero k k).commutes c
-  exact ⟨h.injective, ((Function.Bijective.of_comp_iff' (bijective_toDegreeZero_of_surjective hs) _).1
-    (by
-      have : toDegreeZero k k ∘ algebraMap k (Cohomology k k) = id := funext h
-      rw [this]
-      exact Function.bijective_id)).2⟩
+  have hb := bijective_toDegreeZero_of_surjective hs
+  exact ⟨h.injective, Function.RightInverse.surjective
+    (g := toDegreeZero k k) fun c => hb.1 (h _)⟩
 
 /-- The point has no cohomology in a nonzero natural degree.
 

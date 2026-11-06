@@ -13,13 +13,13 @@ public import OrlikSolomon.Grading.TensorProduct
 # The degrees of de Rham cohomology
 
 This file decomposes the total cohomology of `DeRham/Cohomology/Basic` by cohomological degree. The
-pieces are the images of the closed forms of each degree. A closed form has closed components, and an
-exact form has exact components, so the grading of forms descends.
+pieces are the images of the closed forms of each degree. A closed form has closed components, and
+an exact form has exact components, so the grading of forms descends.
 
 ## Main definitions
 
-* `OrlikSolomon.DeRham.Cohomology.degree k A n`: the piece `H^n`, for `n : ℕ`, a `k`-submodule of the
-  total cohomology, with its `GradedAlgebra` instance.
+* `OrlikSolomon.DeRham.Cohomology.degree k A n`: the piece `H^n`, for `n : ℕ`, a `k`-submodule of
+  the total cohomology, with its `GradedAlgebra` instance.
 * `OrlikSolomon.DeRham.Cohomology.grading k A p`: the same grading, indexed by `p : ℤ`, zero in
   negative degrees, with its `GradedAlgebra` instance.
 * `OrlikSolomon.DeRham.Cohomology.degreeEquiv k A n`: the identification of `H^n` with
@@ -109,8 +109,8 @@ end Forms
 
 /-! ### The closed forms of each degree -/
 
-/-- The forms of degree `n`, as a `k`-submodule of all forms. This is `⋀[A]^n Ω[A⁄k]` with its scalars
-restricted, which is how a `k`-algebra grading sees it. -/
+/-- The forms of degree `n`, as a `k`-submodule of all forms. This is `⋀[A]^n Ω[A⁄k]` with its
+scalars restricted, which is how a `k`-algebra grading sees it. -/
 abbrev formsDegree (n : ℕ) : Submodule k (Forms k A) :=
   (⋀[A]^n Ω[A⁄k]).restrictScalars k
 
@@ -151,9 +151,9 @@ namespace Cohomology
 
 /-! ### The degree pieces -/
 
-/-- The piece `H^n_dR(A/k)` of the total cohomology, which is the image of the closed forms of degree
-`n`. By `degreeEquiv`, it is `ker d / im d` in degree `n`. The negative degrees are in
-`Cohomology.grading`.
+/-- The piece `H^n_dR(A/k)` of the total cohomology, which is the image of the closed forms of
+degree `n`. By `degreeEquiv` and `homologyIso`, it is `ker d / im d` in degree `n`. The negative
+degrees are in `Cohomology.grading`.
 
 Blueprint: `def:dr-cohomology`. -/
 def degree (n : ℕ) : Submodule k (Cohomology k A) :=
@@ -162,7 +162,7 @@ def degree (n : ℕ) : Submodule k (Cohomology k A) :=
 /-- The total cohomology is the internal direct sum of its degree pieces, compatibly with products.
 
 Blueprint: `def:dr-cohomology`. -/
-instance : GradedAlgebra (degree k A) :=
+instance gradedAlgebraDegree : GradedAlgebra (degree k A) :=
   RelationQuotient.gradedAlgebraOfIsHomogeneous (cyclesDegree k A)
     (relationSubmodule_boundaries_isHomogeneous k A)
 
@@ -272,14 +272,14 @@ theorem isHomogeneousOfShift_map_degree (φ : A →ₐ[k] A') :
 
 variable (k A) in
 /-- The grading of the total cohomology by `p : ℤ`. It is `degree k A n` at `p = n`, by
-`grading_natCast`, and zero for `p < 0`, by `grading_of_neg`. Its pieces are the cohomological degrees
-of the bigrading of the de Rham instance.
+`grading_natCast`, and zero for `p < 0`, by `grading_of_neg`. Its pieces are the cohomological
+degrees of the bigrading of the de Rham instance.
 
 Blueprint: `def:dr-cohomology`, for `def:dr-twisted-functor`. -/
 def grading (p : ℤ) : Submodule k (Cohomology k A) :=
   coarsenGrading (degree k A) (Nat.castAddMonoidHom ℤ) p
 
-instance : GradedAlgebra (grading k A) :=
+instance gradedAlgebraGrading : GradedAlgebra (grading k A) :=
   inferInstanceAs (GradedAlgebra (coarsenGrading (degree k A) (Nat.castAddMonoidHom ℤ)))
 
 /-- In a natural degree, the grading is `degree`. -/
@@ -298,14 +298,11 @@ theorem eq_zero_of_mem_grading_of_neg {p : ℤ} (hp : p < 0) {c : Cohomology k A
     (hc : c ∈ grading k A p) : c = 0 := by
   rwa [grading_of_neg hp, Submodule.mem_bot] at hc
 
-/-- The elements of degree `p` are the classes of closed forms of the natural degree `p`. Negative
-degrees have only zero. -/
-theorem exists_eq_natCast_of_mem_grading {p : ℤ} {c : Cohomology k A} (hc : c ∈ grading k A p)
-    (hc0 : c ≠ 0) : ∃ n : ℕ, (n : ℤ) = p ∧ c ∈ degree k A n := by
-  obtain hp | hp := lt_or_ge p 0
-  · exact absurd (eq_zero_of_mem_grading_of_neg hp hc) hc0
-  · obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le hp
-    exact ⟨n, rfl, by rwa [grading_natCast] at hc⟩
+/-- The class of a closed form of degree `n` has degree `n`. -/
+theorem mk_mem_grading {n : ℕ} {x : Forms k A} (hxn : x ∈ ⋀[A]^n Ω[A⁄k]) (hx : d k x = 0) :
+    mk x hx ∈ grading k A n := by
+  rw [grading_natCast]
+  exact mk_mem_degree hxn hx
 
 variable (k A) in
 /-- Cohomology is graded commutative for the grading by the integers. A bigrading whose first index
@@ -340,32 +337,32 @@ variable (k A) in
 exception.
 
 Blueprint: `def:dr-cohomology`. -/
-def boundariesDegree : (n : ℕ) → Submodule k (⋀[A]^n Ω[A⁄k])
+def rangeD : (n : ℕ) → Submodule k (⋀[A]^n Ω[A⁄k])
   | 0 => ⊥
   | n + 1 => LinearMap.range (powerD k A n)
 
 @[simp]
-theorem boundariesDegree_zero : boundariesDegree k A 0 = ⊥ :=
+theorem rangeD_zero : rangeD k A 0 = ⊥ :=
   rfl
 
 @[simp]
-theorem boundariesDegree_succ (n : ℕ) :
-    boundariesDegree k A (n + 1) = LinearMap.range (powerD k A n) :=
+theorem rangeD_succ (n : ℕ) :
+    rangeD k A (n + 1) = LinearMap.range (powerD k A n) :=
   rfl
 
 /-- A form of degree `n` is in the image of `d` in degree `n` as soon as it is exact: a primitive
 can always be taken of degree `n - 1`. -/
-theorem mem_boundariesDegree_iff {n : ℕ} {x : ⋀[A]^n Ω[A⁄k]} :
-    x ∈ boundariesDegree k A n ↔ ∃ y, d k y = (x : Forms k A) := by
+theorem mem_rangeD_iff {n : ℕ} {x : ⋀[A]^n Ω[A⁄k]} :
+    x ∈ rangeD k A n ↔ ∃ y, d k y = (x : Forms k A) := by
   cases n with
   | zero =>
-    rw [boundariesDegree_zero, Submodule.mem_bot]
+    rw [rangeD_zero, Submodule.mem_bot]
     constructor
     · rintro rfl
       exact ⟨0, by simp⟩
     · exact fun h => Subtype.ext (eq_zero_of_mem_exteriorPower_zero_of_exists x.2 h)
   | succ n =>
-    rw [boundariesDegree_succ, LinearMap.mem_range]
+    rw [rangeD_succ, LinearMap.mem_range]
     constructor
     · rintro ⟨y, rfl⟩
       exact ⟨y, rfl⟩
@@ -382,8 +379,8 @@ variable (k A) in
 /-- The class of a closed form of degree `n`, as a surjective `k`-linear map onto `H^n`. -/
 def ofKer (n : ℕ) : LinearMap.ker (powerD k A n) →ₗ[k] degree k A n where
   toFun z := ⟨mk z.1 (d_eq_zero_of_mem_ker z), mk_mem_degree z.1.2 _⟩
-  map_add' z z' := Subtype.ext (mk_add _ _ _ _).symm
-  map_smul' c z := Subtype.ext (mk_smul c _ _).symm
+  map_add' _ _ := Subtype.ext (mk_add _ _ _ _).symm
+  map_smul' c _ := Subtype.ext (mk_smul c _ _).symm
 
 @[simp]
 theorem coe_ofKer {n : ℕ} (z : LinearMap.ker (powerD k A n)) :
@@ -397,20 +394,20 @@ theorem ofKer_surjective (n : ℕ) : Function.Surjective (ofKer k A n) := by
 
 theorem ker_ofKer (n : ℕ) :
     LinearMap.ker (ofKer k A n) =
-      (boundariesDegree k A n).comap (LinearMap.ker (powerD k A n)).subtype := by
+      (rangeD k A n).comap (LinearMap.ker (powerD k A n)).subtype := by
   ext z
-  rw [LinearMap.mem_ker, Submodule.mem_comap, mem_boundariesDegree_iff, ← Subtype.coe_inj]
+  rw [LinearMap.mem_ker, Submodule.mem_comap, mem_rangeD_iff, ← Subtype.coe_inj]
   exact mk_eq_zero_iff
 
 variable (k A) in
-/-- The piece `H^n` of the total cohomology is `ker d / im d` in degree `n`, as the blueprint defines
-it. The image of `d` is `boundariesDegree k A n`, which is the range of `powerD k A (n - 1)` and zero
+/-- The piece `H^n` of the total cohomology is `ker d / im d` in degree `n`, as the blueprint
+defines it. The image of `d` is `rangeD k A n`, which is the range of `powerD k A (n - 1)` and zero
 for `n = 0`.
 
 Blueprint: `def:dr-cohomology`. -/
 def degreeEquiv (n : ℕ) :
     (LinearMap.ker (powerD k A n) ⧸
-      (boundariesDegree k A n).comap (LinearMap.ker (powerD k A n)).subtype) ≃ₗ[k] degree k A n :=
+      (rangeD k A n).comap (LinearMap.ker (powerD k A n)).subtype) ≃ₗ[k] degree k A n :=
   (Submodule.quotEquivOfEq _ _ (ker_ofKer n).symm).trans
     ((ofKer k A n).quotKerEquivOfSurjective (ofKer_surjective n))
 

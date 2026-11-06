@@ -151,6 +151,10 @@ instance {S S' : Type*} [CommSemiring S] [CommSemiring S'] [Algebra S (cycles k 
     SMulCommClass S S' (Cohomology k A) :=
   inferInstanceAs (SMulCommClass S S' (RelationQuotient (boundaries k A : Set (cycles k A))))
 
+-- Verify that there is no diamond, as for `RelationQuotient`.
+example : (Semiring.toNatAlgebra : Algebra ℕ (Cohomology k A)) = instAlgebra k A := rfl
+example : (Ring.toIntAlgebra _ : Algebra ℤ (Cohomology k A)) = instAlgebra k A := rfl
+
 /-- The quotient map from the closed forms, as an algebra map. `simp` rewrites `mkₐ k A z` to
 `mk z z.2`. -/
 def mkₐ : cycles k A →ₐ[k] Cohomology k A :=
@@ -226,6 +230,11 @@ theorem mk_add_d (x y : Forms k A) (h : d k (x + d k y) = 0) :
     mk (x + d k y) h = mk x (by simpa using h) :=
   mk_eq_mk_iff.2 ⟨y, by simp⟩
 
+/-- A differential has zero class. -/
+@[simp]
+theorem mk_diff (a : A) (h : d k (diff k a) = 0) : mk (diff k a) h = 0 :=
+  mk_eq_zero_iff.2 ⟨algebraMap A (Forms k A) a, d_algebraMap k a⟩
+
 /-! ### The operations on classes -/
 
 @[simp]
@@ -277,6 +286,15 @@ theorem mk_pow (x : Forms k A) (hx : d k x = 0) (n : ℕ) :
 theorem mk_smul (c : k) (x : Forms k A) (hx : d k x = 0) :
     c • mk x hx = mk (c • x) (mem_cycles.1 ((cycles k A).smul_mem (mem_cycles.2 hx) c)) :=
   (map_smul (mkₐ k A) c (⟨x, hx⟩ : cycles k A)).symm
+
+@[simp]
+theorem mk_sum {ι : Type*} (s : Finset ι) (x : ι → Forms k A) (hx : ∀ i, d k (x i) = 0) :
+    ∑ i ∈ s, mk (x i) (hx i) =
+      mk (∑ i ∈ s, x i) (mem_cycles.1 (sum_mem fun i _ => mem_cycles.2 (hx i))) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert i s hi ih => simp [Finset.sum_insert hi, ih]
 
 /-- Cohomology of the zero ring is zero. -/
 instance [Subsingleton A] : Subsingleton (Cohomology k A) :=
@@ -420,11 +438,12 @@ theorem map_eq_map_of_exists {φ ψ : A →ₐ[k] A'}
   exact mk_eq_mk_iff.2 (h x hx)
 
 /-- Chain homotopic algebra maps agree on cohomology. The homotopy `K` is an operator on total
-forms, as `d` is, and its degree is not used. It need only be additive: it need not be linear over
-`k` or `A`, and it need not be multiplicative.
+forms, as `d` is, and its degree is not used. It need only be additive: it can be `k`-linear, as an
+integration operator is, and it is not expected to be multiplicative or linear over `A`.
 
 Blueprint: used by `thm:dr-homotopy`, with `K` the integration homotopy. -/
-theorem map_eq_map_of_homotopy {φ ψ : A →ₐ[k] A'} (K : Forms k A →+ Forms k A')
+theorem map_eq_map_of_homotopy {φ ψ : A →ₐ[k] A'} {F : Type*} [FunLike F (Forms k A) (Forms k A')]
+    [AddMonoidHomClass F (Forms k A) (Forms k A')] (K : F)
     (hK : ∀ x, Forms.map φ x - Forms.map ψ x = d k (K x) + K (d k x)) : map φ = map ψ :=
   map_eq_map_of_exists fun x hx => ⟨K x, by rw [hK, hx, map_zero, add_zero]⟩
 
