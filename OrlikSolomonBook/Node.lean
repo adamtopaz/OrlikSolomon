@@ -162,6 +162,7 @@ a + .bp-badge, .bp-overview .bp-badge { font-size: 0.7em; }
   text-align: left;
   vertical-align: top;
 }
+.bp-overview-table td:last-child code { overflow-wrap: anywhere; }
 "#
 
 /-- Escaped text, as an HTML fragment. -/
