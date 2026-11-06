@@ -58,8 +58,9 @@ The pair is a `def`, like `DivisorPair.standardPair`, so `(deletionPair 𝒜 hH 
 not mention the pair and should be used in its place: `complement (𝒜.deletion H)`,
 `complement (𝒜.restriction H)`, `complement 𝒜`, `complementRestriction 𝒜 hH`,
 `complementInclusion (𝒜.deletion_le H)`, `toComplement (𝒜.deletion H) (affineCoord f)` and
-`complementUnit 𝒜 f (hf.covers hH)`. See the implementation notes in `Geometry/SmoothAlg`.
-The residue and Gysin maps have typed names in `Cohomology/DeletionPair`.
+`complementUnit 𝒜 f (hf.covers hH)`. For the same reason, the lemmas `deletionPair_closed` and so on
+are not `simp` lemmas, as the implementation notes in `Geometry/SmoothAlg` explain. The residue and
+Gysin maps have typed names in `Cohomology/DeletionPair`.
 
 The maps `i^*` and `j^*` do not depend on the equation, and `deletionPairHom` shows that neither do
 the residue and Gysin maps of a theory. So a result should hold for every equation of `H`, and one
@@ -67,8 +68,8 @@ should not fix `equation H` in a statement.
 
 No result should depend on the base point in `chart H`. The arrangement `𝒜''` lives on
 `H.direction` through `chart H`, so that map appears in statements, in the form `K.comap (chart H)`
-or `f.comp (chart H)`, but nothing says which point `chart H 0` is. Conditions can always be phrased
-through `H ⊓ K`, as in `comap_chart_eq_comap_chart_iff`.
+or `f.comp (chart H)`, but nothing says which point `chart H 0` is. Conditions on old hyperplanes
+are phrased through `H ⊓ K`, and `comap_chart_eq_comap_chart_iff` translates them.
 
 ## Blueprint
 
@@ -264,7 +265,7 @@ theorem isLocalizationAway_inclusion (hH : H ∈ 𝒜) (hf : IsEquation f H) :
   have h1 := IsLocalization.isLocalization_of_submonoid_le (𝒜.deletion H).ComplementRing
     𝒜.ComplementRing (𝒜.deletion H).equationSubmonoid 𝒜.equationSubmonoid
     (equationSubmonoid_mono (𝒜.deletion_le H))
-  set x : (𝒜.deletion H).ComplementRing := algebraMap _ _ (coord f) with hx
+  set x : (𝒜.deletion H).ComplementRing := algebraMap _ _ (coord f)
   have hxu : IsUnit (algebraMap _ 𝒜.ComplementRing x) := by
     have := isUnit_coord_of_isEquation (𝒜 := 𝒜) hH hf
     rwa [IsScalarTower.algebraMap_apply (CoordinateRing k V) (𝒜.deletion H).ComplementRing
@@ -345,7 +346,7 @@ equations as for any others, by `mapUnits_complementInclusion_complementUnit`. -
   mapUnits_complementInclusion_complementUnit h _
 
 /-- The restriction of the unit of `g` is the unit of `g ∘ chart H`, for any affine function `g`
-that is a unit on `U_𝒜'`. The next three lemmas describe it without the base point.
+that is a unit on `U_𝒜'`. The lemmas below describe it without the base point.
 
 Blueprint: `lem:restriction-geometry`. -/
 @[simp] lemma mapUnits_complementRestriction_complementUnit (hH : IsHyperplane H)

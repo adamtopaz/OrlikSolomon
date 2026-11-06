@@ -111,7 +111,8 @@ lemma gysin_deletionPair_eq (hH : H ∈ 𝒜) (hf : IsEquation f H) (hg : IsEqua
     exact (hid _).symm.trans (h.symm.trans (congrArg _ (hid x)))
 
 /-- The wrapper is the residue of the deletion pair of every equation of `H`. To specialize a result
-about a general pair `P`, use it with `exact`, since `rw` cannot see through the types. -/
+about a general pair `P`, apply it at `deletionPair 𝒜 hH hf`, rewrite with this lemma and
+`deletionPair_eqnUnit`, and finish with `exact`, as in the proof of `deletionResidue_map_gmHom`. -/
 lemma residue_deletionPair (hH : H ∈ 𝒜) (hf : IsEquation f H) :
     T.residue (deletionPair 𝒜 hH hf) = T.deletionResidue hH :=
   T.residue_deletionPair_eq hH hf _
