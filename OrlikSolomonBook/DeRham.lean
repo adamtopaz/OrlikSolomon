@@ -20,7 +20,8 @@ htmlSplit := .never
 This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
 The exterior calculus and conormal splitting are formalized, as is the existence of a global normal derivation modulo the divisor.
 Its normalization after localization and wedge exactness modulo the divisor are also formalized.
-The differential, the cohomology and comparison arguments, and the final instance remain planned.
+Higher-form projectivity, regular-element injectivity and injectivity into localization remain planned,
+as do the differential, the cohomology and comparison arguments, and the final instance.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
@@ -448,7 +449,7 @@ This divisor lies on one connected component, and it is why the derivation is on
 Taking $`v=(0,\partial_z)` gives $`v(f)=(0,1)=1+f(-1,0)`, while $`df=(0,dz)` is not unimodular on all of $`A`.
 :::
 
-:::node "prop:dr-zero-example" (decl := OrlikSolomon.Sanity.zero_formallySmooth) (decl := OrlikSolomon.Sanity.zero_finitePresentation) (decl := OrlikSolomon.Sanity.zero_exists_normalDerivation_modulo) (remaining := "Membership in the de Rham smooth-algebra category, vanishing of forms and de Rham cohomology, the twisted theory and its pair axioms.")
+:::node "prop:dr-zero-example" (decl := OrlikSolomon.smooth_punit) (decl := OrlikSolomon.SmoothAlg.zero) (decl := OrlikSolomon.Sanity.zero_exists_normalDerivation_modulo) (remaining := "Vanishing of forms and de Rham cohomology, the twisted theory and its pair axioms.")
 For $`A=0`, every form and cohomology module is zero, $`C(A)` is the zero $`B`-algebra, and the fields for divisor pairs hold for its unique equation.
 The zero algebra is formally smooth and finitely presented, so it really is an object of the category, and no nontriviality can be imposed on general objects.
 :::

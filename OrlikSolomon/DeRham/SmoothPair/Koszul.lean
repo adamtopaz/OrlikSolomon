@@ -25,7 +25,6 @@ from the one-form splitting in `SmoothPair`.
 * `powerMap_eq_zero_of_wedgeLeft_df_mem_smul` states the same conclusion using membership in
   `(f) Ω^(q+1)`.
 
-The proofs adapt Claude's independent review consumer for PR #88.
 Blueprint: `lem:dr-modf-koszul`.
 -/
 

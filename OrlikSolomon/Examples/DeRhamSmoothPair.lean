@@ -177,14 +177,8 @@ theorem unit_quotient_subsingleton (u : Aˣ) : Subsingleton (A ⧸ Ideal.span {(
 /-- The general normal-derivation theorem accepts unit equations, whose divisor is empty. -/
 theorem unit_exists_normalDerivation_modulo [Algebra.FormallySmooth k A] (u : Aˣ) :
     ∃ (v : Derivation k A A) (h : A), v u = 1 + (u : A) * h := by
-  let := unit_quotient_subsingleton u
+  have := unit_quotient_subsingleton u
   exact DeRham.exists_normalDerivation_modulo (k := k) (u : A) u.isUnit.mem_nonZeroDivisors
-
-/-- The zero algebra is formally smooth over every commutative base ring. -/
-theorem zero_formallySmooth : Algebra.FormallySmooth k PUnit := inferInstance
-
-/-- The zero algebra is finitely presented over every commutative base ring. -/
-theorem zero_finitePresentation : Algebra.FinitePresentation k PUnit := inferInstance
 
 /-- The actual zero algebra also satisfies the normal-derivation conclusion for its equation. -/
 theorem zero_exists_normalDerivation_modulo :
