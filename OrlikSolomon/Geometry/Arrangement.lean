@@ -25,6 +25,7 @@ are constructed in `OrlikSolomon/Geometry/Complement.lean`.
 * `OrlikSolomon.Arrangement.restriction`: the arrangement `𝒜''` on the vector space `H.direction`.
 * `OrlikSolomon.Arrangement.representative`: a chosen hyperplane of `𝒜'` with a given trace on `H`.
 * `OrlikSolomon.Arrangement.inter`: the intersection of a list of hyperplanes of `𝒜`.
+* `OrlikSolomon.Arrangement.IsCentral`: the hyperplanes of `𝒜` have a common point.
 
 ## Main results
 
@@ -38,6 +39,8 @@ are constructed in `OrlikSolomon/Geometry/Complement.lean`.
 * `OrlikSolomon.Arrangement.map_chart_inter`, `OrlikSolomon.Arrangement.inter_eq_bot_iff`,
   `OrlikSolomon.Arrangement.codim_inf_inter_map_representative`: intersections and codimensions in
   the restriction, in terms of `H` and representatives.
+* `OrlikSolomon.Arrangement.IsCentral.inter_ne_bot`: in a central arrangement, every intersection of
+  hyperplanes is nonempty.
 
 ## Blueprint
 
@@ -402,25 +405,6 @@ theorem mem_inter {I : List 𝒜} {x : V} :
     x ∈ inter I ↔ ∀ H ∈ I, x ∈ (H : AffineSubspace k V) := by
   simp [inter, AffineSubspace.mem_iInf_iff]
 
-/-- An arrangement is central if all its hyperplanes contain a common point. This condition is
-independent of the origin, and therefore of a base point used to identify an affine space.
-Blueprint: `lem:central-boundary`. -/
-def IsCentral (𝒜 : Arrangement k V) : Prop := ∃ p, ∀ H ∈ 𝒜, p ∈ H
-
-/-- Intersections in a central arrangement are nonempty, including the empty intersection. -/
-theorem IsCentral.inter_ne_bot (h𝒜 : 𝒜.IsCentral) (I : List 𝒜) : inter I ≠ ⊥ := by
-  obtain ⟨p, hp⟩ := h𝒜
-  exact (AffineSubspace.nonempty_iff_ne_bot _).1 ⟨p, mem_inter.2 fun H _ ↦ hp H H.2⟩
-
-/-- A sub-arrangement of a central arrangement is central. -/
-theorem IsCentral.mono (hℬ : ℬ.IsCentral) (h : 𝒜 ≤ ℬ) : 𝒜.IsCentral := by
-  obtain ⟨p, hp⟩ := hℬ
-  exact ⟨p, fun H hH ↦ hp H (h hH)⟩
-
-@[simp]
-theorem isCentral_empty : (∅ : Arrangement k V).IsCentral := by
-  exact ⟨0, fun H hH ↦ (notMem_empty H hH).elim⟩
-
 @[simp]
 theorem inter_nil : inter ([] : List 𝒜) = ⊤ := by
   simp [inter]
@@ -503,6 +487,32 @@ theorem codim_inf_inter_map_representative [FiniteDimensional k V] (hH : IsHyper
     (I : List (𝒜.restriction H)) :
     codim (H ⊓ inter (I.map representative)) = codim (inter I) + 1 := by
   rw [← map_chart_inter hH.ne_bot, codim_map_chart, hH.codim_eq_one]
+
+/-! ### Central arrangements -/
+
+/-- An arrangement is central if its hyperplanes have a common point, so that all intersections of
+its hyperplanes are nonempty. This does not refer to the origin of `V`, so it makes sense on a
+restriction: see the warning at `chart`.
+
+Blueprint: `lem:central-boundary`. -/
+def IsCentral (𝒜 : Arrangement k V) : Prop :=
+  ∃ p, ∀ H ∈ 𝒜, p ∈ H
+
+/-- In a central arrangement, every intersection of hyperplanes is nonempty. -/
+theorem IsCentral.inter_ne_bot (h : 𝒜.IsCentral) (I : List 𝒜) : inter I ≠ ⊥ := by
+  obtain ⟨p, hp⟩ := h
+  rw [← AffineSubspace.nonempty_iff_ne_bot]
+  exact ⟨p, mem_inter.2 fun H _ ↦ hp H H.2⟩
+
+/-- A sub-arrangement of a central arrangement is central. -/
+theorem IsCentral.mono (hℬ : ℬ.IsCentral) (h : 𝒜 ≤ ℬ) : 𝒜.IsCentral := by
+  obtain ⟨p, hp⟩ := hℬ
+  exact ⟨p, fun H hH ↦ hp H (h hH)⟩
+
+@[simp]
+theorem isCentral_empty : (∅ : Arrangement k V).IsCentral := by
+  exact ⟨0, fun H hH ↦ (notMem_empty H hH).elim⟩
+
 
 end Arrangement
 
