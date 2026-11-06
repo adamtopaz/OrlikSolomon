@@ -21,8 +21,8 @@ name = "verso"
 git = "https://github.com/leanprover/verso"
 rev = "v4.36.0-rc2"
 
-# The audit behind `scripts/check.sh`. It reads the built library at run time, so neither
-# depends on the other.
+# The audit behind `scripts/check.sh` and `scripts/replay.sh`. It reads the built library at run
+# time, so neither depends on the other.
 [[lean_exe]]
 name = "audit"
 root = "Audit"

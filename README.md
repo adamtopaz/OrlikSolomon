@@ -38,8 +38,10 @@ node scripts/check-book-output.mjs _out/book/html-multi
 On NixOS, run the commands for the book inside `nix develop`, which provides the `cc` that
 Verso's native dependency needs.
 
-`scripts/check.sh` runs what CI runs: the build with warnings as errors, then an audit of
-the root imports and of the axioms that the library depends on.
+`scripts/check.sh` runs the build with warnings as errors, an audit of the root imports and
+of the axioms that the library depends on, and the environment linters that `#lint` runs.
+CI runs it and then `scripts/replay.sh`, which replays the library's proofs through the
+kernel.
 
 ## License
 
