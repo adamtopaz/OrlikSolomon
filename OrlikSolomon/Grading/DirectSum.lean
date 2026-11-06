@@ -80,6 +80,90 @@ theorem isHomogeneousOfShift_directSumGrading_iff [Add ι] {N σ : Type*} [SetLi
 
 end Modules
 
+section ShiftedMaps
+
+variable {R ι : Type*} [Semiring R] [DecidableEq ι] [Add ι]
+  (M N : ι → Type*) [∀ i, AddCommMonoid (M i)] [∀ i, Module R (M i)]
+  [∀ i, AddCommMonoid (N i)] [∀ i, Module R (N i)]
+
+/-- Assemble degreewise linear maps of shift `a` into a map of external direct sums. -/
+def shiftedDirectSumMap (a : ι) (f : ∀ i, M i →ₗ[R] N (i + a)) :
+    (⨁ i, M i) →ₗ[R] ⨁ i, N i :=
+  DirectSum.toModule R ι _ fun i ↦ (lof R ι N (i + a)).comp (f i)
+
+@[simp]
+theorem shiftedDirectSumMap_lof (a : ι) (f : ∀ i, M i →ₗ[R] N (i + a)) (i : ι) (x : M i) :
+    shiftedDirectSumMap M N a f (lof R ι M i x) = lof R ι N (i + a) (f i x) :=
+  DirectSum.toModule_lof R i x
+
+/-- The sum of maps of shift `a` is homogeneous of shift `a` for the canonical internal gradings. -/
+theorem isHomogeneousOfShift_shiftedDirectSumMap (a : ι) (f : ∀ i, M i →ₗ[R] N (i + a)) :
+    IsHomogeneousOfShift (directSumGrading (R := R) M) (directSumGrading (R := R) N) a
+      (shiftedDirectSumMap M N a f) := by
+  rw [isHomogeneousOfShift_directSumGrading_iff]
+  intro i x
+  rw [shiftedDirectSumMap_lof]
+  exact lof_mem_directSumGrading N _ _
+
+end ShiftedMaps
+
+section ReindexEquivalences
+
+variable {R ι κ : Type*} [Semiring R] [DecidableEq ι] [DecidableEq κ]
+  (M : ι → Type*) (N : κ → Type*)
+  [∀ i, AddCommMonoid (M i)] [∀ i, Module R (M i)]
+  [∀ j, AddCommMonoid (N j)] [∀ j, Module R (N j)]
+
+/-- Sum component equivalences whose degrees are reindexed by an equivalence. This constructs,
+in particular, the direct sum of degreewise purity equivalences without choosing bases. -/
+def reindexedDirectSumEquiv (e : ι ≃ κ) (f : ∀ i, M i ≃ₗ[R] N (e i)) :
+    (⨁ i, M i) ≃ₗ[R] ⨁ j, N j :=
+  DirectSum.congrLinearEquiv f ≪≫ₗ (DirectSum.lequivCongrLeft R e.symm).symm
+
+@[simp]
+theorem reindexedDirectSumEquiv_lof (e : ι ≃ κ) (f : ∀ i, M i ≃ₗ[R] N (e i))
+    (i : ι) (x : M i) :
+    reindexedDirectSumEquiv M N e f (lof R ι M i x) = lof R κ N (e i) (f i x) := by
+  simp only [reindexedDirectSumEquiv, LinearEquiv.trans_apply, coe_congrLinearEquiv,
+    DirectSum.lmap_lof]
+  exact DirectSum.lequivCongrLeft_symm_lof R
+
+end ReindexEquivalences
+
+section Exactness
+
+variable {R ι : Type*} [Semiring R] [DecidableEq ι] [AddGroup ι]
+  (M N P : ι → Type*) [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
+  [∀ i, AddCommGroup (N i)] [∀ i, Module R (N i)]
+  [∀ i, AddCommGroup (P i)] [∀ i, Module R (P i)]
+
+/-- A degreewise exact pair of shifted maps remains exact on finite-support direct sums.
+Blueprint: exactness in `lem:standard-bridge`. -/
+theorem exact_shiftedDirectSumMap (a b : ι)
+    (f : ∀ i, M i →ₗ[R] N (i + a)) (g : ∀ j, N j →ₗ[R] P (j + b))
+    (h : ∀ i, Function.Exact (f i) (g (i + a))) :
+    Function.Exact (shiftedDirectSumMap M N a f) (shiftedDirectSumMap N P b g) := by
+  apply ((isHomogeneousOfShift_shiftedDirectSumMap M N a f).exact_iff_forall_mem
+    (isHomogeneousOfShift_shiftedDirectSumMap N P b g)).2
+  intro i j hij y hy
+  subst j
+  obtain ⟨y, rfl⟩ := hy
+  constructor
+  · intro hgy
+    have hg : g (i + a) y = 0 := DirectSum.of_injective (β := P) _ (by
+      rw [shiftedDirectSumMap_lof] at hgy
+      simpa only [DirectSum.lof_eq_of, map_zero] using hgy)
+    obtain ⟨x, hx⟩ := (h i y).1 hg
+    exact ⟨lof R ι M i x, lof_mem_directSumGrading M i x, by
+      simp only [shiftedDirectSumMap_lof, hx]⟩
+  · rintro ⟨z, ⟨x, rfl⟩, hx⟩
+    have hxy : f i x = y := DirectSum.of_injective (β := N) _ (by
+      rw [shiftedDirectSumMap_lof] at hx
+      simpa only [DirectSum.lof_eq_of] using hx)
+    rw [shiftedDirectSumMap_lof, ← hxy, (h i _).2 ⟨x, rfl⟩, map_zero]
+
+end Exactness
+
 section Algebras
 
 variable {R ι : Type*} [CommSemiring R] [DecidableEq ι] [AddMonoid ι]
