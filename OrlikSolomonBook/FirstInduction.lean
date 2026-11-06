@@ -83,8 +83,8 @@ The initial basis is the empty word.
 
 The explicit basis is the useful output, more than a statement about ranks.
 The theorem also covers the zero coefficient ring, where every family is a basis, so a numerical rank would not be well defined and would not determine how many basis words have each length.
-That count is recorded separately, as part of {name OrlikSolomon.OrdinaryTheory.exists_logMonomialBasis}`exists_logMonomialBasis`, because the recursive construction determines it: old words keep their length and lifted words gain one.
-{ref "multiplicities"}[The multiplicities chapter] identifies this count.
+So the count is recorded separately, as part of {name OrlikSolomon.OrdinaryTheory.exists_logMonomialBasis}`exists_logMonomialBasis`, for the basis that the recursion builds: old words keep their length and lifted words gain one.
+{ref "multiplicities"}[The multiplicities chapter] identifies this count, and says what it means over the zero ring.
 
 :::node "lem:basis-ses" (decl := OrlikSolomon.basisOfShortExact) (decl := OrlikSolomon.coe_basisOfShortExact)
 In a short exact sequence of modules, a basis of the left term together with lifts of a basis of the right term form a basis of the middle term.

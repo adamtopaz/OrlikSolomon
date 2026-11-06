@@ -10,11 +10,11 @@ bigraded algebra isomorphism between the Orlik–Solomon algebra and the cohomol
 complement. The base field is arbitrary, coefficients need not form a field, and Tate
 twists stay explicit.
 
-**Status:** the affine structure theorem and its corollaries are proved, for any structure
-satisfying the axioms. No nonzero instance of that structure is constructed in Lean, so the
-library is not yet a theorem about any named cohomology theory. The projective theorem is in
-progress. The [status page](https://adamtopaz.github.io/OrlikSolomon/status/) of the book
-has the details.
+**Status:** the affine and projective structure theorems and their corollaries are proved,
+for any structure satisfying the axioms. No nonzero instance of that structure is constructed
+in Lean, so the library is not yet a theorem about any named cohomology theory, and a de Rham
+instance is planned. The empty projective arrangement is excluded. The
+[book](https://adamtopaz.github.io/OrlikSolomon/) states the theorems and has the details.
 
 - Exposition, tied to the code: <https://adamtopaz.github.io/OrlikSolomon/>
 - Mathematical plan: [`blueprint/`](blueprint/arrangement_cohomology_lean_blueprint.tex)
