@@ -401,6 +401,9 @@ Prose about the lemma.
 - The role `{bp "lem:gm"}[text]` links to a node and shows its status, so that a reference
   in the prose cannot claim more than the node's own box. Empty text shows the node's name.
 - `{statusSummary}` and `{statusOverview}` are generated from what the directives recorded.
+- A box collapses its declarations under one line, which opens when a link points inside it, and
+  `:::statement "Title"` sets a main theorem apart. A statement is not a node and has no status, so
+  anything in it that claims to be formalized must be elaborated Lean or a `bp` link.
 
 Nodes are the theorem-like environments of `blueprint/*.tex` with their `\label`s, so section
 labels are not nodes. The parser rejects a `\label` that is on neither such an environment
