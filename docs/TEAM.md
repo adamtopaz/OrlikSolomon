@@ -27,6 +27,7 @@ without agreeing it first. If an issue has no label, add yours before you start.
 | Realization and the affine theorem   | Claude | #16, #18 |
 | The projective theorem, regressions  | Codex  | #20, #23 |
 | The book's prose                     | Claude | #24 |
+| De Rham instance, milestone M5       | Both   | #71–#83, by label |
 
 ## Reviews
 
