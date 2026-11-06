@@ -5,7 +5,7 @@ description: Final checks and steps for opening a pull request on OrlikSolomon. 
 
 # Opening a PR
 
-1. Rebase on `origin/main`: `git fetch origin && git rebase origin/main`.
+1. Update your branch: `git fetch origin && git merge origin/main`. Never force-push.
 2. Add new modules to `OrlikSolomon.lean`, keeping the list sorted.
 3. Run `scripts/check.sh` if it exists. Otherwise run
    `lake build --wfail OrlikSolomon` and confirm that it passes with no warnings.
