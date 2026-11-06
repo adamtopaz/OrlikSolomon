@@ -236,7 +236,9 @@ cohomology of `projectiveComplement P`. It is the unique descent of affine reali
 cone along the injective map `projectiveToCone`; no hyperplane or equation is a parameter.
 `projectiveEquiv_eq_map_section` computes it using every hyperplane at infinity, and
 `projectiveEquiv_difference` and `logClass_projectiveRatioUnit_eq_of_ker_eq` give the ratio formula
-for arbitrary equations and its equation independence. `projectiveComponentEquiv` restricts the
+for arbitrary equations and its equation independence. `toAlgHom_projectiveEquiv_unique` also
+characterizes the map solely by ratios for any family of equations of the hyperplane labels.
+`projectiveComponentEquiv` restricts the
 bigrading-preserving equivalence to actual `R`-submodule pieces.
 
 `OSAlgebra.projectiveDegree` is the inherited ordinary grading on the boundary kernel, and

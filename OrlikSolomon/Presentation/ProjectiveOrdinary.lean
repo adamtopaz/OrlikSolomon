@@ -26,6 +26,8 @@ of the boundary, so no flatness assumption is needed.
 * `projectiveDegreeEquiv` identifies ordinary projective degree `q` with `H^{q,q}(U_P)`.
 * `projectiveDiagonalEquiv` is the resulting equivalence of graded `R`-algebras.
 
+The parameters `R` and `B` stay separate so that the statements use `T.algebra` even when
+specialized to `R = B`; see `Presentation/Ordinary` for the scalar-structure conventions.
 At `R = ℤ`, literal equivalence types can select the canonical integer scalar structure rather
 than the structure in `T`. The same conversions as in `Presentation/Ordinary` apply: coerce to
 an additive or ring equivalence, then use `AddEquiv.toIntLinearEquiv` or
@@ -48,8 +50,8 @@ namespace OrlikSolomon.OrdinaryTheory
 variable {k : Type u} [Field k] {R : Type v} [CommRing R] {B : Type w} [CommRing B]
   [Algebra R B] {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ]
   (T : OrdinaryTheory.{u, v, w, z} k ℬ)
-  {V : Type u} [AddCommGroup V] [Module k V] [FiniteDimensional k V]
-  (P : ProjectiveArrangement k V) [Nonempty P]
+  {W : Type u} [AddCommGroup W] [Module k W] [FiniteDimensional k W]
+  (P : ProjectiveArrangement k W) [Nonempty P]
 
 /-- The canonical projective realization with coefficients in `R`.
 Blueprint: the diagonal in `thm:projective`. -/
@@ -57,6 +59,12 @@ def projectiveRealizationOverR :
     projectiveAlgebra R P.cone_isCentral →ₐ[R] T.C.obj (projectiveComplement P) :=
   ((T.projectiveRealization P).restrictScalars R).comp
     (projectiveCoefficientMap R B P.cone_isCentral)
+
+/-- Projective realization over `R` is coefficient extension followed by the projective
+structure equivalence over `B`. -/
+theorem projectiveRealizationOverR_apply (x : projectiveAlgebra R P.cone_isCentral) :
+    T.projectiveRealizationOverR P x =
+      T.projectiveEquiv P (projectiveCoefficientMap R B P.cone_isCentral x) := rfl
 
 /-- Pullback to the cone identifies projective realization over `R` with affine realization of
 the underlying boundary-closed element. -/
@@ -91,7 +99,8 @@ theorem projectiveRealizationOverR_unique
 /-- A projective difference over `R` realizes as the logarithm of the ratio of any linear
 equations of its hyperplanes.
 Blueprint: the diagonal in `thm:projective`. -/
-theorem projectiveRealizationOverR_difference {ℓ ℓ' : Module.Dual k V}
+@[simp]
+theorem projectiveRealizationOverR_difference {ℓ ℓ' : Module.Dual k W}
     (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
     T.projectiveRealizationOverR P (projectiveDifference R P.cone_isCentral
       (P.coneHyperplaneEquiv ⟨LinearMap.ker ℓ, hℓ⟩)
@@ -100,6 +109,17 @@ theorem projectiveRealizationOverR_difference {ℓ ℓ' : Module.Dual k V}
   change T.projectiveRealization P (projectiveCoefficientMap R B P.cone_isCentral _) = _
   rw [projectiveCoefficientMap_difference]
   exact T.projectiveRealization_difference P hℓ hℓ'
+
+/-- The projective ratio formula over `R` for hyperplane labels with arbitrary equations. -/
+theorem projectiveRealizationOverR_difference_of_ker_eq (H K : P) {ℓ ℓ' : Module.Dual k W}
+    (hℓ : LinearMap.ker ℓ = (H : Submodule k W))
+    (hℓ' : LinearMap.ker ℓ' = (K : Submodule k W)) :
+    T.projectiveRealizationOverR P (projectiveDifference R P.cone_isCentral
+      (P.coneHyperplaneEquiv H) (P.coneHyperplaneEquiv K)) =
+      T.logClass (projectiveRatioUnit (ℓ := ℓ) (ℓ' := ℓ')
+        (by rw [hℓ]; exact H.2) (by rw [hℓ']; exact K.2)) := by
+  rw [T.projectiveRealizationOverR_apply, projectiveCoefficientMap_difference]
+  exact T.projectiveEquiv_difference_of_ker_eq P H K hℓ hℓ'
 
 /-- Ordinary projective degree `q` realizes in bidegree `(q,q)`. -/
 theorem projectiveRealizationOverR_mem_grading {q : ℕ}
@@ -181,10 +201,24 @@ theorem projectiveDiagonalEquiv_of_mem_degree {q : ℕ}
       ⟨T.projectiveRealizationOverR P x, T.projectiveRealizationOverR_mem_grading P hx⟩ :=
   diagonalAlgEquiv_of_mem _ _ hx
 
+/-- The inverse diagonal equivalence on a single summand is the inverse degree equivalence. -/
+theorem projectiveDiagonalEquiv_symm_of (q : ℕ)
+    (y : diagonalGrading (T.grading (projectiveComplement P)) q) :
+    (T.projectiveDiagonalEquiv P).symm (of _ q y) =
+      (T.projectiveDegreeEquiv P q).symm ⟨y, mem_diagonalGrading.1 y.2⟩ := by
+  apply (T.projectiveDiagonalEquiv P).injective
+  rw [AlgEquiv.apply_symm_apply,
+    T.projectiveDiagonalEquiv_of_mem_degree P (Subtype.coe_prop _)]
+  congr 1
+  apply Subtype.ext
+  exact (congrArg Subtype.val ((T.projectiveDegreeEquiv P q).apply_symm_apply
+    ⟨y, mem_diagonalGrading.1 y.2⟩)).symm
+
 /-- A difference of projective generators maps to the logarithm of the ratio of their equations,
 in the summand of degree one. The equations are arbitrary, and no hyperplane at infinity occurs.
 Blueprint: the diagonal in `thm:projective`. -/
-theorem projectiveDiagonalEquiv_difference {ℓ ℓ' : Module.Dual k V}
+@[simp]
+theorem projectiveDiagonalEquiv_difference {ℓ ℓ' : Module.Dual k W}
     (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
     T.projectiveDiagonalEquiv P (projectiveDifference R P.cone_isCentral
       (P.coneHyperplaneEquiv ⟨LinearMap.ker ℓ, hℓ⟩)
@@ -192,5 +226,17 @@ theorem projectiveDiagonalEquiv_difference {ℓ ℓ' : Module.Dual k V}
       of _ 1 ⟨T.logClass (projectiveRatioUnit hℓ hℓ'), T.logClass_mem_diagonalGrading _⟩ := by
   rw [T.projectiveDiagonalEquiv_of_mem_degree P (projectiveDifference_mem_degree R _ _ _)]
   simp only [T.projectiveRealizationOverR_difference]
+
+/-- The diagonal ratio formula for hyperplane labels with arbitrary equations. -/
+theorem projectiveDiagonalEquiv_difference_of_ker_eq (H K : P) {ℓ ℓ' : Module.Dual k W}
+    (hℓ : LinearMap.ker ℓ = (H : Submodule k W))
+    (hℓ' : LinearMap.ker ℓ' = (K : Submodule k W)) :
+    T.projectiveDiagonalEquiv P (projectiveDifference R P.cone_isCentral
+      (P.coneHyperplaneEquiv H) (P.coneHyperplaneEquiv K)) =
+      of _ 1 ⟨T.logClass (projectiveRatioUnit (ℓ := ℓ) (ℓ' := ℓ')
+        (by rw [hℓ]; exact H.2) (by rw [hℓ']; exact K.2)),
+        T.logClass_mem_diagonalGrading _⟩ := by
+  rw [T.projectiveDiagonalEquiv_of_mem_degree P (projectiveDifference_mem_degree R _ _ _)]
+  simp only [T.projectiveRealizationOverR_difference_of_ker_eq P H K hℓ hℓ']
 
 end OrlikSolomon.OrdinaryTheory
