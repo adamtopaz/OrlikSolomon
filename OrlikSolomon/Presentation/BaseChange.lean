@@ -47,6 +47,21 @@ theorem coefficientMap_word (I : List 𝒜) :
     coefficientMap R B 𝒜 (word (generator R 𝒜) I) = word (generator B 𝒜) I := by
   simp
 
+/-- The coefficient map preserves exterior degree. -/
+theorem coefficientMap_mem_degree {n : ℕ} {x : OSAlgebra R 𝒜} (hx : x ∈ degree R 𝒜 n) :
+    coefficientMap R B 𝒜 x ∈ degree B 𝒜 n := by
+  rw [← span_word_length] at hx
+  induction hx using Submodule.span_induction with
+  | mem x hx =>
+    obtain ⟨I, rfl, rfl⟩ := hx
+    rw [coefficientMap_word]
+    exact word_mem_degree B 𝒜 I
+  | zero => simp
+  | add x y _ _ hx hy => simpa only [map_add] using Submodule.add_mem _ hx hy
+  | smul r x _ hx =>
+    rw [map_smul, ← IsScalarTower.algebraMap_smul B r]
+    exact Submodule.smul_mem _ _ hx
+
 /-- The canonical map from the coefficient tensor product to the presentation over `B`. -/
 def baseChangeHom : B ⊗[R] OSAlgebra R 𝒜 →ₐ[B] OSAlgebra B 𝒜 :=
   Algebra.TensorProduct.lift (Algebra.ofId B (OSAlgebra B 𝒜)) (coefficientMap R B 𝒜)
@@ -121,5 +136,21 @@ theorem coefficientMap_comp_map {ℬ : Arrangement k V} (h : 𝒜 ≤ ℬ) :
       ((map B h).restrictScalars R).comp (coefficientMap R B 𝒜) := by
   ext H
   simp
+
+/-- Inclusion and coefficient extension commute on individual elements. -/
+@[simp]
+theorem map_coefficientMap {ℬ : Arrangement k V} (h : 𝒜 ≤ ℬ) (x : OSAlgebra R 𝒜) :
+    map B h (coefficientMap R B 𝒜 x) = coefficientMap R B ℬ (map R h x) :=
+  (DFunLike.congr_fun (coefficientMap_comp_map R B 𝒜 h) x).symm
+
+/-- The coefficient equivalence is natural under inclusions of arrangements. -/
+theorem map_baseChangeEquiv {ℬ : Arrangement k V} (h : 𝒜 ≤ ℬ)
+    (x : B ⊗[R] OSAlgebra R 𝒜) :
+    map B h (baseChangeEquiv R B 𝒜 x) =
+      baseChangeEquiv R B ℬ (TensorProduct.map (LinearMap.id : B →ₗ[R] B)
+        (map R h).toLinearMap x) := by
+  induction x with
+  | tmul b x => simp
+  | add x y hx hy => simp only [map_add, hx, hy]
 
 end OrlikSolomon.OSAlgebra

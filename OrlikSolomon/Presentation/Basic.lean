@@ -89,6 +89,9 @@ instance : Ring (OSAlgebra B 𝒜) :=
 instance instAlgebra {R : Type*} [CommSemiring R] [Algebra R B] : Algebra R (OSAlgebra B 𝒜) :=
   inferInstanceAs (Algebra R (RelationQuotient (osRelations B 𝒜)))
 
+instance [Subsingleton B] : Subsingleton (OSAlgebra B 𝒜) :=
+  Module.subsingleton B _
+
 instance {R S : Type*} [CommSemiring R] [CommSemiring S] [Algebra R B] [Algebra S B]
     [SMul R S] [IsScalarTower R S B] : IsScalarTower R S (OSAlgebra B 𝒜) :=
   inferInstanceAs (IsScalarTower R S (RelationQuotient (osRelations B 𝒜)))
@@ -144,6 +147,10 @@ theorem isExteriorFamily_generator : IsExteriorFamily (generator B 𝒜) :=
 @[simp]
 theorem generator_mul_self (H : 𝒜) : generator B 𝒜 H * generator B 𝒜 H = 0 :=
   (isExteriorFamily_generator B 𝒜).mul_self H
+
+@[simp]
+theorem generator_sq (H : 𝒜) : generator B 𝒜 H ^ 2 = 0 := by
+  rw [pow_two, generator_mul_self]
 
 /-- Empty-intersection products vanish in the presentation. -/
 theorem word_eq_zero_of_inter_eq_bot {I : List 𝒜}
@@ -265,6 +272,12 @@ def emptyEquiv : OSAlgebra B (∅ : Arrangement k V) ≃ₐ[B] B :=
 theorem emptyEquiv_algebraMap (b : B) :
     emptyEquiv B (k := k) (V := V) (algebraMap B (OSAlgebra B ∅) b) = b :=
   (emptyEquiv B).commutes b
+
+/-- In dimension zero every arrangement is empty, so its presentation is the coefficient ring. -/
+def equivOfSubsingleton [Subsingleton V] : OSAlgebra B 𝒜 ≃ₐ[B] B := by
+  have h := Arrangement.eq_empty_of_subsingleton 𝒜
+  subst 𝒜
+  exact emptyEquiv B
 
 /-! ### Linear descent and spanning -/
 
@@ -410,6 +423,28 @@ theorem span_word_length (n : ℕ) :
     exact ⟨word (exteriorGen B) I, ⟨I, hI, rfl⟩, quotient_word B 𝒜 I⟩
   · rintro ⟨_, ⟨I, hI, rfl⟩, rfl⟩
     exact ⟨I, hI, (quotient_word B 𝒜 I).symm⟩
+
+/-- Homogeneous elements supercommute according to their exterior degrees. The proof uses
+square-zero exterior generators, so it also applies with two-torsion coefficients. -/
+theorem mul_comm_of_mem_degree {n m : ℕ} {x y : OSAlgebra B 𝒜}
+    (hx : x ∈ degree B 𝒜 n) (hy : y ∈ degree B 𝒜 m) :
+    x * y = ((n : ℤ) * m).negOnePow • (y * x) := by
+  rw [← span_word_length] at hx hy
+  induction hx using Submodule.span_induction with
+  | mem x hx =>
+    obtain ⟨I, hI, rfl⟩ := hx
+    induction hy using Submodule.span_induction with
+    | mem y hy =>
+      obtain ⟨J, hJ, rfl⟩ := hy
+      simpa only [hI, hJ] using (isExteriorFamily_generator B 𝒜).word_mul_word_comm I J
+    | zero => simp
+    | add x y _ _ hx hy => simp only [mul_add, add_mul, hx, hy, smul_add]
+    | smul b y _ hy =>
+      simp only [mul_smul_comm, smul_mul_assoc, smul_comm b, hy]
+  | zero => simp
+  | add x y _ _ hx hy => simp only [add_mul, mul_add, hx, hy, smul_add]
+  | smul b x _ hx =>
+    simp only [smul_mul_assoc, mul_smul_comm, smul_comm b, hx]
 
 /-- Inclusion maps preserve exterior degree. -/
 theorem map_mem_degree {ℬ : Arrangement k V} (h : 𝒜 ≤ ℬ) {n : ℕ} {x : OSAlgebra B 𝒜}

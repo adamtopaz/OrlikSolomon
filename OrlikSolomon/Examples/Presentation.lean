@@ -56,12 +56,7 @@ variable (B : Type v) [CommRing B] (𝒜 : Arrangement k V)
 theorem generator_mul_eq_zero_of_disjoint (H K : 𝒜)
     (hHK : (H : AffineSubspace k V) ⊓ K = ⊥) :
     generator B 𝒜 H * generator B 𝒜 K = 0 := by
-  have hne : H ≠ K := by
-    intro h
-    subst K
-    exact (𝒜.isHyperplane H.2).ne_bot (by simpa using hHK)
-  simpa using word_eq_zero_of_inter_eq_bot B 𝒜 (I := [H, K]) (by simp [hne])
-    (by simpa using hHK)
+  simpa using word_eq_zero_of_inter_eq_bot B 𝒜 (I := [H, K]) (by simpa using hHK)
 
 private def disjointDetectorFamily (K : 𝒜) (L : 𝒜) : TrivSqZeroExt B B :=
   by classical exact TrivSqZeroExt.inr (if L = K then 1 else 0)
