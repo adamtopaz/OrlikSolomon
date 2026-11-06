@@ -24,8 +24,8 @@ The second is about a `B`-basis `e` of an `R`-bigraded module, where `B` is an `
 weights, and each `e i` has diagonal bidegree `(s i, s i)`. The piece of bidegree `(p, w)` is then
 `R`-linearly a direct sum of copies of the piece `ℬ (w - p)` of `B`, one for each `e i` with
 `s i = p`. That piece is an `R`-module and not a ring, so this is not freeness. In particular, the
-coordinates of a homogeneous element are homogeneous, and if `R ≃ ℬ 0` then the vectors `e i` with `s i = q`
-form an `R`-basis of the piece `(q, q)`.
+coordinates of a homogeneous element are homogeneous, and if `R ≃ ℬ 0` then the vectors `e i` with
+`s i = q` form an `R`-basis of the piece `(q, q)`.
 
 ## Main definitions
 
