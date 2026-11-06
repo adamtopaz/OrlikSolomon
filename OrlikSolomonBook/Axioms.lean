@@ -28,7 +28,7 @@ Working only with the diagonal $`\bigoplus_q H^{q,q}` from the start would lose 
 
 No Künneth theorem, Poincaré duality, weights, resolution of singularities, or dimension bound for general smooth affine schemes is needed.
 
-:::node "def:cohomology"
+:::node "def:cohomology" (decl := OrlikSolomon.OrdinaryTheory) (decl := OrlikSolomon.OrdinaryTheory.gradeZeroEquiv) (decl := OrlikSolomon.OrdinaryTheory.subsingleton_obj_of_subsingleton) (decl := OrlikSolomon.OrdinaryTheory.pointEquiv) (decl := OrlikSolomon.OrdinaryTheory.algebraMap_mem_grading_point_iff) (decl := OrlikSolomon.OrdinaryTheory.exists_algebraMap_eq_of_mem_grading_point) (decl := OrlikSolomon.OrdinaryTheory.polynomialEquiv) (decl := OrlikSolomon.OrdinaryTheory.map_compl_map_j) (remaining := "the sentence of C3 that iterating affine-line invariance gives the same conclusion for affine spaces, which is not yet stated at the level of cohomology (issue 13, through complement_empty_induction)")
 The structure consists of the following data and axioms.
  * *C1.* A weight-graded commutative $`R`-algebra $`B=\bigoplus_w B_w`, with $`R` identified with $`B_0`, and for each $`X` an internally bigraded ring $`C(X)` that is a $`B`-algebra, with central $`B`-action and $`B_w` landing in bidegree $`(0,w)`.
  * *C2.* Functorial pullbacks, which are unital $`B`-algebra maps preserving bidegree, with homogeneous classes supercommuting according to cohomological degree.

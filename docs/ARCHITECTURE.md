@@ -16,6 +16,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | ------------------------------ | ---------------- |
 | `Grading/Basic`                | `def:grading`, `lem:extraction` |
 | `Grading/DirectSum`            | external direct sums in `lem:standard-bridge` |
+| `Grading/TensorProduct`        | product gradings, transport and the weighted tensor grading of `lem:os-basic` |
 | `Algebra/RelationQuotient`     | `def:twosided`, `lem:quotient-api` |
 | `Algebra/ExteriorWords`        | `lem:exterior-words`, `lem:boundary-expansion` |
 | `Algebra/Exact`                | `lem:basis-ses`, `lem:comparison` |
@@ -34,7 +35,10 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Cohomology/Bridge`            | `lem:standard-bridge` |
 | `Cohomology/Logarithms`        | `lem:gm`, `def:log`, `lem:log-basic`, `lem:log-mul`, `lem:log-residue`, `lem:gm-product` |
 | `Cohomology/Deletion`          | `lem:restriction-surj`, `lem:ses`, `thm:generation`, `thm:cohom-basis` |
-| `Presentation/Basic`           | `def:os`, `lem:os-basic` |
+| `Presentation/Basic`           | `def:os`, the ordinary grading and deletion map of `lem:os-basic` |
+| `Presentation/BaseChange`      | coefficient base change in `lem:os-basic` |
+| `Presentation/Generators`      | degree-one generator independence used in `cor:projective-betti` |
+| `Presentation/Grading`         | the weighted bigrading and component formula in `lem:os-basic` |
 | `Presentation/Realization`     | `lem:empty-relation`, `lem:dependent-relation`, `def:realization`, `lem:realization-basic` |
 | `Presentation/Cokernel`        | `lem:representatives`, `def:lift-map`, `lem:lift-surj` |
 | `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine`, `cor:ordinary` |
@@ -44,6 +48,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
 | `Examples/Polynomials`         | polynomial regression examples |
 | `Examples/Sanity`              | the blueprint's regression examples |
+| `Examples/Presentation`        | two points of the affine line, the affine boundary guard, characteristic two and degenerate coefficients |
+| `Examples/Parallel`            | two parallel affine lines: product zero and generator difference nonzero |
 
 `lem:geometry-adapter` has no module of its own: see the next section.
 
@@ -89,9 +95,9 @@ such that the ambient map sends `P.eqn` to a **unit multiple** of `Q.eqn`. The u
 what makes `lem:log-mul` work, where `z ↦ xy` pulls back to the divisor `x = 0`.
 
 **Pairs needed:** for any smooth `A`, the pair `(A[t], A, A[t;t⁻¹], t)` serves as the
-standard pair (`A = k`), the pair in `lem:log-mul` (`A = k[y;y⁻¹]`) and the pair in
-`lem:gm-product`. The only other family is the deletion pair
-`(O(U_𝒜'), O(U_𝒜''), O(U_𝒜), f_H)`.
+standard pair (`A = k`), the pair in `lem:log-mul` (any `A` with a unit `y`, the blueprint's
+universal case being `A = k[y;y⁻¹]`) and the pair in `lem:gm-product`. The only other family is the
+deletion pair `(O(U_𝒜'), O(U_𝒜''), O(U_𝒜), f_H)`.
 
 **Objects and pairs are `def`s.** An object of `SmoothAlg k` that lemmas will mention should be a
 `def` built from `SmoothAlg.of`, as `point`, `polynomial` and `laurent` are, and not an `abbrev`.
@@ -175,6 +181,13 @@ used this way needs its own wrappers.
   `TwoSidedIdeal.span ℛ`, the same shape as Mathlib's `TensorAlgebra` and `CliffordAlgebra`,
   and the congruence is not exposed to importers. Descend non-multiplicative maps with
   `liftLinear` and `mapLinear`.
+- **Affine presentation:** `OSAlgebra B 𝒜` has square-zero generators indexed by `𝒜`.
+  `Arrangement.IsDependent` includes the nonempty-intersection guard. Use the quotient,
+  generator, word and lift APIs instead of the underlying exterior quotient. `degree B 𝒜`
+  is the ordinary grading by `B`-submodules. For a weight grading `ℬ` of `B` over `R`,
+  `OSAlgebra.bigrading 𝒜 ℬ` has `R`-submodule pieces. It transports the weighted tensor
+  grading along `OSAlgebra.baseChangeEquiv R B 𝒜`; `bigradingComponentEquiv` gives exterior
+  degree `n` over `R` tensored with coefficient weight `w - n`. No flatness is assumed.
 
 ## The cohomology structure
 
@@ -185,7 +198,10 @@ used this way needs its own wrappers.
 - Its total cohomology is a functor `SmoothAlg k ⥤ AlgCat B`, with each value internally
   bigraded by `R`-submodules. `AlgCat` is not commutative, as required.
 - Each value also carries an `R`-algebra structure as a field, tied to `B` by `IsScalarTower`, so
-  that a direct sum can keep the structure it already has.
+  that a direct sum can keep the structure it already has. So at `R = B` the two `B`-module
+  structures agree only propositionally, and a term mixing a `B`-linear map with the grading pieces
+  fails with an instance mismatch. Prove statements with `R` and `B` separate and specialize, or use
+  the wrappers `T.mapOverR`, `T.gysinOverR` and `T.residueOverR`.
 - The dimension axiom says `B → C(k)` is bijective, with every degree `(p, w)` for `p ≠ 0` zero.
   C1 sends `ℬ w` into degree `(0, w)` for every `A`, and it follows that `B → C(k)` carries `ℬ w`
   onto degree `(0, w)` (`algebraMap_mem_grading_point_iff`).
