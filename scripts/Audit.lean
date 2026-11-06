@@ -14,6 +14,7 @@ import Lean
 
 * `OrlikSolomon.lean` does not publicly import every module in `OrlikSolomon/`;
 * a module of the project declares an `axiom` or an `unsafe` constant;
+* the library imports this tool;
 * a declaration of the project depends on an axiom other than `propext`, `Classical.choice` and
   `Quot.sound`, which is how `sorry`, `admit` and `native_decide` show up.
 
@@ -30,6 +31,10 @@ at run time.
   `.olean.private`, so at a lower level a `sorry` in a proof would be out of sight.
 * A declaration audited here is any constant stored in a module of the project. This includes
   private and auxiliary constants, as well as those declared outside the `OrlikSolomon` namespace.
+* Each of these is read from the data of its own module, not from the merged environment. When
+  several modules prove a theorem of the same name and statement, the import keeps one proof without
+  comparing them, and a theorem can replace an axiom. A `sorry` or an `axiom` could otherwise hide
+  behind a clean copy in another module.
 * We avoid `Lean.collectAxioms`. It starts afresh on each call unless environment extensions are
   loaded, which would run every initializer in Mathlib through the interpreter, and it ignores
   constants that it cannot find. Instead, one walk covers the dependencies of all declarations, it
@@ -43,16 +48,61 @@ namespace Audit
 /-- The root module of the library. A module is in the project if this is a prefix of its name. -/
 def rootModule : Name := `OrlikSolomon
 
+/-- This module. Lake would let the library import it, and the library must not depend on it. -/
+def toolModule : Name := `Audit
+
 /-- The only axioms that a declaration of the project may depend on. -/
 def allowedAxioms : Array Name := #[``propext, ``Classical.choice, ``Quot.sound]
 
-/-- Whether `c` is the unsafe `T.ctorIdx._impl` that Lean generates for every inductive type `T`
-with several constructors, which nobody wrote and which must not fail the audit. The test is exact
-on purpose: `Name.isInternal` would also let through every `private unsafe def`, because private
-names start with `_private`. -/
-def isGeneratedUnsafe : Name → Bool
-  | .str (.str _ "ctorIdx") "_impl" => true
-  | _ => false
+/-- Whether `type` is `∀ xs, self → Nat` and `value` is `fun xs x => body`, for `n` binders `xs`,
+with `self` under `xs` and with `body` under `xs` and `x`, satisfying `isBody`. -/
+def isIndexFunction (self : Expr) (isBody : Expr → Bool) : Nat → Expr → Expr → Bool
+  | 0, .forallE _ x (.const ``Nat []) _, .lam _ x' body _ =>
+    x == self && x' == self && isBody body
+  | n + 1, .forallE _ d type _, .lam _ d' value _ =>
+    d == d' && isIndexFunction self isBody n type value
+  | _, _, _ => false
+
+/-- Removes all leading lambdas. -/
+def stripLambdas : Expr → Expr
+  | .lam _ _ body _ => stripLambdas body
+  | e => e
+
+/-- Whether `info` is the unsafe `T.ctorIdx._impl` that `Lean.mkCtorIdx` generates for an inductive
+type `T`, unless `T` has exactly one constructor. Such types are common, so the audit has to accept
+it. A name proves nothing, since anybody can write `unsafe def Foo.ctorIdx._impl`, so this asks for
+what Lean generates, term for term:
+
+* `T` is an inductive type without exactly one constructor, and `T.ctorIdx` is a safe definition;
+* `T.ctorIdx` is `fun xs x => T.casesOn x 0 1 ...`, with `implemented_by T.ctorIdx._impl`;
+* `T.ctorIdx._impl` is `fun xs x => getObjTagNat x`.
+
+The `.olean` does not record who wrote a declaration, so a handwritten exact copy of all this also
+passes. But that copy has no freedom left in which to do anything else. -/
+def isGeneratedCtorIdxImpl (env : Environment) (info : ConstantInfo) : Bool := Id.run do
+  let .defnInfo impl := info | return false
+  let .str ctorIdxName@(.str indName "ctorIdx") "_impl" := impl.name | return false
+  let some (.inductInfo ind) := env.find? indName | return false
+  let some (.defnInfo ctorIdx) := env.find? ctorIdxName | return false
+  let us := ind.levelParams.map mkLevelParam
+  let n := ind.numParams + ind.numIndices
+  -- `T.{us} xs`, under the binders `xs`.
+  let self := mkAppN (.const indName us) ((Array.range n).reverse.map .bvar)
+  let isImplBody : Expr → Bool
+    | .app (.app (.const ``getObjTagNat [_]) α) (.bvar 0) => α == self.liftLooseBVars 0 1
+    | _ => false
+  -- The arguments of `casesOn` are the parameters, motive, indices, major premise and alternatives.
+  let major := ind.numParams + 1 + ind.numIndices
+  let isCtorIdxBody (body : Expr) : Bool :=
+    let args := body.getAppArgs
+    body.getAppFn == .const (mkCasesOnName indName) (Level.one :: us) &&
+      args.size == major + 1 + ind.numCtors && args[major]! == .bvar 0 &&
+      (args.extract (major + 1)).zipIdx.all fun (alt, i) => stripLambdas alt == mkRawNatLit i
+  return ind.numCtors != 1 && impl.safety == .unsafe && ctorIdx.safety == .safe &&
+    impl.levelParams == ind.levelParams && ctorIdx.levelParams == ind.levelParams &&
+    Compiler.getImplementedBy? env ctorIdxName == some impl.name &&
+    isIndexFunction self isImplBody n impl.type impl.value &&
+    isIndexFunction self isCtorIdxBody n ctorIdx.type ctorIdx.value
 
 /-- The modules with a source file under `OrlikSolomon/`, a directory which need not exist. -/
 def sourceModules : IO (Array Name) := do
@@ -101,27 +151,29 @@ structure Closure where
   /-- The constants reached that are not in the environment. -/
   missing : Array Name := #[]
 
-/-- Walks the dependencies of `roots`, visiting each constant once however many roots reach it. -/
-def closure (env : Environment) (roots : Array Name) : Closure := Id.run do
-  let mut stack := roots
-  let mut result : Closure := {}
+/-- Walks the dependencies of the constants in `seed`, which come with the constants that they refer
+to, looking up anything else in the environment. Each constant is visited once however many others
+reach it. -/
+def closure (env : Environment) (seed : Std.HashMap Name (Array Name)) : Closure := Id.run do
+  let mut stack := seed.fold (init := #[]) fun stack _ refs => stack ++ refs
+  let mut visited := seed
+  let mut missing := #[]
   repeat
     let some c := stack.back? | break
     stack := stack.pop
-    if result.references.contains c then
+    if visited.contains c then
       continue
     let some info := env.find? c
-      | result := { result with
-          references := result.references.insert c #[]
-          missing := result.missing.push c }
+      | visited := visited.insert c #[]
+        missing := missing.push c
     let refs := references info
-    result := { result with references := result.references.insert c refs }
-    if info.isAxiom then
-      result := { result with axioms := result.axioms.push c }
+    visited := visited.insert c refs
     for r in refs do
-      unless result.references.contains r do
+      unless visited.contains r do
         stack := stack.push r
-  return result
+  let axioms := visited.fold (init := #[]) fun axioms c _ =>
+    if (env.find? c).any (·.isAxiom) then axioms.push c else axioms
+  return { references := visited, axioms, missing }
 
 /-- Reverses the arrows of the graph in `Closure.references`. -/
 def invert (references : Std.HashMap Name (Array Name)) : Std.HashMap Name (Array Name) :=
@@ -146,7 +198,8 @@ def dependents (users : Std.HashMap Name (Array Name)) (target : Name) : NameSet
 contains. `Classical.em` uses all of the allowed axioms, and only in its proof, so this keeps the
 audit honest across toolchain bumps without planting anything in the library. -/
 def checkWalkSeesProofs (env : Environment) : IO Unit := do
-  let { axioms, missing, .. } := closure env #[``Classical.em]
+  let refs := (env.find? ``Classical.em).elim #[] references
+  let { axioms, missing, .. } := closure env (({} : Std.HashMap _ _).insert ``Classical.em refs)
   unless missing.isEmpty && allowedAxioms.all axioms.contains do
     throw <| .userError s!"the audit cannot see through proofs: from `Classical.em` it reached \
       the axioms {axioms} and the missing constants {missing}"
@@ -157,22 +210,23 @@ def checkDeclarations : IO (Array String × String) := do
   initSearchPath (← findSysroot)
   let env ← importModules #[{ module := rootModule }] {} (leakEnv := true) (level := .private)
   checkWalkSeesProofs env
-  -- A set, because a generated constant can be stored in more than one module.
-  let mut ours : NameSet := {}
+  -- Each constant with what it refers to, in all the modules that store a constant of that name.
+  let mut ours : Std.HashMap Name (Array Name) := {}
   let mut numModules := 0
-  for mod in env.allImportedModuleNames, data in env.header.moduleData do
-    if rootModule.isPrefixOf mod then
-      numModules := numModules + 1
-      ours := data.constNames.foldl .insert ours
-  let declarations := ours.toArray.qsort Name.lt
   let mut problems := #[]
-  for c in declarations do
-    let some info := env.find? c | continue -- reported as missing by the walk below
-    if info.isAxiom then
-      problems := problems.push s!"{c} is declared as an axiom"
-    if info.isUnsafe && !isGeneratedUnsafe c then
-      problems := problems.push s!"{c} is declared unsafe"
-  let { references, axioms, missing } := closure env declarations
+  if env.allImportedModuleNames.contains toolModule then
+    problems := problems.push s!"{rootModule} must not import the audit tool, {toolModule}"
+  for mod in env.allImportedModuleNames, data in env.header.moduleData do
+    unless rootModule.isPrefixOf mod do
+      continue
+    numModules := numModules + 1
+    for info in data.constants do
+      ours := ours.alter info.name fun old? => some (old?.getD #[] ++ references info)
+      if info.isAxiom then
+        problems := problems.push s!"{info.name} is declared as an axiom"
+      if info.isUnsafe && !isGeneratedCtorIdxImpl env info then
+        problems := problems.push s!"{info.name} is declared unsafe"
+  let { references, axioms, missing } := closure env ours
   for c in missing.qsort Name.lt do
     problems := problems.push s!"{c} is not in the environment"
   let forbidden := axioms.filter (!allowedAxioms.contains ·)
@@ -182,9 +236,9 @@ def checkDeclarations : IO (Array String × String) := do
       for c in (dependents users ax).toArray.qsort Name.lt do
         if ours.contains c then
           problems := problems.push s!"{c} depends on the axiom {ax}"
-  let summary := s!"{declarations.size} declaration(s) in {numModules} module(s) use only the \
-    axioms {axioms.qsort Name.lt}"
-  return (problems, summary)
+  let summary := s!"{ours.size} declaration(s) in {numModules} module(s) use only the axioms \
+    {axioms.qsort Name.lt}"
+  return (problems.qsort (· < ·), summary)
 
 end Audit
 
