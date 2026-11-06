@@ -35,7 +35,7 @@ Blueprint: `lem:gm`, `def:log`, `lem:log-basic`, `lem:log-mul`, `lem:log-residue
 * `lem:log-mul`: `logClass_mul`, `logClass_inv`, `logClass_div`,
   `logClass_units_map_algebraMap_mul`.
 * `lem:log-residue`: `residue_logClass_eqnUnit`, `residue_logClass_eqnUnit_mul`, for every divisor
-  pair. A deletion pair is one of them.
+  pair. `Cohomology/DeletionPair` states them for deletion pairs.
 * `lem:gm-product`: `gmProductEquiv`, with its inverse in `gmProductEquiv_symm_apply` and its
   degrees in `gmProductEquiv_mem_grading_iff`.
 
