@@ -5,7 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import OrlikSolomon.Presentation.Basic
+public import OrlikSolomon.Presentation.BaseChange
 public import Mathlib.Algebra.TrivSqZeroExt.Basic
 public import Mathlib.Algebra.Field.ZMod
 
@@ -26,6 +26,8 @@ Blueprint: the regressions for `def:os` and `lem:os-basic`.
 @[expose] public section
 
 noncomputable section
+
+open scoped TensorProduct
 
 universe u v
 
@@ -194,6 +196,25 @@ theorem twoPoints_difference (B : Type v) [CommRing B] [Nontrivial B] :
 example : OSAlgebra.generator (ZMod 2) (twoPoints (ZMod 2)) (onePoint (ZMod 2)) -
     OSAlgebra.generator (ZMod 2) (twoPoints (ZMod 2)) (zeroPoint (ZMod 2)) ≠ 0 :=
   twoPoints_difference (ZMod 2)
+
+example : OSAlgebra.generator (ZMod 2) (twoPoints (ZMod 2)) (onePoint (ZMod 2)) ^ 2 = 0 :=
+  OSAlgebra.generator_sq _ _ _
+
+-- Reducing integral coefficients modulo two is allowed without a flatness hypothesis.
+-- Use the module attached to the algebra to avoid the integer-scalar diamond during inference.
+example : letI : Module ℤ (OSAlgebra ℤ (twoPoints k)) := Algebra.toModule
+    (ZMod 2) ⊗[ℤ] OSAlgebra ℤ (twoPoints k) ≃ₐ[ZMod 2]
+      OSAlgebra (ZMod 2) (twoPoints k) := by
+  letI : Module ℤ (OSAlgebra ℤ (twoPoints k)) := Algebra.toModule
+  exact OSAlgebra.baseChangeEquiv ℤ (ZMod 2) _
+
+-- The zero ring is a valid coefficient ring.
+example (𝒜 : Arrangement k V) : Subsingleton (OSAlgebra (ZMod 1) 𝒜) :=
+  inferInstance
+
+-- Every arrangement in a zero-dimensional vector space is empty.
+example (𝒜 : Arrangement k (Fin 0 → k)) : OSAlgebra (ZMod 2) 𝒜 ≃ₐ[ZMod 2] ZMod 2 :=
+  OSAlgebra.equivOfSubsingleton _ _
 
 end PresentationExamples
 
