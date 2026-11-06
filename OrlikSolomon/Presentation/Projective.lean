@@ -17,6 +17,22 @@ complement. The map is characterized by its pullback to the cone complement; a h
 at infinity is used only to prove that this map is bijective. Differences of generators map
 to logarithms of ratios of arbitrary equations. The equivalence preserves the bigrading.
 
+## Main definitions
+
+* `OrdinaryTheory.projectiveRealization`: the canonical map from the cone boundary kernel.
+* `OrdinaryTheory.projectiveEquiv`: the projective `B`-algebra structure theorem.
+* `OrdinaryTheory.projectiveComponentEquiv`: its restriction to each homogeneous piece.
+
+## Main results
+
+* `map_projectiveToCone_projectiveEquiv`: compatibility with the affine cone equivalence.
+* `projectiveEquiv_eq_map_section`: an explicit formula in every decone chart.
+* `projectiveEquiv_difference`: differences of generators map to equation-ratio logarithms.
+* `isHomogeneousOfShift_projectiveEquiv` and
+  `isHomogeneousOfShift_projectiveEquiv_symm`: preservation of the bigrading both ways.
+* `projectiveRealization_unique`: the cone pullback characterizes the map independently
+  of any equations or hyperplane at infinity.
+
 Blueprint: `thm:projective`.
 -/
 
@@ -31,11 +47,6 @@ open OrlikSolomon.ProjectiveArrangement OrlikSolomon.ProjectiveArrangement.Compl
 universe u v w z
 
 namespace OrlikSolomon
-
-/-- A nonempty projective arrangement has a nonempty central cone arrangement. -/
-instance ProjectiveArrangement.nonempty_cone {k : Type u} [Field k] {W : Type u}
-    [AddCommGroup W] [Module k W] (P : ProjectiveArrangement k W) [Nonempty P] :
-    Nonempty P.cone := P.coneHyperplaneEquiv.symm.nonempty
 
 namespace OrdinaryTheory
 
@@ -196,6 +207,19 @@ theorem map_projectiveToCone_projectiveEquiv (x : projectiveAlgebra B P.cone_isC
     T.C.map (projectiveToCone P) (T.projectiveEquiv P x) = T.affineEquiv P.cone x :=
   T.map_projectiveToCone_projectiveRealization P x
 
+/-- In every choice of hyperplane at infinity, the projective equivalence is obtained by
+restricting the affine cone realization to the normalized slice. This formula exhibits
+independence of that choice without changing the canonical definition. -/
+theorem projectiveEquiv_eq_map_section {ℓ₀ : Dual k W} (h₀ : LinearMap.ker ℓ₀ ∈ P)
+    (x : projectiveAlgebra B P.cone_isCentral) :
+    T.projectiveEquiv P x =
+      T.C.map ((coneIso h₀).hom ≫ laurentSection (projectiveComplement P))
+        (T.affineEquiv P.cone x) := by
+  have h := congrArg (T.C.map ((coneIso h₀).hom ≫
+    laurentSection (projectiveComplement P))) (T.map_projectiveToCone_projectiveEquiv P x)
+  rw [T.map_map, projectiveToCone_comp_coneIso_hom_comp_laurentSection] at h
+  simpa using h
+
 /-- A cone class is in the pullback image exactly when its inverse affine realization
 belongs to the projective boundary kernel. -/
 theorem mem_range_projectiveToCone_iff (x : T.C.obj (complement P.cone)) :
@@ -223,6 +247,16 @@ theorem projectiveRealization_unique
   apply T.injective_map_projectiveToCone P
   rw [hφ, T.map_projectiveToCone_projectiveRealization]
 
+/-- Realization sends a projective difference to the logarithm of a ratio of arbitrary
+defining forms. -/
+theorem projectiveRealization_difference {ℓ ℓ' : Dual k W}
+    (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
+    T.projectiveRealization P (projectiveDifference B P.cone_isCentral
+      (P.coneHyperplaneEquiv ⟨LinearMap.ker ℓ, hℓ⟩)
+      (P.coneHyperplaneEquiv ⟨LinearMap.ker ℓ', hℓ'⟩)) =
+      T.logClass (projectiveRatioUnit hℓ hℓ') :=
+  T.projectiveRealization_generator_sub_generator P hℓ hℓ'
+
 /-- The projective equivalence sends a difference of cone generators to the logarithm
 of the ratio of any equations of the two hyperplanes.
 
@@ -234,6 +268,29 @@ theorem projectiveEquiv_difference {ℓ ℓ' : Dual k W}
       (P.coneHyperplaneEquiv ⟨LinearMap.ker ℓ', hℓ'⟩)) =
       T.logClass (projectiveRatioUnit hℓ hℓ') :=
   T.projectiveRealization_generator_sub_generator P hℓ hℓ'
+
+/-- Replacing either defining form by any form with the same kernel leaves the
+logarithmic ratio class unchanged. This makes equation independence explicit. -/
+theorem logClass_projectiveRatioUnit_eq_of_ker_eq {ℓ ℓ' η η' : Dual k W}
+    (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P)
+    (hη : LinearMap.ker η ∈ P) (hη' : LinearMap.ker η' ∈ P)
+    (h : LinearMap.ker ℓ = LinearMap.ker η) (h' : LinearMap.ker ℓ' = LinearMap.ker η') :
+    T.logClass (projectiveRatioUnit hℓ hℓ') = T.logClass (projectiveRatioUnit hη hη') := by
+  have hH : (⟨LinearMap.ker ℓ, hℓ⟩ : P) = ⟨LinearMap.ker η, hη⟩ := Subtype.ext h
+  have hH' : (⟨LinearMap.ker ℓ', hℓ'⟩ : P) = ⟨LinearMap.ker η', hη'⟩ := Subtype.ext h'
+  rw [← T.projectiveEquiv_difference P hℓ hℓ',
+    ← T.projectiveEquiv_difference P hη hη', hH, hH']
+
+/-- The inverse projective equivalence sends a logarithm of an arbitrary equation ratio
+to the corresponding difference of cone generators. -/
+@[simp]
+theorem projectiveEquiv_symm_logClass_ratio {ℓ ℓ' : Dual k W}
+    (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
+    (T.projectiveEquiv P).symm (T.logClass (projectiveRatioUnit hℓ hℓ')) =
+      projectiveDifference B P.cone_isCentral
+        (P.coneHyperplaneEquiv ⟨LinearMap.ker ℓ, hℓ⟩)
+        (P.coneHyperplaneEquiv ⟨LinearMap.ker ℓ', hℓ'⟩) := by
+  rw [← T.projectiveEquiv_difference P hℓ hℓ', AlgEquiv.symm_apply_apply]
 
 /-- Realization preserves the inherited projective bigrading. -/
 theorem isHomogeneousOfShift_projectiveRealization :
