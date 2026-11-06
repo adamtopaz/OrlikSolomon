@@ -1,0 +1,73 @@
+name: Book
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer commit on a pull request replaces an older build, but a deployment is left to finish.
+concurrency:
+  group: book-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # Installs Lean and fetches Mathlib's cache. The build happens below, because the cache that
+      # this action saves is shared with the `CI` workflow, which does not build Verso.
+      - uses: leanprover/lean-action@v1
+        with:
+          auto-config: "false"
+          use-github-cache: "false"
+          use-mathlib-cache: "true"
+
+      # This has to come after the step above, which clones the packages. Mathlib's build comes from
+      # its own cache, so only the native objects that the executable links against are kept here.
+      - uses: actions/cache@v6
+        with:
+          path: |
+            .lake/build
+            .lake/packages/*/.lake/build
+            !.lake/packages/mathlib/.lake/build
+            .lake/packages/mathlib/.lake/build/ir/**/*.c.o.*
+          key: book-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: book-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      - name: Build the book
+        run: lake build OrlikSolomonBook book
+
+      - name: Render the book and check that it covers the blueprint
+        run: lake exe book --output _out/book
+
+      - name: Check the generated pages
+        run: node scripts/check-book-output.mjs _out/book/html-multi
+
+      # Uploading on pull requests too verifies the artifact before anything can be deployed.
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _out/book/html-multi
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
