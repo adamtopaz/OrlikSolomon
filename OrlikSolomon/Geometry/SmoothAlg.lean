@@ -404,7 +404,7 @@ def gmHom (u : Aˣ) : gm k ⟶ A := laurentLift (fromPoint A) u
 @[simp] lemma mapUnits_gmHom_laurentT (u : Aˣ) : mapUnits (gmHom u) (laurentT (point k)) = u :=
   mapUnits_laurentLift_laurentT _ _
 
-@[reassoc (attr := simp)]
+@[simp, reassoc]
 lemma laurentC_comp_gmHom (u : Aˣ) : laurentC (point k) ≫ gmHom u = fromPoint A :=
   laurentC_comp_laurentLift _ _
 
@@ -413,7 +413,7 @@ lemma gm_hom_ext {f g : gm k ⟶ A}
     (h : f (laurentT (point k) : gm k) = g (laurentT (point k) : gm k)) : f = g :=
   laurent_hom_ext (Subsingleton.elim _ _) h
 
-@[reassoc (attr := simp)]
+@[simp, reassoc]
 lemma gmHom_comp (u : Aˣ) (f : A ⟶ B) : gmHom u ≫ f = gmHom (mapUnits f u) := by
   apply gm_hom_ext
   simp
@@ -654,13 +654,15 @@ variable (A)
 @[simp] lemma standardPair_eqnUnit : (standardPair A).eqnUnit = laurentT A :=
   Units.ext (polynomialToLaurent_polynomialX A)
 
-/-- Constants restrict identically to the divisor `X × 0`. -/
-@[reassoc (attr := simp)]
+/-- Constants restrict identically to the divisor `X × 0`. This is not a `simp` lemma, because
+`simp` already proves it by rewriting `(standardPair A).i` with `standardPair_i`. -/
+@[reassoc]
 lemma polynomialC_comp_i : polynomialC A ≫ (standardPair A).i = 𝟙 A :=
   polynomialC_comp_polynomialLift _ _
 
-/-- Constants on `X × 𝔸¹` restrict to constants on `X × 𝔾ₘ`. -/
-@[reassoc (attr := simp)]
+/-- Constants on `X × 𝔸¹` restrict to constants on `X × 𝔾ₘ`. This is not a `simp` lemma, because
+`simp` already proves it by rewriting `(standardPair A).j` with `standardPair_j`. -/
+@[reassoc]
 lemma polynomialC_comp_j : polynomialC A ≫ (standardPair A).j = laurentC A :=
   polynomialC_comp_polynomialToLaurent A
 

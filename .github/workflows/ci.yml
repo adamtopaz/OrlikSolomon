@@ -12,7 +12,37 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+
+      # Installs Lean and fetches Mathlib's build from its own cache. The action's GitHub cache stays
+      # off: it would save all of `.lake`, about 2 GB for every commit, which evicts the other caches
+      # of this repository and takes as long to restore as Mathlib's cache takes to fetch.
       - uses: leanprover/lean-action@v1
         with:
-          build-args: "--wfail"
+          auto-config: "false"
+          use-github-cache: "false"
+          use-mathlib-cache: "true"
+
+      # Only the build of the library is worth keeping. A pull request restores the latest one from
+      # `main` and builds what it changed.
+      - id: restore
+        uses: actions/cache/restore@v6
+        with:
+          path: .lake/build
+          key: ci-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: ci-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
       - run: scripts/check.sh
+
+      - run: scripts/replay.sh
+
+      # TEMPORARY, to be removed before review: does plain `leanchecker` crash on CI too?
+      - name: Replay all modules in one process
+        continue-on-error: true
+        run: lake env leanchecker -v
+
+      # TEMPORARY, to be removed before review: saves on this pull request as well, to test the restore.
+      - uses: actions/cache/save@v6
+        if: steps.restore.outputs.cache-hit != 'true'
+        with:
+          path: .lake/build
+          key: ${{ steps.restore.outputs.cache-primary-key }}

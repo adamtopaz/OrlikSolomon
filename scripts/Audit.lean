@@ -14,6 +14,7 @@ import Lean
 
 * `OrlikSolomon.lean` does not publicly import every module in `OrlikSolomon/`;
 * a module of the project declares an `axiom` or an `unsafe` constant;
+* the root module declares anything at all, since `scripts/replay.sh` cannot replay it;
 * the library imports this tool;
 * a declaration of the project depends on an axiom other than `propext`, `Classical.choice` and
   `Quot.sound`, which is how `sorry`, `admit` and `native_decide` show up.
@@ -226,6 +227,8 @@ def checkDeclarations : IO (Array String × String) := do
         problems := problems.push s!"{info.name} is declared as an axiom"
       if info.isUnsafe && !isGeneratedCtorIdxImpl env info then
         problems := problems.push s!"{info.name} is declared unsafe"
+      if mod == rootModule then
+        problems := problems.push s!"{info.name} is declared in the root module, which only imports"
   let { references, axioms, missing } := closure env ours
   for c in missing.qsort Name.lt do
     problems := problems.push s!"{c} is not in the environment"

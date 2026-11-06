@@ -7,8 +7,10 @@ description: Final checks and steps for opening a pull request on OrlikSolomon. 
 
 1. Update your branch: `git fetch origin && git merge origin/main`. Never force-push.
 2. Add new modules to `OrlikSolomon.lean`, keeping the list sorted.
-3. Run `scripts/check.sh` if it exists. Otherwise run
-   `lake build --wfail OrlikSolomon` and confirm that it passes with no warnings.
+3. Run `scripts/check.sh`: the build with warnings as errors, the audit, and the
+   environment linters of `#lint`. Fix what the linters report. Use `@[nolint]` only for a
+   false positive, with a comment saying why. CI also runs `scripts/replay.sh`, the kernel
+   replay. It takes seconds, so run it too if you added or moved modules.
 4. Confirm the trust boundary on your main declarations by running `#print axioms` on them
    in a scratch file outside the repository, or in the checks above. Only `propext`,
    `Classical.choice` and `Quot.sound` are acceptable.
