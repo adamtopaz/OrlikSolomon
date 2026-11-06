@@ -40,7 +40,13 @@ The design for the formalization is that the total cohomology is a functor on sm
 No axiom about the empty object is needed, because the pair $`(A,1)` already forces the zero ring to have zero cohomology.
 :::
 
-:::node "lem:standard-bridge"
+:::node "lem:standard-bridge" (decl := OrlikSolomon.ofSupportsAndPurity)
 A cohomology presented in the familiar degreewise way, with products, twists, the point dimension axiom, affine-line invariance, localization with supports, oriented divisor purity, transverse naturality and the boundary projection formula, gives an instance of the structure.
 Its degreewise long exact sequence is recovered from the three total exactness statements by {bp "lem:extraction"}[homogeneous extraction].
+
+The constructor takes degreewise groups and pullbacks, separate groups with supports, the three exactness assertions of the degreewise localization sequence, and oriented purity equivalences.
+It constructs the total coefficient algebra, Gysin and residue maps and proves their exactness by taking finite-support direct sums over every bidegree.
+Its input assumes neither an ordinary theory nor total exactness.
+The homogeneous boundary and purity product identities also give linearity over all of $`B`, including coefficients of nonzero weight.
+This supplies an adapter for a standard theory; it does not construct singular, de Rham or étale cohomology in Lean.
 :::

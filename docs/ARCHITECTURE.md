@@ -15,6 +15,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | Module under `OrlikSolomon/`   | Blueprint labels |
 | ------------------------------ | ---------------- |
 | `Grading/Basic`                | `def:grading`, `lem:extraction` |
+| `Grading/DirectSum`            | external direct sums in `lem:standard-bridge` |
 | `Algebra/RelationQuotient`     | `def:twosided`, `lem:quotient-api` |
 | `Algebra/ExteriorWords`        | `lem:exterior-words`, `lem:boundary-expansion` |
 | `Algebra/Exact`                | `lem:basis-ses`, `lem:comparison` |
@@ -27,6 +28,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Geometry/RelationTargets`     | `lem:small-targets` |
 | `Geometry/Projective`          | `def:projective`, `lem:decone` |
 | `Cohomology/Axioms`            | `def:cohomology` |
+| `Cohomology/BridgeData/Basic`   | degreewise products, coefficients and pullbacks for `lem:standard-bridge` |
+| `Cohomology/BridgeData/Supports` | degreewise localization with supports and oriented purity for `lem:standard-bridge` |
 | `Cohomology/Bridge`            | `lem:standard-bridge` |
 | `Cohomology/Logarithms`        | `lem:gm`, `def:log`, `lem:log-basic`, `lem:log-mul`, `lem:log-residue`, `lem:gm-product` |
 | `Cohomology/Deletion`          | `lem:restriction-surj`, `lem:ses`, `thm:generation`, `thm:cohom-basis` |
@@ -188,6 +191,33 @@ you add it. An unsatisfiable structure would make the main theorem vacuous. The 
 `Examples/Sanity` contains the zero theory as a basic consistency check. It must have zero
 coefficients, because `R ≃ ℬ 0` and `B ≃ C(k)` must still hold. It tests the zero-ring edge case,
 not the substantive axioms.
+
+### The degreewise bridge
+
+`DegreewiseTheory` supplies the groups `H A (p,w)`, Mathlib's indexed `GRing` and `GAlgebra`
+products, degreewise pullbacks, and homogeneous coefficient maps `ℬ w →ₗ[R] H A (0,w)`.
+The point and affine-line conditions are also degreewise. The coefficient maps extend along
+`DirectSum.decomposeAlgEquiv ℬ` to a central map from `B` to the external direct sum; their
+centrality follows from supercommutativity in cohomological degree zero.
+
+`SupportsAndPurity` supplies groups `H_D^{p,w}(X)`, support-forgetting, the localization boundary
+of shift `(1,0)`, and oriented purity `H^{p,w}(D) ≃ₗ[R] H_D^{p+2,w+1}(X)`. Its three exactness
+fields are the degreewise localization sequence with supports. Transverse support pullbacks,
+mixed supported/ambient products, and the usual purity and boundary product identities complete
+the input. The product identities are given for arbitrary homogeneous factors, as allowed by the
+blueprint, and imply linearity of Gysin and residue over all of `B`.
+
+`ofSupportsAndPurity` takes the external direct sum over every bidegree. Gysin is purity followed
+by forgetting supports, and residue is the connecting map followed by inverse purity. It proves
+all three total exactness statements from the degreewise sequence and finite support. No
+`OrdinaryTheory`, total exactness, or arrangement-theoretic conclusion is an input. The internal
+grading is `directSumGrading`, the ranges of the summand inclusions, with its decomposition and
+algebra structure proved in `Grading/DirectSum`.
+
+The bridge helpers live in `BridgeData/`, beside the public entry `Bridge.lean`, to avoid putting
+a `Foo.lean` module beside a `Foo/` directory. This is a file-layout choice, not a mathematical
+departure from the blueprint. `Examples/Bridge` tests the constructor on zero degreewise input;
+it does not construct a nonzero standard cohomology theory.
 
 ## Exposition
 
