@@ -612,7 +612,8 @@ block_extension Block.statusSummary where
 def statusSummary : BlockCommandOf Unit
   | () => ``(Verso.Doc.Block.other Block.statusSummary #[])
 
-/- The table of all nodes, generated from what the `node` directives recorded. -/
+/- The tables of all nodes, one for each blueprint, generated from what the `node` directives
+recorded. -/
 block_extension Block.statusOverview where
   data := .null
   extraCss := {⟨nodeCss⟩}
@@ -680,7 +681,7 @@ private def duplicatedLabels (state : TraverseState) : Array String := Id.run do
     if obj.ids.size > 1 then some label else none
 
 /--
-The completeness check: every node of the blueprint must be presented exactly once in the book, and
+The completeness check: every node of the blueprints must be presented exactly once in the book, and
 the book must present nothing else. It reads the blueprint afresh, and runs after rendering, using
 the labels that were actually seen in the document.
 -/

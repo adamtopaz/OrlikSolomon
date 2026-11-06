@@ -528,3 +528,6 @@ How forms are represented is decided, and recorded here, by #73.
 The chapter `OrlikSolomonBook/DeRham.lean` presents these nodes as planned, and its opening and its
 section "What the instance is for" say that none of them is formalized. The build does not check
 that prose, so the PR that names the first declarations on one of these nodes must also update it.
+Likewise, the PR that proves `thm:dr-instance` must update the sentences saying that no nonzero value
+of the structure has been constructed: on the first page, in the chapter on the axioms, on the
+status page and in `README.md`.

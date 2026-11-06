@@ -73,6 +73,10 @@ With the ambient space fixed, the statement would not supply its own induction h
  * {ref "projective"}[Projective complements]
  * the affine theorem, applied to the central cone
  * the projective theorem, whose status is shown there
+*
+ * {ref "de-rham"}[A de Rham instance], planned and not yet formalized
+ * the structure of the axioms, and the affine and projective theorems
+ * a nonzero value of the structure, and forms of those theorems with no hypothetical cohomology theory
 :::
 
 The axioms do not mention logarithmic classes, so the first step has to construct them.
