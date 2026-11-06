@@ -193,7 +193,9 @@ three rings. State results for every equation of `H`.
   `B`-algebra structure and the grading by `R`-submodules. It is the `RingCon.Quotient` of
   `TwoSidedIdeal.span ℛ`, the same shape as Mathlib's `TensorAlgebra` and `CliffordAlgebra`,
   and the congruence is not exposed to importers. Descend non-multiplicative maps with
-  `liftLinear` and `mapLinear`.
+  `liftLinear` and `mapLinear`. Each semireducible `def` type wrapper needs its own `SMul`
+  transport, declared before its `Ring` instance, to preserve the scalar-action coherence
+  needed by canonical integer-coefficient base change.
 - **Affine presentation:** `OSAlgebra B 𝒜` has square-zero generators indexed by `𝒜`.
   `Arrangement.IsDependent` includes the nonempty-intersection guard. Use the quotient,
   generator, word and lift APIs instead of the underlying exterior quotient. `degree B 𝒜`

@@ -67,9 +67,12 @@ this file, so the choice of congruence cannot be relied on. Use the universal pr
 with `mk_eq_zero_iff`, `mk_eq_mk_iff` and `mk_surjective`.
 
 The scalar action is transported separately before the ring instance, following
-`CliffordAlgebra`. This makes the algebra's natural and integer module actions agree with the
-canonical additive actions during instance synthesis, so literal integral tensor products inherit
-their algebra structures without local module instances.
+`CliffordAlgebra`. Together with the same transport on `OSAlgebra`, this lets the canonical
+integer-coefficient base change `B ⊗[ℤ] OSAlgebra ℤ 𝒜` inherit its algebra structure without a
+local module instance. This does not normalize every concrete coefficient algebra: integral
+tensor products of polynomial or Laurent-polynomial coefficient algebras can still encounter
+scalar-action diamonds, and rewriting a literal scalar action with `Algebra.smul_def` can fail
+even when the corresponding equality elaborates directly.
 
 ## Blueprint
 
@@ -267,8 +270,8 @@ namespace RelationQuotient
 
 variable (ℛ : Set T)
 
--- Transport the scalar action separately so the algebra action agrees reducibly with the
--- canonical natural and integer actions, as for Mathlib's `CliffordAlgebra`.
+-- Transport the scalar action separately so the generic natural and integer module actions
+-- agree at instance transparency, as checked below, following Mathlib's `CliffordAlgebra`.
 instance instSMul [CommSemiring S] [Algebra S T] : SMul S (RelationQuotient ℛ) :=
   inferInstanceAs <| SMul S (RingCon.Quotient _)
 
