@@ -70,11 +70,13 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Exterior/BaseChange`   | base change in `lem:dr-exterior`, for any `IsBaseChange`, including localizations |
 | `DeRham/Exterior/Quotient`     | the quotient formula in `lem:dr-exterior` |
 | `DeRham/Exterior`              | the kernel of `⋀_A^n M → ⋀_S^n M'` for surjections of rings and of modules, the form used by `lem:dr-presentation` and `lem:dr-quotient`; the module to import |
+| `DeRham/SmoothPair`           | the one-form conormal splitting of `lem:dr-conormal`, and the global derivation and unit-ideal assertions of `lem:dr-normal-derivation` |
 | `Examples/AffineLines`        | concurrent lines and the triangle, including the nonempty-intersection guard |
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
 | `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
 | `Examples/Degenerate`        | coefficient cohomology of empty complements and nonunique zero-ring basis sizes |
+| `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
 | `Examples/Exterior`          | full exterior algebras for singletons and coordinate arrangements |
 | `Examples/Ordinary`            | the structure theorem at `R = ℤ`, `ZMod 2`, two points over `F₂`, dimension zero, zero coefficients and `R = B` |
 | `Examples/Polynomials`         | polynomial regression examples |
@@ -513,8 +515,11 @@ refers to is `OrdinaryTheory` in `Cohomology/Axioms`, whose fields match its che
 field may be weakened, and no comparison or exactness statement may become a hypothesis. Its
 declaration names are proposals, as with the first blueprint.
 
-The namespace is `OrlikSolomon.DeRham`. **None of these modules exists yet.** Each row of this table
-is one of the issues #72–#83, in order, and depends only on rows above it.
+The namespace is `OrlikSolomon.DeRham`. The exterior calculus and the one-form part of
+`DeRham/SmoothPair` exist; the other parts below remain planned. Each row of this table is one of
+the issues #72–#83, in order. The one-form conormal and normal-derivation results need only Mathlib's
+Kähler differentials and formal-smoothness lifts, so they precede the differential and localization
+modules. The higher-form and localization assertions of `SmoothPair` retain their dependencies.
 
 | Module under `OrlikSolomon/` | Blueprint labels |
 | ---------------------------- | ---------------- |
@@ -537,9 +542,13 @@ a declaration or sub-namespace `OrlikSolomon.DeRham.Localization` would capture 
 
 How forms are represented is decided, and recorded here, by #73.
 
-The chapter `OrlikSolomonBook/DeRham.lean` presents these nodes as planned, and its opening and its
-section "What the instance is for" say that none of them is formalized. The build does not check
-that prose, so the PR that names the first declarations on one of these nodes must also update it.
-Likewise, the PR that proves `thm:dr-instance` must update the sentences saying that no nonzero value
+The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Exterior calculus
+and the conormal splitting are formalized; the normal-derivation node is partial until its
+localization assertion lands. The splitting requires only formal smoothness of `A/(f)`;
+`existsNormalDerivationModulo` additionally uses formal smoothness of `A`. Both allow unit equations,
+the zero ring and disconnected algebras, and the latter asserts `v(f) = 1 + f*h`, not `v(f) = 1`.
+The chapter's opening and its section "What the instance is for" retain the disclosure that the
+nonzero instance is not yet constructed. The build does not check that prose, so keep it current as
+nodes land. The PR that proves `thm:dr-instance` must update the sentences saying that no nonzero value
 of the structure has been constructed: on the first page, in the chapter on the axioms, on the
 status page and in `README.md`.

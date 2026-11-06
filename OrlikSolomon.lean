@@ -22,10 +22,12 @@ public import OrlikSolomon.DeRham.Exterior.BaseChange
 public import OrlikSolomon.DeRham.Exterior.Basic
 public import OrlikSolomon.DeRham.Exterior.Contraction
 public import OrlikSolomon.DeRham.Exterior.Quotient
+public import OrlikSolomon.DeRham.SmoothPair
 public import OrlikSolomon.Examples.AffineLines
 public import OrlikSolomon.Examples.Bridge
 public import OrlikSolomon.Examples.Cokernel
 public import OrlikSolomon.Examples.CoordinatePolynomials
+public import OrlikSolomon.Examples.DeRhamSmoothPair
 public import OrlikSolomon.Examples.Degenerate
 public import OrlikSolomon.Examples.Exterior
 public import OrlikSolomon.Examples.Ordinary
