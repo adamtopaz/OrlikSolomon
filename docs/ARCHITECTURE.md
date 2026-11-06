@@ -128,9 +128,15 @@ coercion silently never fires. See the implementation notes in `Geometry/SmoothA
 - **Bigrading:** use Mathlib's `GradedAlgebra (𝒜 : ℤ × ℤ → Submodule R T)`. Do not add a
   new class. It does not require commutativity, which matters because cohomology and the
   Orlik–Solomon algebra are only graded commutative.
-- **Shifted maps:** state lemmas for a general additive group of degrees, then specialize.
+- **Graded modules:** use `DirectSum.Decomposition ℳ` where only the module structure
+  matters. Some graded objects, such as the cokernel in `def:lift-map`, are not algebras.
+- **Shifted maps:** `IsHomogeneousOfShift ℳ 𝒩 a f` says that `f` sends `ℳ i` into
+  `𝒩 (i + a)`. It is a predicate on plain functions, like `Function.Exact`, because the
+  grading pieces are `R`-submodules while the maps are `B`-linear. State lemmas for a
+  general additive group of degrees, then specialize. Name a target degree by an equation
+  `i + a = j` rather than computing `j - a`, which avoids transport at literal bidegrees.
 - **Signs:** use `Int.negOnePow` (`ℤ → ℤˣ`) acting by scalars, so graded commutativity
-  reads `x * y = (p * q).negOnePow • (y * x)`.
+  reads `x * y = (p * q).negOnePow • (y * x)`. This is `IsGradedCommutative 𝒜 Prod.fst`.
 - **Equivalences:** use `AlgEquiv` plus a separate grading statement, not a new category
   of graded algebras.
 - **Relation quotients:** `RelationQuotient ℛ` takes no ring of scalars. It is an
