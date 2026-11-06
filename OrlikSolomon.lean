@@ -16,6 +16,7 @@ public import OrlikSolomon.Cohomology.Logarithms
 public import OrlikSolomon.Combinatorics.AlternatingSum
 public import OrlikSolomon.Combinatorics.Betti
 public import OrlikSolomon.Combinatorics.Multiplicities
+public import OrlikSolomon.Combinatorics.ProjectiveBetti
 public import OrlikSolomon.Examples.AffineLines
 public import OrlikSolomon.Examples.Bridge
 public import OrlikSolomon.Examples.Cokernel

@@ -46,7 +46,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Cohomology/Deletion`          | `lem:restriction-surj`, `lem:ses`, `thm:generation`, `thm:cohom-basis`, the count of basis words in `thm:betti`, the last sentence of C3 in `def:cohomology` |
 | `Presentation/Basic`           | `def:os`, the ordinary grading and deletion map of `lem:os-basic` |
 | `Presentation/BaseChange`      | coefficient base change in `lem:os-basic` |
-| `Presentation/Generators`      | degree-one generator independence used in `cor:projective-betti` |
+| `Presentation/Generators`      | degree-one generator independence in the blueprint's proof of `cor:projective-betti` |
 | `Presentation/Grading`         | the weighted bigrading and component formula in `lem:os-basic` |
 | `Presentation/Boundary`        | the descended central boundary of `lem:central-boundary` |
 | `Presentation/ProjectiveAlgebra` | the graded kernel, difference generators and shifted module decomposition of `lem:projective-algebra` |
@@ -63,7 +63,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/ProjectiveOrdinary` | the diagonal equivalence of `thm:projective` |
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
 | `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `lem:mobius` |
-| `Combinatorics/Multiplicities` | `cor:projective-betti` |
+| `Combinatorics/ProjectiveBetti` | pure cone/decone intersection sums and polynomials of `cor:projective-betti` |
+| `Combinatorics/Multiplicities` | cohomological pieces and decone word counts of `cor:projective-betti` |
 | `Examples/AffineLines`        | concurrent lines and the triangle, including the nonempty-intersection guard |
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
@@ -359,15 +360,20 @@ and what `cor:projective-betti` says about cohomology goes in `Combinatorics/Mul
 the structure theorems. What `thm:betti` says about cohomology is in `Presentation/Ordinary`, since
 it extracts the homogeneous pieces of a basis, which `cor:ordinary` needs anyway.
 
-`Combinatorics/Multiplicities` defines the polynomial and natural Betti numbers of a nonempty
-projective arrangement. `poincarePolynomial_eq_decone` identifies it with every decone, and
-`poincarePolynomial_cone` proves the factor `1 + X`. The proof pairs the central-intersection
-subset sums with and without a hyperplane at infinity, then uses the existing trace cancellation;
-it does not recover integer coefficients by comparing module ranks. The actual projective pieces
-are identified with decone pieces by `OrdinaryTheory.projectiveDeconeComponentEquiv`.
-`nonempty_projective_grading_linearEquiv_bettiNumber` gives `b_p` copies of `ℬ (w-p)`, and
-`nonempty_basis_projective_grading_bettiNumber` gives an `R`-basis of the diagonal with that
-certified cardinality, including over zero coefficient rings.
+`Combinatorics/ProjectiveBetti` defines the polynomial and natural Betti numbers of a nonempty
+projective arrangement without importing cohomology. `poincarePolynomial_eq_decone` identifies
+it with every decone. The generic `intersectionSum_cone_eq` pairs subsets with and without a
+hyperplane at infinity for any compatible weights and additive map, without finite-dimensionality.
+Its polynomial instances give the factors `1 + X` for the Poincaré polynomial and `X - 1` for
+the characteristic polynomial. The affine degree-one coefficient count lives in `Combinatorics/Betti`.
+
+`Combinatorics/Multiplicities` identifies actual projective pieces with decone pieces through
+`OrdinaryTheory.projectiveDeconeComponentEquiv`. `exists_logMonomialBasis_decone` retains a
+recursive logarithmic basis of every decone together with its number of words of each length,
+which equals `P.bettiNumber q`. The module and diagonal-basis statements follow with these indices.
+Over zero coefficients the bare module and basis statements hold for every cardinality, so they
+do not determine the numbers; the separate assertion about words and polynomial coefficients
+preserves the count. No unique basis cardinality is inferred from a zero module.
 
 The nine required mathematical regressions and their declarations are indexed in
 [`docs/REGRESSIONS.md`](REGRESSIONS.md).
