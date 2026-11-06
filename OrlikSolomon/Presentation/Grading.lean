@@ -60,7 +60,7 @@ theorem baseChangeEquiv_mem_bigrading_iff {i : ℤ × ℤ} {x : B ⊗[R] OSAlgeb
 
 variable [GradedAlgebra ℬ]
 
-instance : GradedAlgebra (bigrading 𝒜 ℬ) :=
+instance bigradingGradedAlgebra : GradedAlgebra (bigrading 𝒜 ℬ) :=
   inferInstanceAs (GradedAlgebra (transportGrading (weightedTensorGrading ℬ (degree R 𝒜))
     ((baseChangeEquiv R B 𝒜).restrictScalars R).toLinearEquiv))
 
