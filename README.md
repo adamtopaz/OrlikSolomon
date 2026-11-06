@@ -12,6 +12,7 @@ twists stay explicit.
 
 **Status:** under active development. Nothing is proved yet.
 
+- Exposition, tied to the code: <https://adamtopaz.github.io/OrlikSolomon/>
 - Mathematical plan: [`blueprint/`](blueprint/arrangement_cohomology_lean_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)
@@ -25,8 +26,17 @@ lake exe cache get
 lake build
 ```
 
-On NixOS, run these inside `nix develop`, which provides the `cc` that Verso's native
-dependency needs.
+This builds only the library, which does not depend on Verso. To build the book and write
+the site to `_out/book/html-multi`:
+
+```bash
+lake build OrlikSolomonBook book
+lake exe book --output _out/book
+node scripts/check-book-output.mjs _out/book/html-multi
+```
+
+On NixOS, run the commands for the book inside `nix develop`, which provides the `cc` that
+Verso's native dependency needs.
 
 ## License
 

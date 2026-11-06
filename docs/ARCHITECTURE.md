@@ -143,10 +143,57 @@ The Verso book in `OrlikSolomonBook/` is tied to the code at build time, while t
 itself has no dependency on Verso and no project-specific attributes:
 
 - Each blueprint node in the book names its Lean declarations in a custom directive. The
-  build **fails** if a name does not resolve or the declaration depends on `sorryAx`, so
-  the text cannot drift from the code.
+  build **fails** if a name does not resolve or the declaration depends on `sorryAx`, or on
+  any axiom other than `propext`, `Classical.choice` and `Quot.sound`, so the text cannot
+  drift from the code.
 - Lean snippets in the text are elaborated against the library.
 - A completeness check compares blueprint labels with the labels the book covers.
+
+A node is presented like this, with its label as the first argument:
+
+```
+:::node "lem:gm" (decl := OrlikSolomon.gmDecomposition)
+Prose about the lemma.
+:::
+```
+
+- With no `decl`, the node renders as **planned**. With `+deferred`, it renders as
+  **deferred**, for what "Scope" below leaves out. Naming declarations is the only way to
+  make a node render as formalized.
+- If the declarations cover only part of a node, say so with `(remaining := "...")`, and it
+  renders as partly formalized. A node split across modules should use this until it is
+  finished.
+- The role `{bp "lem:gm"}[text]` links to a node and shows its status, so that a reference
+  in the prose cannot claim more than the node's own box. Empty text shows the node's name.
+- `{statusSummary}` and `{statusOverview}` are generated from what the directives recorded.
+
+Nodes are the theorem-like environments of `blueprint/*.tex` with their `\label`s, so section
+labels are not nodes. The parser rejects a `\label` that is on neither such an environment
+nor a section, and a theorem-like environment with no `\label`, so that a node cannot drop out
+of the check unnoticed. If a blueprint starts using, say, labelled equations, extend the
+parser in `OrlikSolomonBook/Blueprint.lean`.
+
+Some choices here are deliberate:
+
+- **Book files are not Lean `module`s**, unlike the library. A plain `import` loads the
+  private level of the library's data. Under `module`, a batch build does not see declaration
+  ranges or docstrings, which the book renders. Axiom checks work either way, and a proof that
+  changes to `sorry` rebuilds the book across module boundaries, with no statement changing.
+  A chapter should import `OrlikSolomon` rather than Mathlib directly, because a plain import
+  of Mathlib produces a warning.
+- **The executable links the library natively, and with it Mathlib's closure.** This is the
+  standard Verso setup, and the alternative of loading the chapters at run time needs
+  `unsafe`. With a closure of 2542 modules, compiling the objects took 25 core-minutes and
+  the binary was 149 MB. The objects are shared between worktrees and cached by the `Book`
+  workflow. Use `lake build OrlikSolomonBook` to check the book without linking.
+- **`lake exe book` has checks of its own**: unresolved cross-references and the completeness
+  check, which reads the blueprint afresh. `scripts/check-book-output.mjs` then checks the
+  generated pages. Verso renders formulas with `throwOnError: false`, so without this script a
+  bad formula would only appear as red text on the site.
+
+The `Book` workflow runs all of this on pull requests and deploys `main` to
+<https://adamtopaz.github.io/OrlikSolomon/>. Links to the source use the commit that
+`git rev-parse HEAD` reports when the book is rendered.
 
 ## Scope
 
