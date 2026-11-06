@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 import OrlikSolomonBook.Node
 import OrlikSolomon
@@ -74,7 +74,7 @@ With the ambient space fixed, the statement would not supply its own induction h
  * the affine theorem, applied to the central cone
  * the projective theorem, with a map defined using no hyperplane at infinity
 *
- * {ref "de-rham"}[A de Rham instance], planned and not yet formalized
+ * {ref "de-rham"}[A de Rham instance], in progress
  * the structure of the axioms, and the affine and projective theorems
  * a nonzero value of the structure, and forms of those theorems with no hypothetical cohomology theory
 :::

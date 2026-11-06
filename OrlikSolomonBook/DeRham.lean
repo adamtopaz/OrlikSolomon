@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 import OrlikSolomonBook.Node
 import OrlikSolomon
@@ -9,19 +9,20 @@ import OrlikSolomon
 open Verso.Genre Manual
 open OrlikSolomonBook
 
-#doc (Manual) "A de Rham instance of the axioms (planned)" =>
+#doc (Manual) "A de Rham instance of the axioms" =>
 %%%
 tag := "de-rham"
 file := "de-rham"
 htmlSplit := .never
 %%%
 
-*None of this chapter is formalized yet.*
-It presents the plan in the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
-No Lean declaration is attached to any of its 50 nodes, so every box below is marked as planned.
-The blueprint itself says that nothing in it has been formally verified or elaborated in Lean.
-It proposes names for declarations under `OrlikSolomon.DeRham`, but none of them exists yet, so this chapter does not list them.
-The statements and arguments here are the blueprint's, and no machine has checked them.
+*The de Rham instance is being formalized.*
+This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
+The exterior calculus and the de Rham dg algebra of an arbitrary algebra, including its differential, are formalized.
+The conormal splitting, global and localized normal derivations, and wedge exactness modulo the divisor are also formalized.
+Localization and quotient formulas for forms, higher-form projectivity, regular-element injectivity and injectivity into localization remain planned, as do the cohomology and comparison arguments and the final instance.
+The library therefore still contains no nonzero value of the structure of axioms.
+Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
 
 # What the instance is for
@@ -108,16 +109,16 @@ These transport maps are determined by $`i` and $`j`, and every naturality state
 
 # Exterior algebra
 
-The planned construction needs two facts about exterior algebras, over any commutative ring and without dividing by two.
+The construction needs two facts about exterior algebras, over any commutative ring and without dividing by two.
 
-:::node "lem:dr-exterior"
+:::node "lem:dr-exterior" (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_tmul) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_symm_ιMulti) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_naturality) (decl := OrlikSolomon.DeRham.powerQuotientEquiv) (decl := OrlikSolomon.DeRham.powerQuotientEquiv_mk) (decl := OrlikSolomon.DeRham.map_wedgeSubmodule_succ) (decl := OrlikSolomon.DeRham.wedgeSubmodule_zero) (decl := OrlikSolomon.DeRham.span_word_ι_length) (decl := OrlikSolomon.DeRham.mul_self_eq_zero_of_mem_exteriorPower_one) (decl := OrlikSolomon.DeRham.mul_comm_of_mem_exteriorPower)
 Let $`M` be an $`A`-module with a submodule $`N`, and let $`A\to A'` be a map of commutative algebras.
 There are natural identifications
 $$`A'\otimes_A\bigwedge_A^nM\simeq\bigwedge_{A'}^n(A'\otimes_AM),\qquad\bigwedge_A^n(M/N)\simeq\bigwedge_A^nM\,/\,\bigl(N\wedge\bigwedge_A^{n-1}M\bigr).`
 Exterior words span, each element of degree one squares to zero, and homogeneous elements of degrees $`p` and $`q` commute up to the sign $`(-1)^{pq}`.
 :::
 
-:::node "lem:dr-contraction"
+:::node "lem:dr-contraction" (decl := OrlikSolomon.DeRham.exteriorContraction) (decl := OrlikSolomon.DeRham.exteriorContraction_ιMulti) (decl := OrlikSolomon.DeRham.exteriorContraction_mem_exteriorPower) (decl := OrlikSolomon.DeRham.exteriorContraction_eq_zero_of_mem_exteriorPower_zero) (decl := OrlikSolomon.DeRham.exteriorContraction_mul_of_mem_exteriorPower) (decl := OrlikSolomon.DeRham.exteriorContraction_ι_mul_add) (decl := OrlikSolomon.DeRham.ker_wedgeLeft_succ) (decl := OrlikSolomon.DeRham.ker_wedgeLeft_zero)
 An $`A`-linear map $`\lambda:M\to A` gives an $`A`-linear operator $`\iota_\lambda` of degree $`-1` on $`\bigwedge_AM` with
 $$`\iota_\lambda(\alpha\wedge\beta)=\iota_\lambda\alpha\wedge\beta+(-1)^p\alpha\wedge\iota_\lambda\beta,\qquad\iota_\lambda(e\wedge\alpha)+e\wedge\iota_\lambda\alpha=\lambda(e)\alpha,`
 for $`\alpha` of degree $`p`.
@@ -126,35 +127,43 @@ If $`\lambda(e)=1`, then the kernel of $`e\wedge-` on $`\bigwedge^nM` is $`e\wed
 
 # A de Rham dg algebra without a basis of differentials
 
-The operator $`d` is not $`A`-linear, so it cannot be obtained as an $`A`-linear lift of $`a\mapsto da` to the exterior algebra, and defining it that way would be incorrect.
-The plan is to construct it on a polynomial ring, where differentials have a basis, and to descend it to an arbitrary $`A` through a canonical polynomial presentation.
-This uses a basis only for polynomial differentials, never for $`\Omega^1_{A/k}`.
+The operator $`d` is not $`A`-linear, so it cannot be obtained as an $`A`-linear lift of $`a\mapsto da` to the exterior algebra, for the usual $`A`-module structure on forms, and defining it that way would be incorrect.
+The blueprint constructs it on a polynomial ring, where differentials have a basis, and descends it to an arbitrary $`A` through a canonical polynomial presentation.
 Nothing in this section needs smoothness or a hypothesis on the characteristic.
 
-:::node "def:dr-forms"
+The library proves the same statements by a shorter construction, which uses no polynomial ring and no basis at all.
+Let $`\sigma` be the grade involution, and consider pairs $`x+\varepsilon u` of forms, for an odd variable $`\varepsilon` with $`\varepsilon^2=0`:
+$$`(x+\varepsilon u)(y+\varepsilon v)=xy+\varepsilon\bigl(\sigma(x)v+uy\bigr).`
+The signed Leibniz rule says exactly that $`x\mapsto x+\varepsilon\,dx` is a ring map.
+This ring is an $`A`-algebra through $`a\mapsto a+\varepsilon\,da`, whose image is central because $`da` anticommutes with odd forms, and for this twisted structure $`a\mapsto da` is a derivation, because $`da\wedge db+db\wedge da=0`.
+So the universal properties of Kähler differentials and of the exterior algebra produce the map, and its second component is $`d`.
+The polynomial formula and the presentation below are then theorems about this operator, and {bp "lem:dr-presentation"}[] shows that the operator descended from the presentation is the same one.
+
+:::node "def:dr-forms" (decl := OrlikSolomon.DeRham.Forms) (decl := OrlikSolomon.DeRham.diff) (decl := OrlikSolomon.DeRham.mem_exteriorPower_zero_iff) (decl := OrlikSolomon.DeRham.mem_exteriorPower_one_iff) (decl := OrlikSolomon.DeRham.span_word_diff) (decl := OrlikSolomon.DeRham.Forms.induction_exteriorPower) (decl := OrlikSolomon.DeRham.Forms.induction)
 For a commutative $`k`-algebra $`A`, put $`\Omega_A^0=A`, put $`\Omega_A^n=\bigwedge_A^n\Omega^1_{A/k}` for $`n>0`, and put $`\Omega_A^n=0` for $`n<0`.
 Their direct sum is the exterior algebra under wedge multiplication, and every form is a finite sum of expressions $`a_0\,da_1\wedge\cdots\wedge da_n`.
 :::
 
-:::node "lem:dr-polynomial-dga"
+:::node "lem:dr-polynomial-dga" (decl := KaehlerDifferential.mvPolynomialBasis) (decl := OrlikSolomon.DeRham.d) (decl := OrlikSolomon.DeRham.d_mem_exteriorPower) (decl := OrlikSolomon.DeRham.d_smul_word_X) (decl := OrlikSolomon.DeRham.d_smul_word_X_eq_finsum) (decl := OrlikSolomon.DeRham.finite_support_pderiv_smul) (decl := OrlikSolomon.DeRham.eq_d_of_smul_word_X) (decl := OrlikSolomon.DeRham.d_d) (decl := OrlikSolomon.DeRham.d_mul_of_mem_exteriorPower)
 For a polynomial ring $`P=k[X_i\mid i\in I]`, even with $`I` infinite, $`\Omega_P^1` is free on the $`dX_i`, and there is a $`k`-linear operator of degree one with
 $$`d(p\,dX_{i_1}\wedge\cdots\wedge dX_{i_n})=\sum_{j\in I}\partial_j(p)\,dX_j\wedge dX_{i_1}\wedge\cdots\wedge dX_{i_n},`
 where the sum has finite support.
 It satisfies $`d^2=0` and the signed Leibniz rule, in every characteristic.
 :::
 
-:::node "lem:dr-presentation"
+:::node "lem:dr-presentation" (decl := OrlikSolomon.DeRham.presentationHom) (decl := OrlikSolomon.DeRham.presentationHom_X) (decl := OrlikSolomon.DeRham.presentationHom_surjective) (decl := OrlikSolomon.DeRham.differentialIdeal) (decl := OrlikSolomon.DeRham.differentialIdealPower) (decl := OrlikSolomon.DeRham.differentialIdealPower_zero) (decl := OrlikSolomon.DeRham.differentialIdealPower_succ) (decl := OrlikSolomon.DeRham.mem_differentialIdealPower_iff) (decl := OrlikSolomon.DeRham.mul_mem_differentialIdeal_left) (decl := OrlikSolomon.DeRham.mul_mem_differentialIdeal_right) (decl := OrlikSolomon.DeRham.d_mem_differentialIdeal) (decl := OrlikSolomon.DeRham.Forms.map_eq_zero_iff_of_surjective) (decl := OrlikSolomon.DeRham.quotientEquiv) (decl := OrlikSolomon.DeRham.quotientEquiv_mk) (decl := OrlikSolomon.DeRham.quotientEquiv_mk_mul) (decl := OrlikSolomon.DeRham.quotientPowerEquiv) (decl := OrlikSolomon.DeRham.quotientPowerEquiv_mk) (decl := OrlikSolomon.DeRham.presentationEquiv) (decl := OrlikSolomon.DeRham.presentationEquiv_dQuotient)
 Let $`P_A=k[X_a\mid a\in A]`, let $`\epsilon:P_A\to A` send $`X_a` to $`a`, and let $`I=\ker\epsilon`.
 The homogeneous ideal
 $$`J^n=I\,\Omega_{P_A}^n+\operatorname{span}_{P_A}\{dh\wedge\eta:h\in I,\ \eta\in\Omega_{P_A}^{n-1}\}`
 is stable under $`d`, and the quotient graded algebra is canonically $`\bigoplus_n\Omega_A^n`.
 :::
 
-:::node "def:dr-complex"
+:::node "def:dr-complex" (decl := OrlikSolomon.DeRham.d) (decl := OrlikSolomon.DeRham.presentationEquiv_dQuotient) (decl := OrlikSolomon.DeRham.powerD) (decl := OrlikSolomon.DeRham.complex)
 The de Rham dg algebra of $`A/k` is $`\Omega_A^\bullet` with the differential descended from {bp "lem:dr-presentation"}[] and the wedge product.
+The library constructs this differential directly, as described at the start of this section, and proves that it agrees with the descended one.
 :::
 
-:::node "thm:dr-dga"
+:::node "thm:dr-dga" (decl := OrlikSolomon.DeRham.d_smul_word) (decl := OrlikSolomon.DeRham.d_d) (decl := OrlikSolomon.DeRham.d_mul_of_mem_exteriorPower) (decl := OrlikSolomon.DeRham.d_mul) (decl := OrlikSolomon.DeRham.isGradedCommutative_forms) (decl := OrlikSolomon.DeRham.Forms.map) (decl := OrlikSolomon.DeRham.Forms.map_smul_word) (decl := OrlikSolomon.DeRham.Forms.map_d) (decl := OrlikSolomon.DeRham.Forms.map_mem_exteriorPower) (decl := OrlikSolomon.DeRham.Forms.map_id) (decl := OrlikSolomon.DeRham.Forms.map_map) (decl := OrlikSolomon.DeRham.eq_d_of_smul_word) (decl := OrlikSolomon.DeRham.eq_d_of_leibniz)
 For every commutative $`k`-algebra, $`d(a_0\,da_1\wedge\cdots\wedge da_n)=da_0\wedge da_1\wedge\cdots\wedge da_n`.
 The operator squares to zero and satisfies the signed Leibniz rule, and the wedge product is associative, unital and graded commutative.
 A $`k`-algebra map $`\phi:A\to A'` induces a dg algebra map $`\phi_*`, sending $`a_0\,da_1\cdots da_n` to $`\phi(a_0)\,d\phi(a_1)\cdots d\phi(a_n)`, compatibly with identities and composition.
@@ -214,7 +223,7 @@ If $`A` is formally smooth over $`k`, then $`\Omega_A^1` and every $`\Omega_A^n`
 If $`f` is a non-zero-divisor, then multiplication by $`f` is injective on each $`\Omega_A^n`, and $`\Omega_A^n\to\Omega_{A_f}^n` is injective.
 :::
 
-:::node "lem:dr-conormal"
+:::node "lem:dr-conormal" (decl := OrlikSolomon.DeRham.principalCotangentEquiv) (decl := OrlikSolomon.DeRham.conormalFunctional) (decl := OrlikSolomon.DeRham.conormalFunctional_df) (decl := OrlikSolomon.DeRham.conormalMap_apply) (decl := OrlikSolomon.DeRham.exact_conormalMap) (decl := OrlikSolomon.DeRham.conormalMap_injective) (decl := OrlikSolomon.DeRham.splitConormalSequence) (decl := OrlikSolomon.DeRham.splitConormalSequence_apply) (decl := OrlikSolomon.DeRham.splitConormalSequence_symm_apply_zero)
 Put $`\overline{M}=\Omega_A^1\otimes_AS` and $`e=df\bmod f`.
 There is an $`S`-linear map $`\lambda:\overline{M}\to S` with $`\lambda(e)=1`, so
 $$`0\longrightarrow S\xrightarrow{\ 1\mapsto e\ }\overline{M}\longrightarrow\Omega_S^1\longrightarrow0`
@@ -224,12 +233,12 @@ The non-zero-divisor hypothesis identifies the conormal line, and smoothness of 
 Smoothness of $`A` is not needed for this lemma, and no basis or constant rank is assumed.
 :::
 
-:::node "lem:dr-normal-derivation"
+:::node "lem:dr-normal-derivation" (decl := OrlikSolomon.DeRham.exists_normalDerivation_modulo) (decl := OrlikSolomon.DeRham.span_pair_eq_top_of_normalDerivationModulo) (decl := OrlikSolomon.DeRham.exists_localized_normalDerivation)
 There exist a $`k`-derivation $`v:A\to A` and an element $`h\in A` with $`v(f)=1+fh`.
 If $`g=v(f)`, then $`(f,g)=A`, and on $`A_g` the extended derivation $`v/g` takes $`f` to $`1`.
 :::
 
-:::node "lem:dr-modf-koszul"
+:::node "lem:dr-modf-koszul" (decl := OrlikSolomon.DeRham.ker_wedgeLeft_df_mod_succ) (decl := OrlikSolomon.DeRham.ker_wedgeLeft_df_mod_zero) (decl := OrlikSolomon.DeRham.powerMap_eq_zero_of_wedgeLeft_df_eq_smul) (decl := OrlikSolomon.DeRham.powerMap_eq_zero_of_wedgeLeft_df_mem_smul)
 If $`\eta\in\Omega_A^q` satisfies $`df\wedge\eta\in f\Omega_A^{q+1}`, then its image in $`\Omega_S^q` is zero.
 Equivalently, modulo $`f`, the kernel of $`e\wedge-` on $`\bigwedge_S^q\overline{M}` is the image of $`e\wedge-` from the preceding degree.
 
@@ -433,13 +442,13 @@ For $`A=k[x]` and $`f=x`, we have $`H^0_{\mathrm{dR}}(A_f)=k`, $`H^1_{\mathrm{dR
 Moreover $`r([dx/x])=1`, and the twisted normalized class is $`[dx/x]\,t`.
 :::
 
-:::node "prop:dr-unit-example"
+:::node "prop:dr-unit-example" (decl := OrlikSolomon.Sanity.unit_quotient_subsingleton) (decl := OrlikSolomon.Sanity.zeroDerivation_unit_normal) (decl := OrlikSolomon.Sanity.unit_exists_normalDerivation_modulo) (remaining := "The differential forms, localization, logarithmic complex, cohomology, residue and Gysin calculations.")
 If $`f` is a unit in a smooth $`A`, then $`S=0`, $`A_f\simeq A` and $`L^\bullet=\Omega_A^\bullet`.
 Residue and Gysin are both zero, and all the exactness fields reduce to the identity isomorphism on $`C(A)`.
 In the contraction one may take $`v=0` and $`h=-f^{-1}`, which confirms that no step assumed a nonempty divisor.
 :::
 
-:::node "prop:dr-product-example"
+:::node "prop:dr-product-example" (decl := OrlikSolomon.Sanity.productPolynomialEquation_regular) (decl := OrlikSolomon.Sanity.productPolynomialQuotientEquiv) (decl := OrlikSolomon.Sanity.productPolynomialNormal) (decl := OrlikSolomon.Sanity.productPolynomialNormal_equation) (decl := OrlikSolomon.Sanity.productPolynomial_conormalFunctional_df) (decl := OrlikSolomon.Sanity.productPolynomial_splitConormalSequence_df) (decl := OrlikSolomon.Sanity.productPolynomial_exists_normalDerivation_modulo) (decl := OrlikSolomon.Sanity.productPolynomial_no_global_normal) (remaining := "The localization and de Rham cohomology of the product, and its residue calculation.")
 For $`A=k\times k[z]` and $`f=(1,z)`, we have $`S\simeq k`, $`A_f\simeq k\times k[z,z^{-1}]`, $`H^0_{\mathrm{dR}}(A_f)=k\times k` and $`H^1_{\mathrm{dR}}(A_f)=k[(0,dz/z)]`.
 All higher groups vanish, and the residue takes $`(0,dz/z)` to $`1` on $`S`.
 
@@ -447,7 +456,7 @@ This divisor lies on one connected component, and it is why the derivation is on
 Taking $`v=(0,\partial_z)` gives $`v(f)=(0,1)=1+f(-1,0)`, while $`df=(0,dz)` is not unimodular on all of $`A`.
 :::
 
-:::node "prop:dr-zero-example"
+:::node "prop:dr-zero-example" (decl := OrlikSolomon.smooth_punit) (decl := OrlikSolomon.SmoothAlg.zero) (decl := OrlikSolomon.Sanity.zero_exists_normalDerivation_modulo) (remaining := "Vanishing of forms and de Rham cohomology, the twisted theory and its pair axioms.")
 For $`A=0`, every form and cohomology module is zero, $`C(A)` is the zero $`B`-algebra, and the fields for divisor pairs hold for its unique equation.
 The zero algebra is formally smooth and finitely presented, so it really is an object of the category, and no nontriviality can be imposed on general objects.
 :::

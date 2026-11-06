@@ -66,16 +66,26 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Combinatorics/Moebius`         | the finite nonempty intersection poset, its Mathlib Möbius function and both formulas of `lem:mobius`; pure combinatorics |
 | `Combinatorics/ProjectiveBetti` | pure cone/decone intersection sums and polynomials of `cor:projective-betti` |
 | `Combinatorics/Multiplicities` | cohomological pieces and decone word counts of `cor:projective-betti` |
+| `DeRham/Complex/Forms`         | `def:dr-forms`: `Forms`, the universal differential `diff`, and induction on the words `a₀ da₁ ∧ ⋯ ∧ daₙ` |
+| `DeRham/Complex/Differential`  | `d`, the characterizing formula, `d² = 0`, signed Leibniz and uniqueness, for `def:dr-complex` and `thm:dr-dga` |
+| `DeRham/Complex/Functoriality` | `Forms.map`, with identity and composition, in `thm:dr-dga`, and the bridge to `exteriorMap` |
+| `DeRham/Complex/Polynomial`    | the formula of `lem:dr-polynomial-dga` |
+| `DeRham/Complex/Presentation`  | `lem:dr-presentation`, for any surjection of algebras and for the canonical presentation |
+| `DeRham/Complex`               | `complex`, the cochain complex of `def:dr-complex`, and its functoriality; the module to import |
 | `DeRham/Exterior/Basic`        | exterior words, signs and homogeneous components, and the maps `⋀_A M → ⋀_S M'` along a change of rings, for `lem:dr-exterior` and `thm:dr-dga` |
 | `DeRham/Exterior/Contraction`  | `lem:dr-contraction`, naturality of contraction for `lem:dr-cartan`, and the decomposition `M = K ⊕ A e` for `lem:dr-polynomial-splitting` |
 | `DeRham/Exterior/BaseChange`   | base change in `lem:dr-exterior`, for any `IsBaseChange`, including localizations |
 | `DeRham/Exterior/Quotient`     | the quotient formula in `lem:dr-exterior` |
 | `DeRham/Exterior`              | the kernel of `⋀_A^n M → ⋀_S^n M'` for surjections of rings and of modules, the form used by `lem:dr-presentation` and `lem:dr-quotient`; the module to import |
+| `DeRham/SmoothPair/Koszul`    | `lem:dr-modf-koszul`: wedge exactness modulo a smooth principal divisor in every degree |
+| `DeRham/SmoothPair`           | the conormal splitting of `lem:dr-conormal`, and the global and localized derivations of `lem:dr-normal-derivation` |
 | `Examples/AffineLines`        | concurrent lines and the triangle, including the nonempty-intersection guard |
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
 | `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
+| `Examples/DeRhamComplex`     | `d` is not linear over the algebra, characteristic two and the zero algebra |
 | `Examples/Degenerate`        | coefficient cohomology of empty complements and nonunique zero-ring basis sizes |
+| `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
 | `Examples/Exterior`          | full exterior algebras for singletons and coordinate arrangements |
 | `Examples/Ordinary`            | the structure theorem at `R = ℤ`, `ZMod 2`, two points over `F₂`, dimension zero, zero coefficients and `R = B` |
 | `Examples/Polynomials`         | polynomial regression examples |
@@ -515,8 +525,15 @@ refers to is `OrdinaryTheory` in `Cohomology/Axioms`, whose fields match its che
 field may be weakened, and no comparison or exactness statement may become a hypothesis. Its
 declaration names are proposals, as with the first blueprint.
 
-The namespace is `OrlikSolomon.DeRham`. **None of these modules exists yet.** Each row of this table
-is one of the issues #72–#83, in order, and depends only on rows above it.
+The namespace is `OrlikSolomon.DeRham`. Exterior calculus, the dg algebra and its differential,
+conormal splitting, global and localized normal derivations, and wedge exactness modulo the
+divisor exist; the other parts below remain planned. Each row of this table is one of issues
+#72–#83, in order. The conormal and normal-derivation results need only Mathlib's Kähler
+differentials and formal-smoothness lifts. Normalizing a derivation on `A[v(f)⁻¹]` uses
+Mathlib's localization of Kähler differentials, and wedge exactness uses exterior contraction;
+neither requires the de Rham differential. All of `lem:dr-projective` remains in #77:
+projectivity of every form degree, injectivity of multiplication by a regular element, and
+injectivity into localization.
 
 | Module under `OrlikSolomon/` | Blueprint labels |
 | ---------------------------- | ---------------- |
@@ -531,17 +548,72 @@ is one of the issues #72–#83, in order, and depends only on rows above it.
 | `DeRham/Maps`                | `def:dr-gysin`, `lem:dr-exactness`, `thm:dr-projection`, `thm:dr-log-naturality`, `thm:dr-naturality` |
 | `DeRham/Instance`            | `def:dr-twisted-functor`, `lem:dr-ordinary-basic`, `def:dr-twisted-maps`, `thm:dr-ordinary-localization`, `thm:dr-instance` |
 | `DeRham/Corollaries`         | `lem:dr-tau`, `cor:dr-affine`, `cor:dr-projective` |
-| `Examples/DeRham`            | `prop:dr-gm-example`, `prop:dr-unit-example`, `prop:dr-product-example`, `prop:dr-zero-example`, `prop:dr-crossing-example`, `prop:dr-morphism-examples`, `prop:dr-torus-example`, `prop:dr-characteristic-p` |
+| `Examples/DeRham`, `Examples/DeRhamSmoothPair` | `prop:dr-gm-example`, `prop:dr-unit-example`, `prop:dr-product-example`, `prop:dr-zero-example`, `prop:dr-crossing-example`, `prop:dr-morphism-examples`, `prop:dr-torus-example`, `prop:dr-characteristic-p` |
 
 The rule at the top of this file applies to the namespace. These module names are file names only:
 a declaration or sub-namespace `OrlikSolomon.DeRham.Localization` would capture Mathlib's
 `Localization`, and `OrlikSolomon.DeRham.Complex` would capture `Complex`.
 
-How forms are represented is decided, and recorded here, by #73.
+### Forms and the differential
 
-The chapter `OrlikSolomonBook/DeRham.lean` presents these nodes as planned, and its opening and its
-section "What the instance is for" say that none of them is formalized. The build does not check
-that prose, so the PR that names the first declarations on one of these nodes must also update it.
-Likewise, the PR that proves `thm:dr-instance` must update the sentences saying that no nonzero value
+- **The total algebra is primary.** `Forms k A` is a reducible abbreviation of
+  `ExteriorAlgebra A Ω[A⁄k]`. Mathlib's `⋀[A]^n M` is by definition a submodule of the exterior
+  algebra, so a form of degree `n` is `x : Forms k A` with `x ∈ ⋀[A]^n Ω[A⁄k]`, and there are no
+  casts between degrees. The differential `d k : Forms k A →ₗ[k] Forms k A` is an operator on the
+  total algebra. A signed rule takes the degree as a hypothesis, as `d_mul_of_mem_exteriorPower` does.
+  On all forms, `d_mul` uses the grade involution instead of a sign, so state a fact about a closed
+  form of no particular degree with that. Blueprint degree zero is `algebraMap A (Forms k A)` and
+  degree one is `ι A`, and `mem_exteriorPower_zero_iff` and `mem_exteriorPower_one_iff` say so.
+- **Typed maps only where a complex needs them.** `powerD k A n : ⋀^n → ⋀^(n+1)` and
+  `Forms.mapPower φ n : ⋀^n → ⋀^n` are the same operators with their types restricted, and
+  `coe_powerD` and `coe_mapPower` pass between the two. `complex k A` is a
+  `CochainComplex (ModuleCat k) ℕ`, and `complexMap` and `complexFunctor` are its functoriality.
+  Nothing is indexed by `ℤ`. Extending by zero to `ℤ` is for the module that needs it.
+- **Scalars.** Forms are `A`-modules, `d` is only `k`-linear, and `Forms.map φ` for
+  `φ : A →ₐ[k] A'` is a `k`-algebra map that is semilinear over `φ` (`Forms.map_smul`, or
+  `Forms.mapₛₗ` when a bundled map is needed). It takes an `AlgHom`, because the instance requires it
+  on `SmoothAlg k`. When `S` is an `A`-algebra instance and the exterior algebra API of `DeRham/Exterior`
+  is wanted, for base change or for kernels, `Forms.map_toAlgHom` and `Forms.mapPower_toAlgHom`
+  identify `Forms.map` with `exteriorMap` and `powerMap` along `KaehlerDifferential.map`.
+- **Normal form.** `diff k : Derivation k A (Forms k A)` is `a ↦ da`, so `Derivation.leibniz`,
+  `Derivation.leibniz_pow` and `Derivation.leibniz_of_mul_eq_one` apply to it. The normal form of a
+  word is `a₀ • word (diff k) [a₁, …, aₙ]`, and `Forms.induction` and
+  `Forms.induction_exteriorPower` are the induction principles on it. `word_cons` unfolds a word on
+  an explicit list, and `simp` handles those through `d_smul`, `d_diff_mul`, `Forms.map_smul` and
+  `Forms.map_diff`. `exteriorContraction_diff` is the contraction of the normal form.
+- **The construction of `d` departs from the blueprint's proof, not from its statements.** The
+  blueprint constructs `d` on `k[X_a | a ∈ A]` and descends it, and warns that an `A`-linear lift of
+  `a ↦ da` is wrong. That lift is wrong for the usual `A`-module structure on forms. Instead, let
+  `OddDual` be the ring of `x + ε u`, for an odd `ε` with `ε² = 0`, so that
+  `(x + ε u) * (y + ε v) = x y + ε (σ x * v + u * y)`, with `σ` the grade involution. Signed Leibniz
+  says exactly that `x ↦ x + ε d x` is a ring map. Making `OddDual` an `A`-algebra through
+  `a ↦ a + ε da` makes that map `A`-linear, and `ExteriorAlgebra.lift` and
+  `Derivation.liftKaehlerDifferential` then produce it. All of this is private to
+  `DeRham/Complex/Differential`, and `d` is `@[no_expose]`. No polynomial ring is involved, and no
+  basis of any differentials.
+- **`d` is characterized by its formula.** `d_smul_word` is
+  `d (a₀ da₁ ∧ ⋯ ∧ daₙ) = da₀ ∧ da₁ ∧ ⋯ ∧ daₙ`. `eq_d_of_smul_word` and `eq_d_of_leibniz` are
+  uniqueness. Prove things about `d` through these and through `d_mul`, and do not look for a
+  presentation. `lem:dr-polynomial-dga` and `lem:dr-presentation` are theorems about this operator.
+  `presentationEquiv_dQuotient` says that the operator descended from `k[X_a | a ∈ A]`, which is how
+  the blueprint defines the differential, is `d`.
+- **Differential ideals.** `differentialIdeal k I` is `I Ω^• + dI ∧ Ω^•` for any ideal. For a
+  surjection `φ` it is the kernel of `Forms.map φ` (`Forms.map_eq_zero_iff_of_surjective`), and
+  `quotientEquiv` and `quotientPowerEquiv` are the quotients. `lem:dr-presentation` is the case of
+  `presentationHom k A`, and `lem:dr-quotient` is the case of `A → A ⧸ (f)`, with
+  `differentialIdealPower_span` for its generators. The quotient is stated as `k`-linear equivalences
+  and the kernel of an algebra map, with no quotient ring.
+
+The conormal splitting requires only formal smoothness of `A/(f)`;
+`exists_normalDerivation_modulo` additionally uses formal smoothness of `A`. Both allow unit
+equations, the zero ring and disconnected algebras. The latter asserts `v(f) = 1 + f*h`, with
+normalization to one only after localizing at `v(f)`.
+
+The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Its opening
+names the exterior calculus, dg algebra, conormal splitting, normal derivations and modulo-divisor
+wedge exactness as formalized, and lists what remains. The first page, `Organization` and the
+chapter on the axioms say the instance is in progress. No nonzero value of `OrdinaryTheory` has
+been constructed. The build does not check that prose, so keep it current as nodes land. The PR
+that proves `thm:dr-instance` must update the sentences saying that no nonzero value
 of the structure has been constructed: on the first page, in the chapter on the axioms, on the
 status page and in `README.md`.
