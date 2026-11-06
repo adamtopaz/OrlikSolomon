@@ -6,7 +6,8 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.Examples.Parallel
-public import OrlikSolomon.Presentation.Cokernel
+public import OrlikSolomon.Examples.Sanity
+public import OrlikSolomon.Presentation.CokernelGrading
 
 /-!
 # Consumer regressions for the linear deletion cokernel
@@ -362,5 +363,39 @@ theorem concurrent_representative_independence (B : Type v) [CommRing B] :
     (OSAlgebra.mul_mem_deletionRange B (threeConcurrent k) (concurrentBase k)
       (OSAlgebra.generator_mem_deletionRange B (threeConcurrent k) (concurrentHorizontal k))
       (OSAlgebra.generator_mem_deletionRange B (threeConcurrent k) (concurrentDiagonal k)))
+
+/-- The shifted `(0,0) → (1,1)` component of the singleton lift with characteristic-two
+Laurent coefficients. Both source and target retain the actual quotient's scalar structures. -/
+def singlePointComponentZModTwo :
+    OSAlgebra.bigrading ((singlePoint (ZMod 2)).restriction (singlePointLabel (ZMod 2)))
+        (Sanity.laurentWeight (ZMod 2)) (0, 0) →ₗ[ZMod 2]
+      OSAlgebra.cokernelGrading (singlePoint (ZMod 2)) (Sanity.laurentWeight (ZMod 2))
+        (singlePointLabel (ZMod 2)) (1, 1) :=
+  (OSAlgebra.restrictionToCokernel_isHomogeneous (singlePoint (ZMod 2))
+    (Sanity.laurentWeight (ZMod 2)) (singlePointLabel (ZMod 2))).component rfl
+
+/-- The characteristic-two component map is genuinely nonzero: it sends the homogeneous unit
+to the nonzero class of the deleted generator. -/
+theorem singlePointComponentZModTwo_ne_zero : singlePointComponentZModTwo ≠ 0 := by
+  intro h
+  have h' := LinearMap.congr_fun h
+    ⟨1, SetLike.one_mem_graded (OSAlgebra.bigrading
+      ((singlePoint (ZMod 2)).restriction (singlePointLabel (ZMod 2)))
+      (Sanity.laurentWeight (ZMod 2)))⟩
+  have hv := congrArg Subtype.val h'
+  change OSAlgebra.restrictionToCokernel (LaurentPolynomial (ZMod 2))
+    (singlePoint (ZMod 2)) (singlePointLabel (ZMod 2)) 1 = 0 at hv
+  exact singlePoint_restriction_one_ne_zero (LaurentPolynomial (ZMod 2)) hv
+
+/-- The same component API elaborates when both scalar rings are the zero ring in the same
+universe; every shifted component is zero. -/
+theorem singlePoint_component_zero (i : ℤ × ℤ) :
+    (OSAlgebra.restrictionToCokernel_isHomogeneous (singlePoint k)
+      Sanity.zeroWeight.{0, 0} (singlePointLabel k)).component
+        (i := i) (j := i + (1, 1)) rfl = 0 := by
+  apply LinearMap.ext
+  intro x
+  apply Subtype.ext
+  exact (Module.subsingleton PUnit _).elim _ _
 
 end OrlikSolomon.PresentationExamples
