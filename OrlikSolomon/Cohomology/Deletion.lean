@@ -405,9 +405,9 @@ end ShortExact
 
 section Generation
 
-/-- The span of a family that spans is carried into a submodule `S` by a linear map as soon as the
-members of the family are. This is what replaces a false assumption that an element of a span is a
-single monomial. -/
+/-- A linear map carries everything into a submodule `S` as soon as it carries a spanning family
+into `S`. This is the span induction of `thm:generation`: it applies to `B`-combinations of
+monomials, and a generated class need not be a single monomial. -/
 private lemma map_mem_of_span_eq_top {B M N ι : Type*} [Semiring B] [AddCommMonoid M]
     [AddCommMonoid N] [Module B M] [Module B N] (g : M →ₗ[B] N) {v : ι → M}
     (hv : Submodule.span B (Set.range v) = ⊤) {S : Submodule B N} (h : ∀ i, g (v i) ∈ S) (y : M) :
