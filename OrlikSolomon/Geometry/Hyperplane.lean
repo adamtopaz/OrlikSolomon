@@ -347,15 +347,15 @@ section AffineEquiv
 
 variable {W : Type u} [AddCommGroup W] [Module k W] (e : W ≃ᵃ[k] V)
 
-/-- Pulling back along an affine equivalence and then along its inverse does nothing. -/
-@[simp]
+/-- Pulling back along an affine equivalence and then along its inverse does nothing. This is not a
+`simp` lemma, because Mathlib's `AffineSubspace.comap_symm` rewrites its left side first. -/
 theorem comap_comap_symm (X : AffineSubspace k V) :
     (X.comap (e : W →ᵃ[k] V)).comap (e.symm : V →ᵃ[k] W) = X := by
   ext x
   simp only [AffineSubspace.mem_comap, AffineEquiv.coe_coe, AffineEquiv.apply_symm_apply]
 
-/-- Pulling back along the inverse of an affine equivalence and then along it does nothing. -/
-@[simp]
+/-- Pulling back along the inverse of an affine equivalence and then along it does nothing. This is
+not a `simp` lemma, because Mathlib's `AffineSubspace.comap_symm` rewrites its left side first. -/
 theorem comap_symm_comap (X : AffineSubspace k W) :
     (X.comap (e.symm : V →ᵃ[k] W)).comap (e : W →ᵃ[k] V) = X := by
   ext x

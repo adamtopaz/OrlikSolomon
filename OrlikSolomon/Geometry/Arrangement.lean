@@ -231,8 +231,8 @@ theorem comap_eq_bot_or_mem_comap (φ : W →ᵃ[k] V) (hK : K ∈ 𝒜) (h : K.
   · exact Or.inr (mem_comap.2 ⟨hyp, K, hK, rfl⟩)
 
 /-- Pulling back along an affine equivalence loses no hyperplane: the hyperplanes of `𝒜.comap e` are
-exactly the preimages of those of `𝒜`. -/
-@[simp]
+exactly the preimages of those of `𝒜`. This is not a `simp` lemma, because `mem_comap` rewrites its
+left side first. -/
 theorem comap_mem_comap_affineEquiv (e : W ≃ᵃ[k] V) :
     K.comap (e : W →ᵃ[k] V) ∈ 𝒜.comap (e : W →ᵃ[k] V) ↔ K ∈ 𝒜 := by
   rw [mem_comap]
