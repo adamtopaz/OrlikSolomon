@@ -24,7 +24,9 @@ without agreeing it first. If an issue has no label, add yours before you start.
 | Cohomology and the first induction   | Claude | #11, #12, #13 |
 | The Orlik–Solomon algebra            | Codex  | #14, #17 |
 | Combinatorics and the bridge         | Codex  | #21, #22 |
-| Integration, to be assigned later    | —      | #16, #18, #20, #23, #24 |
+| Realization and the affine theorem   | Claude | #16, #18 |
+| The projective theorem, regressions  | Codex  | #20, #23 |
+| The book's prose                     | Claude | #24 |
 
 ## Reviews
 

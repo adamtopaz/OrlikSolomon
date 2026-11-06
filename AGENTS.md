@@ -26,8 +26,8 @@ Read these before working:
    blueprint.
 3. **This project stands alone.** Do not read or borrow from other directories under
    `~/projects/autoformalization/`. Search only this repository and its dependencies.
-4. **No unproved mathematics on `main`.** No `sorry`, `admit`, `axiom`, `native_decide`
-   or `unsafe`. Do not weaken a statement to make it provable. A branch may contain
+4. **No unproved mathematics on `main`.** No `sorry`, `admit`, `axiom`, `native_decide`,
+   `unsafe` or `partial`. Do not weaken a statement to make it provable. A branch may contain
    `sorry` while in progress, but a PR may not.
 5. **Conclusions are never assumptions.** The cohomology structure holds only the axioms
    the blueprint lists (C1–C5). No field may assert logarithmic generation, arrangement
