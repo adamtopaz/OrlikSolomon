@@ -117,7 +117,7 @@ theorem coe_tensorProductGradingEquiv (i : ι × κ) (x : (ℳ i.1) ⊗[R] (𝒩
       TensorProduct.map (ℳ i.1).subtype (𝒩 i.2).subtype x := rfl
 
 /-- The product grading decomposes the tensor product without any flatness hypothesis. -/
-instance tensorProductGrading_decomposition : Decomposition (tensorProductGrading ℳ 𝒩) := by
+instance tensorProductGradingDecomposition : Decomposition (tensorProductGrading ℳ 𝒩) := by
   let e := tensorProductDecomposeEquiv ℳ 𝒩 ≪≫ₗ
     congrLinearEquiv (tensorProductGradingEquiv ℳ 𝒩)
   have h : (coeLinearMap (tensorProductGrading ℳ 𝒩)) ∘ₗ e = LinearMap.id := by
@@ -157,7 +157,6 @@ theorem mem_transportGrading_iff {i : ι} {n : N} :
   rfl
 
 /-- The equivalence sends each original homogeneous component onto its transported component. -/
-@[simp]
 theorem apply_mem_transportGrading_iff {i : ι} {m : M} :
     e m ∈ transportGrading ℳ e i ↔ m ∈ ℳ i := by
   simp only [mem_transportGrading_iff, e.symm_apply_apply]
@@ -173,7 +172,7 @@ theorem coe_transportGradingEquiv (i : ι) (m : ℳ i) :
 variable [DecidableEq ι] [Decomposition ℳ]
 
 /-- Transport preserves the internal direct-sum decomposition. -/
-instance transportGrading_decomposition : Decomposition (transportGrading ℳ e) := by
+instance transportGradingDecomposition : Decomposition (transportGrading ℳ e) := by
   apply DirectSum.IsInternal.chooseDecomposition
   apply DirectSum.isInternal_submodule_of_iSupIndep_of_iSup_eq_top
   · exact (Decomposition.isInternal ℳ).submodule_iSupIndep.map_orderIso
@@ -191,7 +190,7 @@ variable {R A C ι : Type*} [CommRing R] [Ring A] [Ring C] [Algebra R A] [Algebr
   (e : A ≃ₐ[R] C)
 
 /-- Transport an internal algebra grading along an algebra equivalence. -/
-instance transportGrading_gradedAlgebra : GradedAlgebra (transportGrading 𝒜 e.toLinearEquiv) where
+instance transportGradingGradedAlgebra : GradedAlgebra (transportGrading 𝒜 e.toLinearEquiv) where
   one_mem := by
     rw [mem_transportGrading_iff]
     change e.symm 1 ∈ 𝒜 0
@@ -215,7 +214,7 @@ variable {R B A ι κ : Type*} [CommSemiring R] [Semiring B] [Semiring A]
   (ℬ : ι → Submodule R B) (𝒜 : κ → Submodule R A) [GradedAlgebra ℬ] [GradedAlgebra 𝒜]
 
 /-- The product grading on a tensor product of graded algebras respects multiplication. -/
-instance tensorProductGrading_gradedAlgebra : GradedAlgebra (tensorProductGrading ℬ 𝒜) where
+instance tensorProductGradingGradedAlgebra : GradedAlgebra (tensorProductGrading ℬ 𝒜) where
   one_mem := by
     change (1 : B ⊗[R] A) ∈ tensorProductGrading ℬ 𝒜 (0, 0)
     rw [Algebra.TensorProduct.one_def]
@@ -284,7 +283,7 @@ theorem map_mem_coarsenGrading {N : Type*} [AddCommGroup N] [Module R N]
 variable [DecidableEq ι] [DecidableEq κ] [Decomposition ℳ]
 
 /-- Coarsening preserves the internal direct-sum decomposition. -/
-instance coarsenGrading_decomposition : Decomposition (coarsenGrading ℳ f) := by
+instance coarsenGradingDecomposition : Decomposition (coarsenGrading ℳ f) := by
   apply DirectSum.IsInternal.chooseDecomposition
   apply DirectSum.isInternal_submodule_of_iSupIndep_of_iSup_eq_top
   · rw [iSupIndep_def]
@@ -310,7 +309,7 @@ variable {R A ι κ : Type*} [CommRing R] [Ring A] [Algebra R A]
   (𝒜 : ι → Submodule R A) [GradedAlgebra 𝒜] (f : ι →+ κ)
 
 /-- An additive map of degrees coarsens an internal algebra grading. -/
-instance coarsenGrading_gradedAlgebra : GradedAlgebra (coarsenGrading 𝒜 f) where
+instance coarsenGradingGradedAlgebra : GradedAlgebra (coarsenGrading 𝒜 f) where
   one_mem := by
     simpa only [map_zero] using mem_coarsenGrading 𝒜 f (SetLike.one_mem_graded 𝒜)
   mul_mem i j x y hx hy := by
@@ -427,7 +426,7 @@ end Components
 variable [GradedAlgebra ℬ] [GradedAlgebra 𝒜]
 
 /-- The weighted tensor bigrading is an internal algebra grading. -/
-instance weightedTensorGrading_gradedAlgebra : GradedAlgebra (weightedTensorGrading ℬ 𝒜) :=
+instance weightedTensorGradingGradedAlgebra : GradedAlgebra (weightedTensorGrading ℬ 𝒜) :=
   inferInstanceAs (GradedAlgebra (coarsenGrading (tensorProductGrading ℬ 𝒜)
     weightedTensorDegree))
 

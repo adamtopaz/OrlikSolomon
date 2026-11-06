@@ -42,7 +42,6 @@ theorem coefficientMap_generator (H : 𝒜) :
     coefficientMap R B 𝒜 (generator R 𝒜 H) = generator B 𝒜 H :=
   lift_generator _ _ H
 
-@[simp]
 theorem coefficientMap_word (I : List 𝒜) :
     coefficientMap R B 𝒜 (word (generator R 𝒜) I) = word (generator B 𝒜) I := by
   simp

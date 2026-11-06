@@ -129,12 +129,10 @@ protected theorem induction {motive : OSAlgebra B 𝒜 → Prop}
   obtain ⟨x, rfl⟩ := quotient_surjective B 𝒜 x
   exact quotient x
 
-@[simp]
 theorem quotient_word (I : List 𝒜) :
     quotient B 𝒜 (word (exteriorGen B) I) = word (generator B 𝒜) I := by
   simp
 
-@[simp]
 theorem quotient_wordBoundary (I : List 𝒜) :
     quotient B 𝒜 (wordBoundary (exteriorGen B) I) = wordBoundary (generator B 𝒜) I := by
   simp
@@ -268,7 +266,6 @@ def emptyEquiv : OSAlgebra B (∅ : Arrangement k V) ≃ₐ[B] B :=
     (Subsingleton.elim _ _)
     (algHom_ext fun H ↦ isEmptyElim H)
 
-@[simp]
 theorem emptyEquiv_algebraMap (b : B) :
     emptyEquiv B (k := k) (V := V) (algebraMap B (OSAlgebra B ∅) b) = b :=
   (emptyEquiv B).commutes b
