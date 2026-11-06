@@ -106,7 +106,7 @@ Thus each $`H^{p,w}(U_{\mathcal{A}})` is a direct sum of $`b_p(\mathcal{A})` cop
 # The Möbius function
 
 The usual form of these numbers, in terms of the Möbius function of the intersection poset, is a useful final combinatorial statement and is not used anywhere in the proof of the ring equivalence.
-It has not been formalized: the box below is a statement of intent, and it is tracked by [issue 66](https://github.com/adamtopaz/OrlikSolomon/issues/66).
+It is not formalized yet: the box below is a statement of intent, and the work is tracked by [issue 66](https://github.com/adamtopaz/OrlikSolomon/issues/66).
 
 :::node "lem:mobius"
 For the poset of nonempty intersections, ordered by reverse inclusion,

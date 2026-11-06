@@ -287,7 +287,7 @@ These are mathematical arguments and not formal proofs.
 So the library does not yet contain a theorem about singular or $`\ell`-adic cohomology.
 To obtain one, you must construct a value of the structure, and {bp "lem:standard-bridge"}[the bridge] reduces this to the familiar degreewise inputs: groups, products, pullbacks, localization with supports and oriented purity.
 {ref "axioms"}[The chapter on the axioms] explains each field, the checks and the bridge.
-A de Rham instance is planned, in a separate blueprint, `de_rham_instance_blueprint.tex`, tracked by [issue 71](https://github.com/adamtopaz/OrlikSolomon/issues/71).
+A de Rham instance is planned, in the [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), as described at the end of this page.
 It is not part of what is proved here.
 
 The axioms are deliberately much weaker than the conclusion.
