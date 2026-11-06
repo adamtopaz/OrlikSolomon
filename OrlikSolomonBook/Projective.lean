@@ -73,12 +73,27 @@ Pullback along the section $`t=1` recovers $`b`, and the residue recovers $`c`.
 In the formalization, every smooth $`X` is suitable.
 :::
 
-:::node "thm:projective"
+:::node "thm:projective" (decl := OrlikSolomon.OrdinaryTheory.projectiveEquiv) (decl := OrlikSolomon.OrdinaryTheory.map_projectiveToCone_projectiveEquiv) (decl := OrlikSolomon.OrdinaryTheory.projectiveRealization_unique) (decl := OrlikSolomon.OrdinaryTheory.toAlgHom_projectiveEquiv_unique) (decl := OrlikSolomon.OrdinaryTheory.projectiveEquiv_difference_of_ker_eq) (decl := OrlikSolomon.OrdinaryTheory.projectiveEquiv_eq_map_section) (decl := OrlikSolomon.OrdinaryTheory.projectiveEquiv_difference) (decl := OrlikSolomon.OrdinaryTheory.logClass_projectiveRatioUnit_eq_of_ker_eq) (decl := OrlikSolomon.OrdinaryTheory.projectiveEquiv_symm_logClass_ratio) (decl := OrlikSolomon.OrdinaryTheory.isHomogeneousOfShift_projectiveEquiv) (decl := OrlikSolomon.OrdinaryTheory.isHomogeneousOfShift_projectiveEquiv_symm) (decl := OrlikSolomon.OrdinaryTheory.projectiveComponentEquiv) (decl := OrlikSolomon.OrdinaryTheory.projectiveDiagonalEquiv) (decl := OrlikSolomon.OrdinaryTheory.projectiveDiagonalEquiv_difference) (decl := OrlikSolomon.OrdinaryTheory.projectiveDiagonalEquiv_of_mem_degree)
 For a nonempty split projective arrangement there is a canonical bigrading-preserving equivalence from $`\overline{\operatorname{OS}}_B(\mathcal{P})` to $`C(U_{\mathcal{P}})`, sending $`e_i-e_j` to $`[\ell_i/\ell_j]`.
 It is independent of the equations and of the hyperplane chosen at infinity.
+On diagonal components it gives the canonical graded $`R`-algebra equivalence from the projective algebra over $`R` to $`\bigoplus_{q\geq0} H^{q,q}(U_{\mathcal{P}})`.
+
+The map is uniquely characterized by compatibility with affine realization after pullback to the cone.
+The section $`t=1` makes this pullback injective, and differences descend because their logarithms are ratios.
+For surjectivity, pull back to any decone and use the already proved logarithmic generation there.
+Thus the hyperplane at infinity occurs in the proof, while the resulting map is canonical.
+The diagonal theorem uses coefficient extension from $`R` and the affine diagonal theorem on the cone; injectivity detects the boundary kernel without a flatness hypothesis.
 :::
 
-:::node "cor:projective-betti"
+:::node "cor:projective-betti" (decl := OrlikSolomon.ProjectiveArrangement.poincarePolynomial) (decl := OrlikSolomon.ProjectiveArrangement.poincarePolynomial_eq_decone) (decl := OrlikSolomon.ProjectiveArrangement.poincarePolynomial_cone) (decl := OrlikSolomon.ProjectiveArrangement.bettiNumber_one) (decl := OrlikSolomon.OrdinaryTheory.projectiveDeconeComponentEquiv) (decl := OrlikSolomon.OrdinaryTheory.exists_logMonomialBasis_decone) (decl := OrlikSolomon.OrdinaryTheory.nonempty_projective_grading_linearEquiv_bettiNumber) (decl := OrlikSolomon.OrdinaryTheory.nonempty_basis_projective_grading_bettiNumber) (decl := OrlikSolomon.OrdinaryTheory.nonempty_basis_projective_grading_one)
 The projective Betti polynomial is the decone polynomial and satisfies $`P_{c\mathcal{P}}(t)=(1+t)P_{\mathcal{P}}(t)`.
 In particular $`b_1(U_{\mathcal{P}})=|\mathcal{P}|-1`.
+
+The polynomial identity is proved directly from the subset sum by pairing subsets with and without the hyperplane at infinity.
+Pullback to any decone then identifies the actual cohomological pieces with those of that affine arrangement.
+Thus for $`p\geq0`, $`H^{p,w}(U_{\mathcal{P}})` is a direct sum of $`b_p` copies of $`B_{w-p}`, and $`H^{q,q}` has an $`R`-basis with exactly $`b_q` vectors.
+These module equivalences and bases require choices.
+Over the zero coefficient ring they hold for every cardinality, so they do not determine $`b_q`.
+Here $`b_q` is the polynomial coefficient, which counts the words of length $`q` in a recursive logarithmic basis of any decone.
+The word-count theorem records this count, though over the zero ring its existence statement alone also holds for other counts.
 :::

@@ -6,6 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.Examples.Presentation
+public import OrlikSolomon.Combinatorics.Betti
 
 /-!
 # Two parallel affine lines
@@ -102,6 +103,19 @@ theorem parallelLines_pairwise_disjoint :
   · rw [hH, hK]
     exact verticalLine_inf_eq_bot (one_ne_zero : (1 : k) ≠ 0)
   · exact (hne (Subtype.ext (hH.trans hK.symm))).elim
+
+/-- The two parallel lines contribute two degree-one terms and no degree-two term. -/
+theorem poincarePolynomial_parallelLines :
+    (parallelLines k).poincarePolynomial = 1 + 2 * Polynomial.X := by
+  classical
+  have hne : verticalLine (0 : k) ≠ verticalLine 1 := fun h ↦
+    zeroLine_ne_oneLine (Subtype.ext h)
+  have hplanes : (parallelLines k).hyperplanes = {verticalLine 0, verticalLine 1} := by
+    ext H
+    simp only [Arrangement.mem_hyperplanes, mem_parallelLines, Finset.mem_insert,
+      Finset.mem_singleton]
+  exact Arrangement.poincarePolynomial_pair_disjoint _ hne hplanes
+    (verticalLine_inf_eq_bot zero_ne_one)
 
 /-- The generators of the two parallel lines have zero product. -/
 theorem parallelLines_product (B : Type v) [CommRing B] :
