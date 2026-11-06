@@ -45,6 +45,10 @@ instance : AddCommGroup (DeletionCokernel B 𝒜 H) :=
 instance {R : Type*} [CommSemiring R] [Algebra R B] : Module R (DeletionCokernel B 𝒜 H) :=
   inferInstanceAs (Module R (OSAlgebra B 𝒜 ⧸ deletionRange B 𝒜 H))
 
+instance {R S : Type*} [CommSemiring R] [CommSemiring S] [Algebra R B] [Algebra S B]
+    [SMul R S] [IsScalarTower R S B] : IsScalarTower R S (DeletionCokernel B 𝒜 H) :=
+  inferInstanceAs (IsScalarTower R S (OSAlgebra B 𝒜 ⧸ deletionRange B 𝒜 H))
+
 /-- The linear quotient map to the deletion cokernel. -/
 def cokernelMk : OSAlgebra B 𝒜 →ₗ[B] DeletionCokernel B 𝒜 H :=
   (deletionRange B 𝒜 H).mkQ
