@@ -230,6 +230,17 @@ theorem comap_eq_bot_or_mem_comap (φ : W →ᵃ[k] V) (hK : K ∈ 𝒜) (h : K.
   · exact absurd ht h
   · exact Or.inr (mem_comap.2 ⟨hyp, K, hK, rfl⟩)
 
+/-- Pulling back along an affine equivalence loses no hyperplane: the hyperplanes of `𝒜.comap e` are
+exactly the preimages of those of `𝒜`. -/
+@[simp]
+theorem comap_mem_comap_affineEquiv (e : W ≃ᵃ[k] V) :
+    K.comap (e : W →ᵃ[k] V) ∈ 𝒜.comap (e : W →ᵃ[k] V) ↔ K ∈ 𝒜 := by
+  rw [mem_comap]
+  constructor
+  · rintro ⟨-, K', hK', h⟩
+    rwa [← comap_affineEquiv_injective e h]
+  · exact fun hK ↦ ⟨(𝒜.isHyperplane hK).comap_affineEquiv e, K, hK, rfl⟩
+
 end Comap
 
 /-- The restriction `𝒜''` of an arrangement to `H`, as an arrangement in the vector space
@@ -454,6 +465,16 @@ theorem codim_inter [FiniteDimensional k V] {I : List 𝒜} (h : inter I ≠ ⊥
   rw [codim_iInf_of_isEquation (fun H ↦ isEquation_equation (𝒜.isHyperplane H.1.2)) h,
     Set.image_eq_range]
   rfl
+
+/-- A relabeling along an affine map: if `σ` sends each hyperplane of `𝒜` to its preimage under
+`φ`, then the intersection of the relabeled list is the preimage of the intersection. -/
+theorem inter_map_of_forall_coe_eq_comap {W : Type u} [AddCommGroup W] [Module k W]
+    {𝒟 : Arrangement k W} {φ : W →ᵃ[k] V} {σ : 𝒜 → 𝒟}
+    (hσ : ∀ K, (σ K : AffineSubspace k W) = (K : AffineSubspace k V).comap φ) (I : List 𝒜) :
+    inter (I.map σ) = (inter I).comap φ := by
+  induction I with
+  | nil => simp [AffineSubspace.comap_top]
+  | cons K I ih => simp [AffineSubspace.comap_inf, ih, hσ]
 
 /-- Restricting the representatives of a list of retained hyperplanes gives back their
 intersection. -/

@@ -20,6 +20,7 @@ public import OrlikSolomon.Examples.CoordinatePolynomials
 public import OrlikSolomon.Examples.Parallel
 public import OrlikSolomon.Examples.Polynomials
 public import OrlikSolomon.Examples.Presentation
+public import OrlikSolomon.Examples.Realization
 public import OrlikSolomon.Examples.Sanity
 public import OrlikSolomon.Geometry.Arrangement
 public import OrlikSolomon.Geometry.Chart
@@ -45,6 +46,7 @@ public import OrlikSolomon.Presentation.CokernelData.Words
 public import OrlikSolomon.Presentation.CokernelGrading
 public import OrlikSolomon.Presentation.Generators
 public import OrlikSolomon.Presentation.Grading
+public import OrlikSolomon.Presentation.Realization
 public import OrlikSolomon.Presentation.RepresentativeRelations
 
 /-!

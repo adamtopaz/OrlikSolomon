@@ -47,8 +47,10 @@ The structure `RelationTarget` packages what the two relation lemmas use: a list
 The library numbers the functions in the second case from $`0`, so its slice is $`\{y_0=1\}`.
 :::
 
-:::node "lem:empty-relation"
+:::node "lem:empty-relation" (decl := OrlikSolomon.OrdinaryTheory.word_logClass_eq_zero) (decl := OrlikSolomon.OrdinaryTheory.log_emptyRelation) (decl := OrlikSolomon.OrdinaryTheory.log_emptyRelation_of_isEquation)
 If $`H_1,\ldots,H_s` have empty intersection, then $`[f_1]\cdots[f_s]=0`.
+The library states this for the chosen equations, as `log_emptyRelation`, and for any choice of equations, as `log_emptyRelation_of_isEquation`.
+Both come from `word_logClass_eq_zero`, which is also the proof of {bp "lem:dependent-relation"}[]: a word of logarithmic classes vanishes as soon as its units factor through the complement of an arrangement on a space of dimension smaller than the length of the word.
 :::
 
 :::node "lem:boundary-expansion" (decl := OrlikSolomon.IsExteriorFamily.word_sub_eq_wordBoundary_cons)
@@ -56,16 +58,22 @@ For square-zero, pairwise anticommuting elements $`x_1,\ldots,x_s`,
 $$`(x_2-x_1)\cdots(x_s-x_1)=\sum_{j=1}^s(-1)^{j-1}x_1\cdots\widehat{x_j}\cdots x_s.`
 :::
 
-:::node "lem:dependent-relation"
+:::node "lem:dependent-relation" (decl := OrlikSolomon.OrdinaryTheory.word_logClass_eq_zero) (decl := OrlikSolomon.OrdinaryTheory.log_dependentRelation) (decl := OrlikSolomon.OrdinaryTheory.log_dependentRelation_of_isEquation)
 For a nonempty intersection of codimension less than $`s`, the boundary relation evaluated on the logarithmic classes is zero.
+The hypothesis is `Arrangement.IsDependent`, which contains the nonempty-intersection guard.
 :::
 
-:::node "def:realization"
+:::node "def:realization" (decl := OrlikSolomon.OrdinaryTheory.isFamily_logClass_equationUnit) (decl := OrlikSolomon.OrdinaryTheory.realization) (decl := OrlikSolomon.OrdinaryTheory.realization_generator) (decl := OrlikSolomon.OrdinaryTheory.realization_generator_of_isEquation) (decl := OrlikSolomon.OrdinaryTheory.realization_generator_zeroLocus) (decl := OrlikSolomon.OrdinaryTheory.isHomogeneousOfShift_realization)
 The homogeneous algebra map $`\Phi_{\mathcal{A}}:\operatorname{OS}_B(\mathcal{A})\to C(U_{\mathcal{A}})` sends $`e_H` to $`[f_H]`.
 It exists by the universal property of the exterior algebra and the two relation lemmas.
+The formula for the generators is `realization_generator` for the chosen equation and `realization_generator_of_isEquation` for any other.
+Homogeneity, with $`e_H` in bidegree $`(1,1)` and $`B_w` in bidegree $`(0,w)`, is `isHomogeneousOfShift_realization`.
 :::
 
-:::node "lem:realization-basic"
+:::node "lem:realization-basic" (decl := OrlikSolomon.OrdinaryTheory.surjective_realization) (decl := OrlikSolomon.OrdinaryTheory.realization_generator_of_isEquation) (decl := OrlikSolomon.OrdinaryTheory.realization_eq_lift) (decl := OrlikSolomon.OrdinaryTheory.realization_comp_deletionMap) (decl := OrlikSolomon.OrdinaryTheory.realization_comp_map) (decl := OrlikSolomon.OSAlgebra.comapEquiv) (decl := OrlikSolomon.SmoothAlg.complementIso) (decl := OrlikSolomon.OrdinaryTheory.realization_comp_comapEquiv)
 The map $`\Phi_{\mathcal{A}}` is surjective and independent of the chosen equations.
 It commutes with the deletion algebra map and the open pullback, with affine coordinate changes, and with relabeling the arrangement.
+The label of a generator is its hyperplane, so a relabeling that preserves hyperplanes is an equality of arrangements, which is the case of `realization_comp_map` for an inclusion that is an equality.
+The substantive case is a bijection between the hyperplanes of two arrangements given by pullback along an affine equivalence.
+The maps `comapEquiv` and `complementIso` take such an equivalence, a coordinate change being the case where the target is the pullback of the source, and `realization_comp_comapEquiv` is the square.
 :::

@@ -25,7 +25,8 @@ complement can have no `k`-points while its ring is nonzero, see `Sanity.twoPoin
 * `ComplementRing.lift`, `ComplementRing.map`, `ComplementRing.inclusion`: its universal property,
   and the maps of complements given by an affine map and by a sub-arrangement.
 * `SmoothAlg.complement 𝒜`: the object `O(U_𝒜)` of `SmoothAlg k`, with `SmoothAlg.toComplement`,
-  `SmoothAlg.complementLift`, `SmoothAlg.complementMap` and `SmoothAlg.complementInclusion`.
+  `SmoothAlg.complementLift`, `SmoothAlg.complementMap`, `SmoothAlg.complementIso` and
+  `SmoothAlg.complementInclusion`.
 * `SmoothAlg.complementUnit`, `SmoothAlg.equationUnit`: the units of `O(U_𝒜)` given by equations.
 
 ## Main results
@@ -503,6 +504,31 @@ lemma complementMap_comp (φ : W →ᵃ[k] V) (ψ : U →ᵃ[k] W)
       complementMap (φ.comp ψ) 𝒜 𝒞 (Covers.comap_comp h₁ h₂) := by
   apply complement_hom_ext
   simp [affinePull_comp]
+
+variable (𝒜 ℬ) in
+/-- An affine equivalence `e : W ≃ V` that identifies the hyperplanes of `𝒜` with those of `ℬ` by
+pullback identifies the complements. This covers affine coordinate changes, for `ℬ = 𝒜.comap e`,
+and the identity of `V`, for two arrangements that are equal.
+
+Blueprint: `lem:geometry-adapter`. -/
+@[simps hom]
+def complementIso (e : W ≃ᵃ[k] V) (h : ∀ K, K ∈ 𝒜 ↔ K.comap (e : W →ᵃ[k] V) ∈ ℬ) :
+    complement 𝒜 ≅ complement ℬ where
+  hom := complementMap (e : W →ᵃ[k] V) 𝒜 ℬ fun K hK ↦ .of_mem ((h K).1 hK)
+  inv := complementMap (e.symm : V →ᵃ[k] W) ℬ 𝒜 fun L hL ↦
+    .of_mem ((h _).2 (by rwa [comap_symm_comap]))
+  hom_inv_id := by
+    have hid : (e : W →ᵃ[k] V).comp (e.symm : V →ᵃ[k] W) = AffineMap.id k V := by
+      ext x
+      simp
+    apply complement_hom_ext
+    simp [hid]
+  inv_hom_id := by
+    have hid : (e.symm : V →ᵃ[k] W).comp (e : W →ᵃ[k] V) = AffineMap.id k W := by
+      ext x
+      simp
+    apply complement_hom_ext
+    simp [hid]
 
 end Map
 

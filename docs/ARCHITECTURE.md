@@ -63,6 +63,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/Sanity`              | the blueprint's regression examples |
 | `Examples/Presentation`        | two points of the affine line, the affine boundary guard, characteristic two and degenerate coefficients |
 | `Examples/Parallel`            | two parallel affine lines: product zero and generator difference nonzero |
+| `Examples/Realization`         | the realization map on two points over `F₂`, three concurrent lines, dimension zero, zero coefficients and `R = B` |
 
 `lem:geometry-adapter` has no module of its own: see the next section.
 
@@ -158,7 +159,8 @@ three rings. State results for every equation of `H`.
 - `𝒜.Covers L` says that `L` is empty or a hyperplane of `𝒜`. An affine function whose zero locus
   is covered is a unit on `U_𝒜`, namely `SmoothAlg.complementUnit`. An affine map `φ` induces
   `O(U_𝒜) ⟶ O(U_ℬ)` when `ℬ` covers the preimage of every hyperplane of `𝒜`, by
-  `SmoothAlg.complementMap`.
+  `SmoothAlg.complementMap`. An affine equivalence that identifies the hyperplanes of `𝒜` and `ℬ` by
+  pullback gives the isomorphism `SmoothAlg.complementIso`.
 - Maps that are not affine are built on the ring level with `CoordinateRing.fraction`, which is
   `v ↦ G v / u` for an affine `G` and a unit `u`, with `liftChart` to land in an affine subspace and
   `ComplementRing.lift` to pass to a complement, and are then wrapped with `SmoothAlg.ofHom`.
@@ -248,6 +250,11 @@ three rings. State results for every equation of `H`.
   `OSAlgebra.bigrading 𝒜 ℬ` has `R`-submodule pieces. It transports the weighted tensor
   grading along `OSAlgebra.baseChangeEquiv R B 𝒜`; `bigradingComponentEquiv` gives exterior
   degree `n` over `R` tensored with coefficient weight `w - n`. No flatness is assumed.
+- **Realization:** `T.realization 𝒜 : OSAlgebra B 𝒜 →ₐ[B] T.C.obj (complement 𝒜)` is `@[no_expose]`.
+  Its `simp` lemma on generators uses the chosen equations, and `realization_generator_of_isEquation`
+  gives any other. The label of a generator is its hyperplane, so relabeling is an equality of
+  arrangements or, in general, a bijection of hyperplanes by pullback along an affine equivalence,
+  which is what `OSAlgebra.comapEquiv` and `SmoothAlg.complementIso` take.
 - **Deletion cokernel:** `OSAlgebra.DeletionCokernel B 𝒜 H` is the quotient of the
   `B`-module `OSAlgebra B 𝒜` by `deletionRange B 𝒜 H`, with quotient map `cokernelMk`.
   It carries module structures over coefficient scalar rings, but no quotient-algebra
