@@ -21,9 +21,32 @@ name = "verso"
 git = "https://github.com/leanprover/verso"
 rev = "v4.36.0-rc2"
 
+# The audit behind `scripts/check.sh`. It reads the built library at run time, so neither
+# depends on the other.
+[[lean_exe]]
+name = "audit"
+root = "Audit"
+srcDir = "scripts"
+
 # The formalization: a library that does not depend on Verso.
 [[lean_lib]]
 name = "OrlikSolomon"
 
 [lean_lib.leanOptions]
 weak.linter.mathlibStandardSet = true
+
+# The exposition: a Verso book tied to the code. Only `lake build OrlikSolomonBook` and
+# `lake exe book` compile Verso, and the default target above never does.
+[[lean_lib]]
+name = "OrlikSolomonBook"
+# The book reads the blueprint's labels while it is elaborated.
+needs = ["blueprintSource"]
+
+[[input_dir]]
+name = "blueprintSource"
+path = "blueprint"
+text = true
+
+[[lean_exe]]
+name = "book"
+root = "OrlikSolomonBook.Main"
