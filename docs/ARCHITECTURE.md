@@ -37,7 +37,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Cohomology/DeletionPair`      | `lem:log-residue` for deletion pairs, and the residue and Gysin maps of a deletion, typed |
 | `Cohomology/Bridge`            | `lem:standard-bridge` |
 | `Cohomology/Logarithms`        | `lem:gm`, `def:log`, `lem:log-basic`, `lem:log-mul`, `lem:log-residue`, `lem:gm-product` |
-| `Cohomology/Deletion`          | `lem:restriction-surj`, `lem:ses`, `thm:generation`, `thm:cohom-basis` |
+| `Cohomology/Deletion`          | `lem:restriction-surj`, `lem:ses`, `thm:generation`, `thm:cohom-basis`, the count of basis words in `thm:betti`, the last sentence of C3 in `def:cohomology` |
 | `Presentation/Basic`           | `def:os`, the ordinary grading and deletion map of `lem:os-basic` |
 | `Presentation/BaseChange`      | coefficient base change in `lem:os-basic` |
 | `Presentation/Generators`      | degree-one generator independence used in `cor:projective-betti` |
@@ -49,7 +49,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine`, `cor:ordinary` |
 | `Presentation/Projective`      | `thm:projective` |
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
-| `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `thm:betti`, `lem:mobius`, `cor:projective-betti` |
+| `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `lem:mobius` |
+| `Combinatorics/Multiplicities` | the rest of `thm:betti`, `cor:projective-betti` |
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
 | `Examples/Polynomials`         | polynomial regression examples |
@@ -244,6 +245,16 @@ Every field must hold in real theories, so check each one against singular cohom
 you add it. An unsatisfiable structure would make the main theorem vacuous. The docstrings of
 `OrdinaryTheory` record that check, which is by hand: only the coefficient axiom
 `R ≃ ℬ 0` of the model `B = R[t, t⁻¹]` is checked in Lean.
+
+`Cohomology/Deletion` is the first real audit of these axioms, and it does not import the
+presentation. `Generated`, `Bounded` and `IsDeletionShortExact` are predicates proved there for every
+arrangement, never fields. The basis is the structure `LogMonomialBasis` of `thm:cohom-basis`, which
+holds a finite index type, words and a `B`-basis of monomials. A basis does not determine how many of
+its words have a given length, since over the zero ring every family is a basis, so
+`exists_logMonomialBasis` also records that its recursive basis has `bettiNumber q` words of length
+`q`. **So `Cohomology/Deletion` imports `Combinatorics/Betti`, which must stay free of cohomology**,
+and what `thm:betti` and `cor:projective-betti` say about cohomology goes in
+`Combinatorics/Multiplicities`, above the structure theorems.
 
 `Examples/Sanity` contains the zero theory as a basic consistency check. It must have zero
 coefficients, because `R ≃ ℬ 0` and `B ≃ C(k)` must still hold. It tests the zero-ring edge case,
