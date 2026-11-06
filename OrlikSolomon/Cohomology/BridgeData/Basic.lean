@@ -107,6 +107,13 @@ abbrev Total (A : SmoothAlg k) := ⨁ i, D.H A i
 abbrev incl (A : SmoothAlg k) (i : ℤ × ℤ) : D.H A i →ₗ[R] D.Total A :=
   DirectSum.lof R _ (D.H A) i
 
+/-- Multiplication of classes from two degreewise summands is their indexed cup product. -/
+@[simp]
+lemma incl_mul_incl (A : SmoothAlg k) {i j : ℤ × ℤ} (x : D.H A i) (y : D.H A j) :
+    D.incl A i x * D.incl A j y =
+      D.incl A (i + j) (GradedMonoid.GMul.mul x y) :=
+  DirectSum.of_mul_of x y
+
 /-- The homogeneous coefficient maps, extended to the direct sum of the weights of `B`. -/
 def coeffSum (A : SmoothAlg k) : (⨁ w, ℬ w) →ₐ[R] D.Total A :=
   DirectSum.toAlgebra R _ (fun w ↦ (D.incl A (0, w)).comp (D.coeff A w))
