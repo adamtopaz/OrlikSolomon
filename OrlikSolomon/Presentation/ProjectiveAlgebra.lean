@@ -5,6 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
+public import OrlikSolomon.Grading.Restriction
 public import OrlikSolomon.Presentation.Boundary
 import Mathlib.Tactic.NoncommRing
 
@@ -25,6 +26,48 @@ the multiplication of an ordinary ungraded tensor product of algebras.
 noncomputable section
 
 universe u
+
+namespace OrlikSolomon.IsExteriorFamily
+
+/-- If words in a square-zero anticommuting family span an algebra, any coefficient subalgebra
+containing its differences from one generator spans the algebra together with its left multiple
+by that generator. -/
+theorem exists_mem_decomposition_of_sub_mem {I A B : Type*} [CommRing B] [Ring A]
+    [Algebra B A] {f : I → A} (hf : IsExteriorFamily f)
+    (hspan : Submodule.span B (Set.range (word f : List I → A)) = ⊤)
+    (S : Subalgebra B A) (H₀ : I) (hS : ∀ H, f H - f H₀ ∈ S) (x : A) :
+    ∃ b ∈ S, ∃ c ∈ S, x = b + f H₀ * c := by
+  have hword (I : List I) :
+      ∃ b ∈ S, ∃ c ∈ S, word f I = b + f H₀ * c := by
+    induction I with
+    | nil => exact ⟨1, S.one_mem, 0, S.zero_mem, by simp⟩
+    | cons H I ih =>
+      obtain ⟨b, hb, c, hc, hI⟩ := ih
+      let d := f H - f H₀
+      refine ⟨d * b, S.mul_mem (hS H) hb, b - d * c,
+        S.sub_mem hb (S.mul_mem (hS H) hc), ?_⟩
+      rw [word_cons, hI, mul_add, ← mul_assoc (f H),
+        hf.mul_eq_neg_mul_swap H H₀]
+      dsimp [d]
+      noncomm_ring
+      simp only [← mul_assoc, hf.mul_self, zero_mul, add_zero]
+  have hx : x ∈ Submodule.span B (Set.range (word f : List I → _)) := by
+    rw [hspan]
+    exact Submodule.mem_top
+  induction hx using Submodule.span_induction with
+  | mem x hx => obtain ⟨I, rfl⟩ := hx; exact hword I
+  | zero => exact ⟨0, S.zero_mem, 0, S.zero_mem, by simp⟩
+  | add x y _ _ hx hy =>
+    obtain ⟨b, hb, c, hc, rfl⟩ := hx
+    obtain ⟨b', hb', c', hc', rfl⟩ := hy
+    refine ⟨b + b', S.add_mem hb hb', c + c', S.add_mem hc hc', ?_⟩
+    noncomm_ring
+  | smul a x _ hx =>
+    obtain ⟨b, hb, c, hc, rfl⟩ := hx
+    exact ⟨a • b, S.smul_mem hb a, a • c, S.smul_mem hc a, by
+      rw [smul_add, mul_smul_comm]⟩
+
+end OrlikSolomon.IsExteriorFamily
 
 namespace OrlikSolomon.OSAlgebra
 
@@ -69,41 +112,6 @@ theorem generator_sub_generator_mem_projectiveAlgebra (h𝒜 : 𝒜.IsCentral) (
     generator B 𝒜 H - generator B 𝒜 K ∈ projectiveAlgebra B h𝒜 := by
   simp
 
-/-- Any coefficient subalgebra containing the differences from one generator spans the full
-algebra together with its left multiple by that generator. -/
-theorem exists_mem_decomposition_of_generator_sub_mem (S : Subalgebra B (OSAlgebra B 𝒜))
-    (H₀ : 𝒜) (hS : ∀ H, generator B 𝒜 H - generator B 𝒜 H₀ ∈ S) (x : OSAlgebra B 𝒜) :
-    ∃ b ∈ S, ∃ c ∈ S, x = b + generator B 𝒜 H₀ * c := by
-  have hword (I : List 𝒜) :
-      ∃ b ∈ S, ∃ c ∈ S, word (generator B 𝒜) I = b + generator B 𝒜 H₀ * c := by
-    induction I with
-    | nil => exact ⟨1, S.one_mem, 0, S.zero_mem, by simp⟩
-    | cons H I ih =>
-      obtain ⟨b, hb, c, hc, hI⟩ := ih
-      let d := generator B 𝒜 H - generator B 𝒜 H₀
-      refine ⟨d * b, S.mul_mem (hS H) hb, b - d * c,
-        S.sub_mem hb (S.mul_mem (hS H) hc), ?_⟩
-      rw [word_cons, hI, mul_add, ← mul_assoc (generator B 𝒜 H),
-        (isExteriorFamily_generator B 𝒜).mul_eq_neg_mul_swap H H₀]
-      dsimp [d]
-      noncomm_ring
-      simp only [← mul_assoc, generator_mul_self, zero_mul, add_zero]
-  have hx : x ∈ Submodule.span B (Set.range (word (generator B 𝒜) : List 𝒜 → _)) := by
-    rw [span_range_word]
-    exact Submodule.mem_top
-  induction hx using Submodule.span_induction with
-  | mem x hx => obtain ⟨I, rfl⟩ := hx; exact hword I
-  | zero => exact ⟨0, S.zero_mem, 0, S.zero_mem, by simp⟩
-  | add x y _ _ hx hy =>
-    obtain ⟨b, hb, c, hc, rfl⟩ := hx
-    obtain ⟨b', hb', c', hc', rfl⟩ := hy
-    refine ⟨b + b', S.add_mem hb hb', c + c', S.add_mem hc hc', ?_⟩
-    noncomm_ring
-  | smul a x _ hx =>
-    obtain ⟨b, hb, c, hc, rfl⟩ := hx
-    exact ⟨a • b, S.smul_mem hb a, a • c, S.smul_mem hc a, by
-      rw [smul_add, mul_smul_comm]⟩
-
 /-- Relative to any chosen hyperplane, the differences of generators generate the projective
 algebra over the full coefficient ring. Blueprint: `lem:projective-algebra`. -/
 theorem projectiveAlgebra_eq_adjoin (h𝒜 : 𝒜.IsCentral) (H₀ : 𝒜) :
@@ -118,7 +126,8 @@ theorem projectiveAlgebra_eq_adjoin (h𝒜 : 𝒜.IsCentral) (H₀ : 𝒜) :
   apply le_antisymm ?_ hle
   intro x hx
   obtain ⟨b, hb, c, hc, hbc⟩ :=
-    exists_mem_decomposition_of_generator_sub_mem B S H₀ hS x
+    (isExteriorFamily_generator B 𝒜).exists_mem_decomposition_of_sub_mem
+      (span_range_word B 𝒜) S H₀ hS x
   have hb' : boundary B h𝒜 b = 0 := hle hb
   have hc' : boundary B h𝒜 c = 0 := hle hc
   have hc0 : c = 0 := by
@@ -196,9 +205,9 @@ theorem generatorMulProjective_apply (h𝒜 : 𝒜.IsCentral) (H₀ : 𝒜)
 
 /-- Taking the boundary recovers the second projective summand. -/
 @[simp]
-theorem projectiveBoundary_generatorMulProjective (h𝒜 : 𝒜.IsCentral) (H₀ : 𝒜)
+theorem projectiveBoundary_generator_mul (h𝒜 : 𝒜.IsCentral) (H₀ : 𝒜)
     (x : projectiveAlgebra B h𝒜) :
-    projectiveBoundary B h𝒜 (generatorMulProjective B h𝒜 H₀ x) = x := by
+    projectiveBoundary B h𝒜 (generator B 𝒜 H₀ * x) = x := by
   apply Subtype.ext
   have hx : boundary B h𝒜 (x : OSAlgebra B 𝒜) = 0 := x.property
   simp [hx]
@@ -206,7 +215,7 @@ theorem projectiveBoundary_generatorMulProjective (h𝒜 : 𝒜.IsCentral) (H₀
 /-- The second projective inclusion is injective because the boundary is a left inverse. -/
 theorem generatorMulProjective_injective (h𝒜 : 𝒜.IsCentral) (H₀ : 𝒜) :
     Function.Injective (generatorMulProjective B h𝒜 H₀) :=
-  Function.LeftInverse.injective (projectiveBoundary_generatorMulProjective B h𝒜 H₀)
+  Function.LeftInverse.injective (projectiveBoundary_generator_mul B h𝒜 H₀)
 
 section Bigrading
 
@@ -270,6 +279,23 @@ theorem projectiveAlgebra_isHomogeneous (h𝒜 : 𝒜.IsCentral) :
     DirectSum.SetLike.IsHomogeneous (bigrading 𝒜 ℬ) (projectiveAlgebra B h𝒜) := by
   intro i x hx
   exact ((isHomogeneousOfShift_boundary B ℬ h𝒜).map_eq_zero_iff_forall_decompose.1 hx) i
+
+/-- The boundary kernel is an internally bigraded coefficient subalgebra.
+Blueprint: `lem:projective-algebra`. -/
+instance projectiveBigradingGradedAlgebra (h𝒜 : 𝒜.IsCentral) :
+    GradedAlgebra (projectiveBigrading B ℬ h𝒜) :=
+  homogeneousSubalgebraGradedAlgebra (bigrading 𝒜 ℬ)
+    ((projectiveAlgebra B h𝒜).restrictScalars R) (projectiveAlgebra_isHomogeneous B ℬ h𝒜)
+
+/-- Homogeneous decomposition inside the projective algebra agrees with decomposition inside
+the full algebra. -/
+@[simp]
+theorem coe_decompose_projectiveBigrading (h𝒜 : 𝒜.IsCentral)
+    (x : projectiveAlgebra B h𝒜) (i : ℤ × ℤ) :
+    ((DirectSum.decompose (projectiveBigrading B ℬ h𝒜) x i : projectiveAlgebra B h𝒜) :
+        OSAlgebra B 𝒜) = (DirectSum.decompose (bigrading 𝒜 ℬ) (x : OSAlgebra B 𝒜) i :
+        OSAlgebra B 𝒜) :=
+  ((isHomogeneousOfShift_projectiveInclusion B ℬ h𝒜).decompose_map (add_zero i) x).symm
 
 /-- The projective module decomposition identifies degree `i` with the projective degree `i`
 and the projective degree `j`, where `j + (1,1) = i`. This states the shift on the original
