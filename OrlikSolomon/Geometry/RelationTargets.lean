@@ -247,7 +247,8 @@ def affineImage (f : Fin s → V →ᵃ[k] k) : AffineSubspace k (Fin s → k) :
 theorem mem_affineImage : x ∈ affineImage f ↔ ∃ v, AffineMap.pi f v = x := by
   simp [affineImage]
 
-@[simp]
+/-- A point of the affine image. This is not a `simp` lemma, because `simp` already proves it with
+`mem_affineImage`. -/
 theorem pi_mem_affineImage (f : Fin s → V →ᵃ[k] k) (v : V) : AffineMap.pi f v ∈ affineImage f :=
   mem_affineImage.2 ⟨v, rfl⟩
 
