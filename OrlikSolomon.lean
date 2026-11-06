@@ -3,6 +3,7 @@ module
 public import Mathlib.Init
 public import OrlikSolomon.Algebra.ExteriorWords
 public import OrlikSolomon.Algebra.RelationQuotient
+public import OrlikSolomon.Geometry.SmoothAlg
 
 /-!
 # OrlikSolomon
