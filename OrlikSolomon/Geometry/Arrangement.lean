@@ -402,26 +402,24 @@ theorem mem_inter {I : List 𝒜} {x : V} :
     x ∈ inter I ↔ ∀ H ∈ I, x ∈ (H : AffineSubspace k V) := by
   simp [inter, AffineSubspace.mem_iInf_iff]
 
-/-- An arrangement is central if every hyperplane contains the origin of its ambient vector
-space. This refers to the actual origin, rather than the base point of any affine chart.
+/-- An arrangement is central if all its hyperplanes contain a common point. This condition is
+independent of the origin, and therefore of a base point used to identify an affine space.
 Blueprint: `lem:central-boundary`. -/
-def IsCentral (𝒜 : Arrangement k V) : Prop := ∀ H ∈ 𝒜, (0 : V) ∈ H
-
-/-- Every list of hyperplanes in a central arrangement meets at the origin. -/
-theorem IsCentral.zero_mem_inter (h𝒜 : 𝒜.IsCentral) (I : List 𝒜) : (0 : V) ∈ inter I :=
-  mem_inter.2 fun H _ ↦ h𝒜 H H.2
+def IsCentral (𝒜 : Arrangement k V) : Prop := ∃ p, ∀ H ∈ 𝒜, p ∈ H
 
 /-- Intersections in a central arrangement are nonempty, including the empty intersection. -/
-theorem IsCentral.inter_ne_bot (h𝒜 : 𝒜.IsCentral) (I : List 𝒜) : inter I ≠ ⊥ :=
-  (AffineSubspace.nonempty_iff_ne_bot _).1 ⟨0, h𝒜.zero_mem_inter I⟩
+theorem IsCentral.inter_ne_bot (h𝒜 : 𝒜.IsCentral) (I : List 𝒜) : inter I ≠ ⊥ := by
+  obtain ⟨p, hp⟩ := h𝒜
+  exact (AffineSubspace.nonempty_iff_ne_bot _).1 ⟨p, mem_inter.2 fun H _ ↦ hp H H.2⟩
 
 /-- A sub-arrangement of a central arrangement is central. -/
-theorem IsCentral.mono (hℬ : ℬ.IsCentral) (h : 𝒜 ≤ ℬ) : 𝒜.IsCentral :=
-  fun H hH ↦ hℬ H (h hH)
+theorem IsCentral.mono (hℬ : ℬ.IsCentral) (h : 𝒜 ≤ ℬ) : 𝒜.IsCentral := by
+  obtain ⟨p, hp⟩ := hℬ
+  exact ⟨p, fun H hH ↦ hp H (h hH)⟩
 
 @[simp]
 theorem isCentral_empty : (∅ : Arrangement k V).IsCentral := by
-  simp [IsCentral]
+  exact ⟨0, fun H hH ↦ (notMem_empty H hH).elim⟩
 
 @[simp]
 theorem inter_nil : inter ([] : List 𝒜) = ⊤ := by

@@ -159,4 +159,78 @@ theorem boundary_coefficientMap {S : Type*} [CommRing S] [Algebra B S]
     fun I ↦ by simp [map_wordBoundary]
   exact DFunLike.congr_fun h x
 
+/-- The boundary commutes with inclusions of central arrangements. -/
+@[simp]
+theorem boundary_map {𝒞 : Arrangement k V} (h : 𝒜 ≤ 𝒞)
+    (h𝒜 : 𝒜.IsCentral) (h𝒞 : 𝒞.IsCentral) (x : OSAlgebra B 𝒜) :
+    boundary B h𝒞 (map B h x) = map B h (boundary B h𝒜 x) := by
+  have heq := LinearMap.ext_on_range (span_range_word B 𝒜)
+    (f := boundary B h𝒞 ∘ₗ (map B h).toLinearMap)
+    (g := (map B h).toLinearMap ∘ₗ boundary B h𝒜)
+    fun I ↦ by
+      change boundary B h𝒞 (map B h (word (generator B 𝒜) I)) =
+        map B h (boundary B h𝒜 (word (generator B 𝒜) I))
+      rw [map_word, boundary_word, boundary_word, map_wordBoundary, wordBoundary_map]
+      simp only [map_generator]
+  exact DFunLike.congr_fun heq x
+
+section Bigrading
+
+variable {R : Type*} [CommRing R] [Algebra R B]
+  (ℬ : ℤ → Submodule R B)
+
+/-- The central boundary lowers both cohomological degree and weight by one. This includes the
+degree-zero and negative-degree cases, where the boundary vanishes.
+Blueprint: `lem:central-boundary`. -/
+theorem isHomogeneousOfShift_boundary (h𝒜 : 𝒜.IsCentral) :
+    IsHomogeneousOfShift (bigrading 𝒜 ℬ) (bigrading 𝒜 ℬ) (-1, -1) (boundary B h𝒜) := by
+  rintro ⟨p, w⟩ x hx
+  by_cases hp : 0 ≤ p
+  · lift p to ℕ using hp
+    cases p with
+    | zero =>
+      have h0 := boundary_eq_zero_of_mem_degree_zero B h𝒜
+        (mem_degree_of_mem_bigrading 𝒜 ℬ hx)
+      simp only [h0, Submodule.zero_mem]
+    | succ n =>
+      rw [bigrading_eq_span] at hx
+      induction hx using Submodule.span_induction with
+      | mem x hx =>
+        obtain ⟨b, hb, I, hI, rfl⟩ := hx
+        have hword := wordBoundary_mem_degree R 𝒜 I
+        rw [hI, Nat.add_sub_cancel] at hword
+        have h := smul_coefficientMap_mem_bigrading 𝒜 ℬ hb hword
+        have hw : w - (↑(n + 1) : ℤ) + n = w - 1 := by omega
+        have hn : ((n + 1 : ℕ) : ℤ) + -1 = n := by omega
+        rw [hw] at h
+        simpa only [map_smul, boundary_word, map_wordBoundary, coefficientMap_generator,
+          Prod.mk_add_mk, hn, sub_eq_add_neg] using h
+      | zero => simp
+      | add x y _ _ hx hy => simpa only [map_add] using Submodule.add_mem _ hx hy
+      | smul r x _ hx =>
+        simpa only [LinearMap.map_smul_of_tower] using Submodule.smul_mem _ r hx
+  · have hx0 : x = 0 := by
+      simpa only [bigrading_eq_bot_of_fst_neg 𝒜 ℬ (lt_of_not_ge hp), Submodule.mem_bot] using hx
+    simp [hx0]
+
+/-- The explicit bidegree form of the boundary shift. -/
+theorem boundary_mem_bigrading (h𝒜 : 𝒜.IsCentral) {p w : ℤ} {x : OSAlgebra B 𝒜}
+    (hx : x ∈ bigrading 𝒜 ℬ (p, w)) :
+    boundary B h𝒜 x ∈ bigrading 𝒜 ℬ (p - 1, w - 1) :=
+  (isHomogeneousOfShift_boundary B ℬ h𝒜).map_mem
+    (by ext <;> simp only [Prod.fst_add, Prod.snd_add] <;> rfl) hx
+
+/-- The signed Leibniz rule uses cohomological degree alone, even for weighted coefficients. -/
+theorem boundary_mul_of_mem_bigrading (h𝒜 : 𝒜.IsCentral) {p w : ℤ} {x : OSAlgebra B 𝒜}
+    (hx : x ∈ bigrading 𝒜 ℬ (p, w)) (y : OSAlgebra B 𝒜) :
+    boundary B h𝒜 (x * y) = boundary B h𝒜 x * y + p.negOnePow • (x * boundary B h𝒜 y) := by
+  by_cases hp : 0 ≤ p
+  · lift p to ℕ using hp
+    exact boundary_mul_of_mem_degree B h𝒜 (mem_degree_of_mem_bigrading 𝒜 ℬ hx) y
+  · have hx0 : x = 0 := by
+      simpa only [bigrading_eq_bot_of_fst_neg 𝒜 ℬ (lt_of_not_ge hp), Submodule.mem_bot] using hx
+    simp [hx0]
+
+end Bigrading
+
 end OrlikSolomon.OSAlgebra
