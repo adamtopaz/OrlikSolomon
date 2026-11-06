@@ -62,7 +62,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/ProjectiveGrading` | ordinary degree and coefficient extension on the projective kernel |
 | `Presentation/ProjectiveOrdinary` | the diagonal equivalence of `thm:projective` |
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
-| `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `lem:mobius` |
+| `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion` |
+| `Combinatorics/Moebius`         | the finite nonempty intersection poset, its Mathlib Möbius function and both formulas of `lem:mobius`; pure combinatorics |
 | `Combinatorics/ProjectiveBetti` | pure cone/decone intersection sums and polynomials of `cor:projective-betti` |
 | `Combinatorics/Multiplicities` | cohomological pieces and decone word counts of `cor:projective-betti` |
 | `DeRham/Complex/Forms`         | `def:dr-forms`: `Forms`, the universal differential `diff`, and induction on the words `a₀ da₁ ∧ ⋯ ∧ daₙ` |
@@ -88,6 +89,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/Exterior`          | full exterior algebras for singletons and coordinate arrangements |
 | `Examples/Ordinary`            | the structure theorem at `R = ℤ`, `ZMod 2`, two points over `F₂`, dimension zero, zero coefficients and `R = B` |
 | `Examples/Polynomials`         | polynomial regression examples |
+| `Examples/Moebius`             | Möbius sums for concurrent lines, the triangle and parallel lines, including the odd-degree sign |
 | `Examples/Sanity`              | the blueprint's regression examples |
 | `Examples/Presentation`        | two points of the affine line, the affine boundary guard, characteristic two and degenerate coefficients |
 | `Examples/Parallel`            | two parallel affine lines: product zero, generator difference nonzero and polynomial `1 + 2 X` |
