@@ -51,7 +51,7 @@ The map $`s:A''\to Q` is surjective.
 The proof uses no basis theorem for $`A''`.
 :::
 
-:::node "lem:comparison"
+:::node "lem:comparison" (decl := OrlikSolomon.cokernelComparison) (decl := OrlikSolomon.bijective_of_surjective_of_injective_cokernelComparison_comp) (decl := OrlikSolomon.cokernelComparison_bijective_of_surjective_of_bijective_comp) (decl := OrlikSolomon.injective_of_comp_eq_comp) (decl := OrlikSolomon.injective_of_surjective_of_injective_cokernelComparison_comp) (decl := OrlikSolomon.linearEquivOfCokernelComparison)
 Let $`a:M'\to M`, $`j:N'\to N` and $`r:N\to T` be linear maps with $`j` injective and $`rj=0`, and let $`f':M'\to N'` and $`f:M\to N` satisfy $`fa=jf'` with $`f'` bijective.
 Put $`Q=M/\operatorname{im}(a)`, with $`\psi:Q\to T` induced by $`rf`.
 If a surjective map $`s:L\to Q` has bijective composite $`\psi s`, then $`s` and $`\psi` are bijective and $`a` and $`f` are injective.

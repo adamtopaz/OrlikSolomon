@@ -40,7 +40,7 @@ is an exact sequence of $`B`-modules, with $`r` of shift $`(-1,-1)`.
 Every arrangement is generated and bounded, so the short exact sequence above holds for every deletion.
 :::
 
-:::node "lem:basis-ses"
+:::node "lem:basis-ses" (decl := OrlikSolomon.basisOfShortExact) (decl := OrlikSolomon.coe_basisOfShortExact)
 In a short exact sequence of modules, a basis of the left term together with lifts of a basis of the right term form a basis of the middle term.
 :::
 
