@@ -5,6 +5,7 @@ public import OrlikSolomon.Algebra.Exact
 public import OrlikSolomon.Algebra.ExteriorWords
 public import OrlikSolomon.Algebra.RelationQuotient
 public import OrlikSolomon.Cohomology.Axioms
+public import OrlikSolomon.Cohomology.Logarithms
 public import OrlikSolomon.Examples.Sanity
 public import OrlikSolomon.Geometry.Arrangement
 public import OrlikSolomon.Geometry.Chart

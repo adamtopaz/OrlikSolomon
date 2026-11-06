@@ -82,9 +82,9 @@ such that the ambient map sends `P.eqn` to a **unit multiple** of `Q.eqn`. The u
 what makes `lem:log-mul` work, where `z ↦ xy` pulls back to the divisor `x = 0`.
 
 **Pairs needed:** for any smooth `A`, the pair `(A[t], A, A[t;t⁻¹], t)` serves as the
-standard pair (`A = k`), the pair in `lem:log-mul` (`A = k[y;y⁻¹]`) and the pair in
-`lem:gm-product`. The only other family is the deletion pair
-`(O(U_𝒜'), O(U_𝒜''), O(U_𝒜), f_H)`.
+standard pair (`A = k`), the pair in `lem:log-mul` (any `A` with a unit `y`, the blueprint's
+universal case being `A = k[y;y⁻¹]`) and the pair in `lem:gm-product`. The only other family is the
+deletion pair `(O(U_𝒜'), O(U_𝒜''), O(U_𝒜), f_H)`.
 
 **Objects and pairs are `def`s.** An object of `SmoothAlg k` that lemmas will mention should be a
 `def` built from `SmoothAlg.of`, as `point`, `polynomial` and `laurent` are, and not an `abbrev`.
@@ -166,7 +166,10 @@ used this way needs its own wrappers.
 - Its total cohomology is a functor `SmoothAlg k ⥤ AlgCat B`, with each value internally
   bigraded by `R`-submodules. `AlgCat` is not commutative, as required.
 - Each value also carries an `R`-algebra structure as a field, tied to `B` by `IsScalarTower`, so
-  that a direct sum can keep the structure it already has.
+  that a direct sum can keep the structure it already has. So at `R = B` the two `B`-module
+  structures agree only propositionally, and a term mixing a `B`-linear map with the grading pieces
+  fails with an instance mismatch. Prove statements with `R` and `B` separate and specialize, or use
+  the wrappers `T.mapOverR`, `T.gysinOverR` and `T.residueOverR`.
 - The dimension axiom says `B → C(k)` is bijective, with every degree `(p, w)` for `p ≠ 0` zero.
   C1 sends `ℬ w` into degree `(0, w)` for every `A`, and it follows that `B → C(k)` carries `ℬ w`
   onto degree `(0, w)` (`algebraMap_mem_grading_point_iff`).

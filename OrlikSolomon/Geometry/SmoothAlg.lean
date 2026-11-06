@@ -55,12 +55,13 @@ With `A` a smooth algebra and `P₀ = standardPair (point k)`, write `z` for the
 and `x` for the coordinate of `standardPair A`.
 
 * `lem:gm` uses `P₀` itself, together with `polynomialC_comp_i` and `polynomialC_comp_j`.
-* `lem:log-mul` takes `A = gm k`, with `y = laurentT (point k)`. The maps `z ↦ x` and `z ↦ yx` are
-  `standardMap (fromPoint A) 1` and `standardMap (fromPoint A) y`. By `standardMap_fromPoint_compl`
-  their open parts are `gmHom (mapUnits (laurentC A) u * laurentT A)` for `u = 1` and `u = y`, and
-  by `standardMap_closed` their closed parts are `fromPoint A`. The section `x = 1` is
-  `laurentSection A`. The final pullback along units `(f, g)` of `B` is
-  `laurentLift (gmHom g) f : laurent (gm k) ⟶ B`.
+* `lem:log-mul` takes `y` to be a unit of `A`. The blueprint's universal case is `A = gm k` with
+  `y = laurentT (point k)`. The maps `z ↦ x` and `z ↦ yx` are `standardMap (fromPoint A) 1` and
+  `standardMap (fromPoint A) y`. By `standardMap_fromPoint_compl` their open parts are
+  `gmHom (mapUnits (laurentC A) u * laurentT A)` for `u = 1` and `u = y`, and by
+  `standardMap_closed` their closed parts are `fromPoint A`. The section `x = 1` is
+  `laurentSection A`. The final pullback along `x ↦ g`, for a unit `g` of `A`, is
+  `laurentLift (𝟙 A) g : laurent A ⟶ A`.
 * `lem:gm-product` uses `standardMap (fromPoint A) 1` for general `A`, together with `laurentC A`
   for the projection and `laurentSection A` for the section.
 * `lem:log-residue` uses `fromStandard P : P₀ ⟶ P`, the morphism `z ↦ P.eqn`.

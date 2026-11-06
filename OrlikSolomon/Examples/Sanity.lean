@@ -6,15 +6,17 @@ Authors: Adam Topaz, Claude
 module
 
 public import Mathlib.Algebra.MonoidAlgebra.Grading
-public import OrlikSolomon.Cohomology.Axioms
+public import Mathlib.Data.ZMod.Defs
+public import OrlikSolomon.Cohomology.Logarithms
 
 /-!
 # Regression examples
 
 This file collects consistency checks of the definitions against the blueprint's regression list.
-At present it covers the structure `OrdinaryTheory` of `def:cohomology`, and in particular the
-blueprint's "zero coefficient ring" case. The arrangement examples of that list will be added here
-as the modules they test appear.
+At present it covers the structure `OrdinaryTheory` of `def:cohomology`, in particular the
+blueprint's "zero coefficient ring" case and the case `R = B`, and the logarithmic classes with
+coefficients in `ℤ/2`. The arrangement examples of that list will be added here as the modules they
+test appear.
 
 ## Main definitions
 
@@ -208,6 +210,60 @@ theorem bijective_algebraMap_laurentWeight :
     exact ⟨r, Subtype.ext rfl⟩
 
 end Laurent
+
+/-! ### Coefficients with `R = B`
+
+At `R = B`, a term that mixes a `B`-linear map with the grading pieces fails with an instance
+mismatch: see the implementation notes in `Cohomology/Axioms`. Components must be available all the
+same, through the wrappers that are defined with `R` and `B` separate. -/
+
+section SameRing
+
+variable {k : Type u} [CommRing k] {B : Type w} [CommRing B] {ℬ : ℤ → Submodule B B}
+  [GradedAlgebra ℬ] (T : OrdinaryTheory.{u, w, w, z} k ℬ) {A D : SmoothAlg k}
+
+example (f : A ⟶ D) (i : ℤ × ℤ) : T.grading A i →ₗ[B] T.grading D i :=
+  (T.isHomogeneousOfShift_mapOverR f).component (add_zero i)
+
+example (P : DivisorPair k) {i j : ℤ × ℤ} (h : i + (2, 1) = j) :
+    T.grading P.closed i →ₗ[B] T.grading P.ambient j :=
+  (T.isHomogeneousOfShift_gysinOverR P).component h
+
+example (P : DivisorPair k) {i j : ℤ × ℤ} (h : i + (-1, -1) = j) :
+    T.grading P.compl i →ₗ[B] T.grading P.closed j :=
+  (T.isHomogeneousOfShift_residueOverR P).component h
+
+/-- The component of the wrapper is the Gysin map itself, on underlying elements. -/
+example (P : DivisorPair k) {i j : ℤ × ℤ} (h : i + (2, 1) = j) (x : T.grading P.closed i) :
+    ((T.isHomogeneousOfShift_gysinOverR P).component h x : T.C.obj P.ambient) = T.gysin P x := by
+  simp
+
+/-- Total exactness gives exactness of components at `R = B`, as in `lem:extraction`. -/
+example (P : DivisorPair k) {i j l : ℤ × ℤ} (hij : i + (2, 1) = j) (hjl : j + 0 = l) :
+    Function.Exact ((T.isHomogeneousOfShift_gysinOverR P).component hij)
+      ((T.isHomogeneousOfShift_mapOverR P.j).component hjl) :=
+  ((T.isHomogeneousOfShift_gysinOverR P).exact_iff_forall_component
+    (T.isHomogeneousOfShift_mapOverR P.j)).1 (T.exact_gysin_map P) hij hjl
+
+end SameRing
+
+/-! ### Logarithmic classes with coefficients in `ℤ/2`
+
+Blueprint regression list: the square of a generator is zero with coefficients in `ℤ/2`. The
+statements have no hypothesis on `2`, and these instances record that they apply where `2τ² = 0`
+would say nothing. -/
+
+section ZModTwo
+
+variable {k : Type u} [CommRing k] {B : Type w} [CommRing B] [Algebra (ZMod 2) B]
+  {ℬ : ℤ → Submodule (ZMod 2) B} [GradedAlgebra ℬ] (T : OrdinaryTheory.{u, 0, w, z} k ℬ)
+  {A : SmoothAlg k}
+
+example : T.tau * T.tau = 0 := T.tau_mul_tau
+
+example (u : Aˣ) : T.logClass u * T.logClass u = 0 := T.logClass_mul_self u
+
+end ZModTwo
 
 end Sanity
 
