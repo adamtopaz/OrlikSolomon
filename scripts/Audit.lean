@@ -15,14 +15,18 @@ import Lean
 * `OrlikSolomon.lean` does not publicly import every module in `OrlikSolomon/`;
 * the library imports a module with no source file in `OrlikSolomon/`, unless it comes from a
   dependency. This covers a stale `.olean`, this tool, and a module elsewhere in this package;
-* a module of the project declares an `axiom` or an `unsafe` constant;
+* a module of the project declares anything other than a theorem, a safe definition, a safe opaque
+  constant, or a safe inductive type with its constructors and recursor. This rules out `axiom`,
+  `unsafe` and `partial def`. The only exceptions are two kinds of constant that Lean itself
+  generates for safe code: see `isGeneratedCtorIdxImpl` and `isGeneratedUnsafeRec`;
 * a declaration of the project depends on an axiom other than `propext`, `Classical.choice` and
   `Quot.sound`, which is how `sorry`, `admit` and `native_decide` show up.
 
-`lake exe audit --replay` makes the same checks of the modules, then sends the declarations of each
-one back through the kernel, proofs included. It fails unless the kernel accepts every module of the
-library. The first command only reads what the build recorded, so it would not notice a declaration
-that reached the `.olean` files without the kernel accepting it.
+`lake exe audit --replay` makes the same checks of the modules, then sends every constant of each
+one back through the kernel, proofs included, and leaves nothing out. It fails unless the kernel
+accepts every module of the library, and what it then holds is what the `.olean` files say. The
+first command only reads what the build recorded, so it would not notice a declaration that reached
+the `.olean` files without the kernel accepting it.
 
 Use `scripts/check.sh` and `scripts/replay.sh`, which build the library first, so that these cannot
 read stale files.
@@ -55,9 +59,11 @@ at run time.
   because its argument is a module prefix, which also selects any submodules and stale `.olean`
   files, and because it crashes when one process replays two modules: see #47. Each module has its
   own process for that reason.
-* `Lean.Kernel.Environment.replay` skips `unsafe` and `partial` constants, which no proof can depend
-  on. It also skips a theorem whose name and statement are already in the imports. That statement
-  was proved where the imports declare it, and the replay of that module checks the proof.
+* `Lean.Kernel.Environment.replay` leaves out some constants and does not compare others, so
+  `replayConstants` deals with these itself. See there for the list.
+* The library has no `partial def`, and a mathematical library has no need of one, so the audit
+  rejects it. It cannot reject every partial constant, because Lean generates one to compile each
+  recursive definition, and the library has several.
 -/
 
 open Lean System
@@ -220,13 +226,43 @@ def checkWalkSeesProofs (env : Environment) : IO Unit := do
     throw <| .userError s!"the audit cannot see through proofs: from `Classical.em` it reached \
       the axioms {axioms} and the missing constants {missing}"
 
+/-- Whether `v` is the partial `f._unsafe_rec` that Lean generates in order to compile a recursive
+definition `f`. It has the type of `f`, and `f` has to be a safe definition, which the kernel checks
+separately. A `partial def f` gets one too, but makes `f` opaque, so it is not accepted here.
+
+Safe code cannot refer to a partial constant, so this can never affect what is provable. -/
+def isGeneratedUnsafeRec (env : Environment) (v : DefinitionVal) : Bool := Id.run do
+  let some name := Compiler.isUnsafeRecName? v.name | return false
+  let some (.defnInfo f) := env.find? name | return false
+  let opaqueHints := v.hints matches .opaque
+  return opaqueHints && f.safety == .safe && f.type == v.type && f.levelParams == v.levelParams
+
+/-- What is wrong with a module of the project declaring `info`, if anything. This is an allowlist.
+The cases are listed in full so that a new kind of constant, or of safety, is a compile error. -/
+def constantProblem (env : Environment) (info : ConstantInfo) : Option String :=
+  let ifUnsafe (isUnsafe : Bool) := if isUnsafe then some "is declared unsafe" else none
+  match info with
+  | .thmInfo _ => none
+  | .defnInfo v =>
+    match v.safety with
+    | .safe => none
+    | .partial => if isGeneratedUnsafeRec env v then none else some "is declared partial"
+    | .unsafe => if isGeneratedCtorIdxImpl env info then none else some "is declared unsafe"
+  | .opaqueInfo v => ifUnsafe v.isUnsafe
+  | .inductInfo v => ifUnsafe v.isUnsafe
+  | .ctorInfo v => ifUnsafe v.isUnsafe
+  | .recInfo v => ifUnsafe v.isUnsafe
+  | .axiomInfo _ => some "is declared as an axiom"
+  | .quotInfo _ => some "is declared as a quotient primitive"
+
 /-- The library, as the build recorded it. -/
 structure Library where
   /-- The environment of the root module, at `OLeanLevel.private`. -/
   env : Environment
   /-- The root and each module it imports that is not from a dependency, with its data. -/
   modules : Array (Name × ModuleData)
-  /-- The reasons that `modules` is not what the source files say it should be. -/
+  /-- The reasons that `modules` is not what the source files say it should be, or holds a constant
+  that it may not. -/
   problems : Array String
 
 /-- The entries of the search path that belong to dependencies, which are the packages and the
@@ -243,7 +279,8 @@ def dependencyEntries : IO (List FilePath) := do
 
 /-- Loads the library and compares its modules with the source files, in both directions. Anything
 else that is imported has to come from a dependency. Otherwise it would escape every check here,
-which only look at the modules of the library, and the linters too. -/
+which only look at the modules of the library, and the linters too. It also checks the kind of each
+constant in the library. -/
 def loadLibrary : IO Library := do
   initSearchPath (← findSysroot)
   let env ← importModules #[{ module := rootModule }] {} (leakEnv := true) (level := .private)
@@ -256,6 +293,9 @@ def loadLibrary : IO Library := do
       modules := modules.push (mod, data)
       unless mod == rootModule || sources.contains mod do
         problems := problems.push s!"{mod} is imported, but it has no source file in {rootModule}/"
+      for info in data.constants do
+        if let some problem := constantProblem env info then
+          problems := problems.push s!"{info.name} {problem}"
     else
       let olean ← findOLean mod
       unless dependencies.any (·.components.isPrefixOf olean.components) do
@@ -277,10 +317,6 @@ def checkDeclarations (library : Library) : IO (Array String × String) := do
   for (_, data) in library.modules do
     for info in data.constants do
       ours := ours.alter info.name fun old? => some (old?.getD #[] ++ references info)
-      if info.isAxiom then
-        problems := problems.push s!"{info.name} is declared as an axiom"
-      if info.isUnsafe && !isGeneratedCtorIdxImpl env info then
-        problems := problems.push s!"{info.name} is declared unsafe"
   let { references, axioms, missing } := closure env ours
   for c in missing.qsort Name.lt do
     problems := problems.push s!"{c} is not in the environment"
@@ -310,6 +346,41 @@ def nameComponents : Name → List String
   | .str p s => nameComponents p ++ [s]
   | .num p n => nameComponents p ++ [toString n]
 
+/-- Sends a declaration to the kernel, throwing if it is rejected. -/
+def addChecked (env : Kernel.Environment) (decl : Declaration) : IO Kernel.Environment := do
+  match env.addDeclCore 0 0 decl (cancelTk? := none) with
+  | .ok env => return env
+  | .error ex => throw <| .userError (← (ex.toMessageData {}).toString)
+
+/-- Sends all these constants to the kernel, on top of `imported`, leaving nothing out. Throws if it
+rejects one. `Lean.Kernel.Environment.replay` does most of the work, with these gaps:
+
+* It leaves out partial and unsafe constants. These are sent here in one mutual block for each kind,
+  which is how Lean adds them, so the kernel checks every body with all of them in scope. A partial
+  constant cannot refer to an unsafe one, so the partial block goes first.
+* It leaves out a theorem whose name and statement are already in `imported`. These are checked here
+  under a fresh name, so that the proof in this module is not taken on trust.
+* It regenerates an inductive type without comparing the result with what is stored, and the kernel
+  relies on what is stored, once it has been imported. So every constant must end up in the
+  environment exactly as stored, which also catches any constant that nothing above sent. -/
+def replayConstants (imported : Kernel.Environment) (constants : Std.HashMap Name ConstantInfo) :
+    IO Unit := do
+  let mut env ← imported.replay constants
+  let definitions := constants.toList.filterMap fun (_, info) =>
+    match info with
+    | .defnInfo v => some v
+    | _ => none
+  for safety in [DefinitionSafety.partial, .unsafe] do
+    let block := definitions.filter (·.safety == safety)
+    unless block.isEmpty do
+      env ← addChecked env (.mutualDefnDecl block)
+  for (name, info) in constants do
+    if let (.thmInfo v, some _) := (info, imported.find? name) then
+      let fresh := name.str "_auditDuplicate"
+      discard <| addChecked env (.thmDecl { v with name := fresh, all := [fresh] })
+    else unless env.find? name == some info do
+      throw <| .userError s!"{name} is not stored as the kernel would store it"
+
 /-- Replays exactly this module into the environment of its imports, and prints the number of
 constants it holds. All three files of the module are required, since without the last there would
 be no proofs to replay. Returning without an exception means that the kernel accepted them all. -/
@@ -324,23 +395,32 @@ def replayModule (module : Name) : IO Unit := do
   let mut constants : Std.HashMap Name ConstantInfo := {}
   for name in private_.constNames, info in private_.constants do
     constants := constants.insert name info
-  discard <| env.toKernelEnv.replay constants
+  replayConstants env.toKernelEnv constants
   IO.println constants.size
 
-/-- Throws if the replay accepts a false theorem, in which case it would pass whatever the library
-contains. This keeps it honest across toolchain bumps without planting anything in the library. -/
-def checkReplayRejectsFalse (env : Environment) : IO Unit := do
-  let name := `Audit.falseTheorem
-  let info := .thmInfo
-    { name, levelParams := [], type := mkConst ``False, value := mkConst ``True.intro }
-  let accepted ←
-    try
-      discard <| env.toKernelEnv.replay (({} : Std.HashMap _ _).insert name info)
-      pure true
-    catch _ =>
-      pure false
-  if accepted then
-    throw <| .userError "the kernel replay accepted a proof of `False`"
+/-- Throws if the replay accepts a bad constant of any of the kinds that `replayConstants` has to
+treat differently, in which case it would pass whatever the library contains. This keeps it honest
+across toolchain bumps without planting anything in the library. -/
+def checkReplayRejectsBadConstants (env : Environment) : IO Unit := do
+  let badValue := mkConst ``True.intro
+  let theorem_ : ConstantInfo := .thmInfo
+    { name := `Audit.falseTheorem, levelParams := [], type := mkConst ``False, value := badValue }
+  let definition (name : Name) (safety : DefinitionSafety) : ConstantInfo := .defnInfo
+    { name, safety, levelParams := [], type := mkConst ``False, value := badValue
+      hints := .opaque }
+  let some (.thmInfo trivialVal) := env.find? ``trivial
+    | throw <| .userError "`trivial` is not a theorem, so the audit needs updating"
+  let duplicate : ConstantInfo := .thmInfo { trivialVal with value := mkConst ``Nat.zero }
+  for info in [theorem_, definition `Audit.falsePartial .partial,
+      definition `Audit.falseUnsafe .unsafe, duplicate] do
+    let accepted ←
+      try
+        replayConstants env.toKernelEnv (({} : Std.HashMap _ _).insert info.name info)
+        pure true
+      catch _ =>
+        pure false
+    if accepted then
+      throw <| .userError s!"the kernel replay accepted the bad constant {info.name}"
 
 /-- Replays a module in a child process, returning the problem if there is one. The child has to
 report the number of constants that the data of the module holds. -/
@@ -357,7 +437,7 @@ def replayInChild (tool : FilePath) (module : Name) (numConstants : Nat) : IO (O
 /-- Replays every module of the library, returning the problems found and a one-line summary. The
 workers record each module they finish, and it is a problem if that is not exactly the library. -/
 def checkReplay (library : Library) : IO (Array String × String) := do
-  checkReplayRejectsFalse library.env
+  checkReplayRejectsBadConstants library.env
   let tool ← IO.appPath
   let next ← IO.mkRef 0
   let tasks ← (Array.range replayJobs).mapM fun _ => IO.asTask (prio := .dedicated) do
