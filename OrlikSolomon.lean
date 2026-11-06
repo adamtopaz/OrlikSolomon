@@ -1,6 +1,8 @@
 module
 
 public import Mathlib.Init
+public import OrlikSolomon.Geometry.Arrangement
+public import OrlikSolomon.Geometry.Hyperplane
 
 /-!
 # OrlikSolomon
