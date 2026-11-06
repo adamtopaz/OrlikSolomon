@@ -38,23 +38,6 @@ universe u
 
 variable {k : Type u} [Field k] {V : Type u} [AddCommGroup V] [Module k V]
 
-open scoped Classical in
-/-- Subsets containing the bottom element make no contribution to an intersection weight that
-vanishes at bottom. Thus an empty trace can be discarded before taking the alternating sum. -/
-theorem sum_powerset_sInf_erase_bot {L M : Type*} [CompleteLattice L] [AddCommGroup M]
-    (s : Finset L) (w : L → M) (hw : w ⊥ = 0) :
-    (∑ S ∈ s.powerset, ((-1 : ℤ) ^ S.card) • w (sInf (S : Set L))) =
-      ∑ S ∈ (s.erase ⊥).powerset, ((-1 : ℤ) ^ S.card) • w (sInf (S : Set L)) := by
-  classical
-  symm
-  apply Finset.sum_subset (Finset.powerset_mono.2 (Finset.erase_subset _ _))
-  intro S hS hnot
-  have hbot : (⊥ : L) ∈ S := by
-    by_contra hbot
-    exact hnot (Finset.mem_powerset.2 (Finset.subset_erase.2 ⟨Finset.mem_powerset.1 hS, hbot⟩))
-  have hinter : sInf (S : Set L) = ⊥ := le_bot_iff.1 (sInf_le hbot)
-  simp [hinter, hw]
-
 namespace Arrangement
 
 /-- The alternating sum of a weight on intersections of subsets of an arrangement. A weight
@@ -69,9 +52,7 @@ space. -/
 theorem intersectionSum_empty {M : Type*} [AddCommGroup M] (w : AffineSubspace k V → M) :
     intersectionSum (∅ : Arrangement k V) w = w ⊤ := by
   classical
-  change ∑ S ∈ (∅ : Finset (AffineSubspace k V)).powerset,
-    ((-1 : ℤ) ^ S.card) • w (sInf (S : Set _)) = w ⊤
-  simp
+  simp [intersectionSum]
 
 /-- Splitting the alternating subset sum into subsets avoiding and containing a hyperplane.
 The latter subsets contribute with the opposite sign. -/
@@ -93,25 +74,9 @@ theorem intersectionSum_deletion {M : Type*} [AddCommGroup M] (𝒜 : Arrangemen
     Finset.notMem_mono (Finset.mem_powerset.1 hS) (by simp [deletion])
   simp [Finset.card_insert_of_notMem hnot, pow_succ, Finset.coe_insert, sInf_insert]
 
-open scoped Classical in
-/-- The traces of the deleted hyperplanes are precisely the restriction hyperplanes together
-with a possible empty trace. Erasing `⊥` removes it and `Finset.image` removes duplicates. -/
-theorem hyperplanes_restriction_eq_erase_image (𝒜 : Arrangement k V)
-    {H : AffineSubspace k V} (hH : IsHyperplane H) :
-    (𝒜.restriction H).hyperplanes =
-      ((𝒜.deletion H).hyperplanes.image (AffineSubspace.comap (chart H))).erase ⊥ := by
-  classical
-  ext L
-  rw [mem_hyperplanes, mem_restriction hH, Finset.mem_erase]
-  simp only [Finset.mem_image, mem_hyperplanes]
-  constructor
-  · rintro ⟨K, hK, hbot, rfl⟩
-    exact ⟨(comap_chart_eq_bot_iff hH.ne_bot).not.mpr hbot, K, hK, rfl⟩
-  · rintro ⟨hbot, K, hK, rfl⟩
-    exact ⟨K, hK, (comap_chart_eq_bot_iff hH.ne_bot).not.mp hbot, rfl⟩
-
 /-- The alternating sum of intersections with `H` is the corresponding sum on the restriction.
-Repeated traces collapse by `sum_powerset_image`, and empty traces contribute zero. -/
+Repeated traces collapse by `sum_powerset_neg_one_pow_card_smul_image`, and empty traces
+contribute zero. -/
 theorem intersectionSum_trace {M : Type*} [AddCommGroup M] (𝒜 : Arrangement k V)
     {H : AffineSubspace k V} (hH : IsHyperplane H) (w : AffineSubspace k V → M)
     (hw : w ⊥ = 0) :
@@ -131,12 +96,12 @@ theorem intersectionSum_trace {M : Type*} [AddCommGroup M] (𝒜 : Arrangement k
     _ = ∑ S ∈ ((𝒜.deletion H).hyperplanes.image f).powerset,
         ((-1 : ℤ) ^ S.card) •
           w ((sInf (S : Set (AffineSubspace k H.direction))).map (chart H)) :=
-      sum_powerset_image _ f
+      sum_powerset_neg_one_pow_card_smul_image _ f
         (fun S => w ((sInf (S : Set (AffineSubspace k H.direction))).map (chart H)))
     _ = ∑ S ∈ (((𝒜.deletion H).hyperplanes.image f).erase ⊥).powerset,
         ((-1 : ℤ) ^ S.card) •
           w ((sInf (S : Set (AffineSubspace k H.direction))).map (chart H)) :=
-      sum_powerset_sInf_erase_bot _
+      sum_powerset_neg_one_pow_card_smul_sInf_erase_bot _
         (fun X : AffineSubspace k H.direction => w (X.map (chart H))) (by simpa using hw)
     _ = _ := by
       rw [intersectionSum, hyperplanes_restriction_eq_erase_image 𝒜 hH]
@@ -178,7 +143,11 @@ theorem intersectionSum_pair {M : Type*} [AddCommGroup M] (𝒜 : Arrangement k 
           w (sInf (↑(insert H S) : Set (AffineSubspace k V)))) = _
   rw [Finset.sum_powerset_insert (Finset.notMem_empty K),
     Finset.sum_powerset_insert (Finset.notMem_empty K)]
-  simp [hne, Finset.coe_insert, sInf_insert, sub_eq_add_neg]
+  simp only [Finset.powerset_empty, Int.reduceNeg, Finset.sum_singleton, Finset.card_empty,
+    pow_zero, Finset.coe_empty, sInf_empty, one_smul, Finset.coe_insert, sInf_insert,
+    insert_empty_eq, Finset.card_singleton, pow_one, le_top, inf_of_le_left, neg_smul,
+    Finset.mem_singleton, hne, not_false_eq_true, Finset.card_insert_of_notMem, Nat.reduceAdd,
+    even_two, Even.neg_pow, one_pow, sub_eq_add_neg]
   abel
 
 /-- The weight of a nonempty affine intersection in the characteristic polynomial. -/
@@ -199,6 +168,18 @@ theorem characteristicWeight_bot : characteristicWeight (⊥ : AffineSubspace k 
 theorem poincareWeight_bot : poincareWeight (⊥ : AffineSubspace k V) = 0 := by
   simp [poincareWeight]
 
+/-- A nonempty subspace contributes its dimension monomial to the characteristic polynomial. -/
+@[simp]
+theorem characteristicWeight_of_ne_bot {X : AffineSubspace k V} (hX : X ≠ ⊥) :
+    characteristicWeight X = Polynomial.X ^ finrank k X.direction := by
+  simp [characteristicWeight, hX]
+
+/-- A nonempty subspace contributes its signed codimension monomial to the Poincaré polynomial. -/
+@[simp]
+theorem poincareWeight_of_ne_bot {X : AffineSubspace k V} (hX : X ≠ ⊥) :
+    poincareWeight X = (-Polynomial.X) ^ codim X := by
+  simp [poincareWeight, hX]
+
 /-- Passing through a chart does not change the dimension weight. -/
 theorem characteristicWeight_map_chart {H : AffineSubspace k V}
     (Y : AffineSubspace k H.direction) :
@@ -208,8 +189,8 @@ theorem characteristicWeight_map_chart {H : AffineSubspace k V}
   · subst Y
     simp
   · have hmap : Y.map (chart H) ≠ ⊥ := (AffineSubspace.map_eq_bot_iff _).not.mpr hY
-    simp only [characteristicWeight, hY, hmap, ↓reduceIte]
-    rw [finrank_direction_map_chart]
+    rw [characteristicWeight_of_ne_bot hmap, characteristicWeight_of_ne_bot hY,
+      finrank_direction_map_chart]
 
 /-- Cutting by a hyperplane adds one to codimension and supplies the factor `-X`. -/
 theorem poincareWeight_map_chart [FiniteDimensional k V] {H : AffineSubspace k V}
@@ -220,8 +201,8 @@ theorem poincareWeight_map_chart [FiniteDimensional k V] {H : AffineSubspace k V
   · subst Y
     simp
   · have hmap : Y.map (chart H) ≠ ⊥ := (AffineSubspace.map_eq_bot_iff _).not.mpr hY
-    simp only [poincareWeight, hY, hmap, ↓reduceIte]
-    rw [codim_map_chart, hH.codim_eq_one, pow_succ, mul_comm]
+    rw [poincareWeight_of_ne_bot hmap, poincareWeight_of_ne_bot hY, codim_map_chart,
+      hH.codim_eq_one, pow_succ, mul_comm]
 
 /-- The characteristic polynomial, as a sum over subsets with nonempty intersection.
 Blueprint: `def:polynomials`. -/
@@ -247,8 +228,8 @@ theorem characteristicPolynomial_eq_sum (𝒜 : Arrangement k V) :
   apply Finset.sum_congr rfl
   intro S _
   by_cases hS : sInf (S : Set (AffineSubspace k V)) = ⊥
-  · simp [characteristicWeight, hS]
-  · simp [characteristicWeight, hS, zsmul_eq_mul]
+  · simp [hS]
+  · simp [hS, zsmul_eq_mul]
 
 open scoped Classical in
 /-- The Poincaré polynomial in the blueprint's explicit subset-sum form, with coefficient
@@ -264,8 +245,8 @@ theorem poincarePolynomial_eq_sum (𝒜 : Arrangement k V) :
   apply Finset.sum_congr rfl
   intro S _
   by_cases hS : sInf (S : Set (AffineSubspace k V)) = ⊥
-  · simp [poincareWeight, hS]
-  · simp only [poincareWeight, ne_eq, hS, not_false_eq_true, ↓reduceIte, zsmul_eq_mul]
+  · simp [hS]
+  · simp only [poincareWeight_of_ne_bot hS, zsmul_eq_mul]
     rw [neg_pow (Polynomial.X : ℤ[X])]
     simp only [pow_add, map_mul, map_pow, map_neg, map_one, Int.cast_pow, Int.cast_neg,
       Int.cast_one, mul_assoc]
@@ -275,8 +256,7 @@ Blueprint: `lem:polynomial-recursion`. -/
 @[simp]
 theorem characteristicPolynomial_empty :
     characteristicPolynomial (∅ : Arrangement k V) = Polynomial.X ^ finrank k V := by
-  simp only [characteristicPolynomial, intersectionSum_empty, characteristicWeight,
-    ite_eq_right top_ne_bot]
+  rw [characteristicPolynomial, intersectionSum_empty, characteristicWeight_of_ne_bot top_ne_bot]
   rw [AffineSubspace.direction_top]
   simp
 
@@ -284,7 +264,8 @@ theorem characteristicPolynomial_empty :
 Blueprint: `lem:polynomial-recursion`. -/
 @[simp]
 theorem poincarePolynomial_empty : poincarePolynomial (∅ : Arrangement k V) = 1 := by
-  simp [poincarePolynomial, poincareWeight]
+  rw [poincarePolynomial, intersectionSum_empty, poincareWeight_of_ne_bot top_ne_bot,
+    codim_top, pow_zero]
 
 /-- Characteristic polynomial deletion–restriction. Empty traces are excluded and repeated
 traces counted once. Blueprint: `lem:polynomial-recursion`. -/
@@ -314,8 +295,9 @@ theorem poincarePolynomial_singleton (𝒜 : Arrangement k V)
     {H : AffineSubspace k V} (h𝒜 : 𝒜.hyperplanes = {H}) :
     𝒜.poincarePolynomial = 1 + Polynomial.X := by
   have hH : IsHyperplane H := 𝒜.isHyperplane (by rw [← mem_hyperplanes, h𝒜]; simp)
-  rw [poincarePolynomial, intersectionSum_singleton 𝒜 h𝒜]
-  simp [poincareWeight, hH.ne_bot, hH.codim_eq_one]
+  rw [poincarePolynomial, intersectionSum_singleton 𝒜 h𝒜,
+    poincareWeight_of_ne_bot top_ne_bot, poincareWeight_of_ne_bot hH.ne_bot, codim_top,
+    hH.codim_eq_one, pow_zero, pow_one, sub_neg_eq_add]
 
 open scoped Classical in
 /-- For two distinct hyperplanes, only the weight of their common intersection remains after
@@ -326,8 +308,9 @@ theorem poincarePolynomial_pair (𝒜 : Arrangement k V)
   have hH : IsHyperplane H := 𝒜.isHyperplane (by rw [← mem_hyperplanes, h𝒜]; simp)
   have hK : IsHyperplane K := 𝒜.isHyperplane (by rw [← mem_hyperplanes, h𝒜]; simp)
   rw [poincarePolynomial, intersectionSum_pair 𝒜 hne h𝒜]
-  simp only [poincareWeight, hH.ne_bot, hK.ne_bot, codim_top, hH.codim_eq_one,
-    hK.codim_eq_one, ite_eq_right top_ne_bot, ↓reduceIte, pow_zero, pow_one]
+  rw [poincareWeight_of_ne_bot top_ne_bot, poincareWeight_of_ne_bot hH.ne_bot,
+    poincareWeight_of_ne_bot hK.ne_bot, codim_top, hH.codim_eq_one, hK.codim_eq_one,
+    pow_zero, pow_one]
   ring
 
 open scoped Classical in
@@ -345,8 +328,9 @@ theorem poincarePolynomial_pair_meeting [FiniteDimensional k V] (𝒜 : Arrangem
     (hbot : H ⊓ K ≠ ⊥) : 𝒜.poincarePolynomial = 1 + 2 * Polynomial.X + Polynomial.X ^ 2 := by
   have hH : IsHyperplane H := 𝒜.isHyperplane (by rw [← mem_hyperplanes, h𝒜]; simp)
   have hK : IsHyperplane K := 𝒜.isHyperplane (by rw [← mem_hyperplanes, h𝒜]; simp)
-  rw [poincarePolynomial_pair 𝒜 hne h𝒜]
-  simp [poincareWeight, hbot, hH.codim_inf_eq_two hK hne.symm hbot]
+  rw [poincarePolynomial_pair 𝒜 hne h𝒜, poincareWeight_of_ne_bot hbot,
+    hH.codim_inf_eq_two hK hne.symm hbot]
+  ring
 
 /-- The positive-degree coefficient recurrence, stated over `ℤ` before any passage to natural
 Betti numbers. Blueprint: `lem:polynomial-recursion`. -/
@@ -390,7 +374,8 @@ theorem poincarePolynomial_coeff_nonneg [FiniteDimensional k V] (𝒜 : Arrangem
       exact add_nonneg (hdel (q + 1)) (hres q)
 
 /-- The natural Betti coefficient of the Poincaré polynomial. For finite-dimensional ambient
-spaces, nonnegativity is established above; comparison with cohomology is a later theorem. -/
+spaces, nonnegativity is established above; comparison with cohomology is a later theorem.
+Blueprint: `def:polynomials`. -/
 noncomputable def bettiNumber (𝒜 : Arrangement k V) (q : ℕ) : ℕ :=
   (𝒜.poincarePolynomial.coeff q).toNat
 
