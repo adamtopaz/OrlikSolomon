@@ -52,6 +52,12 @@ Blueprint `lem:boundary-expansion`:
 * `OrlikSolomon.word_sub_eq_wordBoundary_cons`: the product of the differences `x_j - x_i` is the
   boundary of the word `x_i x_{j₁} ⋯ x_{jₛ}`, in any ring.
 
+Blueprint `lem:projective-algebra`:
+
+* `OrlikSolomon.IsExteriorFamily.exists_mem_decomposition_of_sub_mem`: if differences from one
+  generator lie in a subalgebra, every element is the sum of a member of that subalgebra and the
+  chosen generator times another member.
+
 The word statements are proved for an arbitrary exterior family. To apply them in the exterior
 algebra, use `OrlikSolomon.isExteriorFamily_exteriorGen`.
 -/
@@ -631,7 +637,6 @@ theorem word_exteriorGen_ofFn_comp_perm {n : ℕ} (v : Fin n → I) (σ : Equiv.
   rw [word_exteriorGen_ofFn, word_exteriorGen_ofFn]
   exact (ExteriorAlgebra.ιMulti B n).map_perm (fun k => Finsupp.single (v k) 1) σ
 
-
 end Generators
 
 /-! ### Decomposition by differences -/
@@ -640,26 +645,25 @@ namespace IsExteriorFamily
 
 /-- If words in a square-zero anticommuting family span an algebra, any coefficient subalgebra
 containing its differences from one generator spans the algebra together with its left multiple
-by that generator. -/
+by that generator. Blueprint: the generation step of `lem:projective-algebra`. -/
 theorem exists_mem_decomposition_of_sub_mem {I A B : Type*} [CommRing B] [Ring A]
     [Algebra B A] {f : I → A} (hf : IsExteriorFamily f)
     (hspan : Submodule.span B (Set.range (word f : List I → A)) = ⊤)
     (S : Subalgebra B A) (H₀ : I) (hS : ∀ H, f H - f H₀ ∈ S) (x : A) :
     ∃ b ∈ S, ∃ c ∈ S, x = b + f H₀ * c := by
-  have hword (I : List I) :
-      ∃ b ∈ S, ∃ c ∈ S, word f I = b + f H₀ * c := by
-    induction I with
+  have hword (l : List I) :
+      ∃ b ∈ S, ∃ c ∈ S, word f l = b + f H₀ * c := by
+    induction l with
     | nil => exact ⟨1, S.one_mem, 0, S.zero_mem, by simp⟩
-    | cons H I ih =>
-      obtain ⟨b, hb, c, hc, hI⟩ := ih
+    | cons H l ih =>
+      obtain ⟨b, hb, c, hc, hl⟩ := ih
       let d := f H - f H₀
       refine ⟨d * b, S.mul_mem (hS H) hb, b - d * c,
         S.sub_mem hb (S.mul_mem (hS H) hc), ?_⟩
-      rw [word_cons, hI, mul_add, ← mul_assoc (f H),
+      rw [word_cons, hl, mul_add, ← mul_assoc (f H),
         hf.mul_eq_neg_mul_swap H H₀]
       dsimp [d]
-      noncomm_ring
-      simp only [← mul_assoc, hf.mul_self, zero_mul, add_zero]
+      noncomm_ring [← mul_assoc, hf.mul_self]
   have hx : x ∈ Submodule.span B (Set.range (word f : List I → _)) := by
     rw [hspan]
     exact Submodule.mem_top
@@ -700,7 +704,6 @@ Blueprint: `lem:exterior-words`. -/
 theorem word_perm (hx : IsExteriorFamily x) (l : List I) (σ : Equiv.Perm (Fin l.length)) :
     word x (List.ofFn fun k => l.get (σ k)) = Equiv.Perm.sign σ • word x l := by
   simpa [Function.comp_def, List.ofFn_get] using hx.word_ofFn_comp_perm l.get σ
-
 
 end IsExteriorFamily
 

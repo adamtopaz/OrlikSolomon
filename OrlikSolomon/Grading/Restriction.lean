@@ -6,6 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.Grading.Basic
+public import Mathlib.RingTheory.GradedAlgebra.Homogeneous.Submodule
 
 /-!
 # Restricting an internal grading to a homogeneous submodule
@@ -13,6 +14,10 @@ public import OrlikSolomon.Grading.Basic
 A submodule closed under homogeneous components inherits the internal direct-sum decomposition
 of its ambient module. A homogeneous subalgebra inherits the graded algebra structure. These
 constructions are used for the boundary kernel in blueprint `lem:projective-algebra`.
+
+* `isInternal_comap_subtype` proves that the intersections form an internal direct sum.
+* `homogeneousSubmoduleDecomposition` packages that sum as a decomposition.
+* `homogeneousSubalgebraGradedAlgebra` gives the inherited graded algebra structure.
 -/
 
 @[expose] public section
@@ -28,7 +33,7 @@ variable {R ι M : Type*} [Ring R] [AddCommGroup M] [Module R M] [DecidableEq ι
 
 /-- The intersections with the ambient pieces form an internal direct sum on a homogeneous
 submodule. -/
-theorem isInternal_comap_subtype (hS : DirectSum.SetLike.IsHomogeneous ℳ S) :
+theorem isInternal_comap_subtype (hS : S.IsHomogeneous ℳ) :
     IsInternal (fun i ↦ (ℳ i).comap S.subtype) := by
   classical
   apply isInternal_submodule_of_iSupIndep_of_iSup_eq_top
@@ -58,7 +63,7 @@ theorem isInternal_comap_subtype (hS : DirectSum.SetLike.IsHomogeneous ℳ S) :
 The hypothesis is explicit, so this does not introduce an instance search for homogeneity. -/
 @[instance_reducible]
 noncomputable def homogeneousSubmoduleDecomposition
-    (hS : DirectSum.SetLike.IsHomogeneous ℳ S) :
+    (hS : S.IsHomogeneous ℳ) :
     Decomposition (fun i ↦ (ℳ i).comap S.subtype) :=
   (isInternal_comap_subtype ℳ S hS).chooseDecomposition
 

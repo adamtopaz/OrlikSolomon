@@ -16,6 +16,11 @@ boundary of words. It squares to zero, lowers exterior degree by one, and satisf
 Leibniz rule. All results hold over arbitrary commutative rings, including characteristic two.
 The contraction and its basic operator lemmas were extracted from `Algebra/ExteriorWords`.
 
+* `exteriorBoundary` is the contraction-backed word boundary.
+* `exteriorBoundary_exteriorBoundary` states that it squares to zero.
+* `exteriorBoundary_mul_of_mem_exteriorPower` is the homogeneous signed Leibniz rule.
+* `exteriorBoundary_mem_exteriorPower` records its degree shift.
+
 Blueprint: the exterior-algebra operator of `lem:central-boundary`.
 -/
 
@@ -135,7 +140,6 @@ theorem wordBoundary_exteriorGen_ofFn_comp_perm {n : ℕ} (v : Fin n → I) (σ 
   rw [← exteriorBoundary_word, word_exteriorGen_ofFn_comp_perm, Units.smul_def, map_zsmul,
     exteriorBoundary_word, Units.smul_def]
 
-
 namespace IsExteriorFamily
 
 variable {T : Type*} [Ring T] {x : I → T}
@@ -154,7 +158,6 @@ theorem wordBoundary_eq_zero_of_not_nodup (hx : IsExteriorFamily x) {l : List I}
   have h' := congrArg (exteriorLift ℤ ⟨x, hx⟩ ∘ exteriorBoundary ℤ)
     ((isExteriorFamily_exteriorGen ℤ).word_eq_zero_of_not_nodup h)
   simpa using h'
-
 
 end IsExteriorFamily
 

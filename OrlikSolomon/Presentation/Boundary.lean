@@ -15,6 +15,12 @@ submodule, and therefore descends to a linear operator on the Orlik–Solomon al
 square-zero graded antiderivation, lowering both cohomological degree and weight by one.
 Centrality is essential: the affine empty-intersection relations are generally not preserved.
 
+* `boundary_relations` proves preservation of the full relation submodule.
+* `boundary` is the descended coefficient-linear operator, and `boundary_boundary` states that
+  it squares to zero.
+* `boundary_mul_of_mem_bigrading` is the signed Leibniz rule.
+* `isHomogeneousOfShift_boundary` gives the weighted bidegree `(-1,-1)`.
+
 Blueprint: `lem:central-boundary`.
 -/
 

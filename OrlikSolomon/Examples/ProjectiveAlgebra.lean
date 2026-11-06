@@ -54,29 +54,29 @@ theorem boundary_dimension_zero [Subsingleton V] (𝒜 : Arrangement k V) (h𝒜
 
 /-- A singleton affine arrangement is central, even when its hyperplane does not pass through the
 chosen origin. In the line this is the point `a`. -/
-def onePoint (a : k) : Arrangement k k := by
+def singletonPoint (a : k) : Arrangement k k := by
   classical
   exact Arrangement.ofFinset {pointHyperplane a}
 
 @[simp]
 theorem mem_onePoint (a : k) (H : AffineSubspace k k) :
-    H ∈ onePoint a ↔ H = pointHyperplane a := by
+    H ∈ singletonPoint a ↔ H = pointHyperplane a := by
   classical
-  simp only [onePoint, Arrangement.mem_ofFinset, Finset.mem_singleton]
+  simp only [singletonPoint, Arrangement.mem_ofFinset, Finset.mem_singleton]
   exact ⟨And.left, fun h ↦ ⟨h, h ▸ isHyperplane_pointHyperplane a⟩⟩
 
 /-- The unique generator label in the singleton arrangement. -/
-def pointLabel (a : k) : onePoint a := ⟨pointHyperplane a, (mem_onePoint _ _).2 rfl⟩
+def pointLabel (a : k) : singletonPoint a := ⟨pointHyperplane a, (mem_onePoint _ _).2 rfl⟩
 
 /-- The singleton arrangement has its defining point in every hyperplane. -/
-theorem onePoint_isCentral (a : k) : (onePoint a).IsCentral := by
+theorem onePoint_isCentral (a : k) : (singletonPoint a).IsCentral := by
   refine ⟨a, fun H hH ↦ ?_⟩
   rw [(mem_onePoint _ _).1 hH]
   simp
 
 /-- The generator of a translated singleton arrangement has boundary one. -/
 theorem boundary_onePoint_generator (a : k) :
-    boundary B (onePoint_isCentral a) (generator B (onePoint a) (pointLabel a)) = 1 :=
+    boundary B (onePoint_isCentral a) (generator B (singletonPoint a) (pointLabel a)) = 1 :=
   boundary_generator B _ _
 
 /-- For one hyperplane the projective kernel consists exactly of the coefficient subalgebra,
@@ -84,8 +84,8 @@ over arbitrary coefficients, including the zero ring. -/
 theorem projectiveAlgebra_onePoint (a : k) :
     projectiveAlgebra B (onePoint_isCentral a) = ⊥ := by
   rw [projectiveAlgebra_eq_adjoin B _ (pointLabel a)]
-  have hrange : (Set.range fun H : onePoint a ↦ generator B (onePoint a) H -
-      generator B (onePoint a) (pointLabel a)) = {0} := by
+  have hrange : (Set.range fun H : singletonPoint a ↦ generator B (singletonPoint a) H -
+      generator B (singletonPoint a) (pointLabel a)) = {0} := by
     ext x
     constructor
     · rintro ⟨H, rfl⟩
@@ -99,7 +99,7 @@ theorem projectiveAlgebra_onePoint (a : k) :
 example (a : k) :
     (projectiveAlgebra (ZMod 1) (onePoint_isCentral a) ×
       projectiveAlgebra (ZMod 1) (onePoint_isCentral a)) ≃ₗ[ZMod 1]
-        OSAlgebra (ZMod 1) (onePoint a) :=
+        OSAlgebra (ZMod 1) (singletonPoint a) :=
   projectiveDecomposition _ _ (pointLabel a)
 
 /-- A word-boundary operator with the generator Leibniz identity cannot exist on the noncentral
@@ -110,7 +110,7 @@ theorem no_boundary_twoPoints [Nontrivial B] :
         ∀ H x, d (generator B (twoPoints k) H * x) =
           x - generator B (twoPoints k) H * d x := by
   rintro ⟨d, hd, hmul⟩
-  have h := hmul (zeroPoint k) (generator B (twoPoints k) (PresentationExamples.onePoint k))
+  have h := hmul (zeroPoint k) (generator B (twoPoints k) (onePoint k))
   rw [twoPoints_product, map_zero, hd, mul_one] at h
   exact twoPoints_difference B h.symm
 
@@ -157,7 +157,7 @@ example : ¬ ∃ d : OSAlgebra (ZMod 2) (twoPoints (ZMod 2)) →ₗ[ZMod 2]
   no_boundary_twoPoints _
 
 -- The singleton generator still squares to zero with characteristic-two coefficients.
-example : generator (ZMod 2) (onePoint (1 : ZMod 2)) (pointLabel 1) ^ 2 = 0 :=
+example : generator (ZMod 2) (singletonPoint (1 : ZMod 2)) (pointLabel 1) ^ 2 = 0 :=
   generator_sq _ _ _
 
 -- The boundary and kernel construction must allow degenerate coefficient rings.

@@ -511,8 +511,8 @@ theorem IsCentral.mono (hℬ : ℬ.IsCentral) (h : 𝒜 ≤ ℬ) : 𝒜.IsCentra
 
 /-- The empty arrangement is central in every ambient vector space. -/
 @[simp]
-theorem isCentral_empty : (∅ : Arrangement k V).IsCentral := by
-  exact ⟨0, fun H hH ↦ (notMem_empty H hH).elim⟩
+theorem isCentral_empty : (∅ : Arrangement k V).IsCentral :=
+  ⟨0, fun H hH ↦ (notMem_empty H hH).elim⟩
 
 end Arrangement
 
