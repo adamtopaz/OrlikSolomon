@@ -43,9 +43,9 @@ Logarithmic classes commute with pullback, $`[c]=0` for $`c\in k^\times`, and $`
 For invertible regular functions $`f` and $`g` and $`c\in k^\times`, we have $`[fg]=[f]+[g]`, $`[f/g]=[f]-[g]` and $`[cf]=[f]`.
 :::
 
-:::node "lem:log-residue" (decl := OrlikSolomon.OrdinaryTheory.residue_logClass_eqnUnit) (decl := OrlikSolomon.OrdinaryTheory.residue_logClass_eqnUnit_mul)
+:::node "lem:log-residue" (decl := OrlikSolomon.OrdinaryTheory.residue_logClass_eqnUnit) (decl := OrlikSolomon.OrdinaryTheory.residue_logClass_eqnUnit_mul) (decl := OrlikSolomon.OrdinaryTheory.deletionResidue_logClass) (decl := OrlikSolomon.OrdinaryTheory.deletionResidue_logClass_mul)
 In a deletion pair, the residue of $`[f_H]` is $`1`, and $`r([f_H]\,j^*\beta)=i^*\beta` for every $`\beta` in $`C(U_{\mathcal{A}'})`.
 The class $`[f_H]` must stay on the left, because moving it introduces a sign.
 
-The formalization proves both formulas for every divisor pair, of which a deletion pair is one, with $`f_H` the equation of the pair.
+The formalization proves both formulas for every divisor pair, with $`f_H` the equation of the pair, and then for deletion pairs, with $`f_H` any equation of $`H`, typed by the complements themselves.
 :::
