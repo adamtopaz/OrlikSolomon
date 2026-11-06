@@ -73,9 +73,16 @@ Pullback along the section $`t=1` recovers $`b`, and the residue recovers $`c`.
 In the formalization, every smooth $`X` is suitable.
 :::
 
-:::node "thm:projective"
+:::node "thm:projective" (decl := OrlikSolomon.OrdinaryTheory.projectiveEquiv) (decl := OrlikSolomon.OrdinaryTheory.map_projectiveToCone_projectiveEquiv) (decl := OrlikSolomon.OrdinaryTheory.projectiveRealization_unique) (decl := OrlikSolomon.OrdinaryTheory.projectiveEquiv_eq_map_section) (decl := OrlikSolomon.OrdinaryTheory.projectiveEquiv_difference) (decl := OrlikSolomon.OrdinaryTheory.logClass_projectiveRatioUnit_eq_of_ker_eq) (decl := OrlikSolomon.OrdinaryTheory.projectiveEquiv_symm_logClass_ratio) (decl := OrlikSolomon.OrdinaryTheory.isHomogeneousOfShift_projectiveEquiv) (decl := OrlikSolomon.OrdinaryTheory.isHomogeneousOfShift_projectiveEquiv_symm) (decl := OrlikSolomon.OrdinaryTheory.projectiveComponentEquiv) (decl := OrlikSolomon.OrdinaryTheory.projectiveDiagonalEquiv) (decl := OrlikSolomon.OrdinaryTheory.projectiveDiagonalEquiv_difference)
 For a nonempty split projective arrangement there is a canonical bigrading-preserving equivalence from $`\overline{\operatorname{OS}}_B(\mathcal{P})` to $`C(U_{\mathcal{P}})`, sending $`e_i-e_j` to $`[\ell_i/\ell_j]`.
 It is independent of the equations and of the hyperplane chosen at infinity.
+On diagonal components it gives the canonical graded $`R`-algebra equivalence from the projective algebra over $`R` to $`\bigoplus_{q\geq0} H^{q,q}(U_{\mathcal{P}})`.
+
+The map is uniquely characterized by compatibility with affine realization after pullback to the cone.
+The section $`t=1` makes this pullback injective, and differences descend because their logarithms are ratios.
+For surjectivity, pull back to any decone and use the already proved logarithmic generation there.
+Thus the hyperplane at infinity occurs in the proof, while the resulting map is canonical.
+The diagonal theorem uses coefficient extension from $`R` and the affine diagonal theorem on the cone; injectivity detects the boundary kernel without a flatness hypothesis.
 :::
 
 :::node "cor:projective-betti"
