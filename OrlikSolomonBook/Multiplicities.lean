@@ -55,9 +55,13 @@ So the number of words of length $`q` satisfies the same recursion and the same 
 
 Since $`H^{p,w}(U_{\mathcal{A}})\simeq\operatorname{OS}_R^p(\mathcal{A})\otimes_R B_{w-p}`, it follows that this group is a direct sum of $`b_p(\mathcal{A})` copies of $`B_{w-p}`.
 This isomorphism depends on the basis and is not canonical, whereas {bp "cor:ordinary"}[the Orlik–Solomon presentation] is.
-Over the zero ring the count is still correct, as a statement about words, even though every family of elements is a basis there.
 
-For example, two disjoint hyperplanes, such as two parallel lines or two points of a line, give $`1+2t` by {name OrlikSolomon.Arrangement.poincarePolynomial_pair_disjoint}`poincarePolynomial_pair_disjoint`.
+Over the zero ring, these statements do not determine $`b_q`.
+Every group vanishes there, every family of words of admissible length is a basis, and so neither the module statements nor the existence of a basis with this word count pins the number down.
+For the two points of the line over $`\mathbb{F}_2` with zero coefficients, {name OrlikSolomon.DegenerateExamples.different_basis_sizes_zeroTheory_twoPoints}`different_basis_sizes_zeroTheory_twoPoints` shows that one group has bases with zero and with two vectors.
+There $`b_q` is simply the coefficient of the polynomial, and its link to words is the recursive construction in the proof: {name OrlikSolomon.OrdinaryTheory.LogMonomialBasis.empty}`LogMonomialBasis.empty`, {name OrlikSolomon.OrdinaryTheory.LogMonomialBasis.ofDeletion}`ofDeletion` and their word-count lemmas.
+
+As for the values, two disjoint hyperplanes, such as two parallel lines or two points of a line, give $`1+2t` by {name OrlikSolomon.Arrangement.poincarePolynomial_pair_disjoint}`poincarePolynomial_pair_disjoint`.
 Three concurrent lines in the plane give $`1+3t+2t^2`, and three lines in general position give $`1+3t+3t^2`.
 Here are the statements of the last two, for any three hyperplanes with these incidences.
 
@@ -102,9 +106,14 @@ Thus each $`H^{p,w}(U_{\mathcal{A}})` is a direct sum of $`b_p(\mathcal{A})` cop
 # The Möbius function
 
 The usual form of these numbers, in terms of the Möbius function of the intersection poset, is a useful final combinatorial statement and is not used anywhere in the proof of the ring equivalence.
-It has not been formalized: the box below is a statement of intent.
+It is not formalized yet: the box below is a statement of intent, and the work is tracked by [issue 66](https://github.com/adamtopaz/OrlikSolomon/issues/66).
 
 :::node "lem:mobius"
 For the poset of nonempty intersections, ordered by reverse inclusion,
 $$`\chi_{\mathcal{A}}(T)=\sum_X\mu(V,X)T^{\dim X},\qquad b_q=(-1)^q\sum_{\operatorname{codim}X=q}\mu(V,X).`
 :::
+
+# Projective arrangements
+
+A nonempty projective arrangement has Betti numbers too, defined as those of any of its decones, and the polynomial of its cone is $`1+t` times their polynomial.
+What they say about cohomology uses the projective complement, so they are treated in the next chapter, at {bp "cor:projective-betti"}[].
