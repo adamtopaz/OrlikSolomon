@@ -365,6 +365,8 @@ def affineCoord (f : V →ᵃ[k] k) : affineSpace k V := coord f
 
 lemma affineCoord_eq (f : V →ᵃ[k] k) : affineCoord f = (coord f : CoordinateRing k V) := rfl
 
+@[simp] lemma affineCoord_zero : affineCoord (0 : V →ᵃ[k] k) = 0 := map_zero coord
+
 /-- The pullback `O(V) ⟶ O(W)` along an affine map `W → V`. -/
 def affinePull (φ : W →ᵃ[k] V) : affineSpace k V ⟶ affineSpace k W := ofHom (pull φ)
 
