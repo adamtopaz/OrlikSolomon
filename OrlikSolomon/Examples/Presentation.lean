@@ -6,7 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.Presentation.BaseChange
-public import Mathlib.Algebra.TrivSqZeroExt.Basic
+public import OrlikSolomon.Presentation.Generators
 public import Mathlib.Algebra.Field.ZMod
 
 /-!
@@ -35,61 +35,6 @@ namespace OrlikSolomon
 
 variable {k : Type u} [Field k] {V : Type u} [AddCommGroup V] [Module k V]
 
-namespace OSAlgebra
-
-variable {𝒜 : Arrangement k V}
-
-private theorem not_isDependent_of_pairwise_disjoint
-    (h𝒜 : Pairwise fun H K : 𝒜 ↦ (H : AffineSubspace k V) ⊓ K = ⊥)
-    {I : List 𝒜} (hI : I.Nodup) : ¬ Arrangement.IsDependent I := by
-  cases I with
-  | nil => exact Arrangement.isDependent_nil 𝒜
-  | cons H I =>
-    cases I with
-    | nil => simp [Arrangement.IsDependent, 𝒜.isHyperplane H.2 |>.codim_eq_one]
-    | cons K I =>
-      have hHK : H ≠ K := fun h ↦ (List.nodup_cons.mp hI).1 (by simp [h])
-      apply Arrangement.not_isDependent_of_inter_eq_bot
-      simp [Arrangement.inter_cons, ← inf_assoc, h𝒜 hHK]
-
-variable (B : Type v) [CommRing B] (𝒜 : Arrangement k V)
-
-/-- The product of generators of disjoint hyperplanes vanishes in the presentation. -/
-theorem generator_mul_eq_zero_of_disjoint (H K : 𝒜)
-    (hHK : (H : AffineSubspace k V) ⊓ K = ⊥) :
-    generator B 𝒜 H * generator B 𝒜 K = 0 := by
-  simpa using word_eq_zero_of_inter_eq_bot B 𝒜 (I := [H, K]) (by simpa using hHK)
-
-private def disjointDetectorFamily (K : 𝒜) (L : 𝒜) : TrivSqZeroExt B B :=
-  by classical exact TrivSqZeroExt.inr (if L = K then 1 else 0)
-
-private theorem isFamily_disjointDetectorFamily
-    (h𝒜 : Pairwise fun H K : 𝒜 ↦ (H : AffineSubspace k V) ⊓ K = ⊥) (K : 𝒜) :
-    IsFamily 𝒜 (disjointDetectorFamily B 𝒜 K) where
-  mul_self _ := by simp [disjointDetectorFamily]
-  mul_add_mul_swap_of_ne _ := by simp [disjointDetectorFamily]
-  word_eq_zero I _ hI := by
-    cases I with
-    | nil => simp at hI
-    | cons H I =>
-      cases I with
-      | nil => exact ((𝒜.isHyperplane H.2).ne_bot (by simpa using hI)).elim
-      | cons L I => simp [word_cons, disjointDetectorFamily, ← mul_assoc]
-  wordBoundary_eq_zero _ hI hdep := (not_isDependent_of_pairwise_disjoint h𝒜 hI hdep).elim
-
-/-- Distinct generators of a pairwise disjoint arrangement have nonzero difference over any
-nonzero coefficient ring. In particular, empty intersections do not impose boundary relations.
-No invertibility assumption on `2` is used. -/
-theorem generator_sub_ne_zero_of_pairwise_disjoint [Nontrivial B]
-    (h𝒜 : Pairwise fun H K : 𝒜 ↦ (H : AffineSubspace k V) ⊓ K = ⊥)
-    (H K : 𝒜) (hHK : H ≠ K) : generator B 𝒜 K - generator B 𝒜 H ≠ 0 := by
-  intro h
-  let f : OSAlgebra B 𝒜 →ₐ[B] TrivSqZeroExt B B :=
-    lift (disjointDetectorFamily B 𝒜 K) (isFamily_disjointDetectorFamily B 𝒜 h𝒜 K)
-  have h' := congrArg (fun x ↦ (f x).snd) h
-  simp [f, disjointDetectorFamily, hHK] at h'
-
-end OSAlgebra
 
 namespace PresentationExamples
 

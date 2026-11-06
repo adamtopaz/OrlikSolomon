@@ -107,6 +107,41 @@ theorem smul_coefficientMap_mem_bigrading {w : ℤ} {n : ℕ} {b : B} {x : OSAlg
     (tmul_mem_weightedTensorGrading ℬ (degree R 𝒜) hb hx)
 
 omit [GradedAlgebra ℬ] in
+/-- A bigraded piece is spanned over `R` by words of the prescribed length with coefficients
+of the complementary weight. This gives an induction principle for homogeneous linear maps.
+
+Blueprint: the component description in `lem:os-basic`. -/
+theorem bigrading_eq_span (n : ℕ) (w : ℤ) :
+    bigrading 𝒜 ℬ (n, w) = Submodule.span R
+      {y | ∃ b ∈ ℬ (w - n), ∃ I : List 𝒜, I.length = n ∧
+        y = b • word (generator B 𝒜) I} := by
+  let N := Submodule.span R
+    {y | ∃ b ∈ ℬ (w - n), ∃ I : List 𝒜, I.length = n ∧
+      y = b • word (generator B 𝒜) I}
+  have hword (b : B) (hb : b ∈ ℬ (w - n)) :
+      degree R 𝒜 n ≤ N.comap (b • (coefficientMap R B 𝒜).toLinearMap) := by
+    rw [← span_word_length, Submodule.span_le]
+    rintro _ ⟨I, hI, rfl⟩
+    change b • coefficientMap R B 𝒜 (word (generator R 𝒜) I) ∈ N
+    rw [coefficientMap_word]
+    exact Submodule.subset_span ⟨b, hb, I, hI, rfl⟩
+  change (weightedTensorGrading ℬ (degree R 𝒜) (n, w)).map _ = N
+  rw [weightedTensorGrading_apply', tensorProductGrading_eq_span, Submodule.map_span]
+  apply le_antisymm
+  · refine Submodule.span_le.2 ?_
+    rintro _ ⟨_, ⟨b, hb, a, ha, rfl⟩, rfl⟩
+    change baseChangeEquiv R B 𝒜 (b ⊗ₜ[R] a) ∈ N
+    rw [baseChangeEquiv_tmul]
+    exact hword b hb ha
+  · refine Submodule.span_le.2 ?_
+    rintro _ ⟨b, hb, I, rfl, rfl⟩
+    apply Submodule.subset_span
+    refine ⟨b ⊗ₜ[R] word (generator R 𝒜) I, ?_, ?_⟩
+    · refine ⟨b, hb, word (generator R 𝒜) I, word_mem_degree R 𝒜 I, rfl⟩
+    · exact (baseChangeEquiv_tmul R B 𝒜 b _).trans
+        (congrArg (b • ·) (coefficientMap_word R B 𝒜 I))
+
+omit [GradedAlgebra ℬ] in
 /-- There is no negative cohomological degree in the affine presentation. -/
 theorem bigrading_eq_bot_of_fst_neg {p w : ℤ} (hp : p < 0) :
     bigrading 𝒜 ℬ (p, w) = ⊥ := by
