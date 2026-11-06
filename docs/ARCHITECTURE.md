@@ -22,7 +22,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Geometry/Chart`               | identifying `H` with `H.direction` in `def:deletion`, the incidence part of `lem:restriction-geometry` for one hyperplane |
 | `Geometry/Arrangement`         | `def:arrangement`, `def:deletion`, the incidence part of `lem:restriction-geometry` for arrangements |
 | `Geometry/SmoothAlg`           | `def:geometry-interface` |
-| `Geometry/CoordinateRing`      | coordinate rings and complements |
+| `Geometry/CoordinateRing`      | coordinate rings of vector spaces, part of `lem:geometry-adapter` |
+| `Geometry/Complement`          | coordinate rings of arrangement complements, part of `lem:geometry-adapter` |
 | `Geometry/Deletion`            | the ring part of `lem:restriction-geometry` |
 | `Geometry/RelationTargets`     | `lem:small-targets` |
 | `Geometry/Projective`          | `def:projective`, `lem:decone` |
@@ -35,7 +36,10 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/Cokernel`        | `lem:representatives`, `def:lift-map`, `lem:lift-surj` |
 | `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine`, `cor:ordinary` |
 | `Presentation/Projective`      | `lem:central-boundary`, `lem:projective-algebra`, `thm:projective` |
+| `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
 | `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `thm:betti`, `lem:mobius`, `cor:projective-betti` |
+| `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
+| `Examples/Polynomials`         | polynomial regression examples |
 | `Examples/Sanity`              | the blueprint's regression examples |
 
 `lem:geometry-adapter` has no module of its own: see the next section.
@@ -82,9 +86,9 @@ such that the ambient map sends `P.eqn` to a **unit multiple** of `Q.eqn`. The u
 what makes `lem:log-mul` work, where `z ↦ xy` pulls back to the divisor `x = 0`.
 
 **Pairs needed:** for any smooth `A`, the pair `(A[t], A, A[t;t⁻¹], t)` serves as the
-standard pair (`A = k`), the pair in `lem:log-mul` (`A = k[y;y⁻¹]`) and the pair in
-`lem:gm-product`. The only other family is the deletion pair
-`(O(U_𝒜'), O(U_𝒜''), O(U_𝒜), f_H)`.
+standard pair (`A = k`), the pair in `lem:log-mul` (any `A` with a unit `y`, the blueprint's
+universal case being `A = k[y;y⁻¹]`) and the pair in `lem:gm-product`. The only other family is the
+deletion pair `(O(U_𝒜'), O(U_𝒜''), O(U_𝒜), f_H)`.
 
 **Objects and pairs are `def`s.** An object of `SmoothAlg k` that lemmas will mention should be a
 `def` built from `SmoothAlg.of`, as `point`, `polynomial` and `laurent` are, and not an `abbrev`.
@@ -114,6 +118,18 @@ used this way needs its own wrappers.
   really needed, such as for smoothness.
 - `O(U_𝒜)` is a localization of `O(V)` at the equations of the hyperplanes. **It is never
   a subset of `V`**, since a complement can have no `k`-points (blueprint §3).
+  `Arrangement.ComplementRing` inverts all equations of all hyperplanes rather than a chosen
+  product, so its definition involves no choice. `ComplementRing.isLocalizationAway` gives
+  `O(V)[1/P]` for any product `P` of equations, one for each hyperplane, and
+  `ComplementRing.isLocalization_of_exists_dvd` recognizes the ring as a localization at any other
+  submonoid with the same saturation. The object of `SmoothAlg k` is `SmoothAlg.complement 𝒜`.
+- `𝒜.Covers L` says that `L` is empty or a hyperplane of `𝒜`. An affine function whose zero locus
+  is covered is a unit on `U_𝒜`, namely `SmoothAlg.complementUnit`. An affine map `φ` induces
+  `O(U_𝒜) ⟶ O(U_ℬ)` when `ℬ` covers the preimage of every hyperplane of `𝒜`, by
+  `SmoothAlg.complementMap`.
+- Maps that are not affine are built on the ring level with `CoordinateRing.fraction`, which is
+  `v ↦ G v / u` for an affine `G` and a unit `u`, with `liftChart` to land in an affine subspace and
+  `ComplementRing.lift` to pass to a complement, and are then wrapped with `SmoothAlg.ofHom`.
 - The restriction arrangement lives on `H.direction`, identified with `H` through a base
   point chosen once, inside the definition. That definition is `chart H : H.direction →ᵃ[k] V`,
   which is `@[no_expose]`. Move subspaces with `K.comap (chart H)` and `M.map (chart H)`, and
@@ -166,7 +182,10 @@ used this way needs its own wrappers.
 - Its total cohomology is a functor `SmoothAlg k ⥤ AlgCat B`, with each value internally
   bigraded by `R`-submodules. `AlgCat` is not commutative, as required.
 - Each value also carries an `R`-algebra structure as a field, tied to `B` by `IsScalarTower`, so
-  that a direct sum can keep the structure it already has.
+  that a direct sum can keep the structure it already has. So at `R = B` the two `B`-module
+  structures agree only propositionally, and a term mixing a `B`-linear map with the grading pieces
+  fails with an instance mismatch. Prove statements with `R` and `B` separate and specialize, or use
+  the wrappers `T.mapOverR`, `T.gysinOverR` and `T.residueOverR`.
 - The dimension axiom says `B → C(k)` is bijective, with every degree `(p, w)` for `p ≠ 0` zero.
   C1 sends `ℬ w` into degree `(0, w)` for every `A`, and it follows that `B → C(k)` carries `ℬ w`
   onto degree `(0, w)` (`algebraMap_mem_grading_point_iff`).

@@ -33,6 +33,8 @@ map. No hypothesis on `k` beyond being a commutative ring is needed.
 * `SmoothAlg.zero k`: the zero ring, the coordinate ring of the empty scheme.
 * `SmoothAlg.gmHom u`: the map `k[t;t⁻¹] ⟶ A` attached to a unit `u` of `A`, which replaces a
   regular map `X → 𝔾ₘ`.
+* `SmoothAlg.constUnit`: a unit of `k`, as a unit of a smooth algebra.
+* `SmoothAlg.isoOfAlgEquiv`: an isomorphism of `SmoothAlg k` from a `k`-algebra isomorphism.
 * `OrlikSolomon.DivisorPair k`: certified smooth-divisor pairs `(X, D, U)`, with `D` cut out by a
   non-zero-divisor.
 * `DivisorPair.Hom`: transverse morphisms, which make `DivisorPair k` a category.
@@ -55,12 +57,13 @@ With `A` a smooth algebra and `P₀ = standardPair (point k)`, write `z` for the
 and `x` for the coordinate of `standardPair A`.
 
 * `lem:gm` uses `P₀` itself, together with `polynomialC_comp_i` and `polynomialC_comp_j`.
-* `lem:log-mul` takes `A = gm k`, with `y = laurentT (point k)`. The maps `z ↦ x` and `z ↦ yx` are
-  `standardMap (fromPoint A) 1` and `standardMap (fromPoint A) y`. By `standardMap_fromPoint_compl`
-  their open parts are `gmHom (mapUnits (laurentC A) u * laurentT A)` for `u = 1` and `u = y`, and
-  by `standardMap_closed` their closed parts are `fromPoint A`. The section `x = 1` is
-  `laurentSection A`. The final pullback along units `(f, g)` of `B` is
-  `laurentLift (gmHom g) f : laurent (gm k) ⟶ B`.
+* `lem:log-mul` takes `y` to be a unit of `A`. The blueprint's universal case is `A = gm k` with
+  `y = laurentT (point k)`. The maps `z ↦ x` and `z ↦ yx` are `standardMap (fromPoint A) 1` and
+  `standardMap (fromPoint A) y`. By `standardMap_fromPoint_compl` their open parts are
+  `gmHom (mapUnits (laurentC A) u * laurentT A)` for `u = 1` and `u = y`, and by
+  `standardMap_closed` their closed parts are `fromPoint A`. The section `x = 1` is
+  `laurentSection A`. The final pullback along `x ↦ g`, for a unit `g` of `A`, is
+  `laurentLift (𝟙 A) g : laurent A ⟶ A`.
 * `lem:gm-product` uses `standardMap (fromPoint A) 1` for general `A`, together with `laurentC A`
   for the projection and `laurentSection A` for the section.
 * `lem:log-residue` uses `fromStandard P : P₀ ⟶ P`, the morphism `z ↦ P.eqn`.
@@ -212,6 +215,17 @@ def mapUnits (f : A ⟶ B) : Aˣ →* Bˣ := Units.map (algHom f : A →* B)
     mapUnits (f ≫ g) u = mapUnits g (mapUnits f u) := by
   ext; simp
 
+/-- A `k`-algebra isomorphism between smooth algebras, as an isomorphism of `SmoothAlg k`. -/
+def isoOfAlgEquiv (e : A ≃ₐ[k] B) : A ≅ B where
+  hom := ofHom (e : A →ₐ[k] B)
+  inv := ofHom (e.symm : B →ₐ[k] A)
+  hom_inv_id := by
+    ext x
+    exact e.symm_apply_apply x
+  inv_hom_id := by
+    ext x
+    exact e.apply_symm_apply x
+
 /-! ### The point -/
 
 variable (k) in
@@ -233,6 +247,21 @@ instance : Unique (point k ⟶ A) where
 
 @[simp] lemma fromPoint_comp (f : A ⟶ B) : fromPoint A ≫ f = fromPoint B :=
   Subsingleton.elim _ _
+
+variable (A) in
+/-- A unit of `k`, as a unit of a smooth algebra. It is the pullback of a unit of the point along
+`fromPoint A`, by `constUnit_eq_mapUnits`. -/
+def constUnit : kˣ →* Aˣ := Units.map (algebraMap k A : k →* A)
+
+@[simp] lemma coe_constUnit (c : kˣ) : (constUnit A c : A) = algebraMap k A c := rfl
+
+lemma constUnit_eq_mapUnits (c : kˣ) : constUnit A c = mapUnits (fromPoint A) (c : (point k)ˣ) :=
+  rfl
+
+@[simp] lemma mapUnits_constUnit (f : A ⟶ B) (c : kˣ) :
+    mapUnits f (constUnit A c) = constUnit B c := by
+  ext
+  exact (algHom f).commutes _
 
 /-! ### The zero ring -/
 
