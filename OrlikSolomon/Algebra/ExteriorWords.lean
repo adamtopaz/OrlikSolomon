@@ -1,12 +1,12 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
 public import Mathlib.Algebra.Ring.NegOnePow
-public import Mathlib.LinearAlgebra.CliffordAlgebra.Contraction
+public import Mathlib.LinearAlgebra.ExteriorAlgebra.Basic
 
 import Mathlib.LinearAlgebra.ExteriorPower.Basic
 import Mathlib.LinearAlgebra.Finsupp.VectorSpace
@@ -31,8 +31,6 @@ nothing about squares, which is why square-zero is a separate condition on an ex
 * `OrlikSolomon.exteriorGen B i`: the standard generator `e_i` of `ExteriorAlgebra B (I →₀ B)`.
 * `OrlikSolomon.exteriorLift B`: the universal property, an equivalence between exterior families
   in a `B`-algebra `T` and algebra maps `ExteriorAlgebra B (I →₀ B) →ₐ[B] T`.
-* `OrlikSolomon.exteriorBoundary B`: the linear operator on the exterior algebra that sends each
-  word to its signed boundary.
 
 ## Main results
 
@@ -53,6 +51,12 @@ Blueprint `lem:boundary-expansion`:
 
 * `OrlikSolomon.word_sub_eq_wordBoundary_cons`: the product of the differences `x_j - x_i` is the
   boundary of the word `x_i x_{j₁} ⋯ x_{jₛ}`, in any ring.
+
+Blueprint `lem:projective-algebra`:
+
+* `OrlikSolomon.IsExteriorFamily.exists_mem_decomposition_of_sub_mem`: if differences from one
+  generator lie in a subalgebra, every element is the sum of a member of that subalgebra and the
+  chosen generator times another member.
 
 The word statements are proved for an arbitrary exterior family. To apply them in the exterior
 algebra, use `OrlikSolomon.isExteriorFamily_exteriorGen`.
@@ -633,71 +637,50 @@ theorem word_exteriorGen_ofFn_comp_perm {n : ℕ} (v : Fin n → I) (σ : Equiv.
   rw [word_exteriorGen_ofFn, word_exteriorGen_ofFn]
   exact (ExteriorAlgebra.ιMulti B n).map_perm (fun k => Finsupp.single (v k) 1) σ
 
-/-! ### The boundary operator -/
-
-/-- The linear operator on the exterior algebra sending each word to its signed boundary: it is
-contraction with the linear form sending every standard basis vector to `1`. It is a graded
-antiderivation of degree `-1` with square zero, and not a derivation in the sense of Mathlib.
-
-Blueprint: the operator of `lem:central-boundary`, before passing to the quotient. -/
-noncomputable def exteriorBoundary :
-    ExteriorAlgebra B (I →₀ B) →ₗ[B] ExteriorAlgebra B (I →₀ B) :=
-  CliffordAlgebra.contractLeft (Finsupp.linearCombination B fun _ => (1 : B))
-
-@[simp]
-theorem exteriorBoundary_one : exteriorBoundary B (1 : ExteriorAlgebra B (I →₀ B)) = 0 :=
-  CliffordAlgebra.contractLeft_one _ _
-
-/-- The boundary on a product with a standard generator on the left. -/
-@[simp]
-theorem exteriorBoundary_exteriorGen_mul (i : I) (y : ExteriorAlgebra B (I →₀ B)) :
-    exteriorBoundary B (exteriorGen B i * y) = y - exteriorGen B i * exteriorBoundary B y := by
-  simp [exteriorBoundary, exteriorGen, CliffordAlgebra.contractLeft_ι_mul]
-
-@[simp]
-theorem exteriorBoundary_exteriorGen (i : I) : exteriorBoundary B (exteriorGen B i) = 1 := by
-  simpa using exteriorBoundary_exteriorGen_mul B i 1
-
-/-- The boundary operator squares to zero.
-
-Blueprint: `lem:central-boundary`. -/
-@[simp]
-theorem exteriorBoundary_exteriorBoundary (y : ExteriorAlgebra B (I →₀ B)) :
-    exteriorBoundary B (exteriorBoundary B y) = 0 :=
-  CliffordAlgebra.contractLeft_contractLeft _ _
-
-/-- The boundary operator computes the signed boundary of words. -/
-@[simp]
-theorem exteriorBoundary_word (l : List I) :
-    exteriorBoundary B (word (exteriorGen B) l) = wordBoundary (exteriorGen B) l := by
-  induction l with
-  | nil => simp
-  | cons i l ih => simp [ih]
-
-/-- The signed Leibniz rule for the boundary operator, for a word on the left.
-
-Blueprint: `lem:central-boundary`. -/
-theorem exteriorBoundary_word_mul (l : List I) (y : ExteriorAlgebra B (I →₀ B)) :
-    exteriorBoundary B (word (exteriorGen B) l * y) =
-      wordBoundary (exteriorGen B) l * y +
-        (l.length : ℤ).negOnePow • (word (exteriorGen B) l * exteriorBoundary B y) := by
-  induction l with
-  | nil => simp
-  | cons i l ih =>
-    simp only [word_cons, wordBoundary_cons, mul_assoc, exteriorBoundary_exteriorGen_mul, ih,
-      mul_add, sub_mul, List.length_cons, Nat.cast_add, Nat.cast_one, Int.negOnePow_succ,
-      Units.neg_smul, mul_smul_comm]
-    abel
-
-/-- A permutation of the letters multiplies the boundary of a word in the standard generators by
-its sign. -/
-theorem wordBoundary_exteriorGen_ofFn_comp_perm {n : ℕ} (v : Fin n → I) (σ : Equiv.Perm (Fin n)) :
-    wordBoundary (exteriorGen B) (List.ofFn (v ∘ σ)) =
-      Equiv.Perm.sign σ • wordBoundary (exteriorGen B) (List.ofFn v) := by
-  rw [← exteriorBoundary_word, word_exteriorGen_ofFn_comp_perm, Units.smul_def, map_zsmul,
-    exteriorBoundary_word, Units.smul_def]
-
 end Generators
+
+/-! ### Decomposition by differences -/
+
+namespace IsExteriorFamily
+
+/-- If words in a square-zero anticommuting family span an algebra, any coefficient subalgebra
+containing its differences from one generator spans the algebra together with its left multiple
+by that generator. Blueprint: the generation step of `lem:projective-algebra`. -/
+theorem exists_mem_decomposition_of_sub_mem {I A B : Type*} [CommRing B] [Ring A]
+    [Algebra B A] {f : I → A} (hf : IsExteriorFamily f)
+    (hspan : Submodule.span B (Set.range (word f : List I → A)) = ⊤)
+    (S : Subalgebra B A) (H₀ : I) (hS : ∀ H, f H - f H₀ ∈ S) (x : A) :
+    ∃ b ∈ S, ∃ c ∈ S, x = b + f H₀ * c := by
+  have hword (l : List I) :
+      ∃ b ∈ S, ∃ c ∈ S, word f l = b + f H₀ * c := by
+    induction l with
+    | nil => exact ⟨1, S.one_mem, 0, S.zero_mem, by simp⟩
+    | cons H l ih =>
+      obtain ⟨b, hb, c, hc, hl⟩ := ih
+      let d := f H - f H₀
+      refine ⟨d * b, S.mul_mem (hS H) hb, b - d * c,
+        S.sub_mem hb (S.mul_mem (hS H) hc), ?_⟩
+      rw [word_cons, hl, mul_add, ← mul_assoc (f H),
+        hf.mul_eq_neg_mul_swap H H₀]
+      dsimp [d]
+      noncomm_ring [← mul_assoc, hf.mul_self]
+  have hx : x ∈ Submodule.span B (Set.range (word f : List I → _)) := by
+    rw [hspan]
+    exact Submodule.mem_top
+  induction hx using Submodule.span_induction with
+  | mem x hx => obtain ⟨I, rfl⟩ := hx; exact hword I
+  | zero => exact ⟨0, S.zero_mem, 0, S.zero_mem, by simp⟩
+  | add x y _ _ hx hy =>
+    obtain ⟨b, hb, c, hc, rfl⟩ := hx
+    obtain ⟨b', hb', c', hc', rfl⟩ := hy
+    refine ⟨b + b', S.add_mem hb hb', c + c', S.add_mem hc hc', ?_⟩
+    noncomm_ring
+  | smul a x _ hx =>
+    obtain ⟨b, hb, c, hc, rfl⟩ := hx
+    exact ⟨a • b, S.smul_mem hb a, a • c, S.smul_mem hc a, by
+      rw [smul_add, mul_smul_comm]⟩
+
+end IsExteriorFamily
 
 /-! ### Signs for arbitrary exterior families -/
 
@@ -721,21 +704,6 @@ Blueprint: `lem:exterior-words`. -/
 theorem word_perm (hx : IsExteriorFamily x) (l : List I) (σ : Equiv.Perm (Fin l.length)) :
     word x (List.ofFn fun k => l.get (σ k)) = Equiv.Perm.sign σ • word x l := by
   simpa [Function.comp_def, List.ofFn_get] using hx.word_ofFn_comp_perm l.get σ
-
-/-- A permutation of the letters multiplies the boundary of a word by the sign of the permutation.
--/
-theorem wordBoundary_ofFn_comp_perm (hx : IsExteriorFamily x) {n : ℕ} (v : Fin n → I)
-    (σ : Equiv.Perm (Fin n)) :
-    wordBoundary x (List.ofFn (v ∘ σ)) = Equiv.Perm.sign σ • wordBoundary x (List.ofFn v) := by
-  have h := congrArg (exteriorLift ℤ ⟨x, hx⟩) (wordBoundary_exteriorGen_ofFn_comp_perm ℤ v σ)
-  simpa [Units.smul_def] using h
-
-/-- The boundary of a word with a repeated letter is zero. -/
-theorem wordBoundary_eq_zero_of_not_nodup (hx : IsExteriorFamily x) {l : List I} (h : ¬l.Nodup) :
-    wordBoundary x l = 0 := by
-  have h' := congrArg (exteriorLift ℤ ⟨x, hx⟩ ∘ exteriorBoundary ℤ)
-    ((isExteriorFamily_exteriorGen ℤ).word_eq_zero_of_not_nodup h)
-  simpa using h'
 
 end IsExteriorFamily
 

@@ -504,6 +504,16 @@ theorem IsCentral.inter_ne_bot (h : 𝒜.IsCentral) (I : List 𝒜) : inter I �
   rw [← AffineSubspace.nonempty_iff_ne_bot]
   exact ⟨p, mem_inter.2 fun H _ ↦ hp H H.2⟩
 
+/-- A sub-arrangement of a central arrangement is central. -/
+theorem IsCentral.mono (hℬ : ℬ.IsCentral) (h : 𝒜 ≤ ℬ) : 𝒜.IsCentral := by
+  obtain ⟨p, hp⟩ := hℬ
+  exact ⟨p, fun H hH ↦ hp H (h hH)⟩
+
+/-- The empty arrangement is central in every ambient vector space. -/
+@[simp]
+theorem isCentral_empty : (∅ : Arrangement k V).IsCentral :=
+  ⟨0, fun H hH ↦ (notMem_empty H hH).elim⟩
+
 end Arrangement
 
 end OrlikSolomon

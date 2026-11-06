@@ -17,9 +17,11 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Grading/Basic`                | `def:grading`, `lem:extraction` |
 | `Grading/DirectSum`            | external direct sums in `lem:standard-bridge` |
 | `Grading/LinearImage`          | image decompositions for homogeneous module quotients |
+| `Grading/Restriction`          | inherited internal gradings on homogeneous submodules and subalgebras |
 | `Grading/TensorProduct`        | product gradings, transport and the weighted tensor grading of `lem:os-basic` |
 | `Algebra/RelationQuotient`     | `def:twosided`, `lem:quotient-api` |
 | `Algebra/ExteriorWords`        | `lem:exterior-words`, `lem:boundary-expansion` |
+| `Algebra/ExteriorBoundary`     | the exterior-algebra operator and signed Leibniz rule of `lem:central-boundary` |
 | `Algebra/Exact`                | `lem:basis-ses`, `lem:comparison` |
 | `Algebra/SymmetricGrading`     | the degree grading of `O(W)`, used by `def:projective` |
 | `Geometry/Hyperplane`          | hyperplanes and equations of `def:arrangement`, `lem:equations` |
@@ -45,6 +47,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/BaseChange`      | coefficient base change in `lem:os-basic` |
 | `Presentation/Generators`      | degree-one generator independence used in `cor:projective-betti` |
 | `Presentation/Grading`         | the weighted bigrading and component formula in `lem:os-basic` |
+| `Presentation/Boundary`        | the descended central boundary of `lem:central-boundary` |
+| `Presentation/ProjectiveAlgebra` | the graded kernel, difference generators and shifted module decomposition of `lem:projective-algebra` |
 | `Presentation/Realization`     | `lem:empty-relation`, `lem:dependent-relation`, `def:realization`, `lem:realization-basic` |
 | `Presentation/RepresentativeRelations` | the representative identities of `lem:representatives` |
 | `Presentation/CokernelData/Basic` | the module quotient and full-context linear descent in `def:lift-map` |
@@ -52,7 +56,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/Cokernel`        | the choice-independent map of `def:lift-map` and `lem:lift-surj` |
 | `Presentation/CokernelGrading` | the quotient decomposition and shift `(1,1)` in `def:lift-map` |
 | `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine`, `cor:ordinary` |
-| `Presentation/Projective`      | `lem:central-boundary`, `lem:projective-algebra`, `thm:projective` |
+| `Presentation/Projective`      | `thm:projective` |
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
 | `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `lem:mobius` |
 | `Combinatorics/Multiplicities` | the rest of `thm:betti`, `cor:projective-betti` |
@@ -63,6 +67,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/Sanity`              | the blueprint's regression examples |
 | `Examples/Presentation`        | two points of the affine line, the affine boundary guard, characteristic two and degenerate coefficients |
 | `Examples/Parallel`            | two parallel affine lines: product zero and generator difference nonzero |
+| `Examples/ProjectiveAlgebra`   | central boundary and kernel regressions, including the obstruction for noncentral arrangements |
 
 `lem:geometry-adapter` has no module of its own: see the next section.
 
@@ -248,6 +253,14 @@ three rings. State results for every equation of `H`.
   `OSAlgebra.bigrading 𝒜 ℬ` has `R`-submodule pieces. It transports the weighted tensor
   grading along `OSAlgebra.baseChangeEquiv R B 𝒜`; `bigradingComponentEquiv` gives exterior
   degree `n` over `R` tensored with coefficient weight `w - n`. No flatness is assumed.
+- **Central boundary and projective algebra:** `Arrangement.IsCentral` means that the hyperplanes
+  have a common point; it does not depend on an origin chosen for a chart. The contraction-backed
+  `exteriorBoundary` and its sign lemmas live in `Algebra/ExteriorBoundary`, which imports
+  `Algebra/ExteriorWords`. On a central arrangement it descends to the `B`-linear
+  `OSAlgebra.boundary`, with weighted shift `(-1, -1)`. Its kernel is the graded `B`-subalgebra
+  `projectiveAlgebra`. Choosing a hyperplane gives `projectiveDecomposition`, a module equivalence
+  from two copies of the kernel, with the second copy shifted by `(1, 1)`. This is a module
+  decomposition; no ordinary ungraded tensor-product algebra decomposition is asserted.
 - **Deletion cokernel:** `OSAlgebra.DeletionCokernel B 𝒜 H` is the quotient of the
   `B`-module `OSAlgebra B 𝒜` by `deletionRange B 𝒜 H`, with quotient map `cokernelMk`.
   It carries module structures over coefficient scalar rings, but no quotient-algebra
