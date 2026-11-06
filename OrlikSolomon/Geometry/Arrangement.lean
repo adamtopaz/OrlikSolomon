@@ -25,6 +25,7 @@ are constructed in `OrlikSolomon/Geometry/Complement.lean`.
 * `OrlikSolomon.Arrangement.restriction`: the arrangement `𝒜''` on the vector space `H.direction`.
 * `OrlikSolomon.Arrangement.representative`: a chosen hyperplane of `𝒜'` with a given trace on `H`.
 * `OrlikSolomon.Arrangement.inter`: the intersection of a list of hyperplanes of `𝒜`.
+* `OrlikSolomon.Arrangement.IsCentral`: the hyperplanes of `𝒜` have a common point.
 
 ## Main results
 
@@ -38,6 +39,8 @@ are constructed in `OrlikSolomon/Geometry/Complement.lean`.
 * `OrlikSolomon.Arrangement.map_chart_inter`, `OrlikSolomon.Arrangement.inter_eq_bot_iff`,
   `OrlikSolomon.Arrangement.codim_inf_inter_map_representative`: intersections and codimensions in
   the restriction, in terms of `H` and representatives.
+* `OrlikSolomon.Arrangement.IsCentral.inter_ne_bot`: in a central arrangement, every intersection of
+  hyperplanes is nonempty.
 
 ## Blueprint
 
@@ -484,6 +487,22 @@ theorem codim_inf_inter_map_representative [FiniteDimensional k V] (hH : IsHyper
     (I : List (𝒜.restriction H)) :
     codim (H ⊓ inter (I.map representative)) = codim (inter I) + 1 := by
   rw [← map_chart_inter hH.ne_bot, codim_map_chart, hH.codim_eq_one]
+
+/-! ### Central arrangements -/
+
+/-- An arrangement is central if its hyperplanes have a common point, so that all intersections of
+its hyperplanes are nonempty. This does not refer to the origin of `V`, so it makes sense on a
+restriction: see the warning at `chart`.
+
+Blueprint: `lem:central-boundary`. -/
+def IsCentral (𝒜 : Arrangement k V) : Prop :=
+  ∃ p, ∀ H ∈ 𝒜, p ∈ H
+
+/-- In a central arrangement, every intersection of hyperplanes is nonempty. -/
+theorem IsCentral.inter_ne_bot (h : 𝒜.IsCentral) (I : List 𝒜) : inter I ≠ ⊥ := by
+  obtain ⟨p, hp⟩ := h
+  rw [← AffineSubspace.nonempty_iff_ne_bot]
+  exact ⟨p, mem_inter.2 fun H _ ↦ hp H H.2⟩
 
 end Arrangement
 

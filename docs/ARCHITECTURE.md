@@ -16,19 +16,24 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | ------------------------------ | ---------------- |
 | `Grading/Basic`                | `def:grading`, `lem:extraction` |
 | `Grading/DirectSum`            | external direct sums in `lem:standard-bridge` |
+| `Grading/LinearImage`          | image decompositions for homogeneous module quotients |
 | `Grading/TensorProduct`        | product gradings, transport and the weighted tensor grading of `lem:os-basic` |
 | `Algebra/RelationQuotient`     | `def:twosided`, `lem:quotient-api` |
 | `Algebra/ExteriorWords`        | `lem:exterior-words`, `lem:boundary-expansion` |
 | `Algebra/Exact`                | `lem:basis-ses`, `lem:comparison` |
+| `Algebra/SymmetricGrading`     | the degree grading of `O(W)`, used by `def:projective` |
 | `Geometry/Hyperplane`          | hyperplanes and equations of `def:arrangement`, `lem:equations` |
 | `Geometry/Chart`               | identifying `H` with `H.direction` in `def:deletion`, the incidence part of `lem:restriction-geometry` for one hyperplane |
-| `Geometry/Arrangement`         | `def:arrangement`, `def:deletion`, the incidence part of `lem:restriction-geometry` for arrangements |
+| `Geometry/Arrangement`         | `def:arrangement`, `def:deletion`, the incidence part of `lem:restriction-geometry` for arrangements, the central arrangements of `lem:central-boundary` |
 | `Geometry/SmoothAlg`           | `def:geometry-interface` |
 | `Geometry/CoordinateRing`      | coordinate rings of vector spaces, part of `lem:geometry-adapter` |
 | `Geometry/Complement`          | coordinate rings of arrangement complements, part of `lem:geometry-adapter` |
 | `Geometry/Deletion`            | the ring part of `lem:restriction-geometry`, the deletion pairs of `lem:geometry-adapter` |
 | `Geometry/RelationTargets`     | `lem:small-targets` |
-| `Geometry/Projective`          | `def:projective`, `lem:decone` |
+| `Geometry/ProjectiveArrangement` | `def:projective`, the incidence part of `lem:decone` |
+| `Geometry/ProjectiveRing`      | the ring `O(U_P)` of `def:projective` |
+| `Geometry/Projective`          | `lem:decone`, the objects of `SmoothAlg k` and the cone and decone part of `lem:geometry-adapter` |
+| `Geometry/ProjectiveScheme`    | `O(U_P)` as the complement in Mathlib's `Proj` |
 | `Cohomology/Axioms`            | `def:cohomology` |
 | `Cohomology/BridgeData/Basic`   | degreewise products, coefficients and pullbacks for `lem:standard-bridge` |
 | `Cohomology/BridgeData/Supports` | degreewise localization with supports and oriented purity for `lem:standard-bridge` |
@@ -41,7 +46,11 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/Generators`      | degree-one generator independence used in `cor:projective-betti` |
 | `Presentation/Grading`         | the weighted bigrading and component formula in `lem:os-basic` |
 | `Presentation/Realization`     | `lem:empty-relation`, `lem:dependent-relation`, `def:realization`, `lem:realization-basic` |
-| `Presentation/Cokernel`        | `lem:representatives`, `def:lift-map`, `lem:lift-surj` |
+| `Presentation/RepresentativeRelations` | the representative identities of `lem:representatives` |
+| `Presentation/CokernelData/Basic` | the module quotient and full-context linear descent in `def:lift-map` |
+| `Presentation/CokernelData/Words` | same-trace replacement and empty-trace vanishing in old word contexts |
+| `Presentation/Cokernel`        | the choice-independent map of `def:lift-map` and `lem:lift-surj` |
+| `Presentation/CokernelGrading` | the quotient decomposition and shift `(1,1)` in `def:lift-map` |
 | `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine`, `cor:ordinary` |
 | `Presentation/Projective`      | `lem:central-boundary`, `lem:projective-algebra`, `thm:projective` |
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
@@ -49,6 +58,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Combinatorics/Multiplicities` | the rest of `thm:betti`, `cor:projective-betti` |
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
+| `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
 | `Examples/Polynomials`         | polynomial regression examples |
 | `Examples/Sanity`              | the blueprint's regression examples |
 | `Examples/Presentation`        | two points of the affine line, the affine boundary guard, characteristic two and degenerate coefficients |
@@ -158,6 +168,10 @@ three rings. State results for every equation of `H`.
   state results through `map_chart_comap_chart`, whose value is `H ⊓ K`, rather than through the
   base point. `chart H 0` still names that point, but nothing says which one it is, so a condition
   such as `0 ∈ L` for `L` in a restriction cannot be decided and must not define "central".
+- "Central" is `Arrangement.IsCentral`: the hyperplanes have a common point. It does not mention the
+  origin, so it applies to restrictions. `IsCentral.inter_ne_bot` says that all intersections are
+  nonempty. It is in `Geometry/Arrangement`, so the presentation does not depend on projective
+  geometry, and the cone is central by `ProjectiveArrangement.cone_isCentral`.
 - Intersections are lattice operations on `AffineSubspace k V`, and "empty" is `⊥`:
   `⨅ i, H i` for families, `sInf S` for sets, and `Arrangement.inter I` for a list `I : List 𝒜`.
   `codim X` is the dimension of `V ⧸ X.direction`, and `Module.finrank k X.direction` is the
@@ -171,6 +185,37 @@ three rings. State results for every equation of `H`.
   `H` need not belong to `𝒜`, which covers the slice in deconing.
 - Induct over all `V` with `Arrangement.induction`, or by strong induction on `Arrangement.card`
   using `Arrangement.card_deletion_lt` and `Arrangement.card_restriction_lt`.
+
+### Projective arrangements and their complements
+
+- `P : ProjectiveArrangement k W` is a `Finset (Submodule k W)` of coatoms. The symbol `𝒫` is
+  Mathlib's notation for the power set, so the code writes `P`.
+- An equation is a linear form: `LinearMap.ker ℓ ∈ P` says that `ℓ` is an equation of a hyperplane
+  of `P`, and it implies `ℓ ≠ 0`. `P.cone` is the central cone, an `Arrangement k W`.
+  `P.decone ℓ₀` is `P.cone.restriction (slice ℓ₀)`, where `slice ℓ₀` is `ℓ₀ = 1`, on the vector
+  space `(slice ℓ₀).direction`. It is indexed by `ℓ₀` and not by `H₀`, since the slice depends on
+  `ℓ₀`.
+- `O(U_P)` is `P.ComplementRing`, Mathlib's
+  `HomogeneousLocalization (symmetricGrading k (Dual k W)) P.cone.equationSubmonoid`. It is the
+  degree-zero part of `O(V_P)`, so it involves no hyperplane at infinity and no choice of equations.
+  The comparison with the complement in `P^n` is a theorem: `complementOpenIso` identifies `Spec` of
+  this ring with the open subscheme of `Proj Sym(W*)` of the points on no hyperplane of `P`, and
+  `projIsoMvPolynomial` identifies `Proj Sym(W*)` with `Proj k[x_i]` in a basis of `W*`.
+- Do not replace it by the subalgebra generated by the ratios `ℓ_i / ℓ_j` of equations. That is
+  wrong unless the equations span the dual of `W`: for one hyperplane in dimension at least two, it
+  is `k`, whereas the complement is an affine space (`ratio_notMem_adjoin_ratioUnit`). With all
+  linear forms as numerators it is right (`range_toCone_eq_adjoin`).
+- `P` empty is excluded by `[Nonempty P]` on the object `SmoothAlg.projectiveComplement P`. A
+  statement that uses a hyperplane at infinity takes `hℓ₀ : LinearMap.ker ℓ₀ ∈ P` instead. For empty
+  `P` the ring is `k` and it is not used, because it does not correspond to the complement, all of
+  `Proj Sym(W*)`, in general. For `W` of dimension at least two, `k` is the ring of global functions
+  of a projective space that is not affine. For dimension one, the complement is the point `P⁰`,
+  whose ring is `k`. For `W = 0`, `Proj Sym(W*)` is empty, so its ring is zero and not `k`.
+- Consumers use `SmoothAlg.coneIso`, `SmoothAlg.deconeIso` and `SmoothAlg.projectiveRatioUnit`. The
+  formula `ℓ_i = t (ℓ_i / ℓ_0)` is `mapUnits_coneIso_hom_complementUnit`.
+- `Geometry/ProjectiveScheme` is the only module that imports Mathlib's schemes. It adds about 250
+  Mathlib modules to the closure of the root and of the book, about 11%. It is a leaf: nothing else
+  in the library may import it, so the proof of the structure theorem stays free of schemes.
 
 ## Algebra
 
@@ -203,6 +248,16 @@ three rings. State results for every equation of `H`.
   `OSAlgebra.bigrading 𝒜 ℬ` has `R`-submodule pieces. It transports the weighted tensor
   grading along `OSAlgebra.baseChangeEquiv R B 𝒜`; `bigradingComponentEquiv` gives exterior
   degree `n` over `R` tensored with coefficient weight `w - n`. No flatness is assumed.
+- **Deletion cokernel:** `OSAlgebra.DeletionCokernel B 𝒜 H` is the quotient of the
+  `B`-module `OSAlgebra B 𝒜` by `deletionRange B 𝒜 H`, with quotient map `cokernelMk`.
+  It carries module structures over coefficient scalar rings, but no quotient-algebra
+  structure. `restrictionToCokernelOfRepresentatives` uses `liftLinear` after proving
+  vanishing on every full relation context; `restrictionToCokernel` is its canonical,
+  choice-independent version. Surjectivity uses word spanning, without a basis theorem.
+  The image pieces `cokernelGrading` form a `DirectSum.Decomposition`, and the restriction
+  map has shift `(1,1)`. The files under `CokernelData/` separate quotient and word
+  plumbing from the public construction. The range and quotient are reducible abbreviations,
+  so the linear lift composes directly with the generic `cokernelComparison` API.
 
 ## The cohomology structure
 

@@ -8,6 +8,7 @@ module
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.MonoidAlgebra.Grading
 public import OrlikSolomon.Cohomology.Deletion
+public import OrlikSolomon.Geometry.Projective
 public import OrlikSolomon.Geometry.RelationTargets
 
 /-!
@@ -16,9 +17,10 @@ public import OrlikSolomon.Geometry.RelationTargets
 This file collects consistency checks of the definitions against the blueprint's regression list.
 At present it covers the structure `OrdinaryTheory` of `def:cohomology`, in particular the
 blueprint's "zero coefficient ring" case and the case `R = B`, the logarithmic classes with
-coefficients in `ℤ/2`, the example of two points of `𝔸¹` over `F₂`, and the first induction with
-zero coefficients and in dimension zero. The other arrangement examples of that list will be added
-here as the modules they test appear.
+coefficients in `ℤ/2`, the example of two points of `𝔸¹` over `F₂` and its projective analogue, and
+the first induction with zero coefficients and in dimension zero. The other arrangement examples of
+that list will be added here as the modules they test appear. The example of one projective
+hyperplane is `SmoothAlg.projectiveComplementIsoAffineSpace`.
 
 ## Main definitions
 
@@ -32,6 +34,9 @@ here as the modules they test appear.
 * `OrlikSolomon.Sanity.twoPointsPair`: the deletion pair of one of them. Here `H` is a point, the
   restriction is empty (`restriction_twoPoints_eq_empty`), the open part has no `F₂`-points, and the
   other point restricts to the constant `1` (`mapUnits_complementRestriction_twoPoints`).
+* `OrlikSolomon.Sanity.threePoints`: the three rational points of `P¹` over `F₂`. Their complement
+  has no `F₂`-points (`isEmpty_algHom_threePoints`), and its ring is nonzero
+  (`nontrivial_complementRing_threePoints`).
 
 ## Main results
 
@@ -449,6 +454,62 @@ example {k : Type u} [Field k] {R : Type v} [CommRing R] {B : Type w} [CommRing 
       (by simpa [Module.finrank_zero_of_subsingleton] using hp) hx
 
 end TwoPoints
+
+section ThreePoints
+
+open ProjectiveArrangement ProjectiveArrangement.ComplementRing
+
+/-- The linear form `x` on `F₂²`. -/
+def formX : Module.Dual (ZMod 2) (Fin 2 → ZMod 2) := LinearMap.proj 0
+
+/-- The linear form `y` on `F₂²`. -/
+def formY : Module.Dual (ZMod 2) (Fin 2 → ZMod 2) := LinearMap.proj 1
+
+theorem formX_ne_zero : formX ≠ 0 := fun h ↦
+  one_ne_zero (α := ZMod 2) (by simpa [formX] using LinearMap.congr_fun h ![1, 0])
+
+theorem formY_ne_zero : formY ≠ 0 := fun h ↦
+  one_ne_zero (α := ZMod 2) (by simpa [formY] using LinearMap.congr_fun h ![0, 1])
+
+theorem formX_add_formY_ne_zero : formX + formY ≠ 0 := fun h ↦
+  one_ne_zero (α := ZMod 2) (by simpa [formX, formY] using LinearMap.congr_fun h ![1, 0])
+
+open scoped Classical in
+/-- The three rational points of the projective line over the field with two elements: the zeros of
+`x`, of `y` and of `x + y`. -/
+def threePoints : ProjectiveArrangement (ZMod 2) (Fin 2 → ZMod 2) :=
+  ofForms {formX, formY, formX + formY} <| by
+    simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+    exact ⟨formX_ne_zero, formY_ne_zero, formX_add_formY_ne_zero⟩
+
+/-- The complement of the three points of the projective line over `F₂` has no `F₂`-points, even as
+a scheme: its coordinate ring has no `F₂`-algebra map to `F₂`. Both `x / y` and
+`(x + y) / y = x / y + 1` are units, and no element of `F₂` has that property. -/
+theorem isEmpty_algHom_threePoints : IsEmpty (threePoints.ComplementRing →ₐ[ZMod 2] ZMod 2) := by
+  classical
+  refine ⟨fun φ ↦ ?_⟩
+  have hx : LinearMap.ker formX ∈ threePoints := ker_mem_ofForms (by simp)
+  have hy : LinearMap.ker formY ∈ threePoints := ker_mem_ofForms (by simp)
+  have hxy : LinearMap.ker (formX + formY) ∈ threePoints := ker_mem_ofForms (by simp)
+  have h₀ := (ratioUnit hx hy).isUnit.map φ
+  have h₁ := (ratioUnit hxy hy).isUnit.map φ
+  rw [coe_ratioUnit] at h₀ h₁
+  rw [ratio_add, ratio_self, map_add, map_one] at h₁
+  obtain h | h := (by decide : ∀ a : ZMod 2, a = 0 ∨ a = 1) (φ (ratio formX hy))
+  · simp [h] at h₀
+  · rw [h, show (1 + 1 : ZMod 2) = 0 by decide] at h₁
+    simp at h₁
+
+/-- The coordinate ring of the complement of the three points of the projective line over `F₂` is
+nonzero, even though the complement has no `F₂`-points, see `isEmpty_algHom_threePoints`. So it does
+not matter that no hyperplane at infinity can be chosen to make the complement have a point.
+
+Blueprint: the regression list, the projective form of "the two rational points in `𝔸¹` over `F₂`".
+-/
+theorem nontrivial_complementRing_threePoints : Nontrivial threePoints.ComplementRing :=
+  inferInstance
+
+end ThreePoints
 
 end Sanity
 

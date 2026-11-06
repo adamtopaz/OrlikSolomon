@@ -144,6 +144,29 @@ def laurentPolynomialLift {S : Type*} [CommRing S] [Algebra k S] (φ : R →ₐ[
   __ := LaurentPolynomial.eval₂ (φ : R →+* S) u
   commutes' r := by simp [LaurentPolynomial.algebraMap_apply]
 
+variable {k R} in
+@[simp]
+lemma laurentPolynomialLift_C {S : Type*} [CommRing S] [Algebra k S] (φ : R →ₐ[k] S) (u : Sˣ)
+    (a : R) : laurentPolynomialLift φ u (LaurentPolynomial.C a) = φ a :=
+  LaurentPolynomial.eval₂_C _ _ _
+
+variable {k R} in
+@[simp]
+lemma laurentPolynomialLift_T {S : Type*} [CommRing S] [Algebra k S] (φ : R →ₐ[k] S) (u : Sˣ) :
+    laurentPolynomialLift φ u (LaurentPolynomial.T 1) = u :=
+  (LaurentPolynomial.eval₂_T _ _ _).trans (by simp)
+
+variable {k R} in
+/-- `k`-algebra maps out of `R[T;T⁻¹]` agree if they agree on constants and on `T`. -/
+lemma laurentPolynomial_algHom_ext {S : Type*} [CommRing S] [Algebra k S]
+    {f g : R[T;T⁻¹] →ₐ[k] S} (hC : ∀ a, f (LaurentPolynomial.C a) = g (LaurentPolynomial.C a))
+    (hT : f (LaurentPolynomial.T 1) = g (LaurentPolynomial.T 1)) : f = g := by
+  refine AlgHom.toRingHom_injective <|
+    IsLocalization.ringHom_ext (Submonoid.powers (Polynomial.X : R[X])) ?_
+  refine Polynomial.ringHom_ext (fun a ↦ ?_) ?_
+  · simpa [LaurentPolynomial.algebraMap_apply, Polynomial.toLaurent_C] using hC a
+  · simpa [LaurentPolynomial.algebraMap_apply, Polynomial.toLaurent_X] using hT
+
 /-- Transports `IsLocalization.Away f S` from a given algebra structure to the one defined by a
 ring map `g` that equals its structure map. This is the form in which `DivisorPair.isLocalization_j`
 is stated, and it is how to supply that field from an existing `IsLocalization` instance. -/
