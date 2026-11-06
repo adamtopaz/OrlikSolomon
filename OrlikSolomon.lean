@@ -15,6 +15,8 @@ public import OrlikSolomon.Cohomology.DeletionPair
 public import OrlikSolomon.Cohomology.Logarithms
 public import OrlikSolomon.Combinatorics.AlternatingSum
 public import OrlikSolomon.Combinatorics.Betti
+public import OrlikSolomon.Combinatorics.Multiplicities
+public import OrlikSolomon.Combinatorics.ProjectiveBetti
 public import OrlikSolomon.Examples.Bridge
 public import OrlikSolomon.Examples.Cokernel
 public import OrlikSolomon.Examples.CoordinatePolynomials
@@ -53,7 +55,10 @@ public import OrlikSolomon.Presentation.CokernelGrading
 public import OrlikSolomon.Presentation.Generators
 public import OrlikSolomon.Presentation.Grading
 public import OrlikSolomon.Presentation.Ordinary
+public import OrlikSolomon.Presentation.Projective
 public import OrlikSolomon.Presentation.ProjectiveAlgebra
+public import OrlikSolomon.Presentation.ProjectiveGrading
+public import OrlikSolomon.Presentation.ProjectiveOrdinary
 public import OrlikSolomon.Presentation.Realization
 public import OrlikSolomon.Presentation.RepresentativeRelations
 public import OrlikSolomon.Presentation.Structure
