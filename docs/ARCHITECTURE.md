@@ -355,6 +355,16 @@ and what `cor:projective-betti` says about cohomology goes in `Combinatorics/Mul
 the structure theorems. What `thm:betti` says about cohomology is in `Presentation/Ordinary`, since
 it extracts the homogeneous pieces of a basis, which `cor:ordinary` needs anyway.
 
+`Combinatorics/Multiplicities` defines the polynomial and natural Betti numbers of a nonempty
+projective arrangement. `poincarePolynomial_eq_decone` identifies it with every decone, and
+`poincarePolynomial_cone` proves the factor `1 + X`. The proof pairs the central-intersection
+subset sums with and without a hyperplane at infinity, then uses the existing trace cancellation;
+it does not recover integer coefficients by comparing module ranks. The actual projective pieces
+are identified with decone pieces by `OrdinaryTheory.projectiveDeconeComponentEquiv`.
+`nonempty_projective_grading_linearEquiv_bettiNumber` gives `b_p` copies of `ℬ (w-p)`, and
+`nonempty_basis_projective_grading_bettiNumber` gives an `R`-basis of the diagonal with that
+certified cardinality, including over zero coefficient rings.
+
 `Examples/Sanity` contains the zero theory as a basic consistency check. It must have zero
 coefficients, because `R ≃ ℬ 0` and `B ≃ C(k)` must still hold. It tests the zero-ring edge case,
 not the substantive axioms.
