@@ -1,0 +1,27 @@
+# Mathematical regression coverage
+
+These are the nine examples required by the final regression paragraph of
+[`blueprint/arrangement_cohomology_lean_blueprint.tex`](../blueprint/arrangement_cohomology_lean_blueprint.tex).
+Every listed Lean module is imported by the library root, so `scripts/check.sh` builds it,
+audits its declarations and runs the environment linters. `scripts/replay.sh` replays it
+through the kernel. This inventory records proved statements; it adds no mathematical blueprint.
+
+Names below are under `OrlikSolomon`. Cohomological statements quantify over a supplied
+`OrdinaryTheory`; they do not construct a named nonzero cohomology realization. The actual
+`Sanity.zeroTheory` instantiations test consistency and degenerate coefficients.
+
+| Required example | Declarations and what they check |
+| --- | --- |
+| 1. Empty affine arrangement, including dimension zero | [`Examples/Degenerate`](../OrlikSolomon/Examples/Degenerate.lean): `DegenerateExamples.emptyCohomologyEquiv` identifies the coefficient algebra with the empty complement's cohomology in every finite dimension. A literal zero-dimensional instance is included. |
+| 2. One affine hyperplane | [`Examples/Exterior`](../OrlikSolomon/Examples/Exterior.lean): `ExteriorExamples.singletonExteriorEquiv` gives the full exterior algebra on the unique label, with its generator formula. Explicit `ZMod 2` and `ZMod 4` square-zero checks apply to every arrangement, hence also to a singleton. |
+| 3. Coordinate hyperplanes | [`Examples/Exterior`](../OrlikSolomon/Examples/Exterior.lean): `ExteriorExamples.coordinateExteriorEquiv` gives the full exterior algebra on all coordinate labels and preserves generators. [`Examples/CoordinatePolynomials`](../OrlikSolomon/Examples/CoordinatePolynomials.lean): `Examples.card_coordinateArrangement` counts those labels and `Examples.poincarePolynomial_coordinateArrangement` gives `(1 + X)^n`. Empty coordinate types include dimension zero. |
+| 4. Two parallel affine lines | [`Examples/Parallel`](../OrlikSolomon/Examples/Parallel.lean): `PresentationExamples.parallelLines_product`, `parallelLines_difference` and `poincarePolynomial_parallelLines` prove product zero, difference nonzero over every nonzero coefficient ring, and `1 + 2 X`. The characteristic-two difference is instantiated explicitly. |
+| 5. Three concurrent lines | [`Examples/AffineLines`](../OrlikSolomon/Examples/AffineLines.lean): `AffineLineExamples.threeConcurrent_boundary` proves the alternating relation over any coefficient ring, and `poincarePolynomial_threeConcurrent` gives `1 + 3 X + 2 X²`. The fixture is `PresentationExamples.threeConcurrent`; [`Examples/Cokernel`](../OrlikSolomon/Examples/Cokernel.lean) proves its distinct old labels have equal nonempty traces and that replacement is independent of the old label. |
+| 6. Three nonconcurrent lines, no parallel pair | [`Examples/AffineLines`](../OrlikSolomon/Examples/AffineLines.lean): `triangle_inter_triple`, `triangle_triple` and `poincarePolynomial_triangle` prove empty triple intersection, zero triple product and `1 + 3 X + 3 X²`. `triangle_boundary_ne` detects the absence of a degree-two boundary relation over every nonzero coefficient ring, including characteristic two. `triangle_unguarded` shows why omitting the nonempty-intersection guard would introduce that wrong relation. |
+| 7. Two points over F₂ | [`Examples/Sanity`](../OrlikSolomon/Examples/Sanity.lean): `Sanity.isEmpty_algHom_twoPoints` and `nontrivial_complementRing_twoPoints` prove no rational points and a nonzero localization. [`Examples/Degenerate`](../OrlikSolomon/Examples/Degenerate.lean): `DegenerateExamples.poincarePolynomial_twoPoints` proves `1 + 2 X` for this same fixture. [`Examples/Ordinary`](../OrlikSolomon/Examples/Ordinary.lean): `OrdinaryExamples.nonempty_basis_grading_twoPoints` certifies the two degree-one classes for a supplied theory with characteristic-two coefficients. |
+| 8. Projective hyperplane and points in P¹ | [`Examples/ProjectiveOrdinary`](../OrlikSolomon/Examples/ProjectiveOrdinary.lean): `ProjectiveOrdinaryExamples.singleHyperplaneCohomologyEquiv` gives coefficient-algebra cohomology, and `singleHyperplanePolynomial` gives polynomial one. `poincarePolynomial_points` proves `1 + (m - 1) X` for every nonempty arrangement in P¹; `nonempty_basis_points_grading_one` and `nonempty_basis_points_projective_degree_one` give the certified size `m - 1` over every coefficient ring. The three F₂-points fixture is checked explicitly, including its actual zero-theory diagonal and basis. |
+| 9. Zero coefficients | [`Examples/Degenerate`](../OrlikSolomon/Examples/Degenerate.lean): `DegenerateExamples.different_basis_sizes_zeroTheory_twoPoints` gives bases with zero and two vectors for the very same group. `Sanity.exists_logMonomialBasis_zeroTheory_twoPoints` still certifies exactly two recursive words of length one. [`Examples/Ordinary`](../OrlikSolomon/Examples/Ordinary.lean) and [`Examples/ProjectiveOrdinary`](../OrlikSolomon/Examples/ProjectiveOrdinary.lean) instantiate the affine and projective equivalences with actual zero theory. |
+
+The triangle matrix witness adapts Claude's independent PR #45 review consumer; its module
+retains both Claude and Codex attribution. The new exterior, empty/zero and projective
+regressions were written by Codex agents. The existing fixture modules retain their authorship.

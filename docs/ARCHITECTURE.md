@@ -64,15 +64,19 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
 | `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `lem:mobius` |
 | `Combinatorics/Multiplicities` | `cor:projective-betti` |
+| `Examples/AffineLines`        | concurrent lines and the triangle, including the nonempty-intersection guard |
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
 | `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
+| `Examples/Degenerate`        | coefficient cohomology of empty complements and nonunique zero-ring basis sizes |
+| `Examples/Exterior`          | full exterior algebras for singletons and coordinate arrangements |
 | `Examples/Ordinary`            | the structure theorem at `R = ℤ`, `ZMod 2`, two points over `F₂`, dimension zero, zero coefficients and `R = B` |
 | `Examples/Polynomials`         | polynomial regression examples |
 | `Examples/Sanity`              | the blueprint's regression examples |
 | `Examples/Presentation`        | two points of the affine line, the affine boundary guard, characteristic two and degenerate coefficients |
 | `Examples/Parallel`            | two parallel affine lines: product zero and generator difference nonzero |
 | `Examples/ProjectiveAlgebra`   | central boundary and kernel regressions, including the obstruction for noncentral arrangements |
+| `Examples/ProjectiveOrdinary` | single-hyperplane cohomology, points of the projective line and diagonal consumers |
 | `Examples/Realization`         | the realization map on two points over `F₂`, three concurrent lines, dimension zero, zero coefficients and `R = B` |
 
 `lem:geometry-adapter` has no module of its own: see the next section.
@@ -364,6 +368,9 @@ are identified with decone pieces by `OrdinaryTheory.projectiveDeconeComponentEq
 `nonempty_projective_grading_linearEquiv_bettiNumber` gives `b_p` copies of `ℬ (w-p)`, and
 `nonempty_basis_projective_grading_bettiNumber` gives an `R`-basis of the diagonal with that
 certified cardinality, including over zero coefficient rings.
+
+The nine required mathematical regressions and their declarations are indexed in
+[`docs/REGRESSIONS.md`](REGRESSIONS.md).
 
 `Examples/Sanity` contains the zero theory as a basic consistency check. It must have zero
 coefficients, because `R ≃ ℬ 0` and `B ≃ C(k)` must still hold. It tests the zero-ring edge case,
