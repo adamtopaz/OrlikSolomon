@@ -9,6 +9,7 @@ public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.MonoidAlgebra.Grading
 public import OrlikSolomon.Cohomology.Axioms
 public import OrlikSolomon.Geometry.Complement
+public import OrlikSolomon.Geometry.RelationTargets
 
 /-!
 # Regression examples
@@ -25,7 +26,8 @@ arrangement examples of that list will be added here as the modules they test ap
   used by the comparison with singular cohomology in the docstring of `OrdinaryTheory`.
 * `OrlikSolomon.Sanity.twoPoints`: the two rational points of `𝔸¹` over `F₂`. Their complement has
   no `F₂`-points (`isEmpty_algHom_twoPoints`), and its ring is nonzero
-  (`nontrivial_complementRing_twoPoints`).
+  (`nontrivial_complementRing_twoPoints`). It still has the first target of `lem:small-targets`
+  (`nonempty_relationTarget_twoPoints`).
 
 ## What these checks show, and what they do not
 
@@ -267,6 +269,21 @@ though the complement has no `F₂`-points, see `isEmpty_algHom_twoPoints`.
 Blueprint: the regression list, "the two rational points in `𝔸¹` over `F₂`". -/
 theorem nontrivial_complementRing_twoPoints : Nontrivial twoPoints.ComplementRing :=
   inferInstance
+
+/-- The two points have empty intersection, so their equations factor through the first target of
+`lem:small-targets`, although the source has no `F₂`-points, see `isEmpty_algHom_twoPoints`. This is
+the geometry behind the relation `e₁ e₂ = 0`.
+
+Blueprint: the regression list, "the two rational points in `𝔸¹` over `F₂`". -/
+theorem nonempty_relationTarget_twoPoints :
+    Nonempty (RelationTarget twoPoints
+      ([⟨_, zeroLocus_id_mem_twoPoints⟩, ⟨_, zeroLocus_id_sub_one_mem_twoPoints⟩].map
+        (SmoothAlg.equationUnit twoPoints))) := by
+  refine ⟨RelationTarget.ofInterEqBot _ ?_⟩
+  ext x
+  refine iff_of_false (fun hx ↦ ?_) (AffineSubspace.notMem_bot _ _ _)
+  obtain ⟨rfl, h⟩ : x = 0 ∧ x - 1 = 0 := by simpa [AffineSubspace.mem_inf_iff] using hx
+  simp at h
 
 end TwoPoints
 

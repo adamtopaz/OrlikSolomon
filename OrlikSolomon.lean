@@ -15,6 +15,7 @@ public import OrlikSolomon.Geometry.Chart
 public import OrlikSolomon.Geometry.Complement
 public import OrlikSolomon.Geometry.CoordinateRing
 public import OrlikSolomon.Geometry.Hyperplane
+public import OrlikSolomon.Geometry.RelationTargets
 public import OrlikSolomon.Geometry.SmoothAlg
 public import OrlikSolomon.Grading.Basic
 
