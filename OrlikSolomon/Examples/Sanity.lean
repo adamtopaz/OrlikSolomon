@@ -8,7 +8,7 @@ module
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.MonoidAlgebra.Grading
 public import OrlikSolomon.Cohomology.Logarithms
-public import OrlikSolomon.Geometry.Complement
+public import OrlikSolomon.Geometry.Deletion
 
 /-!
 # Regression examples
@@ -27,6 +27,9 @@ examples of that list will be added here as the modules they test appear.
 * `OrlikSolomon.Sanity.twoPoints`: the two rational points of `𝔸¹` over `F₂`. Their complement has
   no `F₂`-points (`isEmpty_algHom_twoPoints`), and its ring is nonzero
   (`nontrivial_complementRing_twoPoints`).
+* `OrlikSolomon.Sanity.twoPointsPair`: the deletion pair of one of them. Here `H` is a point, the
+  restriction is empty (`restriction_twoPoints_eq_empty`), the open part has no `F₂`-points, and the
+  other point restricts to the constant `1` (`mapUnits_complementRestriction_twoPoints`).
 
 ## What these checks show, and what they do not
 
@@ -322,6 +325,62 @@ though the complement has no `F₂`-points, see `isEmpty_algHom_twoPoints`.
 Blueprint: the regression list, "the two rational points in `𝔸¹` over `F₂`". -/
 theorem nontrivial_complementRing_twoPoints : Nontrivial twoPoints.ComplementRing :=
   inferInstance
+
+/-! The deletion pair of the origin, in dimension one, over a finite field, with an open part that
+has no rational points. -/
+
+/-- The identity is an equation of the origin of the line. -/
+theorem isEquation_id_twoPoints :
+    IsEquation (AffineMap.id (ZMod 2) (ZMod 2)) (zeroLocus (AffineMap.id _ _)) :=
+  isEquation_of_zeroLocus_mem zeroLocus_id_mem_twoPoints
+
+/-- The deletion pair `(O(𝔸¹ ∖ {1}), O(pt), O(𝔸¹ ∖ {0, 1}), x)` over `F₂`. The open part is the
+complement in `isEmpty_algHom_twoPoints`, which has no `F₂`-points. -/
+def twoPointsPair : DivisorPair (ZMod 2) :=
+  DivisorPair.deletionPair twoPoints zeroLocus_id_mem_twoPoints isEquation_id_twoPoints
+
+/-- The open part of `twoPointsPair` is the complement of the two points. -/
+example : twoPointsPair.compl = complement twoPoints := rfl
+
+instance : Subsingleton (zeroLocus (AffineMap.id (ZMod 2) (ZMod 2))).direction := by
+  rw [isEquation_id_twoPoints.direction_eq]
+  simpa using inferInstanceAs (Subsingleton (⊥ : Submodule (ZMod 2) (ZMod 2)))
+
+/-- The origin of the line is a point, with direction zero, so the restriction to it is empty and
+the divisor of `twoPointsPair` is the ring of the empty arrangement on the zero vector space. -/
+theorem restriction_twoPoints_eq_empty :
+    twoPoints.restriction (zeroLocus (AffineMap.id (ZMod 2) (ZMod 2))) = ∅ :=
+  eq_empty_of_subsingleton _
+
+theorem zeroLocus_id_sub_one_mem_deletion :
+    zeroLocus (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1) ∈
+      twoPoints.deletion (zeroLocus (AffineMap.id _ _)) := by
+  refine mem_deletion.2 ⟨fun h ↦ ?_, zeroLocus_id_sub_one_mem_twoPoints⟩
+  have h0 : (0 : ZMod 2) ∈ zeroLocus (AffineMap.id (ZMod 2) (ZMod 2)) := by simp
+  rw [← h] at h0
+  simp at h0
+
+theorem inf_zeroLocus_id_twoPoints :
+    zeroLocus (AffineMap.id (ZMod 2) (ZMod 2)) ⊓
+      zeroLocus (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1) = ⊥ := by
+  by_contra h
+  obtain ⟨x, hx⟩ := (AffineSubspace.nonempty_iff_ne_bot _).2 h
+  obtain ⟨h₀, h₁⟩ := (AffineSubspace.mem_inf_iff _ _ _).1 hx
+  simp only [mem_zeroLocus, AffineMap.id_apply] at h₀
+  simp [mem_zeroLocus, h₀] at h₁
+
+/-- The other point does not meet the origin, so its equation `x - 1` restricts to a nonzero
+constant, and over `F₂` the only one is `1`. -/
+theorem mapUnits_complementRestriction_twoPoints :
+    mapUnits (complementRestriction twoPoints isEquation_id_twoPoints.isHyperplane)
+      (complementUnit (twoPoints.deletion (zeroLocus (AffineMap.id (ZMod 2) (ZMod 2))))
+        (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1)
+        (.of_mem zeroLocus_id_sub_one_mem_deletion)) = 1 := by
+  obtain ⟨c, hc⟩ := exists_mapUnits_complementRestriction_eq_constUnit
+    isEquation_id_twoPoints.isHyperplane zeroLocus_id_sub_one_mem_deletion
+    (isEquation_of_zeroLocus_mem zeroLocus_id_sub_one_mem_twoPoints) inf_zeroLocus_id_twoPoints
+  obtain rfl : c = 1 := Units.ext ((by decide : ∀ a : ZMod 2, a ≠ 0 → a = 1) c c.ne_zero)
+  simpa using hc
 
 end TwoPoints
 

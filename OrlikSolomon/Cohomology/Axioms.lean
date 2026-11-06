@@ -51,7 +51,8 @@ Write `T.stdResidue A` and `T.stdGysin A`, never `T.residue (standardPair A)`. T
 `T.residue (standardPair A)`; see the implementation notes in `Geometry/SmoothAlg`. Every field that
 is used at a standard pair has a typed form here, stated with `polynomialToLaurent A`,
 `polynomialLift (𝟙 A) 0` and so on, and `simp` and `rw` work on it as usual. A new family of pairs
-that lemmas will mention, such as the deletion pair, should get wrappers of the same kind.
+that lemmas will mention should get wrappers of the same kind, as the deletion pair does in
+`Cohomology/DeletionPair`.
 
 Pullbacks are written `T.C.map f`, coerced to a function, and `(T.C.map f).hom` is the underlying
 algebra map. The `simp` normal form of a composite is the nested `T.C.map g (T.C.map f x)`, because
