@@ -43,6 +43,8 @@ polynomials of `def:polynomials` require. For `X ≠ ⊥` this is the value of M
   direction of a nonempty intersection of hyperplanes is the intersection of the kernels of the
   linear parts of their equations, and its codimension is the rank of the system.
 * `OrlikSolomon.IsHyperplane.codim_inf`: cutting by a hyperplane raises the codimension by one.
+* `OrlikSolomon.codim_comap_affineEquiv`, `OrlikSolomon.IsHyperplane.comap_affineEquiv`: an affine
+  equivalence preserves codimensions and hyperplanes.
 
 ## Implementation notes
 
@@ -253,6 +255,13 @@ theorem IsHyperplane.comap_eq_bot_or_top_or_isHyperplane {W : Type u} [AddCommGr
     · exact Or.inl (zeroLocus_eq_bot_iff.2 ⟨Units.mk0 c hc0, hc⟩)
   · exact Or.inr (Or.inr hlin)
 
+/-- The pullback of an equation of `H` along an affine map is an equation of the preimage of `H`, as
+long as this preimage is a hyperplane. -/
+theorem IsEquation.comp {W : Type u} [AddCommGroup W] [Module k W] (hf : IsEquation f H)
+    (φ : W →ᵃ[k] V) (h : IsHyperplane (H.comap φ)) : IsEquation (f.comp φ) (H.comap φ) :=
+  have hz : zeroLocus (f.comp φ) = H.comap φ := by rw [zeroLocus_comp, hf.zeroLocus_eq]
+  ⟨isHyperplane_zeroLocus_iff.1 (hz ▸ h), hz⟩
+
 /-- An affine function vanishing on a hyperplane is a scalar multiple of any equation for it. -/
 theorem IsEquation.exists_eq_smul (hf : IsEquation f H) (hg : ∀ x ∈ H, g x = 0) :
     ∃ c : k, g = c • f := by
@@ -333,6 +342,58 @@ theorem isHyperplane_iff_codim_eq_one : IsHyperplane H ↔ H ≠ ⊥ ∧ codim H
 
 theorem IsHyperplane.codim_eq_one (hH : IsHyperplane H) : codim H = 1 :=
   (isHyperplane_iff_codim_eq_one.1 hH).2
+
+section AffineEquiv
+
+variable {W : Type u} [AddCommGroup W] [Module k W] (e : W ≃ᵃ[k] V)
+
+/-- Pulling back along an affine equivalence and then along its inverse does nothing. This is not a
+`simp` lemma, because Mathlib's `AffineSubspace.comap_symm` rewrites its left side first. -/
+theorem comap_comap_symm (X : AffineSubspace k V) :
+    (X.comap (e : W →ᵃ[k] V)).comap (e.symm : V →ᵃ[k] W) = X := by
+  ext x
+  simp only [AffineSubspace.mem_comap, AffineEquiv.coe_coe, AffineEquiv.apply_symm_apply]
+
+/-- Pulling back along the inverse of an affine equivalence and then along it does nothing. This is
+not a `simp` lemma, because Mathlib's `AffineSubspace.comap_symm` rewrites its left side first. -/
+theorem comap_symm_comap (X : AffineSubspace k W) :
+    (X.comap (e.symm : V →ᵃ[k] W)).comap (e : W →ᵃ[k] V) = X := by
+  ext x
+  simp only [AffineSubspace.mem_comap, AffineEquiv.coe_coe, AffineEquiv.symm_apply_apply]
+
+/-- Pulling back along an affine equivalence is injective on affine subspaces. -/
+theorem comap_affineEquiv_injective :
+    Function.Injective (AffineSubspace.comap (e : W →ᵃ[k] V)) :=
+  Function.LeftInverse.injective (comap_comap_symm e)
+
+/-- An affine equivalence pulls back only the empty subspace to the empty subspace. -/
+@[simp]
+theorem comap_affineEquiv_eq_bot_iff {X : AffineSubspace k V} :
+    X.comap (e : W →ᵃ[k] V) = ⊥ ↔ X = ⊥ :=
+  ⟨fun h ↦ by rw [← comap_comap_symm e X, h, AffineSubspace.comap_bot],
+    fun h ↦ by rw [h, AffineSubspace.comap_bot]⟩
+
+/-- An affine equivalence preserves codimensions. This includes the conventional value at `⊥`,
+since it preserves the dimension of the ambient space. -/
+@[simp]
+theorem codim_comap_affineEquiv (X : AffineSubspace k V) :
+    codim (X.comap (e : W →ᵃ[k] V)) = codim X := by
+  obtain rfl | hX := eq_or_ne X ⊥
+  · rw [AffineSubspace.comap_bot, codim_bot, codim_bot, e.linear.finrank_eq]
+  · have hne : X.comap (e : W →ᵃ[k] V) ≠ ⊥ := (comap_affineEquiv_eq_bot_iff e).not.2 hX
+    have hmap : (X.comap (e : W →ᵃ[k] V)).direction.map (e.linear : W →ₗ[k] V) = X.direction := by
+      rw [AffineSubspace.direction_comap hne]
+      exact Submodule.map_comap_eq_of_surjective e.linear.surjective _
+    exact (Submodule.Quotient.equiv _ _ e.linear hmap).finrank_eq
+
+/-- An affine equivalence pulls back hyperplanes to hyperplanes. -/
+theorem IsHyperplane.comap_affineEquiv (hH : IsHyperplane H) :
+    IsHyperplane (H.comap (e : W →ᵃ[k] V)) := by
+  rw [isHyperplane_iff_codim_eq_one] at hH ⊢
+  rw [Ne, comap_affineEquiv_eq_bot_iff, codim_comap_affineEquiv]
+  exact hH
+
+end AffineEquiv
 
 variable [FiniteDimensional k V]
 

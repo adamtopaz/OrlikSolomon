@@ -230,6 +230,19 @@ theorem logClass_complementUnit_eq_logClass_equationUnit (hH : H ∈ 𝒜) (hf :
   rw [hc]
   exact T.logClass_units_map_algebraMap_mul c _
 
+/-- The form of `deletionResidue_logClass` for the chosen equation. -/
+@[simp] theorem deletionResidue_logClass_equationUnit (hH : H ∈ 𝒜) :
+    T.deletionResidue hH (T.logClass (equationUnit 𝒜 ⟨H, hH⟩)) = 1 :=
+  T.deletionResidue_logClass hH (isEquation_equation (𝒜.isHyperplane hH))
+
+/-- The form of `deletionResidue_logClass_mul` for the chosen equation. -/
+@[simp] theorem deletionResidue_logClass_equationUnit_mul (hH : H ∈ 𝒜)
+    (β : T.C.obj (complement (𝒜.deletion H))) :
+    T.deletionResidue hH (T.logClass (equationUnit 𝒜 ⟨H, hH⟩) *
+        T.C.map (complementInclusion (𝒜.deletion_le H)) β) =
+      T.C.map (complementRestriction 𝒜 (𝒜.isHyperplane hH)) β :=
+  T.deletionResidue_logClass_mul hH (isEquation_equation (𝒜.isHyperplane hH)) β
+
 variable (𝒜) in
 /-- The logarithmic monomial `[f_{H₁}] ⋯ [f_{Hₛ}]` of a word `[H₁, …, Hₛ]` in the hyperplanes of
 `𝒜`. The empty word gives `1`. A word has bidegree `(s, s)`, by `logMonomial_mem_grading`. The
