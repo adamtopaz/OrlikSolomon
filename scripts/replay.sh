@@ -5,8 +5,8 @@
 # `scripts/check.sh`.
 #
 # Each module gets its own process, because on Lean v4.36.0-rc2 `leanchecker` crashes when one
-# process replays two modules. Its argument is a prefix, so a module that has submodules cannot be
-# replayed alone. The root has them, and the audit requires that it declares nothing.
+# process replays two modules: see #47. Its argument is a prefix, so a module that has submodules
+# cannot be replayed alone. The root has them, and the audit requires that it declares nothing.
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
@@ -16,7 +16,7 @@ lake build --wfail OrlikSolomon
 modules=()
 while IFS= read -r file; do
   if [ -e "${file%.lean}" ]; then
-    echo "replay: error: $file has submodules, so leanchecker cannot replay it alone" >&2
+    echo "replay: error: $file has submodules, so leanchecker cannot replay it alone: see #47" >&2
     exit 1
   fi
   module="${file%.lean}"
