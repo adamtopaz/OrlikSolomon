@@ -84,6 +84,6 @@ In particular $`b_1(U_{\mathcal{P}})=|\mathcal{P}|-1`.
 
 The polynomial identity is proved directly from the subset sum by pairing subsets with and without the hyperplane at infinity.
 Pullback to any decone then identifies the actual cohomological pieces with those of that affine arrangement.
-Thus $`H^{p,w}(U_{\mathcal{P}})` is a direct sum of $`b_p` copies of $`B_{w-p}`, and $`H^{q,q}` has an $`R`-basis with exactly $`b_q` vectors.
+Thus for $`p\geq0`, $`H^{p,w}(U_{\mathcal{P}})` is a direct sum of $`b_p` copies of $`B_{w-p}`, and $`H^{q,q}` has an $`R`-basis with exactly $`b_q` vectors.
 These module equivalences and bases require choices; the integer multiplicities are certified by the polynomial, even when the coefficient ring is zero and ranks cannot determine them.
 :::
