@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Algebra.Category.CommAlgCat.Basic
 public import Mathlib.Algebra.Polynomial.Laurent
-public import Mathlib.RingTheory.Smooth.Basic
+public import Mathlib.RingTheory.Etale.Basic
 import Mathlib.RingTheory.Polynomial.Ideal
 
 /-!
@@ -91,9 +91,6 @@ namespace OrlikSolomon
 section Smoothness
 
 variable (k R : Type*) [CommRing k] [CommRing R] [Algebra k R]
-
-/-- The base ring is smooth over itself. -/
-instance smooth_self : Algebra.Smooth k k := {}
 
 /-- The scalar tower `k → R[X] → R[T;T⁻¹]`, which Mathlib does not yet provide. -/
 instance isScalarTower_polynomial_laurentPolynomial : IsScalarTower k R[X] R[T;T⁻¹] :=
