@@ -145,7 +145,7 @@ This ring is an $`A`-algebra through $`a\mapsto a+\varepsilon\,da`, whose image 
 So the universal properties of Kähler differentials and of the exterior algebra produce the map, and its second component is $`d`.
 The polynomial formula and the presentation below are then theorems about this operator, and {bp "lem:dr-presentation"}[] shows that the operator descended from the presentation is the same one.
 
-:::node "def:dr-forms" (decl := OrlikSolomon.DeRham.Forms) (decl := OrlikSolomon.DeRham.diff) (decl := OrlikSolomon.DeRham.span_word_diff) (decl := OrlikSolomon.DeRham.Forms.induction_exteriorPower) (decl := OrlikSolomon.DeRham.Forms.induction)
+:::node "def:dr-forms" (decl := OrlikSolomon.DeRham.Forms) (decl := OrlikSolomon.DeRham.diff) (decl := OrlikSolomon.DeRham.mem_exteriorPower_zero_iff) (decl := OrlikSolomon.DeRham.mem_exteriorPower_one_iff) (decl := OrlikSolomon.DeRham.span_word_diff) (decl := OrlikSolomon.DeRham.Forms.induction_exteriorPower) (decl := OrlikSolomon.DeRham.Forms.induction)
 For a commutative $`k`-algebra $`A`, put $`\Omega_A^0=A`, put $`\Omega_A^n=\bigwedge_A^n\Omega^1_{A/k}` for $`n>0`, and put $`\Omega_A^n=0` for $`n<0`.
 Their direct sum is the exterior algebra under wedge multiplication, and every form is a finite sum of expressions $`a_0\,da_1\wedge\cdots\wedge da_n`.
 :::

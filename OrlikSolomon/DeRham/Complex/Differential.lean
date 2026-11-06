@@ -52,8 +52,8 @@ for `d` says exactly that `x ↦ x + ε d x` is a ring map. So we make `OddDual`
 through `a ↦ a + ε da`, whose image is central because `da` anticommutes with odd forms. Then
 `a ↦ da`, a derivation into forms, is also a derivation into `OddDual` for this module structure, by
 `da ∧ db + db ∧ da = 0`. The universal properties of Kähler differentials and of the exterior
-algebra produce an `A`-algebra map `Forms k A → Dual`. Its first component is the identity, and `d`
-is its second component. That map is `A`-linear only for the twisted structure, which is the
+algebra produce an `A`-algebra map `Forms k A → OddDual`. Its first component is the identity, and
+`d` is its second component. That map is `A`-linear only for the twisted structure, which is the
 content of the blueprint's warning.
 -/
 
@@ -219,7 +219,7 @@ private noncomputable def der : Derivation k A (OddDual k A) where
     · simp [Algebra.smul_def]
     · simp [diff_mul_add_mul_swap]
 
-/-- The universal map `Ω[A⁄k] → Dual`, sending `a db` to `a db + ε da ∧ db`. -/
+/-- The universal map `Ω[A⁄k] → OddDual`, sending `a db` to `a db + ε da ∧ db`. -/
 private noncomputable def lin : Ω[A⁄k] →ₗ[A] OddDual k A :=
   der.liftKaehlerDifferential
 
@@ -265,7 +265,7 @@ private noncomputable def hom : Forms k A →ₐ[A] OddDual k A :=
 @[simp] private theorem hom_ι (ω : Ω[A⁄k]) : (hom (ι A ω) : OddDual k A) = lin ω :=
   ExteriorAlgebra.lift_ι_apply A _ _ ω
 
-@[simp] private theorem hom_algebraMap (a : A) :
+private theorem hom_algebraMap (a : A) :
     (hom (algebraMap A (Forms k A) a) : OddDual k A) = ofRing a :=
   AlgHom.commutes _ a
 

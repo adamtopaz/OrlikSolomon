@@ -19,7 +19,10 @@ the words `a₀ da₁ ∧ ⋯ ∧ daₙ`. There is no smoothness hypothesis and 
 The total algebra is primary. Mathlib's `⋀[A]^n Ω[A⁄k]` is by definition a submodule of
 `ExteriorAlgebra A Ω[A⁄k]`, so a form of degree `n` is an element `x : Forms k A` with
 `x ∈ ⋀[A]^n Ω[A⁄k]`. Then `⋀[A]^0 Ω[A⁄k]` is the image of `A` and `⋀[A]^1 Ω[A⁄k]` is the image of
-`Ω[A⁄k]`, and the blueprint's zero modules in negative degrees are never needed.
+`Ω[A⁄k]`, by `mem_exteriorPower_zero_iff` and `mem_exteriorPower_one_iff`, and Mathlib's
+`exteriorPower.zeroEquiv` and `exteriorPower.oneEquiv` identify them with `A` and with `Ω[A⁄k]`. The
+direct sum of the degrees is Mathlib's `ExteriorAlgebra.gradedAlgebra`. The blueprint's zero modules
+in negative degrees are never needed.
 
 ## Main definitions
 

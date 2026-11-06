@@ -240,7 +240,8 @@ theorem differentialIdealPower_succ (I : Ideal P) (n : ℕ) :
   ext x
   simp
 
-/-- An element of degree `n` lies in `I ⋀ M + (N)` if and only if it lies in `I ⋀^n M + N ∧ ⋀^(n-1) M`.
+/-- An element of degree `n` lies in `I ⋀ M + (N)` if and only if it lies in
+`I ⋀^n M + N ∧ ⋀^(n-1) M`.
 This says that the ideal is homogeneous. -/
 theorem coe_mem_smul_top_sup_wedgeIdeal_iff {M : Type*} [AddCommGroup M] [Module P M] (I : Ideal P)
     (N : Submodule P M) {n : ℕ} {x : ⋀[P]^n M} :
