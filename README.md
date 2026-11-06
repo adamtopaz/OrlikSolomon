@@ -13,12 +13,12 @@ twists stay explicit.
 **Status:** the affine and projective structure theorems and their corollaries are proved,
 for any structure satisfying the axioms. No nonzero instance of that structure is constructed
 in Lean, so the library is not yet a theorem about any named cohomology theory, and a de Rham
-instance is planned. The empty projective arrangement is excluded. The
+instance is in progress. The empty projective arrangement is excluded. The
 [book](https://adamtopaz.github.io/OrlikSolomon/) states the theorems and has the details.
 
 - Exposition, tied to the code: <https://adamtopaz.github.io/OrlikSolomon/>
 - Mathematical plan: [`blueprint/`](blueprint/arrangement_cohomology_lean_blueprint.tex)
-- Plan for a de Rham instance of the axioms, with only its first modules formalized so far:
+- De Rham instance of the axioms, in progress:
   [`blueprint/`](blueprint/de_rham_instance_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)

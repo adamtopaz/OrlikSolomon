@@ -74,7 +74,8 @@ Here is the exact state of that check.
 
 *In Lean, there is no nonzero instance.*
 The values of the structure constructed in Lean are the zero theories {name OrlikSolomon.Sanity.zeroTheory}`zeroTheory` and {name OrlikSolomon.Sanity.zeroBridgeTheory}`zeroBridgeTheory`, with zero coefficients, the second built by the bridge below from zero degreewise data.
-A nonzero value, algebraic de Rham cohomology in characteristic zero, is planned in {ref "de-rham"}[its own chapter], and only the first steps of that plan are formalized so far, with no value of the structure among them.
+A nonzero value, algebraic de Rham cohomology in characteristic zero, is being built in {ref "de-rham"}[its own chapter].
+Some algebraic foundations are formalized, but the instance itself has not been constructed.
 
 ```lean -show
 noncomputable section

@@ -287,7 +287,7 @@ These are mathematical arguments and not formal proofs.
 So the library does not yet contain a theorem about singular or $`\ell`-adic cohomology.
 To obtain one, you must construct a value of the structure, and {bp "lem:standard-bridge"}[the bridge] reduces this to the familiar degreewise inputs: groups, products, pullbacks, localization with supports and oriented purity.
 {ref "axioms"}[The chapter on the axioms] explains each field, the checks and the bridge.
-A de Rham instance is planned, in the [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), as described at the end of this page.
+A de Rham instance is in progress, following the [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), as described at the end of this page.
 It is not part of what is proved here.
 
 The axioms are deliberately much weaker than the conclusion.
@@ -325,10 +325,10 @@ Both of these are checked by human or agent review of each change, not by the bu
 So do not read *Formalized* as a machine-checked claim about the words in a box.
 What the build has checked is the declarations shown there, and you can compare their statements with the text yourself.
 
-*A planned second part.*
+*A de Rham instance in progress.*
 The status lines at the top of this page count two blueprints separately.
 The second plans a value of the structure of axioms: algebraic de Rham cohomology over a field of characteristic zero, which would show that the axioms have a nonzero model and would give a form of the theorem with no hypothetical cohomology theory in it.
-That work is in scope and none of it is formalized yet, so the library does not contain this instance.
+Some of its algebraic foundations are formalized, but the library does not yet contain this instance.
 {ref "de-rham"}[Its chapter] presents the plan.
 The main theorem does not depend on it: the dependence runs the other way.
 
