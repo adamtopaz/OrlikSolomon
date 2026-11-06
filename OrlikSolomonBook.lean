@@ -14,6 +14,7 @@ import OrlikSolomonBook.Presentation
 import OrlikSolomonBook.SecondInduction
 import OrlikSolomonBook.Multiplicities
 import OrlikSolomonBook.Projective
+import OrlikSolomonBook.DeRham
 import OrlikSolomonBook.Generalized
 import OrlikSolomonBook.Status
 
@@ -299,7 +300,7 @@ All of these are outputs of the proof.
  * In the projective case the empty arrangement is excluded. There is no hyperplane to put at infinity, the space is $`\mathbb{P}^n` itself, and its cohomology needs a projective bundle formula that the axioms do not provide.
 
 *How this book is tied to the code.*
-Every result appears in a box that shows its label in the [blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex) and a status:
+Every result appears in a box that shows a status and its label in the [blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), or, for the de Rham instance, in the [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex):
  * *Planned* means that the result is in scope and no Lean declaration is attached to it yet. The text describes what is intended, and nothing has been checked.
  * *Deferred* means that the result is in the blueprint but outside the current scope of the project.
  * *Partly formalized* means that the box names Lean declarations for part of the result, shows their statements with links to their source, and says what is missing.
@@ -311,7 +312,7 @@ Open that line to compare them with the text.
 *What the build checks.*
 A box cannot claim the last two statuses by assertion, because they follow from naming declarations.
 For each named declaration, the build of this book checks only that it exists, and that it depends on no `sorry` and on no axiom other than Lean's standard `propext`, `Classical.choice` and `Quot.sound`.
-A second check fails the build if the blueprint has a node that the book does not present, if the book presents a node twice, or if the blueprint uses a label twice.
+A second check fails the build if either blueprint has a node that the book does not present, if the book presents a node twice, or if a label is used twice, even across the two blueprints.
 The {ref "status"}[status page] is generated from the same data.
 Lean code in the text, such as the statements above, is elaborated when the book is built.
 So are the names of declarations that the text sets in Lean's highlighting, and the build fails if one of them does not resolve.
@@ -323,6 +324,13 @@ It also does not check any prose, inside or outside the boxes.
 Both of these are checked by human or agent review of each change, not by the build, and review can make mistakes.
 So do not read *Formalized* as a machine-checked claim about the words in a box.
 What the build has checked is the declarations shown there, and you can compare their statements with the text yourself.
+
+*A planned second part.*
+The status lines at the top of this page count two blueprints separately.
+The second plans a value of the structure of axioms: algebraic de Rham cohomology over a field of characteristic zero, which would show that the axioms have a nonzero model and would give a form of the theorem with no hypothetical cohomology theory in it.
+That work is in scope and none of it is formalized yet, so the library does not contain this instance.
+{ref "de-rham"}[Its chapter] presents the plan.
+The main theorem does not depend on it: the dependence runs the other way.
 
 {include 1 OrlikSolomonBook.Organization}
 
@@ -343,6 +351,8 @@ What the build has checked is the declarations shown there, and you can compare 
 {include 1 OrlikSolomonBook.Multiplicities}
 
 {include 1 OrlikSolomonBook.Projective}
+
+{include 1 OrlikSolomonBook.DeRham}
 
 {include 1 OrlikSolomonBook.Generalized}
 

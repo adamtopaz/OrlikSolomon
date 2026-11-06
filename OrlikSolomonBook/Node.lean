@@ -522,6 +522,26 @@ def summarizeStatus (nodes : Array NodeData) : String :=
     {countStatus nodes .partly} partly formalized, {countStatus nodes .planned} planned. \
     Deferred nodes, out of scope for now: {countStatus nodes .deferred}."
 
+/--
+The name under which the book counts the nodes of a blueprint file. A file with no name here is
+listed under its file name, so that the nodes of a new blueprint are never added to another's count.
+-/
+def blueprintName (source : String) : String :=
+  match source with
+  | "arrangement_cohomology_lean_blueprint.tex" => "Main theorem"
+  | "de_rham_instance_blueprint.tex" => "De Rham instance"
+  | other => other
+
+/-- The nodes of each blueprint file, in the order in which the files first occur. -/
+def nodesByBlueprint (nodes : Array NodeData) : List (String × Array NodeData) :=
+  (nodes.toList.map (·.node.source)).eraseDups.map fun source =>
+    (source, nodes.filter (·.node.source == source))
+
+/-- One sentence for each blueprint file, under its name, so that no count mixes two of them. -/
+def summarizeByBlueprint (nodes : Array NodeData) : List String :=
+  (nodesByBlueprint nodes).map fun (source, group) =>
+    s!"{blueprintName source}. {summarizeStatus group}"
+
 /-
 A link to a node. The status of the node is shown next to the link, so that no reference in the
 prose can suggest more than the node's own box claims.
@@ -575,7 +595,7 @@ def bp : RoleExpanderOf BpConfig
         pure content
     ``(Verso.Doc.Inline.other (Inline.bp $(quote label)) #[$content,*])
 
-/- The sentence that summarizes the status of the nodes, generated like the overview. -/
+/- The sentences that summarize the status of the nodes, generated like the overview. -/
 block_extension Block.statusSummary where
   data := .null
   extraCss := {⟨nodeCss⟩}
@@ -583,14 +603,17 @@ block_extension Block.statusSummary where
   toTeX := none
   toHtml := some fun _ _ _ _ _ => do
     let nodes := coveredNodes (← HtmlT.state)
-    return html%{<p class="bp-summary">{txt (summarizeStatus nodes)}</p>}
+    let sentences := (summarizeByBlueprint nodes).toArray.map fun sentence =>
+      html%{<p class="bp-summary">{txt sentence}</p>}
+    return .seq sentences
 
-/-- Renders one generated sentence that summarizes the status of the nodes. -/
+/-- Renders one generated sentence for each blueprint that summarizes the status of its nodes. -/
 @[block_command]
 def statusSummary : BlockCommandOf Unit
   | () => ``(Verso.Doc.Block.other Block.statusSummary #[])
 
-/- The table of all nodes, generated from what the `node` directives recorded. -/
+/- The tables of all nodes, one for each blueprint, generated from what the `node` directives
+recorded. -/
 block_extension Block.statusOverview where
   data := .null
   extraCss := {⟨nodeCss⟩}
@@ -623,10 +646,10 @@ block_extension Block.statusOverview where
           <td>{decls}</td>
         </tr>
       }
-    return html%{
-      <div class="bp-overview">
-        <p>{txt (summarizeStatus nodes)}</p>
-        {commit}
+    let part : String × Array NodeData → Html := fun (source, group) =>
+      html%{
+        <h2>{txt (blueprintName source)}</h2>
+        <p>{txt (summarizeStatus group)}</p>
         <table class="bp-overview-table">
           <thead>
             <tr>
@@ -636,12 +659,17 @@ block_extension Block.statusOverview where
               <th>{txt "Lean declarations"}</th>
             </tr>
           </thead>
-          <tbody>{nodes.map row}</tbody>
+          <tbody>{group.map row}</tbody>
         </table>
+      }
+    return html%{
+      <div class="bp-overview">
+        {commit}
+        {(nodesByBlueprint nodes).toArray.map part}
       </div>
     }
 
-/-- Renders the table of all nodes and their status. -/
+/-- Renders one table of nodes and their status for each blueprint. -/
 @[block_command]
 def statusOverview : BlockCommandOf Unit
   | () => ``(Verso.Doc.Block.other Block.statusOverview #[])
@@ -653,7 +681,7 @@ private def duplicatedLabels (state : TraverseState) : Array String := Id.run do
     if obj.ids.size > 1 then some label else none
 
 /--
-The completeness check: every node of the blueprint must be presented exactly once in the book, and
+The completeness check: every node of the blueprints must be presented exactly once in the book, and
 the book must present nothing else. It reads the blueprint afresh, and runs after rendering, using
 the labels that were actually seen in the document.
 -/
@@ -669,6 +697,7 @@ def checkCompleteness : ExtraStep := fun _ _ state _ => do
       reportError s!"The book has a node '{label}' that the blueprint does not."
   for label in duplicatedLabels state do
     reportError s!"The book presents blueprint node '{label}' more than once."
-  IO.println s!"{blueprint.size} blueprint nodes. {summarizeStatus (coveredNodes state)}"
+  let summary := " ".intercalate (summarizeByBlueprint (coveredNodes state))
+  IO.println s!"{blueprint.size} blueprint nodes. {summary}"
 
 end OrlikSolomonBook
