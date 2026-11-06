@@ -15,7 +15,8 @@ tag := "status"
 file := "status"
 %%%
 
-This table is generated when the book is built, from the same boxes that appear in the chapters, and it lists every node of the blueprint.
+These tables are generated when the book is built, from the same boxes that appear in the chapters, and they list every node of the two blueprints.
+The two are counted separately: the main theorem does not depend on the de Rham instance, and the dependence runs the other way.
 A node is listed as formalized only if its box names Lean declarations.
 For each of those, the build checks only that it exists, and that it depends on no `sorry` and on no axiom other than `propext`, `Classical.choice` and `Quot.sound`.
 That the declarations cover the node's statement, and that the prose around them is accurate, are checked by human or agent review, not by the build.

@@ -14,6 +14,7 @@ import OrlikSolomonBook.Presentation
 import OrlikSolomonBook.SecondInduction
 import OrlikSolomonBook.Multiplicities
 import OrlikSolomonBook.Projective
+import OrlikSolomonBook.DeRham
 import OrlikSolomonBook.Generalized
 import OrlikSolomonBook.Status
 
@@ -101,6 +102,13 @@ Both of these are checked by human or agent review of each change, not by the bu
 So do not read *Formalized* as a machine-checked claim about the words in a box.
 What the build has checked is the declarations shown there, and you can compare their statements with the text yourself.
 
+*A planned second part.*
+The status lines at the top of this page count two blueprints separately.
+The second plans a value of the structure of axioms: algebraic de Rham cohomology over a field of characteristic zero, which would show that the axioms have a nonzero model and would give a form of the theorem with no hypothetical cohomology theory in it.
+That work is in scope and none of it is formalized yet, so the library does not contain this instance.
+{ref "de-rham"}[Its chapter] presents the plan.
+The main theorem does not depend on it: the dependence runs the other way.
+
 {include 1 OrlikSolomonBook.Organization}
 
 {include 1 OrlikSolomonBook.ReusableAlgebra}
@@ -120,6 +128,8 @@ What the build has checked is the declarations shown there, and you can compare 
 {include 1 OrlikSolomonBook.Multiplicities}
 
 {include 1 OrlikSolomonBook.Projective}
+
+{include 1 OrlikSolomonBook.DeRham}
 
 {include 1 OrlikSolomonBook.Generalized}
 

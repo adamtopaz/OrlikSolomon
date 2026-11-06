@@ -31,6 +31,8 @@ structure Node where
   kind : String
   /-- The optional argument of the environment, with TeX accents and dashes resolved. -/
   title : String
+  /-- The blueprint file that contains the node, such as `de_rham_instance_blueprint.tex`. -/
+  source : String := ""
 deriving Repr, Inhabited, BEq, ToJson, FromJson
 
 /-- The environments that count as nodes of the blueprint. -/
@@ -52,7 +54,7 @@ private def stripLineComment (line : String) : String :=
 
 /-- Resolves the TeX that occurs in the titles of nodes. -/
 private def cleanTitle (title : String) : String :=
-  (title.replace "---" "—").replace "--" "–" |>.replace "\\'e" "é"
+  (title.replace "---" "—").replace "--" "–" |>.replace "\\'e" "é" |>.replace "\\\"u" "ü"
 
 /-- Capitalizes the first letter of an environment name. -/
 private def capitalize (s : String) : String :=
@@ -125,8 +127,8 @@ def duplicateLabels (nodes : Array Node) : List String :=
 def directory : System.FilePath := "blueprint"
 
 /--
-Reads the nodes of every TeX file in `blueprint/`, and fails if two of them have the same label.
-The working directory must be the root of the repository, which it is for `lake build` and
+Reads the nodes of every TeX file in `blueprint/`, each recording its file, and fails if two of them
+have the same label. The working directory must be the root of the repository, which it is for `lake build` and
 `lake exe book`.
 -/
 def readNodes : IO (Array Node) := do
@@ -139,7 +141,9 @@ def readNodes : IO (Array Node) := do
   let mut nodes := #[]
   for file in files do
     match parseNodes (← IO.FS.readFile file) with
-    | .ok found => nodes := nodes ++ found
+    | .ok found =>
+      let source := file.fileName.getD file.toString
+      nodes := nodes ++ found.map ({ · with source })
     | .error e => throw <| .userError s!"{file}: {e}"
   match duplicateLabels nodes with
   | [] => return nodes
