@@ -8,6 +8,7 @@ module
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.MonoidAlgebra.Grading
 public import OrlikSolomon.Cohomology.Deletion
+public import OrlikSolomon.Geometry.RelationTargets
 
 /-!
 # Regression examples
@@ -26,7 +27,8 @@ here as the modules they test appear.
   used by the comparison with singular cohomology in the docstring of `OrdinaryTheory`.
 * `OrlikSolomon.Sanity.twoPoints`: the two rational points of `𝔸¹` over `F₂`. Their complement has
   no `F₂`-points (`isEmpty_algHom_twoPoints`), and its ring is nonzero
-  (`nontrivial_complementRing_twoPoints`).
+  (`nontrivial_complementRing_twoPoints`). It still has the first target of `lem:small-targets`
+  (`nonempty_relationTarget_twoPoints`).
 * `OrlikSolomon.Sanity.twoPointsPair`: the deletion pair of one of them. Here `H` is a point, the
   restriction is empty (`restriction_twoPoints_eq_empty`), the open part has no `F₂`-points, and the
   other point restricts to the constant `1` (`mapUnits_complementRestriction_twoPoints`).
@@ -331,6 +333,21 @@ though the complement has no `F₂`-points, see `isEmpty_algHom_twoPoints`.
 Blueprint: the regression list, "the two rational points in `𝔸¹` over `F₂`". -/
 theorem nontrivial_complementRing_twoPoints : Nontrivial twoPoints.ComplementRing :=
   inferInstance
+
+/-- The two points have empty intersection, so their equations factor through the first target of
+`lem:small-targets`, although the source has no `F₂`-points, see `isEmpty_algHom_twoPoints`. This is
+the geometry behind the relation `e₁ e₂ = 0`.
+
+Blueprint: the regression list, "the two rational points in `𝔸¹` over `F₂`". -/
+theorem nonempty_relationTarget_twoPoints :
+    Nonempty (RelationTarget twoPoints
+      ([⟨_, zeroLocus_id_mem_twoPoints⟩, ⟨_, zeroLocus_id_sub_one_mem_twoPoints⟩].map
+        (SmoothAlg.equationUnit twoPoints))) := by
+  refine ⟨RelationTarget.ofInterEqBot _ ?_⟩
+  ext x
+  refine iff_of_false (fun hx ↦ ?_) (AffineSubspace.notMem_bot _ _ _)
+  obtain ⟨rfl, h⟩ : x = 0 ∧ x - 1 = 0 := by simpa [AffineSubspace.mem_inf_iff] using hx
+  simp at h
 
 /-! The deletion pair of the origin, in dimension one, over a finite field, with an open part that
 has no rational points. -/
