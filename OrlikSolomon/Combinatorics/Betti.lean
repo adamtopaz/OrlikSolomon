@@ -310,7 +310,7 @@ theorem poincarePolynomial_deletion_restriction [FiniteDimensional k V]
 open scoped Classical in
 /-- A singleton arrangement has Poincaré polynomial `1 + X`, in every positive ambient
 dimension and over every base field. -/
-theorem poincarePolynomial_singleton [FiniteDimensional k V] (𝒜 : Arrangement k V)
+theorem poincarePolynomial_singleton (𝒜 : Arrangement k V)
     {H : AffineSubspace k V} (h𝒜 : 𝒜.hyperplanes = {H}) :
     𝒜.poincarePolynomial = 1 + Polynomial.X := by
   have hH : IsHyperplane H := 𝒜.isHyperplane (by rw [← mem_hyperplanes, h𝒜]; simp)
@@ -320,7 +320,7 @@ theorem poincarePolynomial_singleton [FiniteDimensional k V] (𝒜 : Arrangement
 open scoped Classical in
 /-- For two distinct hyperplanes, only the weight of their common intersection remains after
 the two degree-one contributions. -/
-theorem poincarePolynomial_pair [FiniteDimensional k V] (𝒜 : Arrangement k V)
+theorem poincarePolynomial_pair (𝒜 : Arrangement k V)
     {H K : AffineSubspace k V} (hne : H ≠ K) (h𝒜 : 𝒜.hyperplanes = {H, K}) :
     𝒜.poincarePolynomial = 1 + 2 * Polynomial.X + poincareWeight (H ⊓ K) := by
   have hH : IsHyperplane H := 𝒜.isHyperplane (by rw [← mem_hyperplanes, h𝒜]; simp)
@@ -333,7 +333,7 @@ theorem poincarePolynomial_pair [FiniteDimensional k V] (𝒜 : Arrangement k V)
 open scoped Classical in
 /-- Two disjoint hyperplanes have polynomial `1 + 2 X`. In particular, two points of the
 affine line contribute no degree-two term. -/
-theorem poincarePolynomial_pair_disjoint [FiniteDimensional k V] (𝒜 : Arrangement k V)
+theorem poincarePolynomial_pair_disjoint (𝒜 : Arrangement k V)
     {H K : AffineSubspace k V} (hne : H ≠ K) (h𝒜 : 𝒜.hyperplanes = {H, K})
     (hbot : H ⊓ K = ⊥) : 𝒜.poincarePolynomial = 1 + 2 * Polynomial.X := by
   rw [poincarePolynomial_pair 𝒜 hne h𝒜, hbot, poincareWeight_bot, add_zero]
