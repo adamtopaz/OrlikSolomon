@@ -151,14 +151,12 @@ theorem representativeMap_exteriorGen (r : 𝒜.restriction H → 𝒜.deletion 
   simp [representativeMap, representativeGenerator]
 
 /-- The representative map sends exterior words to their old generator words. -/
-@[simp]
 theorem representativeMap_word (r : 𝒜.restriction H → 𝒜.deletion H)
     (I : List (𝒜.restriction H)) :
     representativeMap B 𝒜 r (word (exteriorGen B) I) = word (representativeGenerator B 𝒜 r) I := by
   simp
 
 /-- The representative map sends signed boundaries to the same signed old boundaries. -/
-@[simp]
 theorem representativeMap_wordBoundary (r : 𝒜.restriction H → 𝒜.deletion H)
     (I : List (𝒜.restriction H)) :
     representativeMap B 𝒜 r (wordBoundary (exteriorGen B) I) =

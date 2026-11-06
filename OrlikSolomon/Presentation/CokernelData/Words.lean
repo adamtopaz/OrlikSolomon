@@ -64,6 +64,19 @@ theorem cokernelMk_generator_word_append_cons (P : List (𝒜.deletion H))
 
 variable [FiniteDimensional k V]
 
+/-- The difference caused by changing a representative belongs to the old image.
+Blueprint: `lem:representatives`. -/
+theorem generator_mul_sub_generator_mul_mem_deletionRange
+    (K K' : 𝒜.deletion H)
+    (htrace : (K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) =
+      (K' : AffineSubspace k V).comap (chart (H : AffineSubspace k V)))
+    (hbot : (K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) ≠ ⊥) :
+    generator B 𝒜 H * oldGenerator B 𝒜 H K -
+        generator B 𝒜 H * oldGenerator B 𝒜 H K' ∈ deletionRange B 𝒜 H := by
+  rw [generator_mul_sub_generator_mul_of_same_trace B 𝒜 H K K' htrace hbot]
+  exact Submodule.neg_mem _ (mul_mem_deletionRange B 𝒜 H
+    (generator_mem_deletionRange B 𝒜 K) (generator_mem_deletionRange B 𝒜 K'))
+
 /-- Replacing an old hyperplane by another with the same nonempty trace does not change a
 cokernel class, even with arbitrary old word factors on either side. -/
 theorem cokernelMk_generator_word_replace (P T : List (𝒜.deletion H))
@@ -77,9 +90,7 @@ theorem cokernelMk_generator_word_replace (P T : List (𝒜.deletion H))
   apply congrArg ((P.length : ℤ).negOnePow • ·)
   apply cokernelMk_mul_mul_eq_of_sub_mem B 𝒜 H
     (word_mem_deletionRange B 𝒜 P) (word_mem_deletionRange B 𝒜 T)
-  rw [generator_mul_sub_generator_mul_of_same_trace B 𝒜 H K K' htrace hbot]
-  exact Submodule.neg_mem _ (mul_mem_deletionRange B 𝒜 H
-    (generator_mem_deletionRange B 𝒜 K) (generator_mem_deletionRange B 𝒜 K'))
+  exact generator_mul_sub_generator_mul_mem_deletionRange B 𝒜 H K K' htrace hbot
 
 omit [FiniteDimensional k V] in
 /-- A letter with empty trace kills a word preceded by the deleted generator, regardless of
