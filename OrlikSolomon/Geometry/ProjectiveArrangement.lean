@@ -26,8 +26,6 @@ set, so the code writes `P`.
 * `ProjectiveArrangement.ofForms`: the arrangement of the kernels of a finite set of nonzero forms.
 * `ProjectiveArrangement.cone`: the central cone `cP`.
 * `ProjectiveArrangement.coneHyperplaneEquiv`: the hyperplanes of the cone are those of `P`.
-* `Arrangement.IsCentral`: an arrangement whose hyperplanes all contain a common point. This does
-  not mention the origin, so it makes sense on restrictions, whose base point is not determined.
 * `OrlikSolomon.slice`: the slice `ℓ₀ = 1`.
 * `ProjectiveArrangement.decone`: the decone `d_{H₀}P`, as an arrangement on the vector space
   `(slice ℓ₀).direction`.
@@ -293,35 +291,6 @@ theorem mem_cone_zeroLocus {f : W →ᵃ[k] k} :
 theorem zeroLocus_toAffineMap_mem_cone (hℓ : LinearMap.ker ℓ ∈ P) :
     zeroLocus ℓ.toAffineMap ∈ P.cone := by
   rwa [zeroLocus_toAffineMap, toAffineSubspace_mem_cone]
-
-end ProjectiveArrangement
-
-/-! ### Central arrangements -/
-
-namespace Arrangement
-
-variable {V : Type u} [AddCommGroup V] [Module k V]
-
-/-- An arrangement is central if its hyperplanes have a common point, so that all intersections of
-its hyperplanes are nonempty. This does not refer to the origin of `V`, so it makes sense on a
-restriction: see the warning at `chart`.
-
-Blueprint: `lem:central-boundary`. -/
-def IsCentral (𝒜 : Arrangement k V) : Prop :=
-  ∃ p, ∀ H ∈ 𝒜, p ∈ H
-
-/-- In a central arrangement, every intersection of hyperplanes is nonempty. -/
-theorem IsCentral.inter_ne_bot {𝒜 : Arrangement k V} (h : 𝒜.IsCentral) (I : List 𝒜) :
-    inter I ≠ ⊥ := by
-  obtain ⟨p, hp⟩ := h
-  rw [← AffineSubspace.nonempty_iff_ne_bot]
-  exact ⟨p, mem_inter.2 fun H _ ↦ hp H H.2⟩
-
-end Arrangement
-
-namespace ProjectiveArrangement
-
-variable {P : ProjectiveArrangement k W} {H M M' : Submodule k W} {ℓ ℓ₀ : Dual k W}
 
 /-- The cone of a projective arrangement is central: all its hyperplanes contain the origin. -/
 theorem cone_isCentral (P : ProjectiveArrangement k W) : P.cone.IsCentral :=

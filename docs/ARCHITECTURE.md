@@ -23,7 +23,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Algebra/SymmetricGrading`     | the degree grading of `O(W)`, used by `def:projective` |
 | `Geometry/Hyperplane`          | hyperplanes and equations of `def:arrangement`, `lem:equations` |
 | `Geometry/Chart`               | identifying `H` with `H.direction` in `def:deletion`, the incidence part of `lem:restriction-geometry` for one hyperplane |
-| `Geometry/Arrangement`         | `def:arrangement`, `def:deletion`, the incidence part of `lem:restriction-geometry` for arrangements |
+| `Geometry/Arrangement`         | `def:arrangement`, `def:deletion`, the incidence part of `lem:restriction-geometry` for arrangements, the central arrangements of `lem:central-boundary` |
 | `Geometry/SmoothAlg`           | `def:geometry-interface` |
 | `Geometry/CoordinateRing`      | coordinate rings of vector spaces, part of `lem:geometry-adapter` |
 | `Geometry/Complement`          | coordinate rings of arrangement complements, part of `lem:geometry-adapter` |
@@ -161,6 +161,10 @@ three rings. State results for every equation of `H`.
   state results through `map_chart_comap_chart`, whose value is `H ⊓ K`, rather than through the
   base point. `chart H 0` still names that point, but nothing says which one it is, so a condition
   such as `0 ∈ L` for `L` in a restriction cannot be decided and must not define "central".
+- "Central" is `Arrangement.IsCentral`: the hyperplanes have a common point. It does not mention the
+  origin, so it applies to restrictions. `IsCentral.inter_ne_bot` says that all intersections are
+  nonempty. It is in `Geometry/Arrangement`, so the presentation does not depend on projective
+  geometry, and the cone is central by `ProjectiveArrangement.cone_isCentral`.
 - Intersections are lattice operations on `AffineSubspace k V`, and "empty" is `⊥`:
   `⨅ i, H i` for families, `sInf S` for sets, and `Arrangement.inter I` for a list `I : List 𝒜`.
   `codim X` is the dimension of `V ⧸ X.direction`, and `Module.finrank k X.direction` is the
@@ -184,8 +188,6 @@ three rings. State results for every equation of `H`.
   `P.decone ℓ₀` is `P.cone.restriction (slice ℓ₀)`, where `slice ℓ₀` is `ℓ₀ = 1`, on the vector
   space `(slice ℓ₀).direction`. It is indexed by `ℓ₀` and not by `H₀`, since the slice depends on
   `ℓ₀`.
-- "Central" is `Arrangement.IsCentral`: the hyperplanes have a common point. It does not mention the
-  origin, and it applies to restrictions, for the reason at `chart`.
 - `O(U_P)` is `P.ComplementRing`, Mathlib's
   `HomogeneousLocalization (symmetricGrading k (Dual k W)) P.cone.equationSubmonoid`. It is the
   degree-zero part of `O(V_P)`, so it involves no hyperplane at infinity and no choice of equations.
@@ -198,7 +200,10 @@ three rings. State results for every equation of `H`.
   linear forms as numerators it is right (`range_toCone_eq_adjoin`).
 - `P` empty is excluded by `[Nonempty P]` on the object `SmoothAlg.projectiveComplement P`. A
   statement that uses a hyperplane at infinity takes `hℓ₀ : LinearMap.ker ℓ₀ ∈ P` instead. For empty
-  `P` the ring is `k`, the global functions on `P^n`, and it is not used: `P^n` is not affine.
+  `P` the ring is `k` and it is not used, because it does not correspond to the complement, all of
+  `Proj Sym(W*)`, in general. For `W` of dimension at least two, `k` is the ring of global functions
+  of a projective space that is not affine. For dimension one, the complement is the point `P⁰`,
+  whose ring is `k`. For `W = 0`, `Proj Sym(W*)` is empty, so its ring is zero and not `k`.
 - Consumers use `SmoothAlg.coneIso`, `SmoothAlg.deconeIso` and `SmoothAlg.projectiveRatioUnit`. The
   formula `ℓ_i = t (ℓ_i / ℓ_0)` is `mapUnits_coneIso_hom_complementUnit`.
 - `Geometry/ProjectiveScheme` is the only module that imports Mathlib's schemes. It adds about 250

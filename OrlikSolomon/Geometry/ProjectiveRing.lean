@@ -133,8 +133,11 @@ This is Mathlib's `HomogeneousLocalization`, so `Spec` of this ring is the open 
 no choice of equations.
 
 It is only meaningful when `P` is nonempty. For empty `P`, this ring is the degree-zero part of
-`O(W)`, which is `k`: the global functions on projective space. That space is not affine, so it is
-not the coordinate ring of the complement, and this case must not be used.
+`O(W)`, which is `k`, and the complement is all of `Proj Sym(W*)`. They do not correspond in
+general: for `W` of dimension at least two, `k` is the ring of global functions of a projective
+space that is not affine; for `W` of dimension one, the complement is the point `P⁰`, whose ring is
+`k`; and for `W = 0`, `Proj Sym(W*)` is empty, so its ring is zero and not `k`. This case must not
+be used.
 
 Blueprint: `def:projective`, `lem:decone`. -/
 def ComplementRing : Type u :=
