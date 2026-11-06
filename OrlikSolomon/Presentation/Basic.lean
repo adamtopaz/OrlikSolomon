@@ -91,6 +91,11 @@ def OSAlgebra : Type (max u v) :=
 
 namespace OSAlgebra
 
+-- Keep the transported action visible to instance synthesis, including the canonical
+-- natural and integer actions inherited by the ring structure.
+instance instSMul {R : Type*} [CommSemiring R] [Algebra R B] : SMul R (OSAlgebra B 𝒜) :=
+  inferInstanceAs (SMul R (RelationQuotient (osRelations B 𝒜)))
+
 instance : Ring (OSAlgebra B 𝒜) :=
   inferInstanceAs (Ring (RelationQuotient (osRelations B 𝒜)))
 
