@@ -464,6 +464,11 @@ of the check unnoticed. A label used twice is rejected too, including across fil
 copied label would otherwise add a node with no new coverage obligation. If a blueprint starts
 using, say, labelled equations, extend the parser in `OrlikSolomonBook/Blueprint.lean`.
 
+Each node records the blueprint file it comes from, and `{statusSummary}` and `{statusOverview}`
+count each file separately, so that planned nodes of one blueprint never lower the counts of
+another. `blueprintName` in `OrlikSolomonBook/Node.lean` names a file for readers. A file with no
+name there is listed under its file name, not added to another's count.
+
 Some choices here are deliberate:
 
 - **Book files are not Lean `module`s**, unlike the library. A plain `import` loads the
@@ -489,5 +494,52 @@ The `Book` workflow runs all of this on pull requests and deploys `main` to
 ## Scope
 
 In scope: the ordinary affine and projective theorems, their combinatorial corollaries,
-the bridge from a standard degreewise theory, and the exposition. The stable extension
-(blueprint §9, milestones 5b and 6) is **deferred** unless Adam asks for it.
+the bridge from a standard degreewise theory, the de Rham instance, and the exposition.
+
+The de Rham instance is planned in its own blueprint, `blueprint/de_rham_instance_blueprint.tex`,
+and tracked by the GitHub milestone "M5 De Rham instance". See the next section.
+
+The stable extension is **deferred** unless Adam asks for it. It is §11 of
+`blueprint/arrangement_cohomology_lean_blueprint.tex`, the second half of that blueprint's
+Milestone 5 and its Milestone 6. Those are the blueprint's own numbers, unrelated to the GitHub
+milestone M5.
+
+## The de Rham instance
+
+`blueprint/de_rham_instance_blueprint.tex` is authoritative for the mathematics of this part. It
+constructs a nonzero value of `OrdinaryTheory`, with `k` a field of characteristic zero, `R = k` and
+`B = k[t, t⁻¹]`, and instantiates the affine and projective theorems. The "fixed interface" it
+refers to is `OrdinaryTheory` in `Cohomology/Axioms`, whose fields match its checklist of 22. No
+field may be weakened, and no comparison or exactness statement may become a hypothesis. Its
+declaration names are proposals, as with the first blueprint.
+
+The namespace is `OrlikSolomon.DeRham`. **None of these modules exists yet.** Each row of this table
+is one of the issues #72–#83, in order, and depends only on rows above it.
+
+| Module under `OrlikSolomon/` | Blueprint labels |
+| ---------------------------- | ---------------- |
+| `DeRham/Exterior`            | `lem:dr-exterior`, `lem:dr-contraction` |
+| `DeRham/Complex`             | `def:dr-forms`, `lem:dr-polynomial-dga`, `lem:dr-presentation`, `def:dr-complex`, `thm:dr-dga` |
+| `DeRham/Localization`        | `lem:dr-localization`, `lem:dr-quotient` |
+| `DeRham/Cohomology`          | `def:dr-cohomology` |
+| `DeRham/Homotopy`            | `lem:dr-polynomial-splitting`, `thm:dr-homotopy` |
+| `DeRham/SmoothPair`          | `lem:dr-projective`, `lem:dr-conormal`, `lem:dr-normal-derivation`, `lem:dr-modf-koszul` |
+| `DeRham/Log`                 | `def:dr-log`, `lem:dr-log-dga`, `lem:dr-regularity`, `def:dr-residue`, `thm:dr-residue-sequence`, `lem:dr-form-projection` |
+| `DeRham/Pole`                | `lem:dr-cartan`, `lem:dr-euler`, `def:dr-pole-filtration`, `lem:dr-pole-quotient`, `thm:dr-pole-contraction`, `lem:dr-filtration-reduction`, `thm:dr-comparison` |
+| `DeRham/Maps`                | `def:dr-gysin`, `lem:dr-exactness`, `thm:dr-projection`, `thm:dr-log-naturality`, `thm:dr-naturality` |
+| `DeRham/Instance`            | `def:dr-twisted-functor`, `lem:dr-ordinary-basic`, `def:dr-twisted-maps`, `thm:dr-ordinary-localization`, `thm:dr-instance` |
+| `DeRham/Corollaries`         | `lem:dr-tau`, `cor:dr-affine`, `cor:dr-projective` |
+| `Examples/DeRham`            | `prop:dr-gm-example`, `prop:dr-unit-example`, `prop:dr-product-example`, `prop:dr-zero-example`, `prop:dr-crossing-example`, `prop:dr-morphism-examples`, `prop:dr-torus-example`, `prop:dr-characteristic-p` |
+
+The rule at the top of this file applies to the namespace. These module names are file names only:
+a declaration or sub-namespace `OrlikSolomon.DeRham.Localization` would capture Mathlib's
+`Localization`, and `OrlikSolomon.DeRham.Complex` would capture `Complex`.
+
+How forms are represented is decided, and recorded here, by #73.
+
+The chapter `OrlikSolomonBook/DeRham.lean` presents these nodes as planned, and its opening and its
+section "What the instance is for" say that none of them is formalized. The build does not check
+that prose, so the PR that names the first declarations on one of these nodes must also update it.
+Likewise, the PR that proves `thm:dr-instance` must update the sentences saying that no nonzero value
+of the structure has been constructed: on the first page, in the chapter on the axioms, on the
+status page and in `README.md`.
