@@ -25,6 +25,7 @@ public import OrlikSolomon.Geometry.Projective
 public import OrlikSolomon.Geometry.ProjectiveArrangement
 public import OrlikSolomon.Geometry.ProjectiveRing
 public import OrlikSolomon.Geometry.ProjectiveScheme
+public import OrlikSolomon.Geometry.RelationTargets
 public import OrlikSolomon.Geometry.SmoothAlg
 public import OrlikSolomon.Grading.Basic
 public import OrlikSolomon.Grading.TensorProduct
