@@ -112,8 +112,9 @@ is short exact, which gives the $`B`-basis $`1,\ [x-1],\ [x]` of $`C(U_{\mathcal
 The old equation $`x-1` restricts to the constant $`-1` on $`H`, and $`[-1]=0`, which is consistent with the restriction having no hyperplanes.
 
 The relation is the empty-intersection relation $`e_0e_1=0`.
-It holds because $`(x,x-1)` maps $`U_{\mathcal{A}}` to a line in $`\mathbb{A}^2` that misses the origin, where a product of two classes of degree one has degree two in dimension one and so vanishes.
-The boundary relation $`e_1-e_0=0` does not hold, and it must not: the two classes are part of a basis.
+It holds because $`(x,x-1)` maps $`U_{\mathcal{A}}` to $`W\cap\mathbb{G}_m^2`, where $`W` is a line in $`\mathbb{A}^2` that misses the origin.
+On this target the two coordinate classes are defined, and their product has degree two in dimension one, so it vanishes.
+Over a nonzero coefficient ring the boundary relation $`e_1-e_0=0` does not hold, and it must not: the two classes are distinct members of a basis.
 This is why the boundary relations are imposed only for nonempty intersections.
 
 In the algebra, write $`A` and $`A'` for the Orlik–Solomon algebras of $`\mathcal{A}` and $`\mathcal{A}'`.

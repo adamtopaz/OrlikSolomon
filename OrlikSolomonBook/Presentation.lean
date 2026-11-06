@@ -62,7 +62,8 @@ On it, the product of the $`s` coordinate classes has cohomological degree $`s` 
 
 If the intersection is nonempty of codimension $`r<s`, then after translating a common point to the origin the image $`W` is a linear space of dimension $`r`.
 The map to $`W\cap\mathbb{G}_m^s` would only show that the product of all $`s` classes vanishes, while the relation to be proved is a boundary, of degree $`s-1`.
-So normalize: the ratios $`f_i/f_1` map $`U_{\mathcal{A}}` to the slice $`W_1=W\cap\{y_1=1\}`, of dimension $`r-1`, and the product of the $`s-1` classes $`[f_i/f_1]` vanishes there.
+So normalize: the ratios $`f_i/f_1` map $`U_{\mathcal{A}}` to $`W_1\cap\mathbb{G}_m^s`, where the slice $`W_1=W\cap\{y_1=1\}` has dimension $`r-1`.
+On this target the product of the $`s-1` coordinate classes $`[y_2],\ldots,[y_s]` vanishes, and pulling back gives $`[f_2/f_1]\cdots[f_s/f_1]=0`.
 Since $`[f_i/f_1]=[f_i]-[f_1]`, it remains to expand the product $`([f_2]-[f_1])\cdots([f_s]-[f_1])`.
 Terms that use $`[f_1]` twice vanish, and moving the remaining $`[f_1]` to the front gives exactly the signed boundary of {bp "lem:boundary-expansion"}[the expansion lemma].
 
