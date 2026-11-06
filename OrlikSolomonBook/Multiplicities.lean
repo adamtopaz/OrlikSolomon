@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 import OrlikSolomonBook.Node
 import OrlikSolomon
@@ -21,13 +21,14 @@ For example, three concurrent lines in the plane give $`P(t)=1+3t+2t^2`, three l
 
 The isomorphisms that a choice of basis produces are not canonical, while the Orlik–Solomon presentation map is.
 
-:::node "def:polynomials"
+:::node "def:polynomials" (decl := OrlikSolomon.Arrangement.characteristicPolynomial) (decl := OrlikSolomon.Arrangement.poincarePolynomial) (decl := OrlikSolomon.Arrangement.characteristicPolynomial_eq_sum) (decl := OrlikSolomon.Arrangement.poincarePolynomial_eq_sum) (decl := OrlikSolomon.Arrangement.bettiNumber) (decl := OrlikSolomon.Arrangement.natCast_bettiNumber)
 Over $`\mathbb{Z}`, define
 $$`\chi_{\mathcal{A}}(T)=\sum_{\substack{S\subseteq\mathcal{A}\\\bigcap S\ne\varnothing}}(-1)^{|S|}T^{\dim\bigcap S},\qquad P_{\mathcal{A}}(t)=\sum_{\substack{S\subseteq\mathcal{A}\\\bigcap S\ne\varnothing}}(-1)^{|S|+\operatorname{codim}\bigcap S}t^{\operatorname{codim}\bigcap S},`
 and let $`b_q(\mathcal{A})` be the coefficient of $`t^q` in $`P_{\mathcal{A}}`.
+The natural Betti numbers are defined only after nonnegativity is proved; casting them to integers recovers these coefficients.
 :::
 
-:::node "lem:polynomial-recursion"
+:::node "lem:polynomial-recursion" (decl := OrlikSolomon.Arrangement.characteristicPolynomial_empty) (decl := OrlikSolomon.Arrangement.poincarePolynomial_empty) (decl := OrlikSolomon.Arrangement.characteristicPolynomial_deletion_restriction) (decl := OrlikSolomon.Arrangement.poincarePolynomial_deletion_restriction) (decl := OrlikSolomon.Arrangement.poincarePolynomial_coeff_nonneg)
 For the empty arrangement, $`\chi=T^n` and $`P=1`.
 In general $`\chi_{\mathcal{A}}=\chi_{\mathcal{A}'}-\chi_{\mathcal{A}''}` and $`P_{\mathcal{A}}=P_{\mathcal{A}'}+tP_{\mathcal{A}''}`, so all coefficients of $`P_{\mathcal{A}}` are nonnegative.
 :::
