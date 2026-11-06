@@ -9,20 +9,19 @@ import OrlikSolomon
 open Verso.Genre Manual
 open OrlikSolomonBook
 
-#doc (Manual) "A de Rham instance of the axioms (planned)" =>
+#doc (Manual) "A de Rham instance of the axioms" =>
 %%%
 tag := "de-rham"
 file := "de-rham"
 htmlSplit := .never
 %%%
 
-*Most of this chapter is not formalized yet, and the instance itself is not constructed.*
-It presents the plan in the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
-So far only the exterior algebra and the de Rham dg algebra of an arbitrary algebra are formalized: the seven boxes of the sections {ref "de-rham-exterior"}[on exterior algebra] and {ref "de-rham-dga"}[on the dg algebra], up to and including {bp "thm:dr-dga"}[], name their Lean declarations.
-Every other box below is marked as planned.
-The blueprint itself says that nothing in it has been formally verified or elaborated in Lean.
-It proposes names for declarations under `OrlikSolomon.DeRham`. Those names are only proposals, so this chapter does not list them, and the declarations named in a box may differ from them.
-Outside those seven boxes, the statements and arguments here are the blueprint's, and no machine has checked them.
+*The de Rham instance is being formalized.*
+This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
+The exterior calculus and the de Rham dg algebra of an arbitrary algebra are formalized.
+Localization and quotients of forms, the algebra of a smooth pair, the cohomology and comparison arguments, and the final instance remain planned.
+The library therefore still contains no nonzero value of the structure of axioms.
+Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
 
 # What the instance is for
@@ -108,20 +107,17 @@ The construction is made first for the canonical quotient and localization, and 
 These transport maps are determined by $`i` and $`j`, and every naturality statement below is expressed through them, so the statements survive transport.
 
 # Exterior algebra
-%%%
-tag := "de-rham-exterior"
-%%%
 
 The construction needs two facts about exterior algebras, over any commutative ring and without dividing by two.
 
-:::node "lem:dr-exterior" (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv) (decl := OrlikSolomon.DeRham.powerQuotientEquiv) (decl := OrlikSolomon.DeRham.span_word_ι_length) (decl := OrlikSolomon.DeRham.mul_self_eq_zero_of_mem_exteriorPower_one) (decl := OrlikSolomon.DeRham.mul_comm_of_mem_exteriorPower)
+:::node "lem:dr-exterior" (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_tmul) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_symm_ιMulti) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_naturality) (decl := OrlikSolomon.DeRham.powerQuotientEquiv) (decl := OrlikSolomon.DeRham.powerQuotientEquiv_mk) (decl := OrlikSolomon.DeRham.map_wedgeSubmodule_succ) (decl := OrlikSolomon.DeRham.wedgeSubmodule_zero) (decl := OrlikSolomon.DeRham.span_word_ι_length) (decl := OrlikSolomon.DeRham.mul_self_eq_zero_of_mem_exteriorPower_one) (decl := OrlikSolomon.DeRham.mul_comm_of_mem_exteriorPower)
 Let $`M` be an $`A`-module with a submodule $`N`, and let $`A\to A'` be a map of commutative algebras.
 There are natural identifications
 $$`A'\otimes_A\bigwedge_A^nM\simeq\bigwedge_{A'}^n(A'\otimes_AM),\qquad\bigwedge_A^n(M/N)\simeq\bigwedge_A^nM\,/\,\bigl(N\wedge\bigwedge_A^{n-1}M\bigr).`
 Exterior words span, each element of degree one squares to zero, and homogeneous elements of degrees $`p` and $`q` commute up to the sign $`(-1)^{pq}`.
 :::
 
-:::node "lem:dr-contraction" (decl := OrlikSolomon.DeRham.exteriorContraction) (decl := OrlikSolomon.DeRham.exteriorContraction_ιMulti) (decl := OrlikSolomon.DeRham.exteriorContraction_mem_exteriorPower) (decl := OrlikSolomon.DeRham.exteriorContraction_mul_of_mem_exteriorPower) (decl := OrlikSolomon.DeRham.exteriorContraction_ι_mul_add) (decl := OrlikSolomon.DeRham.ker_wedgeLeft_succ)
+:::node "lem:dr-contraction" (decl := OrlikSolomon.DeRham.exteriorContraction) (decl := OrlikSolomon.DeRham.exteriorContraction_ιMulti) (decl := OrlikSolomon.DeRham.exteriorContraction_mem_exteriorPower) (decl := OrlikSolomon.DeRham.exteriorContraction_eq_zero_of_mem_exteriorPower_zero) (decl := OrlikSolomon.DeRham.exteriorContraction_mul_of_mem_exteriorPower) (decl := OrlikSolomon.DeRham.exteriorContraction_ι_mul_add) (decl := OrlikSolomon.DeRham.ker_wedgeLeft_succ) (decl := OrlikSolomon.DeRham.ker_wedgeLeft_zero)
 An $`A`-linear map $`\lambda:M\to A` gives an $`A`-linear operator $`\iota_\lambda` of degree $`-1` on $`\bigwedge_AM` with
 $$`\iota_\lambda(\alpha\wedge\beta)=\iota_\lambda\alpha\wedge\beta+(-1)^p\alpha\wedge\iota_\lambda\beta,\qquad\iota_\lambda(e\wedge\alpha)+e\wedge\iota_\lambda\alpha=\lambda(e)\alpha,`
 for $`\alpha` of degree $`p`.
@@ -129,9 +125,6 @@ If $`\lambda(e)=1`, then the kernel of $`e\wedge-` on $`\bigwedge^nM` is $`e\wed
 :::
 
 # A de Rham dg algebra without a basis of differentials
-%%%
-tag := "de-rham-dga"
-%%%
 
 The operator $`d` is not $`A`-linear, so it cannot be obtained as an $`A`-linear lift of $`a\mapsto da` to the exterior algebra, for the usual $`A`-module structure on forms, and defining it that way would be incorrect.
 The blueprint constructs it on a polynomial ring, where differentials have a basis, and descends it to an arbitrary $`A` through a canonical polynomial presentation.
@@ -157,7 +150,7 @@ where the sum has finite support.
 It satisfies $`d^2=0` and the signed Leibniz rule, in every characteristic.
 :::
 
-:::node "lem:dr-presentation" (decl := OrlikSolomon.DeRham.presentationHom) (decl := OrlikSolomon.DeRham.differentialIdeal) (decl := OrlikSolomon.DeRham.differentialIdealPower) (decl := OrlikSolomon.DeRham.differentialIdealPower_zero) (decl := OrlikSolomon.DeRham.differentialIdealPower_succ) (decl := OrlikSolomon.DeRham.mem_differentialIdealPower_iff) (decl := OrlikSolomon.DeRham.mul_mem_differentialIdeal_left) (decl := OrlikSolomon.DeRham.mul_mem_differentialIdeal_right) (decl := OrlikSolomon.DeRham.d_mem_differentialIdeal) (decl := OrlikSolomon.DeRham.Forms.map_eq_zero_iff_of_surjective) (decl := OrlikSolomon.DeRham.quotientEquiv) (decl := OrlikSolomon.DeRham.quotientEquiv_mk_mul) (decl := OrlikSolomon.DeRham.quotientPowerEquiv) (decl := OrlikSolomon.DeRham.presentationEquiv) (decl := OrlikSolomon.DeRham.presentationEquiv_dQuotient)
+:::node "lem:dr-presentation" (decl := OrlikSolomon.DeRham.presentationHom) (decl := OrlikSolomon.DeRham.presentationHom_X) (decl := OrlikSolomon.DeRham.presentationHom_surjective) (decl := OrlikSolomon.DeRham.differentialIdeal) (decl := OrlikSolomon.DeRham.differentialIdealPower) (decl := OrlikSolomon.DeRham.differentialIdealPower_zero) (decl := OrlikSolomon.DeRham.differentialIdealPower_succ) (decl := OrlikSolomon.DeRham.mem_differentialIdealPower_iff) (decl := OrlikSolomon.DeRham.mul_mem_differentialIdeal_left) (decl := OrlikSolomon.DeRham.mul_mem_differentialIdeal_right) (decl := OrlikSolomon.DeRham.d_mem_differentialIdeal) (decl := OrlikSolomon.DeRham.Forms.map_eq_zero_iff_of_surjective) (decl := OrlikSolomon.DeRham.quotientEquiv) (decl := OrlikSolomon.DeRham.quotientEquiv_mk) (decl := OrlikSolomon.DeRham.quotientEquiv_mk_mul) (decl := OrlikSolomon.DeRham.quotientPowerEquiv) (decl := OrlikSolomon.DeRham.quotientPowerEquiv_mk) (decl := OrlikSolomon.DeRham.presentationEquiv) (decl := OrlikSolomon.DeRham.presentationEquiv_dQuotient)
 Let $`P_A=k[X_a\mid a\in A]`, let $`\epsilon:P_A\to A` send $`X_a` to $`a`, and let $`I=\ker\epsilon`.
 The homogeneous ideal
 $$`J^n=I\,\Omega_{P_A}^n+\operatorname{span}_{P_A}\{dh\wedge\eta:h\in I,\ \eta\in\Omega_{P_A}^{n-1}\}`

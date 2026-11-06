@@ -592,9 +592,9 @@ a declaration or sub-namespace `OrlikSolomon.DeRham.Localization` would capture 
   `differentialIdealPower_span` for its generators. The quotient is stated as `k`-linear equivalences
   and the kernel of an algebra map, with no quotient ring.
 
-The chapter `OrlikSolomonBook/DeRham.lean` presents these nodes, and its opening says which of them
-are formalized. The build does not check that prose, so a PR that names declarations on one of these
-nodes must also update it, along with the sentence on the chapter in `OrlikSolomonBook/Axioms.lean`.
-Likewise, the PR that proves `thm:dr-instance` must update the sentences saying that no nonzero value
+The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node, and its opening
+says what is formalized and what remains planned. The first page, `Organization` and the chapter on
+the axioms say only that the instance is in progress. The build does not check that prose, so keep
+the opening current as nodes land. Likewise, the PR that proves `thm:dr-instance` must update the sentences saying that no nonzero value
 of the structure has been constructed: on the first page, in the chapter on the axioms, on the
 status page and in `README.md`.
