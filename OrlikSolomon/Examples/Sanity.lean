@@ -36,8 +36,8 @@ over the zero ring has `B = 0` (`subsingleton_of_subsingleton_base`).
 The equation `0` on the ambient ring `k` would give a bijective map of shift `(2, 1)` on `C(k)`,
 which forces `B = 0` (`subsingleton_of_bijective_shift`). So it contradicts the dimension axiom only
 for a nonzero theory, and `C(k) ≠ 0` for such a theory (`nontrivial_obj_point`). `DivisorPair` rules
-out that equation on any nonzero ring (`not_zero_mem_nonZeroDivisors`), and it keeps it on the zero
-ring (`zero_mem_nonZeroDivisors_zero`).
+out that equation on any nonzero ring (Mathlib's `zero_notMem_nonZeroDivisors`), and it keeps it on
+the zero ring (`zero_mem_nonZeroDivisors_zero`).
 -/
 
 @[expose] public section
@@ -161,8 +161,7 @@ end Coefficients
 section Pairs
 
 /-- The equation `0` is ruled out on any nonzero ambient ring, such as `k` for `k ≠ 0`. -/
-theorem not_zero_mem_nonZeroDivisors {A : Type*} [CommRing A] [Nontrivial A] :
-    (0 : A) ∉ nonZeroDivisors A :=
+example {A : Type*} [CommRing A] [Nontrivial A] : (0 : A) ∉ nonZeroDivisors A :=
   zero_notMem_nonZeroDivisors
 
 /-- The equation `0` stays allowed on the zero ring, and no stronger condition is needed. -/
