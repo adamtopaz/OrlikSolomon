@@ -106,9 +106,13 @@ Thus each $`H^{p,w}(U_{\mathcal{A}})` is a direct sum of $`b_p(\mathcal{A})` cop
 # The Möbius function
 
 The usual form of these numbers, in terms of the Möbius function of the intersection poset, is a useful final combinatorial statement and is not used anywhere in the proof of the ring equivalence.
-It is not formalized yet: the box below is a statement of intent, and the work is tracked by [issue 66](https://github.com/adamtopaz/OrlikSolomon/issues/66).
+Group the alternating subset sum by its nonempty intersection $`X`, and call the resulting integer coefficient $`a_X`.
+For each proper flat $`X`, summing these coefficients over flats containing $`X` is the alternating sum over subsets of the hyperplanes containing $`X`.
+That set of hyperplanes is nonempty, so the sum is zero; for the ambient flat the sum is one.
+These are exactly the defining equations of the Möbius function on the poset ordered by reverse inclusion, whose least element is the ambient space.
+Mathlib's Möbius inversion identifies $`a_X=\mu(V,X)`, and weighting by dimension or codimension gives the two formulas.
 
-:::node "lem:mobius"
+:::node "lem:mobius" (decl := OrlikSolomon.Arrangement.IntersectionPoset) (decl := OrlikSolomon.Arrangement.mem_intersectionFlats) (decl := OrlikSolomon.Arrangement.IntersectionPoset.le_iff) (decl := OrlikSolomon.Arrangement.IntersectionPoset.carrier_bot) (decl := OrlikSolomon.Arrangement.IntersectionPoset.mobius) (decl := OrlikSolomon.Arrangement.sum_Iic_intersectionCoefficient) (decl := OrlikSolomon.Arrangement.intersectionCoefficient_eq_mobius) (decl := OrlikSolomon.Arrangement.characteristicPolynomial_eq_sum_mobius) (decl := OrlikSolomon.Arrangement.poincarePolynomial_coeff_eq_sum_mobius) (decl := OrlikSolomon.Arrangement.natCast_bettiNumber_eq_sum_mobius)
 For the poset of nonempty intersections, ordered by reverse inclusion,
 $$`\chi_{\mathcal{A}}(T)=\sum_X\mu(V,X)T^{\dim X},\qquad b_q=(-1)^q\sum_{\operatorname{codim}X=q}\mu(V,X).`
 :::

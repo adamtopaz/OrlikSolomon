@@ -62,7 +62,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/ProjectiveGrading` | ordinary degree and coefficient extension on the projective kernel |
 | `Presentation/ProjectiveOrdinary` | the diagonal equivalence of `thm:projective` |
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
-| `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `lem:mobius` |
+| `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion` |
+| `Combinatorics/Mobius`         | the finite nonempty intersection poset, its Mathlib Möbius function and both formulas of `lem:mobius`; pure combinatorics |
 | `Combinatorics/ProjectiveBetti` | pure cone/decone intersection sums and polynomials of `cor:projective-betti` |
 | `Combinatorics/Multiplicities` | cohomological pieces and decone word counts of `cor:projective-betti` |
 | `DeRham/Exterior/Basic`        | exterior words, signs and homogeneous components, and the maps `⋀_A M → ⋀_S M'` along a change of rings, for `lem:dr-exterior` and `thm:dr-dga` |
