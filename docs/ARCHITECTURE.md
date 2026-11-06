@@ -15,9 +15,11 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | Module under `OrlikSolomon/`   | Blueprint labels |
 | ------------------------------ | ---------------- |
 | `Grading/Basic`                | `def:grading`, `lem:extraction` |
+| `Grading/Restriction`          | inherited internal gradings on homogeneous submodules and subalgebras |
 | `Grading/TensorProduct`        | product gradings, transport and the weighted tensor grading of `lem:os-basic` |
 | `Algebra/RelationQuotient`     | `def:twosided`, `lem:quotient-api` |
 | `Algebra/ExteriorWords`        | `lem:exterior-words`, `lem:boundary-expansion` |
+| `Algebra/ExteriorBoundary`     | the exterior-algebra operator and signed Leibniz rule of `lem:central-boundary` |
 | `Algebra/Exact`                | `lem:basis-ses`, `lem:comparison` |
 | `Geometry/Hyperplane`          | hyperplanes and equations of `def:arrangement`, `lem:equations` |
 | `Geometry/Chart`               | identifying `H` with `H.direction` in `def:deletion`, the incidence part of `lem:restriction-geometry` for one hyperplane |
@@ -37,10 +39,12 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/BaseChange`      | coefficient base change in `lem:os-basic` |
 | `Presentation/Generators`      | degree-one generator independence used in `cor:projective-betti` |
 | `Presentation/Grading`         | the weighted bigrading and component formula in `lem:os-basic` |
+| `Presentation/Boundary`        | the descended central boundary of `lem:central-boundary` |
+| `Presentation/ProjectiveAlgebra` | the graded kernel, difference generators and shifted module decomposition of `lem:projective-algebra` |
 | `Presentation/Realization`     | `lem:empty-relation`, `lem:dependent-relation`, `def:realization`, `lem:realization-basic` |
 | `Presentation/Cokernel`        | `lem:representatives`, `def:lift-map`, `lem:lift-surj` |
 | `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine`, `cor:ordinary` |
-| `Presentation/Projective`      | `lem:central-boundary`, `lem:projective-algebra`, `thm:projective` |
+| `Presentation/Projective`      | `thm:projective` |
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
 | `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `thm:betti`, `lem:mobius`, `cor:projective-betti` |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
@@ -48,6 +52,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/Sanity`              | the blueprint's regression examples |
 | `Examples/Presentation`        | two points of the affine line, the affine boundary guard, characteristic two and degenerate coefficients |
 | `Examples/Parallel`            | two parallel affine lines: product zero and generator difference nonzero |
+| `Examples/ProjectiveAlgebra`   | central boundary and kernel regressions, including the obstruction for noncentral arrangements |
 
 `lem:geometry-adapter` has no module of its own: see the next section.
 
@@ -196,6 +201,14 @@ three rings. State results for every equation of `H`.
   `OSAlgebra.bigrading 𝒜 ℬ` has `R`-submodule pieces. It transports the weighted tensor
   grading along `OSAlgebra.baseChangeEquiv R B 𝒜`; `bigradingComponentEquiv` gives exterior
   degree `n` over `R` tensored with coefficient weight `w - n`. No flatness is assumed.
+- **Central boundary and projective algebra:** `Arrangement.IsCentral` means that the hyperplanes
+  have a common point; it does not depend on an origin chosen for a chart. The contraction-backed
+  `exteriorBoundary` and its sign lemmas live in `Algebra/ExteriorBoundary`, which imports
+  `Algebra/ExteriorWords`. On a central arrangement it descends to the `B`-linear
+  `OSAlgebra.boundary`, with weighted shift `(-1, -1)`. Its kernel is the graded `B`-subalgebra
+  `projectiveAlgebra`. Choosing a hyperplane gives `projectiveDecomposition`, a module equivalence
+  from two copies of the kernel, with the second copy shifted by `(1, 1)`. This is a module
+  decomposition; no ordinary ungraded tensor-product algebra decomposition is asserted.
 
 ## The cohomology structure
 

@@ -7,7 +7,6 @@ module
 
 public import OrlikSolomon.Grading.Restriction
 public import OrlikSolomon.Presentation.Boundary
-import Mathlib.Tactic.NoncommRing
 
 /-!
 # The projective Orlik–Solomon algebra
@@ -27,47 +26,7 @@ noncomputable section
 
 universe u
 
-namespace OrlikSolomon.IsExteriorFamily
 
-/-- If words in a square-zero anticommuting family span an algebra, any coefficient subalgebra
-containing its differences from one generator spans the algebra together with its left multiple
-by that generator. -/
-theorem exists_mem_decomposition_of_sub_mem {I A B : Type*} [CommRing B] [Ring A]
-    [Algebra B A] {f : I → A} (hf : IsExteriorFamily f)
-    (hspan : Submodule.span B (Set.range (word f : List I → A)) = ⊤)
-    (S : Subalgebra B A) (H₀ : I) (hS : ∀ H, f H - f H₀ ∈ S) (x : A) :
-    ∃ b ∈ S, ∃ c ∈ S, x = b + f H₀ * c := by
-  have hword (I : List I) :
-      ∃ b ∈ S, ∃ c ∈ S, word f I = b + f H₀ * c := by
-    induction I with
-    | nil => exact ⟨1, S.one_mem, 0, S.zero_mem, by simp⟩
-    | cons H I ih =>
-      obtain ⟨b, hb, c, hc, hI⟩ := ih
-      let d := f H - f H₀
-      refine ⟨d * b, S.mul_mem (hS H) hb, b - d * c,
-        S.sub_mem hb (S.mul_mem (hS H) hc), ?_⟩
-      rw [word_cons, hI, mul_add, ← mul_assoc (f H),
-        hf.mul_eq_neg_mul_swap H H₀]
-      dsimp [d]
-      noncomm_ring
-      simp only [← mul_assoc, hf.mul_self, zero_mul, add_zero]
-  have hx : x ∈ Submodule.span B (Set.range (word f : List I → _)) := by
-    rw [hspan]
-    exact Submodule.mem_top
-  induction hx using Submodule.span_induction with
-  | mem x hx => obtain ⟨I, rfl⟩ := hx; exact hword I
-  | zero => exact ⟨0, S.zero_mem, 0, S.zero_mem, by simp⟩
-  | add x y _ _ hx hy =>
-    obtain ⟨b, hb, c, hc, rfl⟩ := hx
-    obtain ⟨b', hb', c', hc', rfl⟩ := hy
-    refine ⟨b + b', S.add_mem hb hb', c + c', S.add_mem hc hc', ?_⟩
-    noncomm_ring
-  | smul a x _ hx =>
-    obtain ⟨b, hb, c, hc, rfl⟩ := hx
-    exact ⟨a • b, S.smul_mem hb a, a • c, S.smul_mem hc a, by
-      rw [smul_add, mul_smul_comm]⟩
-
-end OrlikSolomon.IsExteriorFamily
 
 namespace OrlikSolomon.OSAlgebra
 
