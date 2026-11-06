@@ -372,8 +372,10 @@ the characteristic polynomial. The affine degree-one coefficient count lives in 
 recursive logarithmic basis of every decone together with its number of words of each length,
 which equals `P.bettiNumber q`. The module and diagonal-basis statements follow with these indices.
 Over zero coefficients the bare module and basis statements hold for every cardinality, so they
-do not determine the numbers; the separate assertion about words and polynomial coefficients
-preserves the count. No unique basis cardinality is inferred from a zero module.
+do not determine the numbers, and neither does the existence of a word family. The numbers are
+the polynomial coefficients, and the link to the words is the recursive construction:
+`LogMonomialBasis.empty`, `ofDeletion` and their `wordCount` lemmas. No unique basis cardinality
+is inferred from a zero module.
 
 The nine required mathematical regressions and their declarations are indexed in
 [`docs/REGRESSIONS.md`](REGRESSIONS.md).
