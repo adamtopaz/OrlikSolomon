@@ -339,6 +339,9 @@ complement in `isEmpty_algHom_twoPoints`, which has no `F₂`-points. -/
 def twoPointsPair : DivisorPair (ZMod 2) :=
   DivisorPair.deletionPair twoPoints zeroLocus_id_mem_twoPoints isEquation_id_twoPoints
 
+/-- The open part of `twoPointsPair` is the complement of the two points. -/
+example : twoPointsPair.compl = complement twoPoints := rfl
+
 instance : Subsingleton (zeroLocus (AffineMap.id (ZMod 2) (ZMod 2))).direction := by
   rw [isEquation_id_twoPoints.direction_eq]
   simpa using inferInstanceAs (Subsingleton (⊥ : Submodule (ZMod 2) (ZMod 2)))

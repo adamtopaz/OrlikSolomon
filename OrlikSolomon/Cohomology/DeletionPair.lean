@@ -45,6 +45,8 @@ proof of `deletionResidue_logClass` does.
   the deletion pair of every equation of `H`.
 * `OrdinaryTheory.exact_deletionGysin_map`, `OrdinaryTheory.exact_map_deletionResidue`,
   `OrdinaryTheory.exact_deletionResidue_deletionGysin`: the long exact sequence.
+* `OrdinaryTheory.eq_zero_of_mem_grading_complement`: the sequence in degrees, as the dimension
+  bound of `thm:generation` uses it.
 * `OrdinaryTheory.deletionResidue_mul_map`: the boundary projection formula.
 * `OrdinaryTheory.deletionResidue_logClass`, `OrdinaryTheory.deletionResidue_logClass_mul`:
   `lem:log-residue`, for every equation of `H`.
@@ -149,6 +151,19 @@ lemma isHomogeneousOfShift_deletionGysin (hH : H ∈ 𝒜) :
       (T.grading (complement (𝒜.deletion H))) (2, 1) (T.deletionGysin hH) :=
   T.isHomogeneousOfShift_gysin (chosenPair hH)
 
+/-- The residue of a deletion lowers the cohomological degree and the weight by one. -/
+lemma deletionResidue_mem_grading (hH : H ∈ 𝒜) {p w : ℤ} {x : T.C.obj (complement 𝒜)}
+    (hx : x ∈ T.grading (complement 𝒜) (p, w)) :
+    T.deletionResidue hH x ∈ T.grading (complement (𝒜.restriction H)) (p - 1, w - 1) :=
+  T.residue_mem_grading (chosenPair hH) hx
+
+/-- The Gysin map of a deletion raises the cohomological degree by two and the weight by one. -/
+lemma deletionGysin_mem_grading (hH : H ∈ 𝒜) {p w : ℤ}
+    {x : T.C.obj (complement (𝒜.restriction H))}
+    (hx : x ∈ T.grading (complement (𝒜.restriction H)) (p, w)) :
+    T.deletionGysin hH x ∈ T.grading (complement (𝒜.deletion H)) (p + 2, w + 1) :=
+  T.gysin_mem_grading (chosenPair hH) hx
+
 /-- Exactness of the deletion sequence at `C(U_𝒜')`. -/
 lemma exact_deletionGysin_map (hH : H ∈ 𝒜) :
     Function.Exact (T.deletionGysin hH) (T.C.map (complementInclusion (𝒜.deletion_le H))) :=
@@ -202,6 +217,15 @@ lemma exists_mem_grading_deletionResidue_eq (hH : H ∈ 𝒜) {i j : ℤ × ℤ}
     (hx : x ∈ T.grading (complement (𝒜.restriction H)) j) (h : T.deletionGysin hH x = 0) :
     ∃ y ∈ T.grading (complement 𝒜) i, T.deletionResidue hH y = x :=
   T.exists_mem_grading_residue_eq (chosenPair hH) hij hx h
+
+/-- A piece of `C(U_𝒜)` vanishes when the same piece of `C(U_𝒜')` vanishes and so does the piece of
+`C(U_𝒜'')` one degree lower. This is the exact sequence in the form used for the dimension bound in
+`thm:generation`. -/
+lemma eq_zero_of_mem_grading_complement (hH : H ∈ 𝒜) {p w : ℤ}
+    (h₁ : ∀ x ∈ T.grading (complement (𝒜.deletion H)) (p, w), x = 0)
+    (h₂ : ∀ x ∈ T.grading (complement (𝒜.restriction H)) (p - 1, w - 1), x = 0)
+    {y : T.C.obj (complement 𝒜)} (hy : y ∈ T.grading (complement 𝒜) (p, w)) : y = 0 :=
+  T.eq_zero_of_mem_grading_compl (chosenPair hH) h₁ h₂ hy
 
 /-- The boundary projection formula of a deletion. Blueprint: item C5 of `def:cohomology`. -/
 lemma deletionResidue_mul_map (hH : H ∈ 𝒜) {α : T.C.obj (complement 𝒜)}
