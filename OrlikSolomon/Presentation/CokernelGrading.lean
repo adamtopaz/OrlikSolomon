@@ -33,10 +33,9 @@ variable {k : Type u} [Field k] {V : Type u} [AddCommGroup V] [Module k V]
 /-- The image of deletion is closed under taking bigraded components. -/
 theorem deletionRange_isHomogeneous :
     ((deletionRange B 𝒜 H).restrictScalars R).IsHomogeneous (bigrading 𝒜 ℬ) := by
-  intro i x hx
-  obtain ⟨y, rfl⟩ := hx
-  exact ⟨(DirectSum.decompose (bigrading (𝒜.deletion H) ℬ) y i : _),
-    ((deletionMap_isHomogeneous 𝒜 ℬ H).decompose_map (add_zero i) y).symm⟩
+  exact IsHomogeneousOfShift.isHomogeneous_range
+    (f := (deletionMap B 𝒜 H).toLinearMap.restrictScalars R)
+    (deletionMap_isHomogeneous 𝒜 ℬ H)
 
 /-- The bigraded pieces of the module cokernel are the images of the pieces of the original
 presentation. Blueprint: `def:lift-map`. -/
@@ -69,10 +68,8 @@ omit [GradedAlgebra ℬ] in
 /-- The quotient map to the deletion cokernel is homogeneous of shift zero. -/
 theorem cokernelMk_isHomogeneous :
     IsHomogeneousOfShift (bigrading 𝒜 ℬ) (cokernelGrading 𝒜 ℬ H) 0
-      ((cokernelMk B 𝒜 H).restrictScalars R) := by
-  intro i x hx
-  change cokernelMk B 𝒜 H x ∈ cokernelGrading 𝒜 ℬ H (i + 0)
-  simpa only [add_zero] using cokernelMk_mem_cokernelGrading 𝒜 ℬ H hx
+      (cokernelMk B 𝒜 H) :=
+  isHomogeneousOfShift_linearImageGrading _ _
 
 /-- A bigraded component of a cokernel class is the class of that component of a representative. -/
 @[simp]
@@ -80,7 +77,9 @@ theorem decompose_cokernelMk (x : OSAlgebra B 𝒜) (i : ℤ × ℤ) :
     (DirectSum.decompose (cokernelGrading 𝒜 ℬ H) (cokernelMk B 𝒜 H x) i :
         DeletionCokernel B 𝒜 H) =
       cokernelMk B 𝒜 H (DirectSum.decompose (bigrading 𝒜 ℬ) x i) := by
-  exact (cokernelMk_isHomogeneous 𝒜 ℬ H).decompose_map (add_zero i) x
+  let : DirectSum.Decomposition (linearImageGrading (bigrading 𝒜 ℬ)
+      ((cokernelMk B 𝒜 H).restrictScalars R)) := cokernelGradingDecomposition 𝒜 ℬ H
+  exact decompose_linearImageGrading _ _ x i
 
 variable [FiniteDimensional k V] (H : 𝒜)
 
@@ -90,9 +89,8 @@ theorem restrictionToCokernelOfRepresentatives_isHomogeneous
     (r : 𝒜.restriction H → 𝒜.deletion H)
     (hr : ∀ L, (r L : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) = L) :
     IsHomogeneousOfShift (bigrading (𝒜.restriction H) ℬ) (cokernelGrading 𝒜 ℬ H) (1, 1)
-      ((restrictionToCokernelOfRepresentatives B 𝒜 H r hr).restrictScalars R) := by
+      (restrictionToCokernelOfRepresentatives B 𝒜 H r hr) := by
   rintro ⟨p, w⟩ x hx
-  change restrictionToCokernelOfRepresentatives B 𝒜 H r hr x ∈ _
   by_cases hp : p < 0
   · have hx0 : x = 0 := by
       simpa only [bigrading_eq_bot_of_fst_neg (𝒜.restriction H) ℬ hp, Submodule.mem_bot] using hx
@@ -126,7 +124,7 @@ theorem restrictionToCokernelOfRepresentatives_isHomogeneous
 Blueprint: `def:lift-map`. -/
 theorem restrictionToCokernel_isHomogeneous :
     IsHomogeneousOfShift (bigrading (𝒜.restriction H) ℬ) (cokernelGrading 𝒜 ℬ H) (1, 1)
-      ((restrictionToCokernel B 𝒜 H).restrictScalars R) :=
+      (restrictionToCokernel B 𝒜 H) :=
   restrictionToCokernelOfRepresentatives_isHomogeneous 𝒜 ℬ H
     Arrangement.representative Arrangement.comap_representative
 

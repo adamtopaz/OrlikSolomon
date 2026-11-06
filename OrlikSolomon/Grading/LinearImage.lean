@@ -143,13 +143,4 @@ theorem IsHomogeneousOfShift.isHomogeneous_range [AddGroup ι]
   exact ⟨(decompose ℳ x (i + -a) : M),
     (hf.decompose_map (neg_add_cancel_right i a) x).symm⟩
 
-/-- The kernel of a homogeneous map is closed under taking homogeneous components. -/
-theorem IsHomogeneousOfShift.isHomogeneous_ker [Add ι] [IsRightCancelAdd ι]
-    {𝒩 : ι → Submodule R Q} [Decomposition 𝒩] {a : ι}
-    (hf : IsHomogeneousOfShift ℳ 𝒩 a f) : (LinearMap.ker f).IsHomogeneous ℳ := by
-  intro i x hx
-  change f (decompose ℳ x i) = 0
-  rw [← hf.decompose_map rfl x]
-  simp [(show f x = 0 from hx)]
-
 end OrlikSolomon

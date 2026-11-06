@@ -214,7 +214,8 @@ three rings. State results for every equation of `H`.
   choice-independent version. Surjectivity uses word spanning, without a basis theorem.
   The image pieces `cokernelGrading` form a `DirectSum.Decomposition`, and the restriction
   map has shift `(1,1)`. The files under `CokernelData/` separate quotient and word
-  plumbing from the public construction; there is no `Cokernel/` sibling directory.
+  plumbing from the public construction. The range and quotient are reducible abbreviations,
+  so the linear lift composes directly with the generic `cokernelComparison` API.
 
 ## The cohomology structure
 

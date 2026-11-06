@@ -46,7 +46,7 @@ If $`K\ne K'` and $`H\cap K=H\cap K'` is a hyperplane in $`H`, then $`e_Ke_{K'}-
 If $`I` is a list of representatives of a nonempty dependent family in $`H`, then $`e_H\partial e_I=e_I`.
 :::
 
-:::node "def:lift-map" (decl := OrlikSolomon.OSAlgebra.DeletionCokernel) (decl := OrlikSolomon.OSAlgebra.preRestrictionToCokernel_context) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernel) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernel_word) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernelOfRepresentatives_eq_restrictionToCokernel) (decl := OrlikSolomon.OSAlgebra.cokernelGradingDecomposition) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernel_isHomogeneous)
+:::node "def:lift-map" (decl := OrlikSolomon.OSAlgebra.DeletionCokernel) (decl := OrlikSolomon.OSAlgebra.preRestrictionToCokernel_context) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernel) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernel_word) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernelOfRepresentatives_word) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernelOfRepresentatives_eq_restrictionToCokernel) (decl := OrlikSolomon.OSAlgebra.cokernelGradingDecomposition) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernel_isHomogeneous)
 Choosing an old representative $`K_L` for each hyperplane $`L` of the restriction, the formula above defines a homogeneous $`B`-linear map $`s:A''\to Q` of shift $`(1,1)`, and this map does not depend on the representatives.
 :::
 

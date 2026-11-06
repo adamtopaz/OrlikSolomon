@@ -30,19 +30,6 @@ namespace OrlikSolomon.OSAlgebra
 variable {k : Type u} [Field k] {V : Type u} [AddCommGroup V] [Module k V]
   (B : Type v) [CommRing B] (𝒜 : Arrangement k V) (H : 𝒜)
 
-/-- The old generators, viewed in the original affine presentation. -/
-abbrev oldGenerator (K : 𝒜.deletion H) : OSAlgebra B 𝒜 :=
-  generator B 𝒜 (Arrangement.inclusion (𝒜.deletion_le H) K)
-
-/-- An old prefix moves past the deleted generator with the exterior sign of its length. -/
-theorem generator_mul_old_word_comm (P : List (𝒜.deletion H)) :
-    generator B 𝒜 H * word (oldGenerator B 𝒜 H) P =
-      (P.length : ℤ).negOnePow • (word (oldGenerator B 𝒜 H) P * generator B 𝒜 H) := by
-  have h := (isExteriorFamily_generator B 𝒜).mul_word_comm H
-    (P.map (Arrangement.inclusion (𝒜.deletion_le H)))
-  simp only [word_map, List.length_map] at h
-  exact h
-
 /-- Moving the deleted generator through an old prefix gives a contextual formula in the
 module cokernel, with the sign recorded explicitly. -/
 theorem cokernelMk_generator_word_append_cons (P : List (𝒜.deletion H))

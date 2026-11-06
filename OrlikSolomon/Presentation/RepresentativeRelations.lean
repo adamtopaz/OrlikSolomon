@@ -68,6 +68,16 @@ theorem generator_mul_word_representatives_eq_zero (H : 𝒜)
   simpa only [word_cons, word_map, Function.comp_apply] using
     word_eq_zero_of_inter_eq_bot B 𝒜 hinter
 
+/-- The dependent-boundary relation for a word beginning with `H` is `e_H ∂e_I = e_I`.
+This permits an arbitrary list of old representatives, including different representatives
+for repeated traces. Blueprint: `lem:representatives`. -/
+theorem generator_mul_wordBoundary_of_isDependent (H : 𝒜) {I : List 𝒜}
+    (hI : Arrangement.IsDependent (H :: I)) :
+    generator B 𝒜 H * wordBoundary (generator B 𝒜) I = word (generator B 𝒜) I := by
+  have h := wordBoundary_eq_zero_of_isDependent B 𝒜 hI
+  rw [wordBoundary_cons] at h
+  exact (sub_eq_zero.mp h).symm
+
 /-- Adjoining `H` to arbitrary representatives of a nonempty dependent restricted family gives
 `e_H ∂e_I = e_I`. Blueprint: `lem:representatives`. -/
 theorem generator_mul_wordBoundary_representatives [FiniteDimensional k V] (H : 𝒜)
@@ -91,9 +101,8 @@ theorem generator_mul_wordBoundary_representatives [FiniteDimensional k V] (H : 
     refine ⟨hinter, ?_⟩
     rw [hcodim, List.length_cons, List.length_map]
     exact Nat.add_lt_add_right hI.2 1
-  have h := wordBoundary_eq_zero_of_isDependent B 𝒜 hdep
-  simp only [wordBoundary_cons, word_map, wordBoundary_map, Function.comp_apply] at h
-  exact (sub_eq_zero.mp h).symm
+  simpa only [word_map, wordBoundary_map, Function.comp_apply] using
+    generator_mul_wordBoundary_of_isDependent B 𝒜 H hdep
 
 /-- Two old hyperplanes with the same nonempty trace satisfy the boundary relation of their
 triple with `H`. The statement also allows the two old hyperplanes to agree.

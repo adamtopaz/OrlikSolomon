@@ -5,6 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
+public import OrlikSolomon.Algebra.Exact
 public import OrlikSolomon.Examples.Parallel
 public import OrlikSolomon.Examples.Sanity
 public import OrlikSolomon.Presentation.CokernelGrading
@@ -105,10 +106,10 @@ theorem singlePoint_cokernel_generator_ne_zero (B : Type v) [CommRing B] [Nontri
     OSAlgebra.cokernelMk B (singlePoint k) (singlePointLabel k)
       (OSAlgebra.generator B (singlePoint k) (singlePointLabel k)) ≠ 0 := by
   intro h
-  obtain ⟨x, hx⟩ := (OSAlgebra.cokernelMk_eq_zero_iff B (singlePoint k) (singlePointLabel k)).1 h
+  obtain ⟨x, hx⟩ :=
+    (OSAlgebra.mem_deletionRange B (singlePoint k) (singlePointLabel k)).1
+      ((OSAlgebra.cokernelMk_eq_zero_iff B (singlePoint k) (singlePointLabel k)).1 h)
   have h' := congrArg (singlePointCoefficient B) hx
-  change singlePointCoefficient B
-      (OSAlgebra.deletionMap B (singlePoint k) (singlePointLabel k) x) = _ at h'
   rw [singlePointCoefficient_deletionMap] at h'
   simp [singlePointCoefficient, singlePointDetector, OSAlgebra.lift_generator] at h'
 
@@ -397,5 +398,54 @@ theorem singlePoint_component_zero (i : ℤ × ℤ) :
   intro x
   apply Subtype.ext
   exact (Module.subsingleton PUnit _).elim _ _
+
+section Comparison
+
+variable {V : Type u} [AddCommGroup V] [Module k V] [FiniteDimensional k V]
+  {B : Type v} [CommRing B] (𝒜 : Arrangement k V) (H : 𝒜)
+  {C' C D : Type*} [Ring C'] [Ring C] [Ring D]
+  [Algebra B C'] [Algebra B C] [Algebra B D]
+  (Φ' : OSAlgebra B (𝒜.deletion H) →ₐ[B] C') (Φ : OSAlgebra B 𝒜 →ₐ[B] C)
+  (Φ'' : OSAlgebra B (𝒜.restriction H) →ₐ[B] D) (jstar : C' →ₐ[B] C) (res : C →ₗ[B] D)
+
+/-- The abstract deletion step applies the generic comparison lemma directly to the restriction
+lift. The residue word formula and the two smaller realizations supply injectivity, without
+unfolding the range or the quotient. Blueprint: the consumer of `lem:lift-surj` in `thm:affine`. -/
+theorem deletion_step_injective
+    (hj : Function.Injective jstar.toLinearMap) (hΦ' : Function.Injective Φ'.toLinearMap)
+    (hΦ'' : Function.Injective Φ''.toLinearMap) (hrj : res ∘ₗ jstar.toLinearMap = 0)
+    (hfa : Φ.toLinearMap ∘ₗ (OSAlgebra.deletionMap B 𝒜 H).toLinearMap =
+      jstar.toLinearMap ∘ₗ Φ'.toLinearMap)
+    (hword : ∀ I, res (Φ (OSAlgebra.generator B 𝒜 H *
+        word (OSAlgebra.representativeGenerator B 𝒜 Arrangement.representative) I)) =
+      Φ'' (word (OSAlgebra.generator B (𝒜.restriction H)) I)) :
+    Function.Injective Φ.toLinearMap := by
+  apply injective_of_surjective_of_injective_cokernelComparison_comp hj hΦ' hrj hfa
+    (OSAlgebra.restrictionToCokernel_surjective B 𝒜 H)
+  have hcomp : cokernelComparison hrj hfa ∘ₗ OSAlgebra.restrictionToCokernel B 𝒜 H =
+      Φ''.toLinearMap := by
+    apply OSAlgebra.linearMap_ext
+    intro I
+    rw [LinearMap.comp_apply, OSAlgebra.restrictionToCokernel_word]
+    exact hword I
+  simpa only [hcomp] using hΦ''
+
+-- The quotient map also computes under `simp`, rather than only as a term at default transparency.
+example (hrj : res ∘ₗ jstar.toLinearMap = 0)
+    (hfa : Φ.toLinearMap ∘ₗ (OSAlgebra.deletionMap B 𝒜 H).toLinearMap =
+      jstar.toLinearMap ∘ₗ Φ'.toLinearMap) (x : OSAlgebra B 𝒜) :
+    cokernelComparison hrj hfa (OSAlgebra.cokernelMk B 𝒜 H x) = res (Φ x) := by
+  simp [OSAlgebra.cokernelMk]
+
+-- A basis consumer can pass the actual quotient sequence to the generic short-exact basis API.
+example {I J : Type*} (ha : Function.Injective (OSAlgebra.deletionMap B 𝒜 H).toLinearMap)
+    (u : Module.Basis I B (OSAlgebra B (𝒜.deletion H)))
+    (v : Module.Basis J B (OSAlgebra.DeletionCokernel B 𝒜 H)) (w : J → OSAlgebra B 𝒜)
+    (hw : ∀ j, OSAlgebra.cokernelMk B 𝒜 H (w j) = v j) (i : I) :
+    basisOfShortExact ha (OSAlgebra.exact_deletionMap_cokernelMk B 𝒜 H) u v w hw (.inl i) =
+      OSAlgebra.deletionMap B 𝒜 H (u i) := by
+  simp
+
+end Comparison
 
 end OrlikSolomon.PresentationExamples
