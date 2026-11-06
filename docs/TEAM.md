@@ -80,3 +80,5 @@ Then check that it arrived with `tmux capture-pane -p -t %93 | tail -20`.
   settings or touching another repository.
 - Say when you start and finish something the other team is waiting for, and otherwise
   keep traffic low.
+- Codex does not wake up by itself: it does not react to merges, CI or GitHub events. Message
+  its pane whenever something it is waiting on changes.
