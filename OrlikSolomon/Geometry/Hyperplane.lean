@@ -100,6 +100,36 @@ theorem zeroLocus_ne_bot {f : V →ᵃ[k] k} (hf : f.linear ≠ 0) : zeroLocus f
   rw [← AffineSubspace.nonempty_iff_ne_bot]
   exact ⟨v, mem_zeroLocus.2 (by simp [congrFun f.decomp v, hv])⟩
 
+/-- An affine function has empty zero locus exactly when it is a nonzero constant. -/
+theorem zeroLocus_eq_bot_iff {f : V →ᵃ[k] k} :
+    zeroLocus f = ⊥ ↔ ∃ c : kˣ, f = AffineMap.const k V (c : k) := by
+  constructor
+  · intro h
+    have hlin : f.linear = 0 := by
+      by_contra hf
+      exact zeroLocus_ne_bot hf h
+    obtain ⟨c, rfl⟩ := (AffineMap.linear_eq_zero_iff_exists_const _).1 hlin
+    have hc : c ≠ 0 := by
+      rintro rfl
+      have hmem : (0 : V) ∈ zeroLocus (AffineMap.const k V (0 : k)) := by simp
+      rw [h] at hmem
+      exact AffineSubspace.notMem_bot k _ _ hmem
+    exact ⟨Units.mk0 c hc, rfl⟩
+  · rintro ⟨c, rfl⟩
+    ext x
+    simp [AffineSubspace.notMem_bot]
+
+/-- An affine function has zero locus everything exactly when it is zero. -/
+theorem zeroLocus_eq_top_iff {f : V →ᵃ[k] k} : zeroLocus f = ⊤ ↔ f = 0 := by
+  constructor
+  · intro h
+    ext x
+    have hx : x ∈ zeroLocus f := h ▸ AffineSubspace.mem_top k V x
+    simpa using hx
+  · rintro rfl
+    ext x
+    simp
+
 end ZeroLocus
 
 /-! ### Hyperplanes -/
@@ -209,6 +239,19 @@ theorem IsHyperplane.exists_isEquation (hH : IsHyperplane H) : ∃ f : V →ᵃ[
 theorem isHyperplane_iff_exists_isEquation :
     IsHyperplane H ↔ ∃ f : V →ᵃ[k] k, IsEquation f H :=
   ⟨IsHyperplane.exists_isEquation, fun ⟨_, hf⟩ ↦ hf.isHyperplane⟩
+
+/-- The preimage of a hyperplane under an affine map is empty, everything, or a hyperplane. -/
+theorem IsHyperplane.comap_eq_bot_or_top_or_isHyperplane {W : Type u} [AddCommGroup W] [Module k W]
+    (hH : IsHyperplane H) (φ : W →ᵃ[k] V) :
+    H.comap φ = ⊥ ∨ H.comap φ = ⊤ ∨ IsHyperplane (H.comap φ) := by
+  obtain ⟨f, hf⟩ := hH.exists_isEquation
+  rw [← hf.zeroLocus_eq, ← zeroLocus_comp, isHyperplane_zeroLocus_iff]
+  by_cases hlin : (f.comp φ).linear = 0
+  · obtain ⟨c, hc⟩ := (AffineMap.linear_eq_zero_iff_exists_const _).1 hlin
+    obtain rfl | hc0 := eq_or_ne c 0
+    · exact Or.inr (Or.inl (zeroLocus_eq_top_iff.2 (hc.trans rfl)))
+    · exact Or.inl (zeroLocus_eq_bot_iff.2 ⟨Units.mk0 c hc0, hc⟩)
+  · exact Or.inr (Or.inr hlin)
 
 /-- An affine function vanishing on a hyperplane is a scalar multiple of any equation for it. -/
 theorem IsEquation.exists_eq_smul (hf : IsEquation f H) (hg : ∀ x ∈ H, g x = 0) :

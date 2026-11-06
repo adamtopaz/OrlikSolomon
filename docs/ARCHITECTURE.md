@@ -23,7 +23,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Geometry/Chart`               | identifying `H` with `H.direction` in `def:deletion`, the incidence part of `lem:restriction-geometry` for one hyperplane |
 | `Geometry/Arrangement`         | `def:arrangement`, `def:deletion`, the incidence part of `lem:restriction-geometry` for arrangements |
 | `Geometry/SmoothAlg`           | `def:geometry-interface` |
-| `Geometry/CoordinateRing`      | coordinate rings and complements |
+| `Geometry/CoordinateRing`      | coordinate rings of vector spaces, part of `lem:geometry-adapter` |
+| `Geometry/Complement`          | coordinate rings of arrangement complements, part of `lem:geometry-adapter` |
 | `Geometry/Deletion`            | the ring part of `lem:restriction-geometry` |
 | `Geometry/RelationTargets`     | `lem:small-targets` |
 | `Geometry/Projective`          | `def:projective`, `lem:decone` |
@@ -120,6 +121,18 @@ used this way needs its own wrappers.
   really needed, such as for smoothness.
 - `O(U_𝒜)` is a localization of `O(V)` at the equations of the hyperplanes. **It is never
   a subset of `V`**, since a complement can have no `k`-points (blueprint §3).
+  `Arrangement.ComplementRing` inverts all equations of all hyperplanes rather than a chosen
+  product, so its definition involves no choice. `ComplementRing.isLocalizationAway` gives
+  `O(V)[1/P]` for any product `P` of equations, one for each hyperplane, and
+  `ComplementRing.isLocalization_of_exists_dvd` recognizes the ring as a localization at any other
+  submonoid with the same saturation. The object of `SmoothAlg k` is `SmoothAlg.complement 𝒜`.
+- `𝒜.Covers L` says that `L` is empty or a hyperplane of `𝒜`. An affine function whose zero locus
+  is covered is a unit on `U_𝒜`, namely `SmoothAlg.complementUnit`. An affine map `φ` induces
+  `O(U_𝒜) ⟶ O(U_ℬ)` when `ℬ` covers the preimage of every hyperplane of `𝒜`, by
+  `SmoothAlg.complementMap`.
+- Maps that are not affine are built on the ring level with `CoordinateRing.fraction`, which is
+  `v ↦ G v / u` for an affine `G` and a unit `u`, with `liftChart` to land in an affine subspace and
+  `ComplementRing.lift` to pass to a complement, and are then wrapped with `SmoothAlg.ofHom`.
 - The restriction arrangement lives on `H.direction`, identified with `H` through a base
   point chosen once, inside the definition. That definition is `chart H : H.direction →ᵃ[k] V`,
   which is `@[no_expose]`. Move subspaces with `K.comap (chart H)` and `M.map (chart H)`, and
