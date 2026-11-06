@@ -18,8 +18,8 @@ attached to affine maps. Everything is coordinate free and refers to universal p
 for smoothness and for the comparison with iterated polynomial rings. Complements of arrangements
 are in `OrlikSolomon/Geometry/Complement.lean`.
 
-Functions on `V` are not functions on the set `V`, since `k` may be finite: this ring is never
-compared with functions on `k`-points. Affine functions, however, are determined by their values on
+Elements of this ring are not functions on the set `V`, since `k` may be finite, and they are never
+compared with such functions. Affine functions, however, are determined by their values on
 `k`-points (`CoordinateRing.coord_injective`), and this is how far linear algebra over `k` reaches.
 
 ## Main definitions
