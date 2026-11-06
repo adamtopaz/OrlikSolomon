@@ -12,7 +12,31 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+
+      # Installs Lean and fetches Mathlib's build from its own cache. The action's GitHub cache stays
+      # off: it saves all of `.lake`, about 2 GB for every commit, which evicts the other caches of
+      # this repository, and it saves no time.
       - uses: leanprover/lean-action@v1
         with:
-          build-args: "--wfail"
+          auto-config: "false"
+          use-github-cache: "false"
+          use-mathlib-cache: "true"
+
+      # Only the build of the library is worth keeping, and only `main` saves it. A pull request
+      # restores the latest build from `main` and builds what it changed.
+      - id: restore
+        uses: actions/cache/restore@v6
+        with:
+          path: .lake/build
+          key: ci-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: ci-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
       - run: scripts/check.sh
+
+      - run: scripts/replay.sh
+
+      - uses: actions/cache/save@v6
+        if: github.ref == 'refs/heads/main' && steps.restore.outputs.cache-hit != 'true'
+        with:
+          path: .lake/build
+          key: ${{ steps.restore.outputs.cache-primary-key }}
