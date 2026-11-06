@@ -69,7 +69,7 @@ variable (S : Type*) [CommRing S] [Algebra A S]
 
 /-- If `1 ⊗ y` vanishes in `S ⊗_A X` for a surjection `A → S`, then `y` is divisible by its kernel.
 -/
-private theorem mem_smul_top_of_one_tmul_eq_zero (hS : Function.Surjective (algebraMap A S))
+theorem mem_smul_top_of_one_tmul_eq_zero (hS : Function.Surjective (algebraMap A S))
     {X : Type*} [AddCommGroup X] [Module A X] {y : X} (h : (1 : S) ⊗ₜ[A] y = 0) :
     y ∈ RingHom.ker (algebraMap A S) • (⊤ : Submodule A X) := by
   have hexact : Function.Exact (RingHom.ker (algebraMap A S)).subtype (Algebra.linearMap A S) := by
