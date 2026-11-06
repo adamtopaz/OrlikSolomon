@@ -15,6 +15,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | Module under `OrlikSolomon/`   | Blueprint labels |
 | ------------------------------ | ---------------- |
 | `Grading/Basic`                | `def:grading`, `lem:extraction` |
+| `Grading/Diagonal`             | the diagonal `⨁ 𝒜 (q, q)` of a bigrading, and homogeneous bases, for `cor:ordinary` and `thm:betti` |
 | `Grading/DirectSum`            | external direct sums in `lem:standard-bridge` |
 | `Grading/LinearImage`          | image decompositions for homogeneous module quotients |
 | `Grading/Restriction`          | inherited internal gradings on homogeneous submodules and subalgebras |
@@ -55,14 +56,16 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/CokernelData/Words` | same-trace replacement and empty-trace vanishing in old word contexts |
 | `Presentation/Cokernel`        | the choice-independent map of `def:lift-map` and `lem:lift-surj` |
 | `Presentation/CokernelGrading` | the quotient decomposition and shift `(1,1)` in `def:lift-map` |
-| `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine`, `cor:ordinary` |
+| `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine` |
+| `Presentation/Ordinary`        | `cor:ordinary`, and the direct sums and diagonal basis in `thm:betti` |
 | `Presentation/Projective`      | `thm:projective` |
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
 | `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `lem:mobius` |
-| `Combinatorics/Multiplicities` | the rest of `thm:betti`, `cor:projective-betti` |
+| `Combinatorics/Multiplicities` | `cor:projective-betti` |
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
 | `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
+| `Examples/Ordinary`            | the structure theorem at `R = ℤ`, `ZMod 2`, two points over `F₂`, dimension zero, zero coefficients and `R = B` |
 | `Examples/Polynomials`         | polynomial regression examples |
 | `Examples/Sanity`              | the blueprint's regression examples |
 | `Examples/Presentation`        | two points of the affine line, the affine boundary guard, characteristic two and degenerate coefficients |
@@ -278,6 +281,14 @@ three rings. State results for every equation of `H`.
   map has shift `(1,1)`. The files under `CokernelData/` separate quotient and word
   plumbing from the public construction. The range and quotient are reducible abbreviations,
   so the linear lift composes directly with the generic `cokernelComparison` API.
+- **The structure theorem:** `T.affineEquiv 𝒜 : OSAlgebra B 𝒜 ≃ₐ[B] T.C.obj (complement 𝒜)` is the
+  total-ring form. It is `AlgEquiv.ofBijective` of `T.realization 𝒜`, with the grading statements
+  `isHomogeneousOfShift_affineEquiv` and `isHomogeneousOfShift_affineEquiv_symm`. The forms with
+  coefficients in `R` go through `T.realizationOverR 𝒜`: `T.ordinaryComponentEquiv` for `H^{p, w}`
+  and `T.diagonalEquiv` for the diagonal. The target of the latter is the external direct sum
+  `⨁ q : ℕ, diagonalGrading (T.grading A) q`, which is the blueprint's display and which embeds in
+  `T.C.obj A` by `DirectSum.coeAlgHom`. `diagonalAlgEquiv` in `Grading/Diagonal` needs only an
+  algebra map that is bijective on each diagonal piece, so `thm:projective` can use it too.
 
 ## The cohomology structure
 
@@ -291,7 +302,10 @@ three rings. State results for every equation of `H`.
   that a direct sum can keep the structure it already has. So at `R = B` the two `B`-module
   structures agree only propositionally, and a term mixing a `B`-linear map with the grading pieces
   fails with an instance mismatch. Prove statements with `R` and `B` separate and specialize, or use
-  the wrappers `T.mapOverR`, `T.gysinOverR` and `T.residueOverR`.
+  the wrappers `T.mapOverR`, `T.gysinOverR` and `T.residueOverR`. The same happens at `R = ℤ`, where
+  a literal `≃ₗ[ℤ]` or `≃ₐ[ℤ]` picks the canonical `ℤ`-structure of a piece rather than the one from
+  the field. The specialized statements still apply: `Examples/Ordinary` shows how to get the literal
+  forms, through `AddEquiv.toIntLinearEquiv` and `RingEquiv.toIntAlgEquiv` and a coercion.
 - The dimension axiom says `B → C(k)` is bijective, with every degree `(p, w)` for `p ≠ 0` zero.
   C1 sends `ℬ w` into degree `(0, w)` for every `A`, and it follows that `B → C(k)` carries `ℬ w`
   onto degree `(0, w)` (`algebraMap_mem_grading_point_iff`).
@@ -317,8 +331,9 @@ holds a finite index type, words and a `B`-basis of monomials. A basis does not 
 its words have a given length, since over the zero ring every family is a basis, so
 `exists_logMonomialBasis` also records that its recursive basis has `bettiNumber q` words of length
 `q`. **So `Cohomology/Deletion` imports `Combinatorics/Betti`, which must stay free of cohomology**,
-and what `thm:betti` and `cor:projective-betti` say about cohomology goes in
-`Combinatorics/Multiplicities`, above the structure theorems.
+and what `cor:projective-betti` says about cohomology goes in `Combinatorics/Multiplicities`, above
+the structure theorems. What `thm:betti` says about cohomology is in `Presentation/Ordinary`, since
+it extracts the homogeneous pieces of a basis, which `cor:ordinary` needs anyway.
 
 `Examples/Sanity` contains the zero theory as a basic consistency check. It must have zero
 coefficients, because `R ≃ ℬ 0` and `B ≃ C(k)` must still hold. It tests the zero-ring edge case,

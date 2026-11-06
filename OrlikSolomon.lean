@@ -18,6 +18,7 @@ public import OrlikSolomon.Combinatorics.Betti
 public import OrlikSolomon.Examples.Bridge
 public import OrlikSolomon.Examples.Cokernel
 public import OrlikSolomon.Examples.CoordinatePolynomials
+public import OrlikSolomon.Examples.Ordinary
 public import OrlikSolomon.Examples.Parallel
 public import OrlikSolomon.Examples.Polynomials
 public import OrlikSolomon.Examples.Presentation
@@ -37,6 +38,7 @@ public import OrlikSolomon.Geometry.ProjectiveScheme
 public import OrlikSolomon.Geometry.RelationTargets
 public import OrlikSolomon.Geometry.SmoothAlg
 public import OrlikSolomon.Grading.Basic
+public import OrlikSolomon.Grading.Diagonal
 public import OrlikSolomon.Grading.DirectSum
 public import OrlikSolomon.Grading.LinearImage
 public import OrlikSolomon.Grading.Restriction
@@ -50,9 +52,11 @@ public import OrlikSolomon.Presentation.CokernelData.Words
 public import OrlikSolomon.Presentation.CokernelGrading
 public import OrlikSolomon.Presentation.Generators
 public import OrlikSolomon.Presentation.Grading
+public import OrlikSolomon.Presentation.Ordinary
 public import OrlikSolomon.Presentation.ProjectiveAlgebra
 public import OrlikSolomon.Presentation.Realization
 public import OrlikSolomon.Presentation.RepresentativeRelations
+public import OrlikSolomon.Presentation.Structure
 
 /-!
 # OrlikSolomon

@@ -62,16 +62,16 @@ If a surjective map $`s:L\to Q` has bijective composite $`\psi s`, then $`s` and
 If $`f` is also surjective, then it is a linear equivalence.
 :::
 
-:::node "lem:comparison-residue"
+:::node "lem:comparison-residue" (decl := OrlikSolomon.OrdinaryTheory.deletionResidue_realization_deletionMap) (decl := OrlikSolomon.OrdinaryTheory.residueComparison) (decl := OrlikSolomon.OrdinaryTheory.residueComparison_cokernelMk) (decl := OrlikSolomon.OrdinaryTheory.residueComparison_comp_restrictionToCokernel)
 The map $`r\Phi_{\mathcal{A}}` vanishes on the image of $`a` and descends to $`\psi:Q\to C(U_{\mathcal{A}''})`, whose composite with $`s` is $`\Phi_{\mathcal{A}''}`.
 :::
 
-:::node "thm:affine"
+:::node "thm:affine" (decl := OrlikSolomon.OrdinaryTheory.bijective_realization) (decl := OrlikSolomon.OrdinaryTheory.affineEquiv) (decl := OrlikSolomon.OrdinaryTheory.affineEquiv_apply) (decl := OrlikSolomon.OrdinaryTheory.isHomogeneousOfShift_affineEquiv) (decl := OrlikSolomon.OrdinaryTheory.isHomogeneousOfShift_affineEquiv_symm) (decl := OrlikSolomon.OrdinaryTheory.affineEquiv_generator_of_isEquation) (decl := OrlikSolomon.OrdinaryTheory.affineEquiv_generator_zeroLocus) (decl := OrlikSolomon.OrdinaryTheory.toAlgHom_affineEquiv_eq_lift) (decl := OrlikSolomon.OrdinaryTheory.toAlgHom_affineEquiv_unique) (decl := OrlikSolomon.OrdinaryTheory.injective_deletionMap) (decl := OrlikSolomon.OrdinaryTheory.bijective_restrictionToCokernel) (decl := OrlikSolomon.OrdinaryTheory.bijective_residueComparison) (decl := OrlikSolomon.OrdinaryTheory.restrictionCokernelEquiv) (decl := OrlikSolomon.OrdinaryTheory.isHomogeneousOfShift_restrictionCokernelEquiv) (decl := OrlikSolomon.OrdinaryTheory.isHomogeneousOfShift_restrictionCokernelEquiv_symm) (decl := OrlikSolomon.OrdinaryTheory.restrictionCokernelComponentEquiv)
 For every split affine arrangement, $`\Phi_{\mathcal{A}}` is a canonical bigrading-preserving $`B`-algebra equivalence from $`\operatorname{OS}_B(\mathcal{A})` to $`C(U_{\mathcal{A}})`.
 For every deletion, the algebra map $`a` is injective, and $`s` identifies $`A''`, shifted by $`(1,1)`, with $`A/\operatorname{im}(a)`.
 :::
 
-:::node "cor:ordinary"
+:::node "cor:ordinary" (decl := OrlikSolomon.OrdinaryTheory.realizationOverR) (decl := OrlikSolomon.OrdinaryTheory.injective_realizationOverR) (decl := OrlikSolomon.OrdinaryTheory.ordinaryComponentEquiv) (decl := OrlikSolomon.OrdinaryTheory.coe_ordinaryComponentEquiv_tmul) (decl := OrlikSolomon.OrdinaryTheory.grading_complement_eq_bot) (decl := OrlikSolomon.OrdinaryTheory.degree_eq_bot_of_finrank_lt) (decl := OrlikSolomon.OrdinaryTheory.degreeEquiv) (decl := OrlikSolomon.OrdinaryTheory.coe_degreeEquiv_apply) (decl := OrlikSolomon.OrdinaryTheory.diagonalEquiv) (decl := OrlikSolomon.OrdinaryTheory.coeAlgHom_diagonalEquiv) (decl := OrlikSolomon.OrdinaryTheory.coe_diagonalEquiv_apply) (decl := OrlikSolomon.OrdinaryTheory.diagonalEquiv_of_mem_degree) (decl := OrlikSolomon.OrdinaryTheory.diagonalEquiv_generator_of_isEquation) (decl := OrlikSolomon.OrdinaryTheory.LogMonomialBasis.osBasis) (decl := OrlikSolomon.OrdinaryTheory.LogMonomialBasis.osBasis_apply) (decl := OrlikSolomon.OrdinaryTheory.LogMonomialBasis.affineEquiv_osBasis) (decl := OrlikSolomon.OrdinaryTheory.LogMonomialBasis.osBasisOverR) (decl := OrlikSolomon.OrdinaryTheory.LogMonomialBasis.osBasisOverR_apply) (decl := OrlikSolomon.OrdinaryTheory.LogMonomialBasis.degreeBasis) (decl := OrlikSolomon.OrdinaryTheory.LogMonomialBasis.coe_degreeBasis_apply)
 There are canonical isomorphisms $`H^{p,w}(U_{\mathcal{A}})\simeq\operatorname{OS}_R^p(\mathcal{A})\otimes_R B_{w-p}` for $`0\le p\le n`, the groups outside this range are zero, and the diagonal is canonically $`\operatorname{OS}_R(\mathcal{A})`.
 A recursively chosen logarithmic monomial basis corresponds to an Orlik–Solomon monomial basis.
 All of this holds with torsion coefficients, including in characteristic two.
