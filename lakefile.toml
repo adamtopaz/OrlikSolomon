@@ -1,0 +1,29 @@
+name = "OrlikSolomon"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["OrlikSolomon"]
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+maxSynthPendingDepth = 3
+
+# We track the most recent Mathlib; `lake-manifest.json` pins the exact commit.
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "master"
+
+# Must stay on the same Lean toolchain as Mathlib `master`.
+[[require]]
+name = "verso"
+git = "https://github.com/leanprover/verso"
+rev = "v4.36.0-rc2"
+
+# The formalization: a library that does not depend on Verso.
+[[lean_lib]]
+name = "OrlikSolomon"
+
+[lean_lib.leanOptions]
+weak.linter.mathlibStandardSet = true
