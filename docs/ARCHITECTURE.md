@@ -75,9 +75,12 @@ that one family of pairs (below) covers every standard pair.
 Certifying instead of using `A ⧸ (f)` and `Localization.Away f` literally lets
 `O(U_𝒜')`, `O(U_𝒜'')` and `O(U_𝒜)` form a pair directly, with no transport.
 
-**The non-zero-divisor condition is essential, not cosmetic.** For `eqn = 0` the open part
-is empty and exactness would force a bijective Gysin map of shift `(2, 1)` on every smooth
-algebra, which contradicts the dimension axiom.
+**The non-zero-divisor condition is essential, not cosmetic.** If `eqn = 0` were allowed on
+a nonzero ambient ring, the open part would be empty and exactness would force a bijective
+Gysin map of shift `(2, 1)` on that ring. For the ambient ring `k` this contradicts the
+dimension axiom of a **nonzero** theory. It does not contradict the zero theory, and `0` is a
+non-zero-divisor of the zero ring, which stays allowed. No stronger condition is needed: units
+are allowed (the empty divisor `emptyDivisor`, cut out by `1`), and so is the zero ambient ring.
 
 A *transverse morphism* of pairs `P → Q` is a triple of maps commuting with `i` and `j`
 such that the ambient map sends `P.eqn` to a **unit multiple** of `Q.eqn`. The unit is
@@ -88,11 +91,19 @@ standard pair (`A = k`), the pair in `lem:log-mul` (`A = k[y;y⁻¹]`) and the p
 `lem:gm-product`. The only other family is the deletion pair
 `(O(U_𝒜'), O(U_𝒜''), O(U_𝒜), f_H)`.
 
-**Objects are `def`s.** An object of `SmoothAlg k` that lemmas will mention should be a `def`
-built from `SmoothAlg.of`, as `point`, `polynomial` and `laurent` are, and not an `abbrev`.
+**Objects and pairs are `def`s.** An object of `SmoothAlg k` that lemmas will mention should be a
+`def` built from `SmoothAlg.of`, as `point`, `polynomial` and `laurent` are, and not an `abbrev`.
 `simp` indexes the source and target of a coerced morphism, and a reducible object produces keys
 that differ between when a lemma is added and when a goal is matched, so a lemma about such a
 coercion silently never fires. See the implementation notes in `Geometry/SmoothAlg`.
+
+The same holds for pairs: `standardPair` and the deletion pair stay `def`s. With
+`abbrev standardPair` the library still builds, but a `simp` lemma about the residue of a standard
+pair silently never fires. The friction this leaves is that `(standardPair A).closed` is `A` only
+at default transparency, so `rw` and `simp` cannot work under `T.residue (standardPair A)`. Handle
+it with **typed wrappers**, not with `change`: `T.stdResidue A : C (laurent A) →ₗ[B] C A` and
+`T.stdGysin A : C A →ₗ[B] C (polynomial A)`, with lemmas stated about them. A new family of pairs
+used this way needs its own wrappers.
 
 ### Coordinate rings and arrangements
 
@@ -166,19 +177,29 @@ coercion silently never fires. See the implementation notes in `Geometry/SmoothA
   `ℬ : ℤ → Submodule R B`, with `R` identified with `ℬ 0`.
 - Its total cohomology is a functor `SmoothAlg k ⥤ AlgCat B`, with each value internally
   bigraded by `R`-submodules. `AlgCat` is not commutative, as required.
-- The dimension axiom says `B → C(k)` is bijective and carries `ℬ w` onto degree `(0, w)`,
-  with every other degree zero.
+- Each value also carries an `R`-algebra structure as a field, tied to `B` by `IsScalarTower`, so
+  that a direct sum can keep the structure it already has.
+- The dimension axiom says `B → C(k)` is bijective, with every degree `(p, w)` for `p ≠ 0` zero.
+  C1 sends `ℬ w` into degree `(0, w)` for every `A`, and it follows that `B → C(k)` carries `ℬ w`
+  onto degree `(0, w)` (`algebraMap_mem_grading_point_iff`).
 - Affine-line invariance is stated for `A → A[t]` over every smooth `A`.
-- The residue and Gysin maps of C4 and C5 exist for every `DivisorPair`, and residue
-  naturality is stated for every transverse morphism.
+- The residue and Gysin maps of C4 and C5 exist for every `DivisorPair`, and residue and Gysin
+  naturality are stated for every transverse morphism. The proof uses only the residue square; the
+  Gysin square is there because C5 asks for the whole sequence to commute.
 - The boundary projection formula is stated only for `α` of degree `(1, 1)`, as the
   blueprint allows. A weaker hypothesis gives a stronger theorem.
-- It has no axiom for the empty object: the pair `(A, 1)` already forces the zero ring to
-  have zero cohomology.
+- It has no axiom for the empty object: the pair `emptyDivisor A D`, which is `(A, 1)` for a zero
+  ring `D`, already forces the zero ring to have zero cohomology
+  (`subsingleton_obj_of_subsingleton`).
 
 Every field must hold in real theories, so check each one against singular cohomology when
-you add it. An unsatisfiable structure would make the main theorem vacuous.
-`Examples/Sanity` should contain the zero theory as a basic consistency check.
+you add it. An unsatisfiable structure would make the main theorem vacuous. The docstrings of
+`OrdinaryTheory` record that check, which is by hand: only the coefficient axiom
+`R ≃ ℬ 0` of the model `B = R[t, t⁻¹]` is checked in Lean.
+
+`Examples/Sanity` contains the zero theory as a basic consistency check. It must have zero
+coefficients, because `R ≃ ℬ 0` and `B ≃ C(k)` must still hold. It tests the zero-ring edge case,
+not the substantive axioms.
 
 ## Exposition
 
