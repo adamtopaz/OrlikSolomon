@@ -83,8 +83,11 @@ The bar is Mathlib quality: someone should be able to depend on this library.
   Authors: Adam Topaz, Claude
   -/
   ```
-  Next come the imports, then a module docstring with a title, a summary, the main
-  definitions and results, and the blueprint labels covered.
+  Next comes `module`, the imports, a module docstring (title, summary, main definitions
+  and results, blueprint labels covered), and then `@[expose] public section`.
+- **Module system:** every file is a Lean `module`, like Mathlib. A plain `import` of
+  Mathlib produces a warning, which fails CI. Use `public import` by default, and a private
+  `import` only for what proofs alone need.
 - **Imports:** import specific Mathlib modules, never all of `Mathlib`. Add each new module
   to `OrlikSolomon.lean`, keeping the list sorted.
 - **Docstrings:** every public definition, structure and main theorem has one. Name the
