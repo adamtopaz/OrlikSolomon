@@ -39,8 +39,9 @@ Read these before working:
 
 ## How work is organized
 
-- A supervisor plans the work and is the only one who merges. Subagents do the work and
-  report back to the supervisor, who is the only one talking to Adam.
+- A supervisor (Claude) and a deputy supervisor (Codex) plan the work, and only they merge.
+  Subagents do the work and report to the supervisor that launched them. Read
+  `docs/TEAM.md` for roles, ownership, reviews and the tmux protocol.
 - All work is tracked by a GitHub issue. Every change reaches `main` through a PR that
   closes its issue, with one concern per PR.
 - A PR needs CI passing and an approving review from an agent that did not write it. All
@@ -48,10 +49,10 @@ Read these before working:
   post a comment review whose first line is `Verdict: APPROVE` or
   `Verdict: CHANGES REQUESTED`.
 - Branch names are `<issue-number>-<short-slug>`.
-- End every commit message with:
-  `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`
-- End every PR description with:
-  `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+- **Attribution:** if your harness specifies attribution lines, end every commit message
+  and PR description with exactly those lines. Otherwise, Claude agents end commit messages
+  with `Co-Authored-By: Claude <noreply@anthropic.com>`, and Codex agents with
+  `Co-Authored-By: Codex <noreply@openai.com>`. No PR footer is required in that case.
 - Project skills are in `.claude/skills/`. If you cannot invoke one by name, read its
   `SKILL.md` and follow it.
 
@@ -80,7 +81,7 @@ The bar is Mathlib quality: someone should be able to depend on this library.
   /-
   Copyright (c) 2026 Adam Topaz. All rights reserved.
   Released under Apache 2.0 license as described in the file LICENSE.
-  Authors: Adam Topaz, Claude
+  Authors: Adam Topaz, <the agent that wrote it: Claude or Codex>
   -/
   ```
   Next comes `module`, the imports, a module docstring (title, summary, main definitions
