@@ -133,4 +133,115 @@ theorem restrictionToCokernelOfRepresentatives_eq_restrictionToCokernel
   restrictionToCokernelOfRepresentatives_eq B 𝒜 H r Arrangement.representative hr
     Arrangement.comap_representative
 
+omit [FiniteDimensional k V] in
+private theorem exists_old_list {I : List 𝒜} (hH : H ∉ I) :
+    ∃ J : List (𝒜.deletion H), J.map (Arrangement.inclusion (𝒜.deletion_le H)) = I := by
+  revert hH
+  induction I with
+  | nil => exact fun _ ↦ ⟨[], rfl⟩
+  | cons K I ih =>
+    intro hH
+    have hK : K ≠ H := fun h ↦ hH (List.mem_cons.2 (Or.inl h.symm))
+    have hI : H ∉ I := fun h ↦ hH (List.mem_cons_of_mem K h)
+    obtain ⟨J, hJ⟩ := ih hI
+    let K' : 𝒜.deletion H := ⟨K, Arrangement.mem_deletion.2 ⟨fun h ↦ hK (Subtype.ext h), K.2⟩⟩
+    refine ⟨K' :: J, ?_⟩
+    rw [List.map_cons, hJ]
+    congr 1
+
+omit [FiniteDimensional k V] in
+private theorem exists_restricted_list (J : List (𝒜.deletion H))
+    (h : ∀ K ∈ J, (K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) ≠ ⊥) :
+    ∃ I : List (𝒜.restriction H), List.Forall₂
+      (fun (K : 𝒜.deletion H) (L : 𝒜.restriction H) ↦
+      (K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) = L ∧
+        (K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) ≠ ⊥) J I := by
+  revert h
+  induction J with
+  | nil => exact fun _ ↦ ⟨[], .nil⟩
+  | cons K J ih =>
+    intro h
+    have hK := h K (List.mem_cons_self)
+    obtain ⟨I, hI⟩ := ih fun K' hK' ↦ h K' (List.mem_cons_of_mem K hK')
+    let L : 𝒜.restriction H := ⟨(K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)),
+      Arrangement.comap_chart_mem_restriction (𝒜.isHyperplane H.2) K.2
+        ((comap_chart_eq_bot_iff (𝒜.isHyperplane H.2).ne_bot).not.1 hK)⟩
+    exact ⟨L :: I, .cons ⟨rfl, hK⟩ hI⟩
+
+/-- Every old word preceded by the deleted generator has a preimage under the restriction lift.
+An empty trace kills the class; otherwise replace all old factors by the chosen representatives.
+Repeated restricted labels are allowed and are already handled by the exterior presentation. -/
+theorem cokernelMk_generator_old_word_mem_range (J : List (𝒜.deletion H)) :
+    cokernelMk B 𝒜 H (generator B 𝒜 H * word (oldGenerator B 𝒜 H) J) ∈
+      LinearMap.range (restrictionToCokernel B 𝒜 H) := by
+  classical
+  by_cases h : ∀ K ∈ J, (K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) ≠ ⊥
+  · obtain ⟨I, hI⟩ := exists_restricted_list 𝒜 H J h
+    clear h
+    have hrep : List.Forall₂ (fun K K' : 𝒜.deletion H ↦
+        (K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) =
+            (K' : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) ∧
+          (K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) ≠ ⊥)
+        J (I.map Arrangement.representative) := by
+      induction hI with
+      | nil => exact .nil
+      | @cons K L J I hKL hJI ih =>
+        exact .cons ⟨hKL.1.trans (Arrangement.comap_representative L).symm, hKL.2⟩ ih
+    have hword := cokernelMk_generator_word_eq_of_forall₂ B 𝒜 H hrep []
+    simp only [List.nil_append, word_map] at hword
+    refine ⟨word (generator B (𝒜.restriction H)) I, ?_⟩
+    rw [restrictionToCokernel_word]
+    exact hword.symm
+  · push Not at h
+    obtain ⟨K, hK, hbot⟩ := h
+    obtain ⟨P, T, rfl⟩ := List.append_of_mem hK
+    rw [cokernelMk_generator_word_eq_zero_of_empty_trace B 𝒜 H P T K hbot]
+    exact Submodule.zero_mem _
+
+/-- The class of every generator word is in the range of the restriction lift. Words without
+the deleted generator are old; repeated words vanish; the remaining words move it to the front
+with their exterior sign. No basis theorem is used. -/
+theorem cokernelMk_word_mem_range (I : List 𝒜) :
+    cokernelMk B 𝒜 H (word (generator B 𝒜) I) ∈
+      LinearMap.range (restrictionToCokernel B 𝒜 H) := by
+  classical
+  -- The exterior-word lemma uses the equality test induced by `DecidableEq`, also for `erase`.
+  let : BEq 𝒜 := instBEqOfDecidableEq
+  by_cases hI : I.Nodup
+  · by_cases hH : H ∈ I
+    · obtain ⟨J, hJ⟩ := exists_old_list 𝒜 H hI.not_mem_erase
+      obtain ⟨x, hx⟩ := cokernelMk_generator_old_word_mem_range B 𝒜 H J
+      have hw := (isExteriorFamily_generator B 𝒜).word_eq_smul_mul_word_erase hH
+      have hwold : word (generator B 𝒜) (I.erase H) = word (oldGenerator B 𝒜 H) J :=
+        (congrArg (word (generator B 𝒜)) hJ).symm.trans (word_map _ _ _)
+      have hw' : word (generator B 𝒜) I =
+          (I.idxOf H : ℤ).negOnePow • (generator B 𝒜 H * word (oldGenerator B 𝒜 H) J) :=
+        hw.trans (congrArg (fun z ↦ (I.idxOf H : ℤ).negOnePow • (generator B 𝒜 H * z)) hwold)
+      refine ⟨(I.idxOf H : ℤ).negOnePow • x, ?_⟩
+      rw [map_zsmul_unit, hx, hw', map_zsmul_unit]
+    · obtain ⟨J, hJ⟩ := exists_old_list 𝒜 H hH
+      have hold : word (generator B 𝒜) I ∈ deletionRange B 𝒜 H := by
+        rw [← hJ, word_map]
+        exact word_mem_deletionRange B 𝒜 J
+      rw [(cokernelMk_eq_zero_iff B 𝒜 H).2 hold]
+      exact Submodule.zero_mem _
+  · rw [(isExteriorFamily_generator B 𝒜).word_eq_zero_of_not_nodup hI, map_zero]
+    exact Submodule.zero_mem _
+
+/-- The linear lifting map from the restriction presentation to the module cokernel of deletion
+is surjective, by exterior-word spanning alone. Blueprint: `lem:lift-surj`. -/
+theorem restrictionToCokernel_surjective : Function.Surjective (restrictionToCokernel B 𝒜 H) := by
+  intro y
+  obtain ⟨x, rfl⟩ := cokernelMk_surjective B 𝒜 H y
+  change cokernelMk B 𝒜 H x ∈ LinearMap.range (restrictionToCokernel B 𝒜 H)
+  have hx : x ∈ Submodule.span B (Set.range (word (generator B 𝒜))) :=
+    span_range_word B 𝒜 ▸ Submodule.mem_top
+  induction hx using Submodule.span_induction with
+  | mem x hx =>
+    obtain ⟨I, rfl⟩ := hx
+    exact cokernelMk_word_mem_range B 𝒜 H I
+  | zero => simp
+  | add x y _ _ hx hy => simpa only [map_add] using Submodule.add_mem _ hx hy
+  | smul b x _ hx => simpa only [map_smul] using Submodule.smul_mem _ b hx
+
 end OrlikSolomon.OSAlgebra
