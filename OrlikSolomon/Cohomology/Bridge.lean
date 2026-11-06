@@ -83,8 +83,22 @@ lemma ofSupportsAndPurity_map_incl {A E : SmoothAlg k} (f : A ⟶ E) (i : ℤ ×
 lemma ofSupportsAndPurity_gysin_apply (P : DivisorPair k) (x : D.Total P.closed) :
     (ofSupportsAndPurity D S).gysin P x = S.forgetTotal P (S.purityTotal P x) := rfl
 
+/-- On one summand, the constructed Gysin map is the given degreewise purity followed by the
+given support-forgetting map. -/
+@[simp]
+lemma ofSupportsAndPurity_gysin_incl (P : DivisorPair k) (i : ℤ × ℤ) (x : D.H P.closed i) :
+    (ofSupportsAndPurity D S).gysin P (D.incl P.closed i x) =
+      D.incl P.ambient (i + (2, 1)) (S.forget P (i + (2, 1)) (S.purity P i x)) := by
+  rw [ofSupportsAndPurity_gysin_apply, S.purityTotal_incl, S.forgetTotal_incl]
+
 /-- Residue in the constructed theory is the connecting homomorphism followed by inverse purity. -/
 lemma ofSupportsAndPurity_residue_apply (P : DivisorPair k) (x : D.Total P.compl) :
     (ofSupportsAndPurity D S).residue P x = (S.purityTotal P).symm (S.boundaryTotal P x) := rfl
+
+/-- Applying purity to the constructed residue gives the original localization boundary. -/
+@[simp]
+lemma ofSupportsAndPurity_purity_residue (P : DivisorPair k) (x : D.Total P.compl) :
+    S.purityTotal P ((ofSupportsAndPurity D S).residue P x) = S.boundaryTotal P x :=
+  (S.purityTotal P).apply_symm_apply _
 
 end OrlikSolomon
