@@ -68,7 +68,7 @@ The whole argument runs on a single global derivation, in the following steps.
  * *A derivation normal to the divisor.* Smoothness of $`S` splits $`A/(f^2)\to S`, and since $`f` is a non-zero-divisor this gives a derivation $`A\to S` taking $`f` to $`1`. Projectivity of $`\Omega_A^1` lifts it to a global $`k`-derivation $`v:A\to A` with $`v(f)=1+fh`. The form $`df` need not be unimodular on all of $`\operatorname{Spec}A`, only along the divisor, and the congruence $`v(f)\equiv1` modulo $`f` is all that is used. The elements $`f` and $`v(f)` do generate the unit ideal, so they define a cover by two open sets, but the blueprint does not glue over it. See {bp "lem:dr-normal-derivation"}[].
  * *An Euler contraction.* Set $`E=fv`. Contraction by $`E` sends logarithmic forms to regular forms and descends to a map $`J` of degree $`-1` on $`V^\bullet=L^\bullet/fL^\bullet`. With $`W` the wedge by the class of $`\theta`, it satisfies $`\bar dJ+J\bar d=0` and $`WJ+JW=1`. See {bp "lem:dr-euler"}[].
  * *A filtration by pole order.* The modules $`F_m=f^{-m}L^\bullet` are subcomplexes that exhaust $`\Omega_{A_f}^\bullet`, while the unadjusted $`f^{-m}\Omega_A^\bullet` need not be subcomplexes. Each quotient $`F_m/F_{m-1}` is $`V^\bullet` with the differential $`D_m=\bar d-mW`. See {bp "lem:dr-pole-quotient"}[].
- * *One calculation.* The operator $`h_m=-J/m` contracts every quotient with $`m\ge1`, because $`D_mh_m+h_mD_m=-\tfrac1m\bigl(\bar dJ+J\bar d-m(WJ+JW)\bigr)=1`. See {bp "thm:dr-pole-contraction"}[].
+ * *One calculation.* When $`m\ge1` is invertible in $`k`, the operator $`h_m=-J/m` contracts the quotient, because $`D_mh_m+h_mD_m=-\tfrac1m\bigl(\bar dJ+J\bar d-m(WJ+JW)\bigr)=1`. See {bp "thm:dr-pole-contraction"}[].
  * *Finite reduction.* Every localized form has a finite pole order, and a contractible quotient lowers the pole order of a cocycle, or of a primitive, by one step. Both directions are finite inductions on a natural number, so no spectral sequence and no limit is needed. See {bp "thm:dr-comparison"}[].
 
 The derivation $`v` is used only to prove bijectivity, so it leaves no trace: the comparison map and its inverse are canonical, and so are the residue and Gysin maps built from them.
@@ -198,8 +198,9 @@ $$`d\omega=d_A\alpha+dz\wedge(\partial_z\alpha-d_A\beta).`
 :::node "thm:dr-homotopy"
 Suppose every positive integer is invertible in $`k`.
 For every commutative $`k`-algebra $`A`, the inclusion $`A\to A[z]` is a cohomology isomorphism, with inverse induced by evaluation at $`z=0`.
-A chain homotopy from inclusion after evaluation to the identity is
-$$`K(\alpha+dz\wedge\beta)=I\beta,\qquad I\Bigl(\sum_{m\ge0}z^m\beta_m\Bigr)=\sum_{m\ge0}\frac{z^{m+1}}{m+1}\beta_m.`
+A chain homotopy between the identity and evaluation followed by inclusion is
+$$`K(\alpha+dz\wedge\beta)=I\beta,\qquad I\Bigl(\sum_{m\ge0}z^m\beta_m\Bigr)=\sum_{m\ge0}\frac{z^{m+1}}{m+1}\beta_m,`
+so that $`dK+Kd=1-\operatorname{inc}\circ\operatorname{ev}_0`.
 :::
 
 # The algebra of a smooth principal pair

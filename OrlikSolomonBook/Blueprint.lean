@@ -128,8 +128,8 @@ def directory : System.FilePath := "blueprint"
 
 /--
 Reads the nodes of every TeX file in `blueprint/`, each recording its file, and fails if two of them
-have the same label. The working directory must be the root of the repository, which it is for `lake build` and
-`lake exe book`.
+have the same label. The working directory must be the root of the repository, which it is for
+`lake build` and `lake exe book`.
 -/
 def readNodes : IO (Array Node) := do
   unless ← directory.isDir do
