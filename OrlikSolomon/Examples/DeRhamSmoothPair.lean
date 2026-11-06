@@ -140,10 +140,10 @@ theorem productPolynomial_splitConormalSequence_df :
   simp [DeRham.splitConormalSequence_apply, mapBaseChange_tmul, map_D]
 
 /-- The general normal-derivation theorem applies to the actual disconnected pair. -/
-theorem productPolynomial_existsNormalDerivationModulo :
+theorem productPolynomial_exists_normalDerivation_modulo :
     ∃ (v : Derivation k (k × k[X]) (k × k[X])) (h : k × k[X]),
       v (productPolynomialEquation k) = 1 + productPolynomialEquation k * h :=
-  DeRham.existsNormalDerivationModulo (k := k) _ (productPolynomialEquation_regular k)
+  DeRham.exists_normalDerivation_modulo (k := k) _ (productPolynomialEquation_regular k)
 
 /-- No derivation can take `(1,X)` to one on both components of the ambient algebra. -/
 theorem productPolynomial_no_global_normal [Nontrivial k] (v : Derivation k (k × k[X]) (k × k[X])) :
@@ -169,18 +169,27 @@ variable {k A : Type*} [CommRing k] [CommRing A] [Algebra k A]
 theorem zeroDerivation_unit_normal (u : Aˣ) :
     (0 : Derivation k A A) u = 1 + (u : A) * (-(↑u⁻¹ : A)) := by simp
 
+/-- The quotient by a unit equation is the zero algebra. -/
+theorem unit_quotient_subsingleton (u : Aˣ) : Subsingleton (A ⧸ Ideal.span {(u : A)}) := by
+  rw [Ideal.span_singleton_eq_top.mpr u.isUnit]
+  infer_instance
+
 /-- The general normal-derivation theorem accepts unit equations, whose divisor is empty. -/
-theorem unit_existsNormalDerivationModulo [Algebra.FormallySmooth k A] (u : Aˣ) :
+theorem unit_exists_normalDerivation_modulo [Algebra.FormallySmooth k A] (u : Aˣ) :
     ∃ (v : Derivation k A A) (h : A), v u = 1 + (u : A) * h := by
-  have : Subsingleton (A ⧸ Ideal.span {(u : A)}) := by
-    rw [Ideal.span_singleton_eq_top.mpr u.isUnit]
-    infer_instance
-  exact DeRham.existsNormalDerivationModulo (k := k) (u : A) u.isUnit.mem_nonZeroDivisors
+  let := unit_quotient_subsingleton u
+  exact DeRham.exists_normalDerivation_modulo (k := k) (u : A) u.isUnit.mem_nonZeroDivisors
+
+/-- The zero algebra is formally smooth over every commutative base ring. -/
+theorem zero_formallySmooth : Algebra.FormallySmooth k PUnit := inferInstance
+
+/-- The zero algebra is finitely presented over every commutative base ring. -/
+theorem zero_finitePresentation : Algebra.FinitePresentation k PUnit := inferInstance
 
 /-- The actual zero algebra also satisfies the normal-derivation conclusion for its equation. -/
-theorem zero_existsNormalDerivationModulo :
+theorem zero_exists_normalDerivation_modulo :
     ∃ (v : Derivation k PUnit PUnit) (h : PUnit), v 0 = 1 + (0 : PUnit) * h :=
-  DeRham.existsNormalDerivationModulo (k := k) (0 : PUnit)
+  DeRham.exists_normalDerivation_modulo (k := k) (0 : PUnit)
     ⟨fun _ _ ↦ Subsingleton.elim _ _, fun _ _ ↦ Subsingleton.elim _ _⟩
 
 end UnitsAndZero

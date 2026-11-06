@@ -23,6 +23,7 @@ public import OrlikSolomon.DeRham.Exterior.Basic
 public import OrlikSolomon.DeRham.Exterior.Contraction
 public import OrlikSolomon.DeRham.Exterior.Quotient
 public import OrlikSolomon.DeRham.SmoothPair
+public import OrlikSolomon.DeRham.SmoothPair.Koszul
 public import OrlikSolomon.Examples.AffineLines
 public import OrlikSolomon.Examples.Bridge
 public import OrlikSolomon.Examples.Cokernel

@@ -70,7 +70,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Exterior/BaseChange`   | base change in `lem:dr-exterior`, for any `IsBaseChange`, including localizations |
 | `DeRham/Exterior/Quotient`     | the quotient formula in `lem:dr-exterior` |
 | `DeRham/Exterior`              | the kernel of `⋀_A^n M → ⋀_S^n M'` for surjections of rings and of modules, the form used by `lem:dr-presentation` and `lem:dr-quotient`; the module to import |
-| `DeRham/SmoothPair`           | the one-form conormal splitting of `lem:dr-conormal`, and the global derivation and unit-ideal assertions of `lem:dr-normal-derivation` |
+| `DeRham/SmoothPair/Koszul`    | `lem:dr-modf-koszul`: wedge exactness modulo a smooth principal divisor in every degree |
+| `DeRham/SmoothPair`           | the conormal splitting of `lem:dr-conormal`, and the global and localized derivations of `lem:dr-normal-derivation` |
 | `Examples/AffineLines`        | concurrent lines and the triangle, including the nonempty-intersection guard |
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
@@ -515,11 +516,14 @@ refers to is `OrdinaryTheory` in `Cohomology/Axioms`, whose fields match its che
 field may be weakened, and no comparison or exactness statement may become a hypothesis. Its
 declaration names are proposals, as with the first blueprint.
 
-The namespace is `OrlikSolomon.DeRham`. The exterior calculus and the one-form part of
-`DeRham/SmoothPair` exist; the other parts below remain planned. Each row of this table is one of
+The namespace is `OrlikSolomon.DeRham`. Exterior calculus, conormal splitting, global and
+localized normal derivations, and wedge exactness modulo the divisor exist; the other parts
+below remain planned. Each row of this table is one of
 the issues #72–#83, in order. The one-form conormal and normal-derivation results need only Mathlib's
 Kähler differentials and formal-smoothness lifts, so they precede the differential and localization
-modules. The higher-form and localization assertions of `SmoothPair` retain their dependencies.
+modules. Normalizing a derivation on `A[v(f)⁻¹]` uses Mathlib’s localization of Kähler
+differentials, and wedge exactness uses the exterior contraction API; neither needs the de Rham
+differential. Higher-form projectivity and injectivity into localization remain in #77.
 
 | Module under `OrlikSolomon/` | Blueprint labels |
 | ---------------------------- | ---------------- |
@@ -534,7 +538,7 @@ modules. The higher-form and localization assertions of `SmoothPair` retain thei
 | `DeRham/Maps`                | `def:dr-gysin`, `lem:dr-exactness`, `thm:dr-projection`, `thm:dr-log-naturality`, `thm:dr-naturality` |
 | `DeRham/Instance`            | `def:dr-twisted-functor`, `lem:dr-ordinary-basic`, `def:dr-twisted-maps`, `thm:dr-ordinary-localization`, `thm:dr-instance` |
 | `DeRham/Corollaries`         | `lem:dr-tau`, `cor:dr-affine`, `cor:dr-projective` |
-| `Examples/DeRham`            | `prop:dr-gm-example`, `prop:dr-unit-example`, `prop:dr-product-example`, `prop:dr-zero-example`, `prop:dr-crossing-example`, `prop:dr-morphism-examples`, `prop:dr-torus-example`, `prop:dr-characteristic-p` |
+| `Examples/DeRham`, `Examples/DeRhamSmoothPair` | `prop:dr-gm-example`, `prop:dr-unit-example`, `prop:dr-product-example`, `prop:dr-zero-example`, `prop:dr-crossing-example`, `prop:dr-morphism-examples`, `prop:dr-torus-example`, `prop:dr-characteristic-p` |
 
 The rule at the top of this file applies to the namespace. These module names are file names only:
 a declaration or sub-namespace `OrlikSolomon.DeRham.Localization` would capture Mathlib's
@@ -542,10 +546,10 @@ a declaration or sub-namespace `OrlikSolomon.DeRham.Localization` would capture 
 
 How forms are represented is decided, and recorded here, by #73.
 
-The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Exterior calculus
-and the conormal splitting are formalized; the normal-derivation node is partial until its
-localization assertion lands. The splitting requires only formal smoothness of `A/(f)`;
-`existsNormalDerivationModulo` additionally uses formal smoothness of `A`. Both allow unit equations,
+The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Exterior calculus,
+the conormal splitting, the complete normal-derivation node and wedge exactness modulo the
+divisor are formalized. The splitting requires only formal smoothness of `A/(f)`;
+`exists_normalDerivation_modulo` additionally uses formal smoothness of `A`. Both allow unit equations,
 the zero ring and disconnected algebras, and the latter asserts `v(f) = 1 + f*h`, not `v(f) = 1`.
 The chapter's opening and its section "What the instance is for" retain the disclosure that the
 nonzero instance is not yet constructed. The build does not check that prose, so keep it current as

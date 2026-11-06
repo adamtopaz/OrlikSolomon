@@ -1,32 +1,35 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Codex
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
 public import Mathlib.Algebra.Exact.Basic
 public import Mathlib.Algebra.Ring.NonZeroDivisors
+public import Mathlib.RingTheory.Etale.Kaehler
 public import Mathlib.RingTheory.Smooth.Basic
 
 /-!
-# One-forms for a smooth principal pair
+# Conormal splitting and normal derivations for a smooth principal pair
 
 For a regular element `f` of a commutative `k`-algebra `A`, put `S = A/(f)`.
 Formal smoothness of `S` splits the conormal sequence of one-forms. Formal smoothness
 of `A` then lifts its splitting functional to a global derivation `v` with
 `v(f) = 1 + f * h`. These constructions use no coordinates, finite presentation,
-connectedness or nonzero-ring hypothesis, and allow `f` to be a unit.
+connectedness or nonzero-ring hypothesis, and allow `f` to be a unit. Localizing at
+`v(f)` extends `v`; dividing by its invertible value gives a derivation taking `f` to one.
 
 ## Main definitions and results
 
 * `principalCotangentEquiv`: the conormal module `(f)/(f²)` is the free `S`-module on `f`.
 * `conormalFunctional`: a functional on `S ⊗[A] Ω[A⁄k]` taking `df` to one.
 * `splitConormalSequence`: the splitting of one-forms into the conormal line and `Ω[S⁄k]`.
-* `existsNormalDerivationModulo`: a global normal derivation modulo the divisor.
+* `exists_normalDerivation_modulo`: a global normal derivation modulo the divisor.
+* `exists_localized_normalDerivation`: its normalized extension after inverting `v(f)`.
 
-Blueprint: `lem:dr-conormal` and the global part of `lem:dr-normal-derivation`.
-The higher-form localization and Koszul assertions of `DeRham/SmoothPair` are separate.
+Blueprint: `lem:dr-conormal` and `lem:dr-normal-derivation`.
+Wedge exactness modulo the divisor is in `DeRham/SmoothPair/Koszul`.
 -/
 
 @[expose] public section
@@ -237,7 +240,7 @@ Blueprint: `lem:dr-conormal`. -/
 /-- A smooth principal pair has a global normal derivation modulo its divisor.
 The value need only be one modulo `f`, including when `A` is disconnected.
 Blueprint: the global assertion in `lem:dr-normal-derivation`. -/
-lemma existsNormalDerivationModulo [Algebra.FormallySmooth k A]
+lemma exists_normalDerivation_modulo [Algebra.FormallySmooth k A]
     (hf : f ∈ nonZeroDivisors A) :
     ∃ (v : Derivation k A A) (h : A), v f = 1 + f * h := by
   let l₀ := (conormalFunctional (k := k) f hf).restrictScalars A |>.comp
@@ -264,5 +267,34 @@ lemma span_pair_eq_top_of_normalDerivationModulo (v : Derivation k A A) (h : A)
     (hv : v f = 1 + f * h) : Ideal.span {f, v f} = ⊤ := by
   rw [hv, Ideal.span_pair_add_left_mul]
   simp only [Ideal.span_insert, Ideal.span_singleton_one, sup_top_eq]
+
+/-- After inverting `v(f)`, the derivation `v` extends and can be divided by `v(f)`.
+The second formula identifies this normalized derivation on every element from `A`.
+No smoothness or regularity hypothesis is required for the extension itself.
+Blueprint: the localization assertion in `lem:dr-normal-derivation`. -/
+lemma exists_localized_normalDerivation (v : Derivation k A A) (Ag : Type*)
+    [CommRing Ag] [Algebra A Ag] [Algebra k Ag] [IsScalarTower k A Ag]
+    [IsLocalization.Away (v f) Ag] :
+    ∃ w : Derivation k Ag Ag, w (algebraMap A Ag f) = 1 ∧
+      ∀ a : A, algebraMap A Ag (v f) * w (algebraMap A Ag a) = algebraMap A Ag (v a) := by
+  obtain ⟨u, hu⟩ : IsUnit (algebraMap A Ag (v f)) :=
+    IsLocalization.Away.algebraMap_isUnit (v f)
+  let l : Ω[A⁄k] →ₗ[A] Ag := (Algebra.linearMap A Ag) ∘ₗ v.liftKaehlerDifferential
+  let i : Ω[A⁄k] →ₗ[A] Ω[Ag⁄k] := KaehlerDifferential.map k k A Ag
+  have hunits : ∀ x : Submonoid.powers (v f), IsUnit ((algebraMap A (Module.End A Ag)) x) :=
+    IsLocalizedModule.map_units (Algebra.linearMap A Ag)
+  let L : Ω[Ag⁄k] →ₗ[A] Ag := IsLocalizedModule.lift (Submonoid.powers (v f)) i l hunits
+  have hL : ∀ x, L (i x) = l x := IsLocalizedModule.lift_apply (Submonoid.powers (v f)) i l hunits
+  let w₀ : Derivation k Ag Ag :=
+    (L.extendScalarsOfIsLocalization (Submonoid.powers (v f)) Ag).compDer (D k Ag)
+  have hw₀ (a : A) : w₀ (algebraMap A Ag a) = algebraMap A Ag (v a) := by
+    change L (D k Ag (algebraMap A Ag a)) = _
+    rw [← map_D k k A Ag a]
+    change L (i (D k A a)) = _
+    rw [hL]
+    simp [l]
+  refine ⟨(↑u⁻¹ : Ag) • w₀, ?_, fun a ↦ ?_⟩
+  · rw [smul_apply, hw₀, ← hu, smul_eq_mul, Units.inv_mul]
+  · rw [smul_apply, hw₀, ← hu, smul_eq_mul, ← mul_assoc, Units.mul_inv, one_mul]
 
 end OrlikSolomon.DeRham

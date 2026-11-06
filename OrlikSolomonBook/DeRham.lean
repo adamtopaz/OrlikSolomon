@@ -19,7 +19,8 @@ htmlSplit := .never
 *The de Rham instance is being formalized.*
 This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
 The exterior calculus and conormal splitting are formalized, as is the existence of a global normal derivation modulo the divisor.
-Normalizing that derivation after localization remains planned, as do the differential, the cohomology and comparison arguments, and the final instance.
+Its normalization after localization and wedge exactness modulo the divisor are also formalized.
+The differential, the cohomology and comparison arguments, and the final instance remain planned.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
@@ -110,7 +111,7 @@ These transport maps are determined by $`i` and $`j`, and every naturality state
 
 The planned construction needs two facts about exterior algebras, over any commutative ring and without dividing by two.
 
-:::node "lem:dr-exterior" (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_tmul) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_symm_ιMulti) (decl := OrlikSolomon.DeRham.powerQuotientEquiv) (decl := OrlikSolomon.DeRham.map_wedgeSubmodule_succ) (decl := OrlikSolomon.DeRham.wedgeSubmodule_zero) (decl := OrlikSolomon.DeRham.span_word_ι_length) (decl := OrlikSolomon.DeRham.mul_self_eq_zero_of_mem_exteriorPower_one) (decl := OrlikSolomon.DeRham.mul_comm_of_mem_exteriorPower)
+:::node "lem:dr-exterior" (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_tmul) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_symm_ιMulti) (decl := OrlikSolomon.DeRham.powerBaseChangeEquiv_naturality) (decl := OrlikSolomon.DeRham.powerQuotientEquiv) (decl := OrlikSolomon.DeRham.powerQuotientEquiv_mk) (decl := OrlikSolomon.DeRham.map_wedgeSubmodule_succ) (decl := OrlikSolomon.DeRham.wedgeSubmodule_zero) (decl := OrlikSolomon.DeRham.span_word_ι_length) (decl := OrlikSolomon.DeRham.mul_self_eq_zero_of_mem_exteriorPower_one) (decl := OrlikSolomon.DeRham.mul_comm_of_mem_exteriorPower)
 Let $`M` be an $`A`-module with a submodule $`N`, and let $`A\to A'` be a map of commutative algebras.
 There are natural identifications
 $$`A'\otimes_A\bigwedge_A^nM\simeq\bigwedge_{A'}^n(A'\otimes_AM),\qquad\bigwedge_A^n(M/N)\simeq\bigwedge_A^nM\,/\,\bigl(N\wedge\bigwedge_A^{n-1}M\bigr).`
@@ -214,7 +215,7 @@ If $`A` is formally smooth over $`k`, then $`\Omega_A^1` and every $`\Omega_A^n`
 If $`f` is a non-zero-divisor, then multiplication by $`f` is injective on each $`\Omega_A^n`, and $`\Omega_A^n\to\Omega_{A_f}^n` is injective.
 :::
 
-:::node "lem:dr-conormal" (decl := OrlikSolomon.DeRham.principalCotangentEquiv) (decl := OrlikSolomon.DeRham.conormalFunctional) (decl := OrlikSolomon.DeRham.conormalFunctional_df) (decl := OrlikSolomon.DeRham.exact_conormalMap) (decl := OrlikSolomon.DeRham.conormalMap_injective) (decl := OrlikSolomon.DeRham.splitConormalSequence) (decl := OrlikSolomon.DeRham.splitConormalSequence_apply) (decl := OrlikSolomon.DeRham.splitConormalSequence_symm_apply_zero)
+:::node "lem:dr-conormal" (decl := OrlikSolomon.DeRham.principalCotangentEquiv) (decl := OrlikSolomon.DeRham.conormalFunctional) (decl := OrlikSolomon.DeRham.conormalFunctional_df) (decl := OrlikSolomon.DeRham.conormalMap_apply) (decl := OrlikSolomon.DeRham.exact_conormalMap) (decl := OrlikSolomon.DeRham.conormalMap_injective) (decl := OrlikSolomon.DeRham.splitConormalSequence) (decl := OrlikSolomon.DeRham.splitConormalSequence_apply) (decl := OrlikSolomon.DeRham.splitConormalSequence_symm_apply_zero)
 Put $`\overline{M}=\Omega_A^1\otimes_AS` and $`e=df\bmod f`.
 There is an $`S`-linear map $`\lambda:\overline{M}\to S` with $`\lambda(e)=1`, so
 $$`0\longrightarrow S\xrightarrow{\ 1\mapsto e\ }\overline{M}\longrightarrow\Omega_S^1\longrightarrow0`
@@ -224,12 +225,12 @@ The non-zero-divisor hypothesis identifies the conormal line, and smoothness of 
 Smoothness of $`A` is not needed for this lemma, and no basis or constant rank is assumed.
 :::
 
-:::node "lem:dr-normal-derivation" (decl := OrlikSolomon.DeRham.existsNormalDerivationModulo) (decl := OrlikSolomon.DeRham.span_pair_eq_top_of_normalDerivationModulo) (remaining := "Extending the derivation to A[v(f)⁻¹] and normalizing its value on f to one.")
+:::node "lem:dr-normal-derivation" (decl := OrlikSolomon.DeRham.exists_normalDerivation_modulo) (decl := OrlikSolomon.DeRham.span_pair_eq_top_of_normalDerivationModulo) (decl := OrlikSolomon.DeRham.exists_localized_normalDerivation)
 There exist a $`k`-derivation $`v:A\to A` and an element $`h\in A` with $`v(f)=1+fh`.
 If $`g=v(f)`, then $`(f,g)=A`, and on $`A_g` the extended derivation $`v/g` takes $`f` to $`1`.
 :::
 
-:::node "lem:dr-modf-koszul"
+:::node "lem:dr-modf-koszul" (decl := OrlikSolomon.DeRham.ker_wedgeLeft_df_mod_succ) (decl := OrlikSolomon.DeRham.ker_wedgeLeft_df_mod_zero) (decl := OrlikSolomon.DeRham.powerMap_eq_zero_of_wedgeLeft_df_eq_smul) (decl := OrlikSolomon.DeRham.powerMap_eq_zero_of_wedgeLeft_df_mem_smul)
 If $`\eta\in\Omega_A^q` satisfies $`df\wedge\eta\in f\Omega_A^{q+1}`, then its image in $`\Omega_S^q` is zero.
 Equivalently, modulo $`f`, the kernel of $`e\wedge-` on $`\bigwedge_S^q\overline{M}` is the image of $`e\wedge-` from the preceding degree.
 
@@ -433,13 +434,13 @@ For $`A=k[x]` and $`f=x`, we have $`H^0_{\mathrm{dR}}(A_f)=k`, $`H^1_{\mathrm{dR
 Moreover $`r([dx/x])=1`, and the twisted normalized class is $`[dx/x]\,t`.
 :::
 
-:::node "prop:dr-unit-example" (decl := OrlikSolomon.Sanity.zeroDerivation_unit_normal) (decl := OrlikSolomon.Sanity.unit_existsNormalDerivationModulo) (remaining := "The differential forms, localization, logarithmic complex, cohomology, residue and Gysin calculations.")
+:::node "prop:dr-unit-example" (decl := OrlikSolomon.Sanity.unit_quotient_subsingleton) (decl := OrlikSolomon.Sanity.zeroDerivation_unit_normal) (decl := OrlikSolomon.Sanity.unit_exists_normalDerivation_modulo) (remaining := "The differential forms, localization, logarithmic complex, cohomology, residue and Gysin calculations.")
 If $`f` is a unit in a smooth $`A`, then $`S=0`, $`A_f\simeq A` and $`L^\bullet=\Omega_A^\bullet`.
 Residue and Gysin are both zero, and all the exactness fields reduce to the identity isomorphism on $`C(A)`.
 In the contraction one may take $`v=0` and $`h=-f^{-1}`, which confirms that no step assumed a nonempty divisor.
 :::
 
-:::node "prop:dr-product-example" (decl := OrlikSolomon.Sanity.productPolynomialEquation_regular) (decl := OrlikSolomon.Sanity.productPolynomialQuotientEquiv) (decl := OrlikSolomon.Sanity.productPolynomialNormal_equation) (decl := OrlikSolomon.Sanity.productPolynomial_conormalFunctional_df) (decl := OrlikSolomon.Sanity.productPolynomial_splitConormalSequence_df) (decl := OrlikSolomon.Sanity.productPolynomial_existsNormalDerivationModulo) (decl := OrlikSolomon.Sanity.productPolynomial_no_global_normal) (remaining := "The localization and de Rham cohomology of the product, and its residue calculation.")
+:::node "prop:dr-product-example" (decl := OrlikSolomon.Sanity.productPolynomialEquation_regular) (decl := OrlikSolomon.Sanity.productPolynomialQuotientEquiv) (decl := OrlikSolomon.Sanity.productPolynomialNormal) (decl := OrlikSolomon.Sanity.productPolynomialNormal_equation) (decl := OrlikSolomon.Sanity.productPolynomial_conormalFunctional_df) (decl := OrlikSolomon.Sanity.productPolynomial_splitConormalSequence_df) (decl := OrlikSolomon.Sanity.productPolynomial_exists_normalDerivation_modulo) (decl := OrlikSolomon.Sanity.productPolynomial_no_global_normal) (remaining := "The localization and de Rham cohomology of the product, and its residue calculation.")
 For $`A=k\times k[z]` and $`f=(1,z)`, we have $`S\simeq k`, $`A_f\simeq k\times k[z,z^{-1}]`, $`H^0_{\mathrm{dR}}(A_f)=k\times k` and $`H^1_{\mathrm{dR}}(A_f)=k[(0,dz/z)]`.
 All higher groups vanish, and the residue takes $`(0,dz/z)` to $`1` on $`S`.
 
@@ -447,7 +448,7 @@ This divisor lies on one connected component, and it is why the derivation is on
 Taking $`v=(0,\partial_z)` gives $`v(f)=(0,1)=1+f(-1,0)`, while $`df=(0,dz)` is not unimodular on all of $`A`.
 :::
 
-:::node "prop:dr-zero-example" (decl := OrlikSolomon.Sanity.zero_existsNormalDerivationModulo) (remaining := "Vanishing of forms and de Rham cohomology, the twisted theory and its pair axioms.")
+:::node "prop:dr-zero-example" (decl := OrlikSolomon.Sanity.zero_formallySmooth) (decl := OrlikSolomon.Sanity.zero_finitePresentation) (decl := OrlikSolomon.Sanity.zero_exists_normalDerivation_modulo) (remaining := "Membership in the de Rham smooth-algebra category, vanishing of forms and de Rham cohomology, the twisted theory and its pair axioms.")
 For $`A=0`, every form and cohomology module is zero, $`C(A)` is the zero $`B`-algebra, and the fields for divisor pairs hold for its unique equation.
 The zero algebra is formally smooth and finitely presented, so it really is an object of the category, and no nontriviality can be imposed on general objects.
 :::
