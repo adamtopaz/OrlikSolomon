@@ -12,11 +12,13 @@ public import OrlikSolomon.Presentation.Ordinary
 /-!
 # Projective cohomology and decone word counts
 
-Decone pullback identifies the cohomology of a nonempty projective complement with that of any
-of its affine decones. The recursive logarithmic basis of a decone has exactly the number of
-words of each length given by the projective polynomial. This word-count witness remains
-meaningful over zero coefficients. A bare basis or module equivalence over the zero ring holds
-for every cardinality and does not determine the Betti numbers.
+Decone pullback identifies projective cohomology with the cohomology of any affine decone.
+The recursion of `Cohomology/Deletion` builds a logarithmic basis of a decone with exactly the
+number of words of each length given by the projective polynomial. Over nonzero coefficients
+every logarithmic monomial basis has these counts. Over zero coefficients every family of words
+of admissible length is a basis, so neither a bare basis, a module equivalence nor the existence
+of a word family determines the Betti numbers. There the number is the polynomial coefficient,
+and its link to the words is the recursive construction.
 
 ## Main results
 
@@ -26,8 +28,8 @@ for every cardinality and does not determine the Betti numbers.
   of its word counts with the projective polynomial coefficients.
 * `OrdinaryTheory.nonempty_projective_grading_linearEquiv_bettiNumber` and
   `OrdinaryTheory.nonempty_basis_projective_grading_bettiNumber` give the module equivalences
-  and diagonal bases indexed by these numbers. At zero coefficients these conclusions alone
-  carry no information about the counts; the preceding word-count statement supplies it.
+  and diagonal bases indexed by these numbers. At zero coefficients these conclusions do not
+  determine the counts, and neither does the word-count statement.
 
 The polynomial definitions and identities are in `Combinatorics/ProjectiveBetti`, which imports
 no cohomology.
@@ -81,9 +83,9 @@ theorem coe_projectiveDeconeComponentEquiv_apply (hℓ₀ : LinearMap.ker ℓ₀
     (T.projectiveDeconeComponentEquiv hℓ₀ i x : T.C.obj (complement (P.decone ℓ₀))) =
       T.C.map (deconeIso hℓ₀).hom x := rfl
 
-/-- The recursive logarithmic basis of every decone has exactly the projective Betti number
-of words of each length. The words and this equality are retained, so the count is still a
-combinatorial assertion over zero coefficients, where a basis alone cannot determine it.
+/-- A logarithmic basis of every decone, built by the recursion, has exactly the projective Betti
+number of words of each length. Over zero coefficients this existence statement also holds for
+other counts, so the match with the polynomial rests on the recursive construction in its proof.
 Blueprint: `cor:projective-betti`. -/
 theorem exists_logMonomialBasis_decone (P : ProjectiveArrangement k W) [Nonempty P]
     {ℓ : Dual k W} (hℓ : LinearMap.ker ℓ ∈ P) :
@@ -93,8 +95,8 @@ theorem exists_logMonomialBasis_decone (P : ProjectiveArrangement k W) [Nonempty
 
 /-- Every projective piece `H^{p,w}` is a direct sum of the projective Betti number of copies of
 the coefficient piece `B_{w-p}`. Over the zero ring such an equivalence exists with any number
-of copies, so it does not determine `b_p`; `exists_logMonomialBasis_decone` records the recursive
-word count that agrees with the polynomial coefficient.
+of copies, so it does not determine `b_p`. The existential `exists_logMonomialBasis_decone` also
+allows other counts there; its proof constructs a basis with the polynomial count by recursion.
 Blueprint: `cor:projective-betti`. -/
 theorem nonempty_projective_grading_linearEquiv_bettiNumber (P : ProjectiveArrangement k W)
     [Nonempty P] (p : ℕ) (w : ℤ) :
@@ -107,7 +109,8 @@ theorem nonempty_projective_grading_linearEquiv_bettiNumber (P : ProjectiveArran
 
 /-- The projective diagonal piece has a basis indexed by its combinatorial Betti number.
 Over the zero ring a basis exists for every cardinality; this conclusion does not determine the
-number. `exists_logMonomialBasis_decone` retains the recursive words and their polynomial count.
+number. The existence of a word family does not determine it either: the proof of
+`exists_logMonomialBasis_decone` uses recursion to match the polynomial count.
 Blueprint: `cor:projective-betti`. -/
 theorem nonempty_basis_projective_grading_bettiNumber (P : ProjectiveArrangement k W)
     [Nonempty P] (q : ℕ) :

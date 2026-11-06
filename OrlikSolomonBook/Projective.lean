@@ -87,5 +87,6 @@ Pullback to any decone then identifies the actual cohomological pieces with thos
 Thus for $`p\geq0`, $`H^{p,w}(U_{\mathcal{P}})` is a direct sum of $`b_p` copies of $`B_{w-p}`, and $`H^{q,q}` has an $`R`-basis with exactly $`b_q` vectors.
 These module equivalences and bases require choices.
 Over the zero coefficient ring they hold for every cardinality, so they do not determine $`b_q`.
-Here $`b_q` is the polynomial coefficient, which counts the words of length $`q` in a recursive logarithmic basis of any decone; the word-count theorem retains both the words and their count.
+Here $`b_q` is the polynomial coefficient, which counts the words of length $`q` in a recursive logarithmic basis of any decone.
+The word-count theorem records this count, though over the zero ring its existence statement alone also holds for other counts.
 :::
