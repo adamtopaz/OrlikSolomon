@@ -58,9 +58,10 @@ This isomorphism depends on the basis and is not canonical, whereas {bp "cor:ord
 
 Over the zero ring, these statements do not determine $`b_q`.
 Every group vanishes there, every family of words of admissible length is a basis, and so neither the module statements nor the existence of a basis with this word count pins the number down.
+For the two points of the line over $`\mathbb{F}_2` with zero coefficients, {name OrlikSolomon.DegenerateExamples.different_basis_sizes_zeroTheory_twoPoints}`different_basis_sizes_zeroTheory_twoPoints` shows that one group has bases with zero and with two vectors.
 There $`b_q` is simply the coefficient of the polynomial, and its link to words is the recursive construction in the proof: {name OrlikSolomon.OrdinaryTheory.LogMonomialBasis.empty}`LogMonomialBasis.empty`, {name OrlikSolomon.OrdinaryTheory.LogMonomialBasis.ofDeletion}`ofDeletion` and their word-count lemmas.
 
-For example, two disjoint hyperplanes, such as two parallel lines or two points of a line, give $`1+2t` by {name OrlikSolomon.Arrangement.poincarePolynomial_pair_disjoint}`poincarePolynomial_pair_disjoint`.
+As for the values, two disjoint hyperplanes, such as two parallel lines or two points of a line, give $`1+2t` by {name OrlikSolomon.Arrangement.poincarePolynomial_pair_disjoint}`poincarePolynomial_pair_disjoint`.
 Three concurrent lines in the plane give $`1+3t+2t^2`, and three lines in general position give $`1+3t+3t^2`.
 Here are the statements of the last two, for any three hyperplanes with these incidences.
 

@@ -283,8 +283,9 @@ $$`P_{c\mathcal{P}}(t)=(1+t)\,P_{d_{H_0}\mathcal{P}}(t).`
 The left-hand side does not mention $`H_0`, and $`1+t` is not a zero divisor, so the decone polynomial is the same for every hyperplane.
 The degree-one coefficient is $`b_1=|\mathcal{P}|-1`.
 
-For example, one hyperplane has an empty decone, so its polynomial is $`1`, and its complement is an affine space by {name OrlikSolomon.SmoothAlg.projectiveComplementIsoAffineSpace}`projectiveComplementIsoAffineSpace`.
-And $`m\ge1` distinct points of $`\mathbb{P}^1` have as decone $`m-1` points of the affine line, so their polynomial is $`1+(m-1)t`.
+For example, one hyperplane has an empty decone, so its polynomial is $`1` by {name OrlikSolomon.ProjectiveOrdinaryExamples.singleHyperplanePolynomial}`singleHyperplanePolynomial`.
+Its complement is an affine space by {name OrlikSolomon.SmoothAlg.projectiveComplementIsoAffineSpace}`projectiveComplementIsoAffineSpace`, so its cohomology is $`B` by {name OrlikSolomon.ProjectiveOrdinaryExamples.singleHyperplaneCohomologyEquiv}`singleHyperplaneCohomologyEquiv`.
+And $`m\ge1` distinct points of $`\mathbb{P}^1` have as decone $`m-1` points of the affine line, so their polynomial is $`1+(m-1)t` by {name OrlikSolomon.ProjectiveOrdinaryExamples.poincarePolynomial_points}`poincarePolynomial_points`.
 
 Pullback to a decone identifies the actual cohomological pieces with those of that affine arrangement, which gives the module statements: for $`p\ge0`, the group $`H^{p,w}(U_{\mathcal{P}})` is a direct sum of $`b_p` copies of $`B_{w-p}`, and $`H^{q,q}(U_{\mathcal{P}})` has an $`R`-basis with $`b_q` elements.
 These isomorphisms depend on choices, unlike the presentation.
@@ -295,6 +296,7 @@ Over the zero ring they do not.
 Every group vanishes there, and such module equivalences and bases exist for every cardinality.
 The statement {name OrlikSolomon.OrdinaryTheory.exists_logMonomialBasis_decone}`exists_logMonomialBasis_decone`, that a decone has a logarithmic basis with $`b_q` words of length $`q`, does not determine $`b_q` there either, because as an existence statement it also holds for other counts.
 Over the zero ring, $`b_q` is simply the coefficient of the polynomial, and its link to words is the recursive construction in the proof: {name OrlikSolomon.OrdinaryTheory.LogMonomialBasis.empty}`LogMonomialBasis.empty`, {name OrlikSolomon.OrdinaryTheory.LogMonomialBasis.ofDeletion}`ofDeletion` and their word-count lemmas.
+For the three rational points of $`\mathbb{P}^1` over $`\mathbb{F}_2` with zero coefficients, {name OrlikSolomon.ProjectiveOrdinaryExamples.exists_logMonomialBasis_decone_threePoints_zeroTheory}`exists_logMonomialBasis_decone_threePoints_zeroTheory` records the resulting family, with two words of length one.
 
 :::node "cor:projective-betti" (decl := OrlikSolomon.ProjectiveArrangement.poincarePolynomial) (decl := OrlikSolomon.ProjectiveArrangement.poincarePolynomial_eq_decone) (decl := OrlikSolomon.ProjectiveArrangement.poincarePolynomial_cone) (decl := OrlikSolomon.ProjectiveArrangement.bettiNumber_one) (decl := OrlikSolomon.OrdinaryTheory.projectiveDeconeComponentEquiv) (decl := OrlikSolomon.OrdinaryTheory.exists_logMonomialBasis_decone) (decl := OrlikSolomon.OrdinaryTheory.nonempty_projective_grading_linearEquiv_bettiNumber) (decl := OrlikSolomon.OrdinaryTheory.nonempty_basis_projective_grading_bettiNumber) (decl := OrlikSolomon.OrdinaryTheory.nonempty_basis_projective_grading_one) (decl := OrlikSolomon.ProjectiveArrangement.intersectionSum_cone_eq) (decl := OrlikSolomon.ProjectiveArrangement.poincarePolynomial_cone_eq_mul_decone) (decl := OrlikSolomon.ProjectiveArrangement.bettiNumber) (decl := OrlikSolomon.ProjectiveArrangement.natCast_bettiNumber) (decl := OrlikSolomon.ProjectiveArrangement.bettiNumber_eq_decone)
 The projective Betti polynomial is the decone polynomial and satisfies $`P_{c\mathcal{P}}(t)=(1+t)P_{\mathcal{P}}(t)`.
