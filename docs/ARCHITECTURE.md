@@ -81,6 +81,12 @@ standard pair (`A = k`), the pair in `lem:log-mul` (`A = k[y;y⁻¹]`) and the p
 `lem:gm-product`. The only other family is the deletion pair
 `(O(U_𝒜'), O(U_𝒜''), O(U_𝒜), f_H)`.
 
+**Objects are `def`s.** An object of `SmoothAlg k` that lemmas will mention should be a `def`
+built from `SmoothAlg.of`, as `point`, `polynomial` and `laurent` are, and not an `abbrev`.
+`simp` indexes the source and target of a coerced morphism, and a reducible object produces keys
+that differ between when a lemma is added and when a goal is matched, so a lemma about such a
+coercion silently never fires. See the implementation notes in `Geometry/SmoothAlg`.
+
 ### Coordinate rings and arrangements
 
 - `V` is a finite-dimensional `k`-vector space in `Type u`, with `k : Type u`. Induction
