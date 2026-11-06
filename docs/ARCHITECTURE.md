@@ -15,6 +15,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | Module under `OrlikSolomon/`   | Blueprint labels |
 | ------------------------------ | ---------------- |
 | `Grading/Basic`                | `def:grading`, `lem:extraction` |
+| `Grading/TensorProduct`        | product gradings, transport and the weighted tensor grading of `lem:os-basic` |
 | `Algebra/RelationQuotient`     | `def:twosided`, `lem:quotient-api` |
 | `Algebra/ExteriorWords`        | `lem:exterior-words`, `lem:boundary-expansion` |
 | `Algebra/Exact`                | `lem:basis-ses`, `lem:comparison` |
@@ -32,7 +33,10 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Cohomology/Bridge`            | `lem:standard-bridge` |
 | `Cohomology/Logarithms`        | `lem:gm`, `def:log`, `lem:log-basic`, `lem:log-mul`, `lem:log-residue`, `lem:gm-product` |
 | `Cohomology/Deletion`          | `lem:restriction-surj`, `lem:ses`, `thm:generation`, `thm:cohom-basis` |
-| `Presentation/Basic`           | `def:os`, `lem:os-basic` |
+| `Presentation/Basic`           | `def:os`, the ordinary grading and deletion map of `lem:os-basic` |
+| `Presentation/BaseChange`      | coefficient base change in `lem:os-basic` |
+| `Presentation/Generators`      | degree-one generator independence used in `cor:projective-betti` |
+| `Presentation/Grading`         | the weighted bigrading and component formula in `lem:os-basic` |
 | `Presentation/Realization`     | `lem:empty-relation`, `lem:dependent-relation`, `def:realization`, `lem:realization-basic` |
 | `Presentation/Cokernel`        | `lem:representatives`, `def:lift-map`, `lem:lift-surj` |
 | `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine`, `cor:ordinary` |
@@ -42,6 +46,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
 | `Examples/Polynomials`         | polynomial regression examples |
 | `Examples/Sanity`              | the blueprint's regression examples |
+| `Examples/Presentation`        | two points of the affine line, the affine boundary guard, characteristic two and degenerate coefficients |
+| `Examples/Parallel`            | two parallel affine lines: product zero and generator difference nonzero |
 
 `lem:geometry-adapter` has no module of its own: see the next section.
 
@@ -183,6 +189,13 @@ three rings. State results for every equation of `H`.
   `TwoSidedIdeal.span ℛ`, the same shape as Mathlib's `TensorAlgebra` and `CliffordAlgebra`,
   and the congruence is not exposed to importers. Descend non-multiplicative maps with
   `liftLinear` and `mapLinear`.
+- **Affine presentation:** `OSAlgebra B 𝒜` has square-zero generators indexed by `𝒜`.
+  `Arrangement.IsDependent` includes the nonempty-intersection guard. Use the quotient,
+  generator, word and lift APIs instead of the underlying exterior quotient. `degree B 𝒜`
+  is the ordinary grading by `B`-submodules. For a weight grading `ℬ` of `B` over `R`,
+  `OSAlgebra.bigrading 𝒜 ℬ` has `R`-submodule pieces. It transports the weighted tensor
+  grading along `OSAlgebra.baseChangeEquiv R B 𝒜`; `bigradingComponentEquiv` gives exterior
+  degree `n` over `R` tensored with coefficient weight `w - n`. No flatness is assumed.
 
 ## The cohomology structure
 

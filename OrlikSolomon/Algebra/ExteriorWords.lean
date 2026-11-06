@@ -585,6 +585,18 @@ theorem word_mem_exteriorPower (l : List I) :
     rw [word_cons, List.length_cons, ExteriorAlgebra.exteriorPower, pow_succ']
     exact Submodule.mul_mem_mul (LinearMap.mem_range_self _ _) ih
 
+/-- The signed boundary of a word of length `n` lies in exterior degree `n - 1`.
+The boundary of the empty word is zero, so no nonemptiness hypothesis is needed.
+
+Blueprint: the homogeneity of the boundary relators in `lem:os-basic`. -/
+theorem wordBoundary_mem_exteriorPower (l : List I) :
+    wordBoundary (exteriorGen B) l ∈ ⋀[B]^(l.length - 1) (I →₀ B) := by
+  rw [wordBoundary_eq_sum]
+  refine Submodule.sum_mem _ fun i _ ↦ ?_
+  have h := word_mem_exteriorPower B (l.eraseIdx i)
+  simp only [List.length_eraseIdx, ite_eq_left i.isLt] at h
+  simpa only [Units.smul_def] using zsmul_mem h (((i.val : ℤ).negOnePow : ℤˣ) : ℤ)
+
 /-- Words of length `n` in the standard generators span the `n`th exterior power.
 
 Blueprint: `lem:exterior-words`. -/
