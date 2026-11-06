@@ -110,6 +110,7 @@ def coordinateArrangement : Arrangement k (Fin s → k) :=
   open scoped Classical in
   ofFinset (Finset.univ.image fun i ↦ zeroLocus (yCoord k i))
 
+@[simp]
 theorem mem_coordinateArrangement {H : AffineSubspace k (Fin s → k)} :
     H ∈ coordinateArrangement k s ↔ ∃ i, zeroLocus (yCoord k i) = H := by
   classical
@@ -151,6 +152,7 @@ Blueprint: `lem:small-targets`. -/
 def torusSection (X : AffineSubspace k (Fin s → k)) : Arrangement k X.direction :=
   (coordinateArrangement k s).restriction X
 
+@[simp]
 theorem mem_torusSection {L : AffineSubspace k X.direction} :
     L ∈ torusSection X ↔ IsHyperplane L ∧ ∃ i, zeroLocus ((yCoord k i).comp (chart X)) = L := by
   simp only [torusSection, mem_restriction', mem_coordinateArrangement, exists_exists_eq_and,
@@ -180,8 +182,8 @@ theorem coe_torusUnit (h : ¬X ≤ zeroLocus (yCoord k i)) :
   rfl
 
 /-- If no coordinate vanishes on all of `X`, then the coordinate ring of the complement of
-`torusSection X` is the localization of `O(X)` at the coordinates. This says that the complement is
-`X ∩ 𝔾ₘˢ`, whichever coordinate sections were discarded.
+`torusSection X` is the localization of `O(X)` at the coordinates. For nonempty `X`, this says that
+the complement is `X ∩ 𝔾ₘˢ`, whichever coordinate sections were discarded.
 
 Blueprint: `lem:small-targets`. -/
 theorem isLocalization_torusSection (h : ∀ i, ¬X ≤ zeroLocus (yCoord k i)) :
@@ -241,9 +243,11 @@ Blueprint: `lem:small-targets`. -/
 def affineImage (f : Fin s → V →ᵃ[k] k) : AffineSubspace k (Fin s → k) :=
   (⊤ : AffineSubspace k V).map (AffineMap.pi f)
 
+@[simp]
 theorem mem_affineImage : x ∈ affineImage f ↔ ∃ v, AffineMap.pi f v = x := by
   simp [affineImage]
 
+@[simp]
 theorem pi_mem_affineImage (f : Fin s → V →ᵃ[k] k) (v : V) : AffineMap.pi f v ∈ affineImage f :=
   mem_affineImage.2 ⟨v, rfl⟩
 
