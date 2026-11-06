@@ -78,7 +78,15 @@ For a nonempty split projective arrangement there is a canonical bigrading-prese
 It is independent of the equations and of the hyperplane chosen at infinity.
 :::
 
-:::node "cor:projective-betti"
+:::node "cor:projective-betti" (decl := OrlikSolomon.ProjectiveArrangement.poincarePolynomial) (decl := OrlikSolomon.ProjectiveArrangement.poincarePolynomial_eq_decone) (decl := OrlikSolomon.ProjectiveArrangement.poincarePolynomial_cone) (decl := OrlikSolomon.ProjectiveArrangement.bettiNumber_one) (decl := OrlikSolomon.OrdinaryTheory.projectiveDeconeComponentEquiv) (decl := OrlikSolomon.OrdinaryTheory.exists_logMonomialBasis_decone) (decl := OrlikSolomon.OrdinaryTheory.nonempty_projective_grading_linearEquiv_bettiNumber) (decl := OrlikSolomon.OrdinaryTheory.nonempty_basis_projective_grading_bettiNumber) (decl := OrlikSolomon.OrdinaryTheory.nonempty_basis_projective_grading_one)
 The projective Betti polynomial is the decone polynomial and satisfies $`P_{c\mathcal{P}}(t)=(1+t)P_{\mathcal{P}}(t)`.
 In particular $`b_1(U_{\mathcal{P}})=|\mathcal{P}|-1`.
+
+The polynomial identity is proved directly from the subset sum by pairing subsets with and without the hyperplane at infinity.
+Pullback to any decone then identifies the actual cohomological pieces with those of that affine arrangement.
+Thus for $`p\geq0`, $`H^{p,w}(U_{\mathcal{P}})` is a direct sum of $`b_p` copies of $`B_{w-p}`, and $`H^{q,q}` has an $`R`-basis with exactly $`b_q` vectors.
+These module equivalences and bases require choices.
+Over the zero coefficient ring they hold for every cardinality, so they do not determine $`b_q`.
+Here $`b_q` is the polynomial coefficient, which counts the words of length $`q` in a recursive logarithmic basis of any decone.
+The word-count theorem records this count, though over the zero ring its existence statement alone also holds for other counts.
 :::

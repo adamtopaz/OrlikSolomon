@@ -24,6 +24,8 @@ discarded before taking either. Both polynomials have integer coefficients.
   `Arrangement.poincarePolynomial_deletion_restriction` give the two polynomial recurrences.
 * `Arrangement.poincarePolynomial_coeff_nonneg` proves nonnegativity before `bettiNumber` is
   defined. Comparing those coefficients with cohomology is a separate result.
+* `Arrangement.poincarePolynomial_coeff_one` and `Arrangement.bettiNumber_one` count the distinct
+  hyperplanes in degree one.
 
 Blueprint: `def:polynomials`, `lem:polynomial-recursion`.
 -/
@@ -408,6 +410,25 @@ theorem bettiNumber_succ_deletion_restriction [FiniteDimensional k V]
     (((𝒜.deletion H).bettiNumber (q + 1) + (𝒜.restriction H).bettiNumber q : ℕ) : ℤ)
   rw [Nat.cast_add, natCast_bettiNumber, natCast_bettiNumber, natCast_bettiNumber]
   exact poincarePolynomial_coeff_succ_deletion_restriction 𝒜 hH q
+
+/-- The degree-one coefficient counts the distinct hyperplanes, over the integers. -/
+theorem poincarePolynomial_coeff_one [FiniteDimensional k V] (𝒜 : Arrangement k V) :
+    𝒜.poincarePolynomial.coeff 1 = 𝒜.card := by
+  refine Arrangement.induction
+    (motive := fun _ _ _ _ ℬ => ℬ.poincarePolynomial.coeff 1 = (ℬ.card : ℤ)) ?_ ?_ V 𝒜
+  · intro W _ _ _
+    rw [poincarePolynomial_empty, Polynomial.coeff_one]
+    norm_num
+  · intro W _ _ _ ℬ H hH hdel _
+    rw [poincarePolynomial_coeff_succ_deletion_restriction ℬ hH 0, hdel,
+      poincarePolynomial_coeff_zero]
+    exact_mod_cast card_deletion_add_one hH
+
+/-- The first natural Betti coefficient counts the distinct affine hyperplanes. -/
+@[simp]
+theorem bettiNumber_one [FiniteDimensional k V] (𝒜 : Arrangement k V) :
+    𝒜.bettiNumber 1 = 𝒜.card := by
+  simp only [bettiNumber, poincarePolynomial_coeff_one, Int.toNat_natCast]
 
 end Arrangement
 

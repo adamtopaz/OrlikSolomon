@@ -17,7 +17,7 @@ theorem. Distinct generators of a pairwise disjoint arrangement have nonzero dif
 without a finite-dimensional ambient hypothesis. In finite dimension all generators are linearly
 independent.
 
-Blueprint: the degree-one assertion used in `cor:projective-betti`.
+Blueprint: the degree-one assertion in the blueprint's proof of `cor:projective-betti`.
 -/
 
 @[expose] public section
@@ -145,7 +145,7 @@ private theorem isFamily_squareZeroGenerator [FiniteDimensional k V] :
 A square-zero extension of the free module detects their coefficients, without using the
 cohomology structure theorem or assuming that two is invertible.
 
-Blueprint: the degree-one assertion used in `cor:projective-betti`. -/
+Blueprint: the degree-one assertion in the blueprint's proof of `cor:projective-betti`. -/
 theorem linearIndependent_generator [FiniteDimensional k V] :
     LinearIndependent B (generator B 𝒜) := by
   let f : OSAlgebra B 𝒜 →ₐ[B] TrivSqZeroExt B (𝒜 →₀ B) :=
