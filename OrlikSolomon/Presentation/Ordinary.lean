@@ -37,8 +37,8 @@ None of this assumes that `R` is nonzero, that `2` is invertible, or that `B` is
   - `LogMonomialBasis.osBasisOverR`, the monomial basis of `OS_R(𝒜)`;
   - `LogMonomialBasis.degreeBasis`, its part in degree `q`;
   - `LogMonomialBasis.diagonalBasis`, the basis of `H^{q, q}(U_𝒜)`;
-  - `LogMonomialBasis.gradingEquiv`, which says that `H^{p, w}(U_𝒜)` is free over `B_{w - p}` on the
-    words of length `p`.
+  - `LogMonomialBasis.gradingEquiv`, which says that `H^{p, w}(U_𝒜)` is `R`-linearly a direct sum of
+    copies of `B_{w - p}`, one for each word of length `p`.
 
 ## Main results
 
@@ -376,8 +376,9 @@ Blueprint: `cor:ordinary`. -/
 theorem affineEquiv_osBasis (i : b.Index) : T.affineEquiv 𝒜 (b.osBasis i) = b.basis i := by
   simp [osBasis]
 
-/-- The piece `H^{p, w}(U_𝒜)` is free over `B_{w - p}` on the logarithmic monomials of the words of
-length `p`: the map sends a class to its coordinates in the basis `b`. This depends on `b`, unlike
+/-- The piece `H^{p, w}(U_𝒜)` is `R`-linearly a direct sum of copies of `B_{w - p}`, one for each
+logarithmic monomial of a word of length `p`: the map sends a class to its coordinates in the basis
+`b`. This depends on `b`, unlike
 `ordinaryComponentEquiv`.
 
 Blueprint: `cor:ordinary`, `thm:betti`. -/

@@ -22,8 +22,9 @@ equivalence from `M` to this direct sum.
 
 The second is about a `B`-basis `e` of an `R`-bigraded module, where `B` is an `R`-algebra graded by
 weights, and each `e i` has diagonal bidegree `(s i, s i)`. The piece of bidegree `(p, w)` is then
-free over the piece `ℬ (w - p)` of `B`, on the `e i` with `s i = p`. In particular, the coordinates
-of a homogeneous element are homogeneous, and if `R ≃ ℬ 0` then the vectors `e i` with `s i = q`
+`R`-linearly a direct sum of copies of the piece `ℬ (w - p)` of `B`, one for each `e i` with
+`s i = p`. That piece is an `R`-module and not a ring, so this is not freeness. In particular, the
+coordinates of a homogeneous element are homogeneous, and if `R ≃ ℬ 0` then the vectors `e i` with `s i = q`
 form an `R`-basis of the piece `(q, q)`.
 
 ## Main definitions
@@ -263,8 +264,8 @@ theorem sum_smul_mem [Fintype ι] {p : ℕ} {v w : ℤ} (hw : (p : ℤ) + v = w)
 variable [Fintype ι] [IsScalarTower R B M]
 
 /-- If `e` is a `B`-basis of `M` with each `e i` of bidegree `(s i, s i)`, then the piece of `M` of
-bidegree `(p, w)` is free over the piece `ℬ v` of `B`, where `p + v = w`, on the `e i` with
-`s i = p`. The equivalence sends an element to its coordinates.
+bidegree `(p, w)` is `R`-linearly a direct sum of copies of the piece `ℬ v` of `B`, where
+`p + v = w`, one for each `e i` with `s i = p`. The equivalence sends an element to its coordinates.
 
 This applies to any `R`-module with a `B`-module structure for which the weights of `B` add to the
 second degree, as `hsmul` says. No rank is involved, and `R` can be the zero ring. -/
