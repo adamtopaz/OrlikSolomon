@@ -5,24 +5,28 @@ Authors: Adam Topaz, Claude
 -/
 module
 
+public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.MonoidAlgebra.Grading
-public import Mathlib.Data.ZMod.Defs
 public import OrlikSolomon.Cohomology.Logarithms
+public import OrlikSolomon.Geometry.Complement
 
 /-!
 # Regression examples
 
 This file collects consistency checks of the definitions against the blueprint's regression list.
 At present it covers the structure `OrdinaryTheory` of `def:cohomology`, in particular the
-blueprint's "zero coefficient ring" case and the case `R = B`, and the logarithmic classes with
-coefficients in `ℤ/2`. The arrangement examples of that list will be added here as the modules they
-test appear.
+blueprint's "zero coefficient ring" case and the case `R = B`, the logarithmic classes with
+coefficients in `ℤ/2`, and the example of two points of `𝔸¹` over `F₂`. The other arrangement
+examples of that list will be added here as the modules they test appear.
 
 ## Main definitions
 
 * `OrlikSolomon.Sanity.zeroTheory k`: the zero theory, with zero coefficients, over any `k`.
 * `OrlikSolomon.Sanity.laurentWeight R`: the coefficient grading `ℬ w = R t^w` of `R[t, t⁻¹]`,
   used by the comparison with singular cohomology in the docstring of `OrdinaryTheory`.
+* `OrlikSolomon.Sanity.twoPoints`: the two rational points of `𝔸¹` over `F₂`. Their complement has
+  no `F₂`-points (`isEmpty_algHom_twoPoints`), and its ring is nonzero
+  (`nontrivial_complementRing_twoPoints`).
 
 ## What these checks show, and what they do not
 
@@ -264,6 +268,62 @@ example : T.tau * T.tau = 0 := T.tau_mul_tau
 example (u : Aˣ) : T.logClass u * T.logClass u = 0 := T.logClass_mul_self u
 
 end ZModTwo
+
+/-! ### Two points of the line over the field with two elements
+
+The blueprint's regression example of a complement with no `k`-points whose coordinate ring is
+nonzero. This is why `O(U_𝒜)` is a localization, and never a subset of `V`. -/
+
+section TwoPoints
+
+open Arrangement CoordinateRing
+
+open scoped Classical in
+/-- The two rational points of the affine line over the field with two elements. -/
+def twoPoints : Arrangement (ZMod 2) (ZMod 2) :=
+  ofFinset {zeroLocus (AffineMap.id _ _), zeroLocus (AffineMap.id _ _ - AffineMap.const _ _ 1)}
+
+theorem zeroLocus_id_mem_twoPoints :
+    zeroLocus (AffineMap.id (ZMod 2) (ZMod 2)) ∈ twoPoints := by
+  refine mem_ofFinset.2 ⟨by simp, isHyperplane_zeroLocus_iff.2 ?_⟩
+  simpa using fun h ↦ one_ne_zero (LinearMap.congr_fun h (1 : ZMod 2))
+
+theorem zeroLocus_id_sub_one_mem_twoPoints :
+    zeroLocus (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1) ∈ twoPoints := by
+  refine mem_ofFinset.2 ⟨by simp, isHyperplane_zeroLocus_iff.2 ?_⟩
+  simpa using fun h ↦ one_ne_zero (LinearMap.congr_fun h (1 : ZMod 2))
+
+/-- Every `F₂`-point of the line lies on one of the two hyperplanes. -/
+theorem exists_mem_twoPoints (v : ZMod 2) : ∃ H ∈ twoPoints, v ∈ H := by
+  obtain rfl | rfl : v = 0 ∨ v = 1 := by revert v; decide
+  · exact ⟨_, zeroLocus_id_mem_twoPoints, by simp⟩
+  · exact ⟨_, zeroLocus_id_sub_one_mem_twoPoints, by simp⟩
+
+/-- The complement of the two points of the line over `F₂` has no `F₂`-points, even as a scheme: its
+coordinate ring has no `F₂`-algebra map to `F₂`. -/
+theorem isEmpty_algHom_twoPoints : IsEmpty (twoPoints.ComplementRing →ₐ[ZMod 2] ZMod 2) := by
+  refine ⟨fun φ ↦ ?_⟩
+  have h₀ := (ComplementRing.isUnit_coord (𝒜 := twoPoints)
+    (.of_mem zeroLocus_id_mem_twoPoints)).map φ
+  have h₁ := (ComplementRing.isUnit_coord (𝒜 := twoPoints)
+    (.of_mem zeroLocus_id_sub_one_mem_twoPoints)).map φ
+  rw [map_sub, map_sub, map_sub, coord_const] at h₁
+  set a := φ (algebraMap _ _ (coord (AffineMap.id (ZMod 2) (ZMod 2))))
+  have h1 : φ (algebraMap _ _ (algebraMap (ZMod 2) (CoordinateRing (ZMod 2) (ZMod 2)) 1)) = 1 := by
+    simp
+  rw [h1] at h₁
+  obtain h | h := (by decide : ∀ a : ZMod 2, a = 0 ∨ a = 1) a
+  · simp [h] at h₀
+  · simp [h] at h₁
+
+/-- The coordinate ring of the complement of the two points of the line over `F₂` is nonzero, even
+though the complement has no `F₂`-points, see `isEmpty_algHom_twoPoints`.
+
+Blueprint: the regression list, "the two rational points in `𝔸¹` over `F₂`". -/
+theorem nontrivial_complementRing_twoPoints : Nontrivial twoPoints.ComplementRing :=
+  inferInstance
+
+end TwoPoints
 
 end Sanity
 
