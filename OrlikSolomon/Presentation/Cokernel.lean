@@ -5,8 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import OrlikSolomon.Presentation.CokernelData.Basic
-public import OrlikSolomon.Presentation.RepresentativeRelations
+public import OrlikSolomon.Presentation.CokernelData.Words
 
 /-!
 # The linear lifting map to the deletion cokernel
@@ -37,7 +36,7 @@ theorem generator_mul_representativeMap_mem_deletionRange
     (hr : ∀ L, (r L : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) = L)
     {x : ExteriorAlgebra B (𝒜.restriction H →₀ B)} (hx : x ∈ osRelations B (𝒜.restriction H)) :
     generator B 𝒜 H * representativeMap B 𝒜 r x ∈ deletionRange B 𝒜 H := by
-  obtain ⟨I, _, ⟨hI, rfl⟩ | ⟨hI, rfl⟩⟩ := hx
+  obtain ⟨I, _, ⟨hI, rfl⟩ | ⟨hI, rfl⟩⟩ := (mem_osRelations B (𝒜.restriction H)).1 hx
   · rw [representativeMap_word]
     have h : generator B 𝒜 H * word (representativeGenerator B 𝒜 r) I = 0 :=
       generator_mul_word_representatives_eq_zero B 𝒜 H r hr hI
@@ -97,5 +96,41 @@ theorem restrictionToCokernel_word (I : List (𝒜.restriction H)) :
       cokernelMk B 𝒜 H
         (generator B 𝒜 H * word (representativeGenerator B 𝒜 Arrangement.representative) I) :=
   restrictionToCokernelOfRepresentatives_word B 𝒜 H _ _ I
+
+/-- The linear lifting map is independent of every chosen old representative. The proof changes
+one letter at a time in each word, using the same-trace triple relation in old word contexts.
+Blueprint: independence in `def:lift-map`. -/
+theorem restrictionToCokernelOfRepresentatives_eq
+    (r s : 𝒜.restriction H → 𝒜.deletion H)
+    (hr : ∀ L, (r L : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) = L)
+    (hs : ∀ L, (s L : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) = L) :
+    restrictionToCokernelOfRepresentatives B 𝒜 H r hr =
+      restrictionToCokernelOfRepresentatives B 𝒜 H s hs := by
+  apply linearMap_ext
+  intro I
+  rw [restrictionToCokernelOfRepresentatives_word, restrictionToCokernelOfRepresentatives_word]
+  have h : List.Forall₂ (fun K K' : 𝒜.deletion H ↦
+      (K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) =
+          (K' : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) ∧
+        (K : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) ≠ ⊥)
+      (I.map r) (I.map s) := by
+    induction I with
+    | nil => exact .nil
+    | cons L I ih =>
+      apply List.Forall₂.cons _ ih
+      exact ⟨(hr L).trans (hs L).symm, by
+        rw [hr L]
+        exact ((𝒜.restriction H).isHyperplane L.2).ne_bot⟩
+  have hword := cokernelMk_generator_word_eq_of_forall₂ B 𝒜 H h []
+  simp only [List.nil_append, word_map] at hword
+  exact hword
+
+/-- Any choice of old representatives computes the canonical restriction lift. -/
+theorem restrictionToCokernelOfRepresentatives_eq_restrictionToCokernel
+    (r : 𝒜.restriction H → 𝒜.deletion H)
+    (hr : ∀ L, (r L : AffineSubspace k V).comap (chart (H : AffineSubspace k V)) = L) :
+    restrictionToCokernelOfRepresentatives B 𝒜 H r hr = restrictionToCokernel B 𝒜 H :=
+  restrictionToCokernelOfRepresentatives_eq B 𝒜 H r Arrangement.representative hr
+    Arrangement.comap_representative
 
 end OrlikSolomon.OSAlgebra
