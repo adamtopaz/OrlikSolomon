@@ -6,7 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import Mathlib.LinearAlgebra.ExteriorAlgebra.Grading
-public import OrlikSolomon.Algebra.ExteriorWords
+public import OrlikSolomon.Algebra.ExteriorBoundary
 public import OrlikSolomon.Algebra.RelationQuotient
 public import OrlikSolomon.Geometry.Arrangement
 
