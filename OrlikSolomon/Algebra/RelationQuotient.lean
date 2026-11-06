@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
@@ -65,6 +65,11 @@ The quotient is `RingCon.Quotient` of the congruence of `TwoSidedIdeal.span ℛ`
 `TensorAlgebra` and `CliffordAlgebra` in Mathlib. `RelationQuotient.ringCon` is not exposed outside
 this file, so the choice of congruence cannot be relied on. Use the universal properties together
 with `mk_eq_zero_iff`, `mk_eq_mk_iff` and `mk_surjective`.
+
+The scalar action is transported separately before the ring instance, following
+`CliffordAlgebra`. This makes the algebra's natural and integer module actions agree with the
+canonical additive actions during instance synthesis, so literal integral tensor products inherit
+their algebra structures without local module instances.
 
 ## Blueprint
 
@@ -262,6 +267,11 @@ namespace RelationQuotient
 
 variable (ℛ : Set T)
 
+-- Transport the scalar action separately so the algebra action agrees reducibly with the
+-- canonical natural and integer actions, as for Mathlib's `CliffordAlgebra`.
+instance instSMul [CommSemiring S] [Algebra S T] : SMul S (RelationQuotient ℛ) :=
+  inferInstanceAs <| SMul S (RingCon.Quotient _)
+
 instance : Ring (RelationQuotient ℛ) :=
   inferInstanceAs <| Ring (RingCon.Quotient _)
 
@@ -272,6 +282,15 @@ instance instAlgebra [CommSemiring S] [Algebra S T] : Algebra S (RelationQuotien
 -- `reducible_and_instances`: https://github.com/leanprover-community/mathlib4/issues/10906
 example : (Semiring.toNatAlgebra : Algebra ℕ (RelationQuotient ℛ)) = instAlgebra ℛ := rfl
 example : (Ring.toIntAlgebra _ : Algebra ℤ (RelationQuotient ℛ)) = instAlgebra ℛ := rfl
+
+-- Module coherence does hold at instance transparency; tensor algebra synthesis needs this.
+example : (Algebra.toModule : Module ℕ (RelationQuotient ℛ)) =
+    AddCommMonoid.toNatModule := by
+  with_reducible_and_instances rfl
+
+example : (Algebra.toModule : Module ℤ (RelationQuotient ℛ)) =
+    AddCommGroup.toIntModule _ := by
+  with_reducible_and_instances rfl
 
 instance {S' : Type*} [CommSemiring S] [Algebra S T] [CommSemiring S'] [Algebra S' T] [SMul S S']
     [IsScalarTower S S' T] : IsScalarTower S S' (RelationQuotient ℛ) :=

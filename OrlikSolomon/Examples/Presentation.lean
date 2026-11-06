@@ -146,12 +146,48 @@ example : OSAlgebra.generator (ZMod 2) (twoPoints (ZMod 2)) (onePoint (ZMod 2)) 
   OSAlgebra.generator_sq _ _ _
 
 -- Reducing integral coefficients modulo two is allowed without a flatness hypothesis.
--- Use the module attached to the algebra to avoid the integer-scalar diamond during inference.
-example : letI : Module ℤ (OSAlgebra ℤ (twoPoints k)) := Algebra.toModule
-    (ZMod 2) ⊗[ℤ] OSAlgebra ℤ (twoPoints k) ≃ₐ[ZMod 2]
-      OSAlgebra (ZMod 2) (twoPoints k) := by
-  letI : Module ℤ (OSAlgebra ℤ (twoPoints k)) := Algebra.toModule
-  exact OSAlgebra.baseChangeEquiv ℤ (ZMod 2) _
+example : (ZMod 2) ⊗[ℤ] OSAlgebra ℤ (twoPoints k) ≃ₐ[ZMod 2]
+    OSAlgebra (ZMod 2) (twoPoints k) :=
+  OSAlgebra.baseChangeEquiv ℤ (ZMod 2) _
+
+-- The same literal tensor algebra works with zero coefficients.
+example (𝒜 : Arrangement k V) : (ZMod 1) ⊗[ℤ] OSAlgebra ℤ 𝒜 ≃ₐ[ZMod 1]
+    OSAlgebra (ZMod 1) 𝒜 :=
+  OSAlgebra.baseChangeEquiv ℤ (ZMod 1) 𝒜
+
+-- Both canonical base-change maps use the naturally inferred integral module structure.
+example {B : Type v} [CommRing B] (𝒜 : Arrangement k V) (H : 𝒜) :
+    OSAlgebra.baseChangeEquiv ℤ B 𝒜 ((1 : B) ⊗ₜ[ℤ] OSAlgebra.generator ℤ 𝒜 H) =
+      OSAlgebra.generator B 𝒜 H := by
+  simp
+
+example {B : Type v} [CommRing B] (𝒜 : Arrangement k V) (H : 𝒜) :
+    (OSAlgebra.baseChangeEquiv ℤ B 𝒜).symm (OSAlgebra.generator B 𝒜 H) =
+      (1 : B) ⊗ₜ[ℤ] OSAlgebra.generator ℤ 𝒜 H :=
+  OSAlgebra.baseChangeEquiv_symm_generator ℤ B 𝒜 H
+
+/-- Reducing the integral tensor modulo two retains the nonzero difference of the two point
+generators. This exercises the literal tensor algebra and its canonical coefficient map. -/
+theorem twoPoints_integral_tensor_difference_ne_zero :
+    (1 : ZMod 2) ⊗ₜ[ℤ]
+      (OSAlgebra.generator ℤ (twoPoints k) (onePoint k) -
+        OSAlgebra.generator ℤ (twoPoints k) (zeroPoint k)) ≠ 0 := by
+  intro h
+  have h' := congrArg (OSAlgebra.baseChangeEquiv ℤ (ZMod 2) (twoPoints k)) h
+  apply twoPoints_difference (k := k) (ZMod 2)
+  simpa using h'
+
+-- Canonical integer scalars continue to give the odd-degree commutativity sign.
+example (𝒜 : Arrangement k V) (H K : 𝒜) :
+    OSAlgebra.generator ℤ 𝒜 H * OSAlgebra.generator ℤ 𝒜 K =
+      -(OSAlgebra.generator ℤ 𝒜 K * OSAlgebra.generator ℤ 𝒜 H) := by
+  simpa using OSAlgebra.mul_comm_of_mem_degree ℤ 𝒜
+    (OSAlgebra.generator_mem_degree ℤ 𝒜 H) (OSAlgebra.generator_mem_degree ℤ 𝒜 K)
+
+-- The generic relation quotient, before any arrangement specialization, has the same coherence.
+example {T : Type*} [Ring T] (ℛ : Set T) :
+    Algebra (ZMod 2) ((ZMod 2) ⊗[ℤ] RelationQuotient ℛ) :=
+  inferInstance
 
 -- The zero ring is a valid coefficient ring.
 example (𝒜 : Arrangement k V) : Subsingleton (OSAlgebra (ZMod 1) 𝒜) :=
