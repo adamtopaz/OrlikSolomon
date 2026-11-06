@@ -40,7 +40,7 @@ The design for the formalization is that the total cohomology is a functor on sm
 No axiom about the empty object is needed, because the pair $`(A,1)` already forces the zero ring to have zero cohomology.
 :::
 
-:::node "lem:standard-bridge" (decl := OrlikSolomon.ofSupportsAndPurity)
+:::node "lem:standard-bridge" (decl := OrlikSolomon.DegreewiseTheory) (decl := OrlikSolomon.SupportsAndPurity) (decl := OrlikSolomon.ofSupportsAndPurity) (decl := OrlikSolomon.ofSupportsAndPurity_exact_gysin_map) (decl := OrlikSolomon.ofSupportsAndPurity_exact_map_residue) (decl := OrlikSolomon.ofSupportsAndPurity_exact_residue_gysin)
 A cohomology presented in the familiar degreewise way, with products, twists, the point dimension axiom, affine-line invariance, localization with supports, oriented divisor purity, transverse naturality and the boundary projection formula, gives an instance of the structure.
 Its degreewise long exact sequence is recovered from the three total exactness statements by {bp "lem:extraction"}[homogeneous extraction].
 

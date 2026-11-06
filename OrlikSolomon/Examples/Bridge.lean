@@ -16,6 +16,10 @@ zero groups. These inputs check that the standard bridge permits the zero coeffi
 all integer degrees and weights, and every certified divisor pair. They are consistency checks
 of the interface rather than checks of the substantive cohomology axioms.
 
+The same-ring component tests first construct the component maps with separate abstract rings
+`R` and `B`, then specialize to `R = B = PUnit`. This fixes the recorded scalar structures
+before identifying the rings, as required for explicit `OverR` component consumers.
+
 Blueprint: `lem:standard-bridge` and the zero-coefficient-ring regression.
 -/
 
@@ -108,19 +112,47 @@ theorem zeroBridgeTheory_residue (k : Type u) [CommRing k] (P : DivisorPair k) :
     (zeroBridgeTheory.{u, v, w, z, t} k).residue P = 0 :=
   LinearMap.ext fun _ ↦ Subsingleton.elim _ _
 
-/-- With `R = B = PUnit` in the same universe, the constructed Gysin and residue maps act on
-homogeneous components with the prescribed shifts. This also checks the coincident scalar
-structures of the total direct sum. -/
-theorem zeroBridgeTheory_same_universe (k : Type u) [CommRing k] (P : DivisorPair k)
-    (i : ℤ × ℤ) :
+section FrozenComponents
+
+variable {k : Type u} [CommRing k] {R : Type v} [CommRing R]
+  {B : Type w} [CommRing B] [Algebra R B]
+  {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ]
+
+private def gysinComponent (T : OrdinaryTheory.{u, v, w, z} k ℬ)
+    (P : DivisorPair k) (i : ℤ × ℤ) :
+    T.grading P.closed i →ₗ[R] T.grading P.ambient (i + (2, 1)) :=
+  (T.isHomogeneousOfShift_gysinOverR P).component rfl
+
+private def residueComponent (T : OrdinaryTheory.{u, v, w, z} k ℬ)
+    (P : DivisorPair k) (i : ℤ × ℤ) :
+    T.grading P.compl i →ₗ[R] T.grading P.closed (i + (-1, -1)) :=
+  (T.isHomogeneousOfShift_residueOverR P).component rfl
+
+private def pullbackComponent (D : DegreewiseTheory.{u, v, w, z} k ℬ)
+    {A E : SmoothAlg k} (f : A ⟶ E) (i : ℤ × ℤ) :
+    D.grading A i →ₗ[R] D.grading E i :=
+  (D.isHomogeneousOfShift_mapTotalR f).component (add_zero i)
+
+end FrozenComponents
+
+/-- The concrete zero bridge specializes actual component maps constructed before identifying
+its coefficient rings. -/
+private theorem sameRingPinned (k : Type u) [CommRing k] (P : DivisorPair k) (i : ℤ × ℤ) :
     let T := zeroBridgeTheory.{u, v, v, v, v} k
-    ∀ (x : T.C.obj P.closed) (y : T.C.obj P.compl),
-      T.gysin P (DirectSum.decompose (T.grading P.closed) x i) ∈
-          T.grading P.ambient (i + (2, 1)) ∧
-        T.residue P (DirectSum.decompose (T.grading P.compl) y i) ∈
-          T.grading P.closed (i + (-1, -1)) := by
+    ∀ (x : T.grading P.closed i) (y : T.grading P.compl i),
+      (gysinComponent T P i x : T.C.obj P.ambient) = T.gysin P x ∧
+        (residueComponent T P i y : T.C.obj P.closed) = T.residue P y := by
   intro T x y
-  exact ⟨T.isHomogeneousOfShift_gysin P (DirectSum.decompose _ _ _).2,
-    T.isHomogeneousOfShift_residue P (DirectSum.decompose _ _ _).2⟩
+  exact ⟨rfl, rfl⟩
+
+/-- The concrete zero degreewise theory specializes the actual R-linear component construction. -/
+private theorem sameRingPullback (k : Type u) [CommRing k] {A E : SmoothAlg k}
+    (f : A ⟶ E) (i : ℤ × ℤ) :
+    let D := zeroDegreewiseTheory.{u, v, v, v} k
+    ∀ x : D.grading A i,
+      (pullbackComponent D f i x : D.Total E) = D.mapTotalR f x := by
+  intro D x
+  rfl
+
 
 end OrlikSolomon.Sanity

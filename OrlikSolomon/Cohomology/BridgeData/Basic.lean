@@ -17,6 +17,31 @@ products and pullbacks, and their homogeneous coefficient maps. All maps in the 
 degreewise. This is the product and functoriality part of the input to `lem:standard-bridge`;
 localization with supports and oriented purity are supplied separately.
 
+## Hand check of the input against a real theory
+
+This is a mathematical check, not a Lean instance. For a field with a chosen embedding into
+`ℂ`, take `B = R[t,t⁻¹]`, `ℬ w = R t^w`, and `H^{p,w}(A) = H^p((Spec A)(ℂ); R) t^w`, for any
+commutative ring `R`. This verifies the fields as follows:
+
+* `H`, `addCommGroup`, `module`, `gRing` and `gAlgebra` are ordinary cohomology groups and cup
+  products. The formal symbol `t` is central, and `graded_comm` uses only cohomological degree.
+* `coeff`, `coeff_one` and `coeff_mul` are pullback of constant classes times `t^w`.
+  `bijective_algebraMap_gradeZero` is the identification `R = R t⁰`.
+* `map`, `map_id`, `map_comp`, `map_one`, `map_mul` and `map_coeff` are the usual functorial
+  pullbacks and their compatibility with products and constant classes.
+* `bijective_coeff_point` and `eq_zero_point` are the cohomology of a point.
+  `bijective_map_polynomialC` is homotopy invariance for the contractible factor `ℂ`.
+
+This model uses the specified Laurent coefficient algebra; it does not interpret an arbitrary
+weight-graded `B` as singular cohomology. The only concrete theory instances constructed in Lean
+are the zero theories in `Examples/Sanity` and `Examples/Bridge`.
+
+For geometric étale cohomology the analogous input uses `H^p(X_{k^sep}; ℤ_ℓ(w))`, with `ℓ`
+invertible in the base field and a separably closed geometric point. Arithmetic cohomology of
+`Spec k` generally has higher Galois cohomology and fails the point axiom. A Lean instance would
+also have to supply coherent twists and the strict indexed products required by `GRing`;
+these are implementation obligations, not additional fields or a formal model supplied here.
+
 The external direct sums carry the ring structure supplied by Mathlib's `DirectSum.GRing`.
 The coefficient maps extend to a central algebra map from `B`, and degreewise pullbacks extend
 to a functor to `AlgCat B`. No exactness assertion is part of this file.
@@ -194,6 +219,14 @@ lemma mapTotalR_incl {A E : SmoothAlg k} (f : A ⟶ E) (i : ℤ × ℤ) (x : D.H
   rw [DirectSum.toModule_lof]
   rfl
 
+/-- Pulling back a summand and then taking its component gives the original degreewise map. -/
+lemma component_mapTotalR_incl {A E : SmoothAlg k} (f : A ⟶ E) (i : ℤ × ℤ) :
+    (DirectSum.component R _ (D.H E) i).comp
+        ((D.mapTotalR f).toLinearMap.comp (D.incl A i)) = D.map f i := by
+  ext x
+  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, D.mapTotalR_incl,
+    DirectSum.component.lof_self]
+
 /-- Total pullback preserves the full coefficient ring. -/
 lemma mapTotalR_coeffMap {A E : SmoothAlg k} (f : A ⟶ E) (b : B) :
     D.mapTotalR f (D.coeffMap A b) = D.coeffMap E b := by
@@ -232,6 +265,14 @@ lemma algebraMap_mem_grading (A : SmoothAlg k) {w : ℤ} {b : B} (hb : b ∈ ℬ
     algebraMap B (D.Total A) b ∈ D.grading A (0, w) := by
   rw [D.algebraMap_coe A ⟨b, hb⟩]
   exact lof_mem_directSumGrading (D.H A) _ _
+
+/-- The `R`-algebra pullback preserves bidegrees with the original direct-sum scalar structure.
+This form can be used to take components when `R` and `B` coincide. -/
+lemma isHomogeneousOfShift_mapTotalR {A E : SmoothAlg k} (f : A ⟶ E) :
+    IsHomogeneousOfShift (D.grading A) (D.grading E) 0 (D.mapTotalR f) := by
+  rintro i _ ⟨x, rfl⟩
+  rw [D.mapTotalR_incl, add_zero]
+  exact lof_mem_directSumGrading (D.H E) _ _
 
 /-- Total pullbacks preserve bidegrees. -/
 lemma isHomogeneousOfShift_mapTotal {A E : SmoothAlg k} (f : A ⟶ E) :

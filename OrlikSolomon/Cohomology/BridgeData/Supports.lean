@@ -15,6 +15,34 @@ public import OrlikSolomon.Cohomology.BridgeData.Basic
 maps of localization, and oriented purity equivalences. Its exactness fields concern the
 degreewise sequence with supports; neither total exactness nor Gysin or residue maps are input.
 
+## Hand check of supports, purity and signs
+
+Continue the Betti interpretation recorded in `BridgeData/Basic`, with `B = R[t,t⁻¹]` and
+`H^{p,w}(X) = H^p(X(ℂ); R) t^w`. This is a hand check of every input field, not a formal
+construction of singular cohomology in Lean:
+
+* `support`, `addCommGroup` and `module` are relative cohomology `H^p(X(ℂ), U(ℂ); R) t^w`.
+  `forget` is the relative-to-absolute map, and `boundary` is the connecting homomorphism,
+  raising cohomological degree by one and preserving `w`.
+* `purity` is the Thom isomorphism for the complex normal line, multiplied by `t`. Its shift
+  is `(2,1)`. The three `exact_*` fields are consecutive positions of the localization long
+  exact sequence, with no injectivity or surjectivity assertion at its ends.
+* `supportMap` is pullback of pairs. `forget_natural` and `boundary_natural` are naturality of
+  relative cohomology. `purity_natural` is naturality of the oriented Thom class under the
+  certified transverse maps: the induced normal-line map is complex linear and invertible.
+* `supportMul` is the relative cup product with an ambient class on the right. `forget_mul`
+  expresses its compatibility with forgetting supports. `purity_mul` has no sign because
+  the Thom class has even cohomological degree two.
+* `boundary_mul` has no sign with the ambient factor on the right: if `b` is its closed
+  cochain representative, the cochain formula is `d(ã ∪ b) = dã ∪ b`.
+
+The Thom isomorphism and these products hold for any commutative `R`, including characteristic
+two and the zero ring. A geometric étale interpretation instead uses oriented divisor purity
+with the same twist shift, with `ℓ` invertible and the geometric point convention described in
+`BridgeData/Basic`. Passing finite-coefficient localization to an integral `ℓ`-adic theory and
+implementing coherent twist products remain obligations of such a model. No nonzero model is
+constructed here, and no such passage is an assumption of this bridge theorem.
+
 Mixed products of a supported class and an ambient class encode the usual boundary projection
 formula and the compatibility of oriented purity with products. These give coefficient linearity
 of the Gysin and residue maps constructed from the data.

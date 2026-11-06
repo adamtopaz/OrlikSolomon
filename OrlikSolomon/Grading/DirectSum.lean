@@ -66,6 +66,19 @@ instance directSumGradingDecomposition : Decomposition (directSumGrading (R := R
     obtain ⟨x, rfl⟩ := (directSumComponentEquiv (R := R) M i).surjective x
     simp [e, coe_congrLinearEquiv]
 
+/-- Taking an internal homogeneous component of an external direct sum selects the original
+summand and reinserts it in that degree. -/
+@[simp]
+theorem coe_decompose_directSumGrading (x : ⨁ i, M i) (i : ι) :
+    (decompose (directSumGrading (R := R) M) x i : ⨁ i, M i) = lof R ι M i (x i) := rfl
+
+/-- Projection and reinsertion recover a homogeneous element of an external direct sum. -/
+theorem lof_component_of_mem_directSumGrading (i : ι) (x : ⨁ i, M i)
+    (hx : x ∈ directSumGrading (R := R) M i) :
+    lof R ι M i (component R ι M i x) = x := by
+  obtain ⟨x, rfl⟩ := hx
+  rw [DirectSum.component.lof_self]
+
 /-- To check homogeneity out of the canonical direct-sum grading, it suffices to check the
 original summand inclusions. This criterion applies to plain functions as well as linear maps. -/
 theorem isHomogeneousOfShift_directSumGrading_iff [Add ι] {N σ : Type*} [SetLike σ N]
@@ -149,39 +162,44 @@ theorem shiftedDirectSumEquiv_lof (a : ι) (f : ∀ i, M i ≃ₗ[R] N (i + a)) 
 
 end ShiftEquivalences
 
-section Exactness
+section ExactComponents
 
 variable {R ι : Type*} [Semiring R] [DecidableEq ι] [AddGroup ι]
   (M N P : ι → Type*) [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
   [∀ i, AddCommGroup (N i)] [∀ i, Module R (N i)]
   [∀ i, AddCommGroup (P i)] [∀ i, Module R (P i)]
 
-/-- A degreewise exact pair of shifted maps remains exact on finite-support direct sums.
-Blueprint: exactness in `lem:standard-bridge`. -/
-theorem exact_shiftedDirectSumMap (a b : ι)
-    (f : ∀ i, M i →ₗ[R] N (i + a)) (g : ∀ j, N j →ₗ[R] P (j + b))
-    (h : ∀ i, Function.Exact (f i) (g (i + a))) :
-    Function.Exact (shiftedDirectSumMap M N a f) (shiftedDirectSumMap N P b g) := by
-  apply ((isHomogeneousOfShift_shiftedDirectSumMap M N a f).exact_iff_forall_mem
-    (isHomogeneousOfShift_shiftedDirectSumMap N P b g)).2
-  intro i j hij y hy
-  subst j
-  obtain ⟨y, rfl⟩ := hy
+/-- An exact pair of homogeneous maps on external direct sums induces an exact pair on the
+original summands. The source and target degrees are related by explicit shift equalities. -/
+theorem exact_directSum_components
+    (f : (⨁ i, M i) →ₗ[R] ⨁ i, N i) (g : (⨁ i, N i) →ₗ[R] ⨁ i, P i)
+    {a b i j l : ι}
+    (hf : IsHomogeneousOfShift (directSumGrading (R := R) M) (directSumGrading (R := R) N) a f)
+    (hg : IsHomogeneousOfShift (directSumGrading (R := R) N) (directSumGrading (R := R) P) b g)
+    (hfg : Function.Exact f g) (hij : i + a = j) (hjl : j + b = l) :
+    Function.Exact ((component R ι N j).comp (f.comp (lof R ι M i)))
+      ((component R ι P l).comp (g.comp (lof R ι N j))) := by
+  intro y
   constructor
-  · intro hgy
-    have hg : g (i + a) y = 0 := DirectSum.of_injective (β := P) _ (by
-      rw [shiftedDirectSumMap_lof] at hgy
-      simpa only [DirectSum.lof_eq_of, map_zero] using hgy)
-    obtain ⟨x, hx⟩ := (h i y).1 hg
-    exact ⟨lof R ι M i x, lof_mem_directSumGrading M i x, by
-      simp only [shiftedDirectSumMap_lof, hx]⟩
-  · rintro ⟨z, ⟨x, rfl⟩, hx⟩
-    have hxy : f i x = y := DirectSum.of_injective (β := N) _ (by
-      rw [shiftedDirectSumMap_lof] at hx
-      simpa only [DirectSum.lof_eq_of] using hx)
-    rw [shiftedDirectSumMap_lof, ← hxy, (h i _).2 ⟨x, rfl⟩, map_zero]
+  · intro hy
+    change component R ι P l (g (lof R ι N j y)) = 0 at hy
+    have htotal : g (lof R ι N j y) = 0 := by
+      have h := lof_component_of_mem_directSumGrading P l (g (lof R ι N j y))
+        (hg.map_mem hjl (lof_mem_directSumGrading _ _ _))
+      rw [hy, map_zero] at h
+      exact h.symm
+    obtain ⟨x, hx, hxy⟩ := hf.exists_mem_preimage_of_exact hfg hij
+      (lof_mem_directSumGrading _ _ _) htotal
+    obtain ⟨x, rfl⟩ := hx
+    refine ⟨x, ?_⟩
+    change component R ι N j (f (lof R ι M i x)) = y
+    rw [hxy, DirectSum.component.lof_self]
+  · rintro ⟨x, rfl⟩
+    change component R ι P l (g (lof R ι N j (component R ι N j (f (lof R ι M i x))))) = 0
+    rw [lof_component_of_mem_directSumGrading N j _
+      (hf.map_mem hij (lof_mem_directSumGrading _ _ _)), hfg.apply_apply_eq_zero, map_zero]
 
-end Exactness
+end ExactComponents
 
 section Algebras
 
