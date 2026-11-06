@@ -121,6 +121,12 @@ standard pair (`A = k`), the pair in `lem:log-mul` (`A = k[y;y⁻¹]`) and the p
   reads `x * y = (p * q).negOnePow • (y * x)`.
 - **Equivalences:** use `AlgEquiv` plus a separate grading statement, not a new category
   of graded algebras.
+- **Relation quotients:** `RelationQuotient ℛ` takes no ring of scalars. It is an
+  `S`-algebra for every `S` over which `T` is an algebra, so one type carries both the
+  `B`-algebra structure and the grading by `R`-submodules. It is the `RingCon.Quotient` of
+  `TwoSidedIdeal.span ℛ`, the same shape as Mathlib's `TensorAlgebra` and `CliffordAlgebra`,
+  and the congruence is not exposed to importers. Descend non-multiplicative maps with
+  `liftLinear` and `mapLinear`.
 
 ## The cohomology structure
 
