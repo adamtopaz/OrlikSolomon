@@ -341,19 +341,7 @@ theorem IsEquation.comp_chart (hH : IsHyperplane H) (hf : IsEquation f K) (hne :
 Blueprint: `lem:restriction-geometry`. -/
 theorem IsEquation.exists_comp_chart_eq_const (hH : H ≠ ⊥) (hf : IsEquation f K)
     (hbot : H ⊓ K = ⊥) : ∃ c : kˣ, f.comp (chart H) = AffineMap.const k H.direction (c : k) := by
-  have hzero : zeroLocus (f.comp (chart H)) = ⊥ := by
-    rw [zeroLocus_comp, hf.zeroLocus_eq, comap_chart_eq_bot_iff hH, hbot]
-  have hlin : (f.comp (chart H)).linear = 0 := by
-    by_contra h
-    exact zeroLocus_ne_bot h hzero
-  obtain ⟨c, hc⟩ := (AffineMap.linear_eq_zero_iff_exists_const _).1 hlin
-  have hc0 : c ≠ 0 := by
-    rintro rfl
-    have hmem : (0 : H.direction) ∈ zeroLocus (f.comp (chart H)) := by
-      rw [mem_zeroLocus, hc, AffineMap.const_apply]
-    rw [hzero] at hmem
-    exact AffineSubspace.notMem_bot k _ _ hmem
-  exact ⟨Units.mk0 c hc0, hc⟩
+  rw [← zeroLocus_eq_bot_iff, zeroLocus_comp, hf.zeroLocus_eq, comap_chart_eq_bot_iff hH, hbot]
 
 /-- A hyperplane `K` restricts to a hyperplane of `X.direction`, for a nonempty affine subspace `X`
 of any codimension, exactly when `X` meets `K` and is not contained in it.

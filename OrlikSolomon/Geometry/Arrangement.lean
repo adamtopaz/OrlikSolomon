@@ -14,7 +14,7 @@ An arrangement in a vector space `V` over a field `k` is a finite set of affine 
 file defines arrangements, their deletion and restriction with respect to a hyperplane, and the
 incidence data used by the Orlik-Solomon algebra and by induction on arrangements. It is all linear
 algebra over `k`, and it has no rings of functions: complements are not subsets of `V`, and they
-are constructed in `OrlikSolomon/Geometry/CoordinateRing.lean`.
+are constructed in `OrlikSolomon/Geometry/Complement.lean`.
 
 ## Main definitions
 
@@ -207,6 +207,15 @@ theorem mem_comap {φ : W →ᵃ[k] V} {L : AffineSubspace k W} :
     L ∈ 𝒜.comap φ ↔ IsHyperplane L ∧ ∃ K ∈ 𝒜, K.comap φ = L := by
   classical
   simp [comap, and_comm]
+
+/-- A hyperplane of `𝒜` whose preimage is not the whole of `W` has empty preimage, or a preimage in
+the pullback of `𝒜`. -/
+theorem comap_eq_bot_or_mem_comap (φ : W →ᵃ[k] V) (hK : K ∈ 𝒜) (h : K.comap φ ≠ ⊤) :
+    K.comap φ = ⊥ ∨ K.comap φ ∈ 𝒜.comap φ := by
+  obtain hb | ht | hyp := (𝒜.isHyperplane hK).comap_eq_bot_or_top_or_isHyperplane φ
+  · exact Or.inl hb
+  · exact absurd ht h
+  · exact Or.inr (mem_comap.2 ⟨hyp, K, hK, rfl⟩)
 
 end Comap
 
