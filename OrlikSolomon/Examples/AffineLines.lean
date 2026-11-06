@@ -12,8 +12,10 @@ public import OrlikSolomon.Presentation.Grading
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.Notation
 
+import OrlikSolomon.Examples.Realization
+
 /-!
-# The affine triangle regression
+# Concurrent lines and the affine triangle
 
 The three lines `x = 0`, `y = 0` and `x + y = 1` have empty triple intersection.
 Their triple product vanishes, while `triangle_boundary_ne` proves that the degree-two boundary
@@ -34,7 +36,7 @@ ordinary noncommutativity over the integers. The same concrete triangle has poly
 These regressions adapt Claude's independent review consumer for PR #45. Their statements
 test the empty-intersection guard and do not use the cohomology structure theorem.
 
-Blueprint: item 6 of "Required mathematical regression examples".
+Blueprint: items 5 and 6 of "Required mathematical regression examples".
 -/
 
 @[expose] public section
@@ -85,7 +87,7 @@ def triangle (k : Type u) [Field k] : Arrangement k (k × k) := by
   classical
   exact ofFinset {line fX 0, line fY 0, line (fX + fY) 1}
 
-private theorem mem_triangle {H : AffineSubspace k (k × k)} :
+private theorem mem_triangle_aux {H : AffineSubspace k (k × k)} :
     H ∈ triangle k ↔ H = line fX 0 ∨ H = line fY 0 ∨ H = line (fX + fY) 1 := by
   classical
   simp only [triangle, mem_ofFinset, Finset.mem_insert, Finset.mem_singleton]
@@ -95,20 +97,34 @@ private theorem mem_triangle {H : AffineSubspace k (k × k)} :
   · exact isHyperplane_line fY_ne 0
   · exact isHyperplane_line fXY_ne 1
 
+/-- The triangle consists exactly of the coordinate axes and the line `x + y = 1`.
+This statement uses their public equations, independently of the internal line constructor. -/
+@[simp]
+theorem mem_triangle {H : AffineSubspace k (k × k)} :
+    H ∈ triangle k ↔
+      H = zeroLocus (LinearMap.fst k k k).toAffineMap ∨
+      H = zeroLocus (LinearMap.snd k k k).toAffineMap ∨
+      H = zeroLocus (((LinearMap.fst k k k + LinearMap.snd k k k).toAffineMap) -
+        AffineMap.const k (k × k) 1) := by
+  have hzero : AffineMap.const k (k × k) (0 : k) = (0 : (k × k) →ᵃ[k] k) := by
+    ext p
+    rfl
+  simpa only [line, fX, fY, hzero, sub_zero] using (mem_triangle_aux (k := k) (H := H))
+
 /-- The line `x = 0` as a label of the triangle. -/
 @[no_expose]
-def t1 : triangle k := ⟨line fX 0, mem_triangle.2 (by simp)⟩
+def t1 : triangle k := ⟨line fX 0, mem_triangle_aux.2 (by simp)⟩
 
 /-- The line `y = 0` as a label of the triangle. -/
 @[no_expose]
-def t2 : triangle k := ⟨line fY 0, mem_triangle.2 (by simp)⟩
+def t2 : triangle k := ⟨line fY 0, mem_triangle_aux.2 (by simp)⟩
 
 /-- The line `x + y = 1` as a label of the triangle. -/
 @[no_expose]
-def t3 : triangle k := ⟨line (fX + fY) 1, mem_triangle.2 (by simp)⟩
+def t3 : triangle k := ⟨line (fX + fY) 1, mem_triangle_aux.2 (by simp)⟩
 
 private theorem t_cases (H : triangle k) : H = t1 ∨ H = t2 ∨ H = t3 := by
-  rcases mem_triangle.1 H.2 with h | h | h
+  rcases mem_triangle_aux.1 H.2 with h | h | h
   · exact Or.inl (Subtype.ext h)
   · exact Or.inr (Or.inl (Subtype.ext h))
   · exact Or.inr (Or.inr (Subtype.ext h))
@@ -143,7 +159,7 @@ theorem poincarePolynomial_triangle :
   apply Examples.poincarePolynomial_three_nonconcurrent (triangle k)
     (H := (t1 : triangle k)) (K := (t2 : triangle k)) (L := (t3 : triangle k))
   · ext H
-    simp only [Arrangement.mem_hyperplanes, mem_triangle, Finset.mem_insert,
+    simp only [Arrangement.mem_hyperplanes, mem_triangle_aux, Finset.mem_insert,
       Finset.mem_singleton, t1, t2, t3]
   · exact fun h ↦ t1_ne_t2 (Subtype.ext h)
   · exact fun h ↦ t1_ne_t3 (Subtype.ext h)
@@ -287,7 +303,8 @@ theorem triangle_not_comm :
   have := congrFun (congrFun h' 3) 0
   simp [mA, mB, Matrix.mul_apply, Fin.sum_univ_four] at this
 
-/-- Over `ℤ/2` the same two generators do commute, which is why the box says "in general". -/
+/-- In characteristic two the same generators commute, while their individual squares remain
+zero. The integer noncommutativity assertion therefore cannot be uniform in the coefficients. -/
 example : generator (ZMod 2) (triangle k) t1 * generator _ _ t2 =
     generator (ZMod 2) (triangle k) t2 * generator _ _ t1 := by
   have h := (isExteriorFamily_generator (ZMod 2) (triangle k)).mul_add_mul_swap t1 t2
@@ -341,24 +358,8 @@ theorem threeConcurrent_boundary (B : Type v) [CommRing B] :
     generator B 𝒜 K * generator B 𝒜 L - generator B 𝒜 H * generator B 𝒜 L +
       generator B 𝒜 H * generator B 𝒜 K = 0 := by
   dsimp only
-  let I : List (PresentationExamples.threeConcurrent k) :=
-    [PresentationExamples.concurrentBase k,
-      Arrangement.inclusion ((PresentationExamples.threeConcurrent k).deletion_le _)
-        (PresentationExamples.concurrentHorizontal k),
-      Arrangement.inclusion ((PresentationExamples.threeConcurrent k).deletion_le _)
-        (PresentationExamples.concurrentDiagonal k)]
-  have hdep : Arrangement.IsDependent I := by
-    constructor
-    · apply (AffineSubspace.nonempty_iff_ne_bot _).1
-      refine ⟨0, ?_⟩
-      simp only [I, inter_cons, inter_nil, inf_top_eq]
-      change (0 : k × k) ∈ PresentationExamples.verticalLine 0 ⊓
-        (PresentationExamples.horizontalZero k ⊓ PresentationExamples.diagonalZero k)
-      simp only [AffineSubspace.mem_inf_iff, PresentationExamples.mem_verticalLine,
-        PresentationExamples.mem_horizontalZero, PresentationExamples.mem_diagonalZero]
-      exact ⟨rfl, rfl, rfl⟩
-    · exact lt_of_le_of_lt (codim_le_finrank _) (by simp [I])
-  simpa only [I, wordBoundary_triple] using
-    wordBoundary_eq_zero_of_isDependent B (PresentationExamples.threeConcurrent k) hdep
+  simpa only [wordBoundary_triple] using
+    wordBoundary_eq_zero_of_isDependent B (PresentationExamples.threeConcurrent k)
+      (RealizationExamples.isDependent_threeConcurrent _ _ _)
 
 end OrlikSolomon.AffineLineExamples

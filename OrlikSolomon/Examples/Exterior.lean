@@ -6,6 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.Examples.CoordinatePolynomials
+public import OrlikSolomon.Examples.Cokernel
 public import OrlikSolomon.Presentation.Basic
 public import Mathlib.Algebra.Field.ZMod
 
@@ -13,8 +14,9 @@ public import Mathlib.Algebra.Field.ZMod
 # Exterior algebras in the regression examples
 
 `coordinateExteriorEquiv` identifies the algebra of the coordinate hyperplanes with the full
-exterior algebra on their labels. `singletonExteriorEquiv` gives the one-hyperplane case.
-Both equivalences send each generator to the corresponding exterior generator, over arbitrary
+exterior algebra on their labels. `singletonExteriorEquiv` gives the one-hyperplane case, and
+`singlePointExteriorEquiv` instantiates it on the existing one-point fixture.
+These equivalences send each generator to the corresponding exterior generator, over arbitrary
 commutative coefficient rings. In particular, the singleton generator squares to zero over
 `ZMod 2` and `ZMod 4`.
 
@@ -142,6 +144,31 @@ theorem singletonExteriorEquiv_generator :
   exteriorEquivOfIndependent_generator B _ H₀
 
 end Singleton
+
+/-- The existing singleton fixture has the full exterior algebra on its one actual label. -/
+def singlePointExteriorEquiv (k : Type u) [Field k] :
+    OSAlgebra B (PresentationExamples.singlePoint k) ≃ₐ[B]
+      ExteriorAlgebra B ((PresentationExamples.singlePoint k) →₀ B) :=
+  singletonExteriorEquiv B (PresentationExamples.singlePointLabel k)
+    (fun _ ↦ Subsingleton.elim _ _)
+
+/-- The concrete singleton equivalence sends its generator to the exterior generator. -/
+@[simp]
+theorem singlePointExteriorEquiv_generator :
+    singlePointExteriorEquiv B k
+        (generator B (PresentationExamples.singlePoint k)
+          (PresentationExamples.singlePointLabel k)) =
+      exteriorGen B (PresentationExamples.singlePointLabel k) :=
+  singletonExteriorEquiv_generator B _ _
+
+/-- The actual singleton generator has square zero over `ℤ/4`, where signed commutativity alone
+would only force twice its square to vanish. -/
+theorem singlePoint_generator_sq_zmod_four :
+    generator (ZMod 4) (PresentationExamples.singlePoint k)
+      (PresentationExamples.singlePointLabel k) ^ 2 = 0 := generator_sq _ _ _
+
+example : generator (ZMod 2) (PresentationExamples.singlePoint k)
+    (PresentationExamples.singlePointLabel k) ^ 2 = 0 := generator_sq _ _ _
 
 -- These coefficients detect the distinction between square-zero and merely signed commutativity.
 example (H : 𝒜) : generator (ZMod 2) 𝒜 H ^ 2 = 0 := generator_sq _ _ _

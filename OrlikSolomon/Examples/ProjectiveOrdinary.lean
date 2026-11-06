@@ -17,8 +17,12 @@ points of the projective line has polynomial `1 + (m - 1) X`, and its first diag
 has a basis indexed by `Fin (m - 1)` over every coefficient ring, including the zero ring.
 
 The example of the three rational points over `F₂` has a complement without rational points.
-Its polynomial is still `1 + 2 X`. Its basis certificate is tested for every supplied theory,
-and for the actual zero theory. This does not construct a nonzero cohomology theory instance.
+Its polynomial is still `1 + 2 X`. Bases with the polynomial index size exist for every supplied
+theory, including the actual zero theory. Over the zero ring, neither a basis statement nor an
+existential word family determines the count: other sizes are possible. The integer polynomial
+defines the Betti numbers, and the empty/deletion recursion in the proof supplies a word family
+with matching counts. `exists_logMonomialBasis_decone_threePoints_zeroTheory` checks this matching
+family in the concrete example. No nonzero theory instance is built.
 The integer example checks the documented scalar conversion for the diagonal theorem.
 
 Blueprint: regression example 8 and the projective form of example 7.
@@ -97,9 +101,7 @@ variable {k : Type u} [Field k] (P : ProjectiveArrangement k (Fin 2 → k)) [Non
 `1 + (m - 1) X`. This is an integral polynomial identity, independent of a cohomology theory. -/
 theorem poincarePolynomial_points :
     P.poincarePolynomial = 1 + Polynomial.C ((P.card : ℤ) - 1) * Polynomial.X := by
-  apply AddMonoidAlgebra.ext
-  apply Finsupp.ext
-  intro q
+  ext q
   rw [Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_C_mul_X]
   by_cases hq0 : q = 0
   · subst q
@@ -121,15 +123,17 @@ theorem poincarePolynomial_points :
 variable {R : Type v} [CommRing R] {B : Type w} [CommRing B] [Algebra R B]
   {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ] (T : OrdinaryTheory.{u, v, w, z} k ℬ)
 
-/-- The first diagonal group of the complement of `m` points has a certified basis of size
-`m - 1`, for every coefficient ring. No rank uniqueness is asserted over the zero ring. -/
+/-- The first diagonal group of the complement of `m` points admits a basis indexed by
+`Fin (m - 1)`. Over the zero ring this holds for every index size. The polynomial defines the count;
+the recursive construction in the proof supplies a matching word family, whose existence alone
+also does not determine the count over the zero ring. -/
 theorem nonempty_basis_points_grading_one :
     Nonempty (Basis (Fin (P.card - 1)) R
       (T.grading (projectiveComplement P) (1, 1))) :=
   T.nonempty_basis_projective_grading_one P
 
 include T in
-/-- The projective diagonal equivalence transports the same certified basis to degree one of
+/-- The projective diagonal equivalence transports the same indexed basis to degree one of
 the projective presentation over `R`. -/
 theorem nonempty_basis_points_projective_degree_one :
     Nonempty (Basis (Fin (P.card - 1)) R (projectiveDegree R P.cone_isCentral 1)) := by
@@ -173,13 +177,26 @@ theorem poincarePolynomial_threePoints : threePoints.poincarePolynomial = 1 + 2 
   rw [poincarePolynomial_points, card_threePoints]
   norm_num
 
-/-- The certified degree-one basis survives specialization to the actual zero theory over
-`F₂`. Over the zero ring the number two is a combinatorial certificate, not a unique rank. -/
+/-- The basis indexed by `Fin 2` exists for the actual zero theory over `F₂`. This conclusion
+also holds for any other index size, so it does not determine the polynomial Betti number. -/
 theorem nonempty_basis_threePoints_zeroTheory :
     Nonempty (Basis (Fin 2) PUnit
       ((zeroTheory.{0, 0, 0, 0} (ZMod 2)).grading (projectiveComplement threePoints) (1, 1))) := by
   simpa [card_threePoints] using
     nonempty_basis_points_grading_one threePoints (zeroTheory.{0, 0, 0, 0} (ZMod 2))
+
+/-- A decone of the three `F₂`-points admits a logarithmic monomial basis with two words of length
+one, matching its polynomial Betti number. The proof uses the empty/deletion recursion. Over the
+zero ring, analogous existential statements hold with other word counts, so this conclusion does
+not define the Betti number. -/
+theorem exists_logMonomialBasis_decone_threePoints_zeroTheory :
+    ∃ b : (zeroTheory.{0, 0, 0, 0} (ZMod 2)).LogMonomialBasis (threePoints.decone formX),
+      b.wordCount 1 = 2 := by
+  have hx : LinearMap.ker formX ∈ threePoints :=
+    ProjectiveArrangement.ker_mem_ofForms (by simp)
+  obtain ⟨b, hb⟩ := (zeroTheory.{0, 0, 0, 0} (ZMod 2)).exists_logMonomialBasis_decone threePoints hx
+  refine ⟨b, (hb 1).trans ?_⟩
+  simp [ProjectiveArrangement.bettiNumber_one, card_threePoints]
 
 /-- The projective diagonal equivalence exists for the actual zero theory on the point-free
 projective complement. -/
@@ -188,7 +205,7 @@ example : projectiveAlgebra PUnit threePoints.cone_isCentral ≃ₐ[PUnit]
       ((zeroTheory.{0, 0, 0, 0} (ZMod 2)).grading (projectiveComplement threePoints)) q :=
   (zeroTheory.{0, 0, 0, 0} (ZMod 2)).projectiveDiagonalEquiv threePoints
 
-/-- With characteristic-two coefficients the same degree-one certificate applies to any
+/-- With characteristic-two coefficients the same indexed basis exists for any
 supplied theory, with no assumption that the complement has rational points. -/
 example {B : Type w} [CommRing B] [Algebra (ZMod 2) B]
     {ℬ : ℤ → Submodule (ZMod 2) B} [GradedAlgebra ℬ]
@@ -198,6 +215,17 @@ example {B : Type w} [CommRing B] [Algebra (ZMod 2) B]
   simpa [card_threePoints] using nonempty_basis_points_grading_one threePoints T
 
 end ThreePoints
+
+section CharacteristicFour
+
+/-- Logarithmic squares vanish with `ℤ/4` coefficients, where the signed commutativity identity
+alone does not force square zero. -/
+example {k : Type u} [CommRing k] {B : Type w} [CommRing B] [Algebra (ZMod 4) B]
+    {ℬ : ℤ → Submodule (ZMod 4) B} [GradedAlgebra ℬ]
+    (T : OrdinaryTheory.{u, 0, w, z} k ℬ) {A : SmoothAlg k} (a : Aˣ) :
+    T.logClass a * T.logClass a = 0 := T.logClass_mul_self a
+
+end CharacteristicFour
 
 section Integers
 

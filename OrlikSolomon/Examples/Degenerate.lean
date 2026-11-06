@@ -13,8 +13,9 @@ public import OrlikSolomon.Examples.Polynomials
 
 The empty complement has precisely the coefficient algebra in every ambient dimension,
 including dimension zero. On the zero theory the same degree-one group of the two-point
-complement admits bases with zero and two vectors. Its certified Betti number is nevertheless
-two: the count comes from the recursive words and polynomial, not uniqueness of basis cardinality.
+complement admits bases with zero and two vectors. The integer polynomial defines its Betti
+number to be two. The empty/deletion recursion in the proof supplies a matching word family;
+over zero coefficients neither a basis nor an existential word family determines this count.
 
 Blueprint: items 1 and 9 of "Required mathematical regression examples".
 -/
@@ -65,19 +66,23 @@ theorem poincarePolynomial_twoPoints :
   rw [heq]
   exact Examples.poincarePolynomial_twoPoints_zmod_two
 
-/-- The same zero module has bases of two different finite cardinalities, while its certified
-Betti number is two. Thus basis cardinality alone cannot define the Betti numbers. -/
+/-- The same zero module has bases of two different finite cardinalities, while the separate
+polynomial Betti number is two. Thus basis cardinality alone cannot define the Betti numbers. -/
 theorem different_basis_sizes_zeroTheory_twoPoints :
     let T := Sanity.zeroTheory.{0, 0, 0, 0} (ZMod 2)
     let M := T.grading (complement Sanity.twoPoints) (1, 1)
-    Nonempty (Basis (Fin 0) PUnit M) ∧ Nonempty (Basis (Fin 2) PUnit M) := by
+    Nonempty (Basis (Fin 0) PUnit M) ∧ Nonempty (Basis (Fin 2) PUnit M) ∧
+      Sanity.twoPoints.bettiNumber 1 = 2 := by
   dsimp
   let : Subsingleton ((Sanity.zeroTheory.{0, 0, 0, 0} (ZMod 2)).C.obj
       (complement Sanity.twoPoints)) := inferInstanceAs (Subsingleton PUnit)
   constructor
   · exact ⟨Basis.empty _⟩
-  · simpa [Sanity.bettiNumber_one_twoPoints] using
-      (Sanity.zeroTheory.{0, 0, 0, 0} (ZMod 2)).nonempty_basis_grading_bettiNumber
+  · constructor
+    · have hb := (Sanity.zeroTheory.{0, 0, 0, 0} (ZMod 2)).nonempty_basis_grading_bettiNumber
         Sanity.twoPoints 1
+      rw [Sanity.bettiNumber_one_twoPoints] at hb
+      simpa using hb
+    · exact Sanity.bettiNumber_one_twoPoints
 
 end OrlikSolomon.DegenerateExamples
