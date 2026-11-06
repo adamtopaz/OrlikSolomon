@@ -39,8 +39,12 @@ For every homomorphism of commutative rings $`R\to B`, there is a canonical equi
 For $`n\geq 0`, its component of bidegree $`(n,w)` is $`\operatorname{OS}_R^n(\mathcal{A})\otimes_R B_{w-n}`; components of negative first degree vanish.
 :::
 
-:::node "lem:small-targets"
+:::node "lem:small-targets" (decl := OrlikSolomon.affineImage) (decl := OrlikSolomon.zero_notMem_affineImage) (decl := OrlikSolomon.finrank_direction_affineImage_lt) (decl := OrlikSolomon.mem_affineImage_iff_mem_direction) (decl := OrlikSolomon.finrank_direction_affineImage) (decl := OrlikSolomon.normalizedSlice) (decl := OrlikSolomon.finrank_direction_normalizedSlice_add_one) (decl := OrlikSolomon.torusSection) (decl := OrlikSolomon.mem_torusSection) (decl := OrlikSolomon.isLocalization_torusSection) (decl := OrlikSolomon.not_affineImage_le_zeroLocus) (decl := OrlikSolomon.not_normalizedSlice_le_zeroLocus) (decl := OrlikSolomon.toAffineImage) (decl := OrlikSolomon.mapUnits_toAffineImage_torusUnit) (decl := OrlikSolomon.toNormalizedSlice) (decl := OrlikSolomon.mapUnits_toNormalizedSlice_torusUnit) (decl := OrlikSolomon.RelationTarget) (decl := OrlikSolomon.RelationTarget.ofInterEqBot) (decl := OrlikSolomon.RelationTarget.ofDependent)
 For equations $`f_1,\ldots,f_s`, the two targets described above exist as arrangement complements, after discarding empty coordinate sections and duplicates, together with the regular maps from $`U_{\mathcal{A}}` to them.
+The image and the slice are `affineImage` and `normalizedSlice`, with their dimensions stated in the declarations below, and `torusSection` is the arrangement whose complement is the intersection with $`\mathbb{G}_m^s`.
+The maps `toAffineImage` and `toNormalizedSlice` are algebra maps on coordinate rings, sending the coordinate $`y_i` to the unit $`f_i` and to the unit $`f_i/f_1`, so they exist when $`U_{\mathcal{A}}` has no $`k`-points.
+The structure `RelationTarget` packages what the two relation lemmas use: a list of units of $`\mathcal{O}(U_{\mathcal{A}})` factoring through the complement of an arrangement on a space of dimension smaller than the length of the list.
+The library numbers the functions in the second case from $`0`, so its slice is $`\{y_0=1\}`.
 :::
 
 :::node "lem:empty-relation"
