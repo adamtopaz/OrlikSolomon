@@ -109,6 +109,16 @@ theorem quotient_exteriorGen (H : 𝒜) : quotient B 𝒜 (exteriorGen B H) = ge
 theorem quotient_surjective : Function.Surjective (quotient B 𝒜) :=
   RelationQuotient.mk_surjective
 
+/-- The kernel of the exterior-algebra quotient map is the two-sided relation submodule. -/
+theorem quotient_eq_zero_iff {x : ExteriorAlgebra B (𝒜 →₀ B)} :
+    quotient B 𝒜 x = 0 ↔ x ∈ relationSubmodule B (osRelations B 𝒜) :=
+  RelationQuotient.mk_eq_zero_iff B
+
+/-- Two exterior-algebra representatives agree exactly when their difference is a relation. -/
+theorem quotient_eq_quotient_iff {x y : ExteriorAlgebra B (𝒜 →₀ B)} :
+    quotient B 𝒜 x = quotient B 𝒜 y ↔ x - y ∈ relationSubmodule B (osRelations B 𝒜) :=
+  RelationQuotient.mk_eq_mk_iff B
+
 /-- Induction on representatives in the exterior algebra. -/
 @[elab_as_elim, induction_eliminator]
 protected theorem induction {motive : OSAlgebra B 𝒜 → Prop}
@@ -136,16 +146,22 @@ theorem generator_mul_self (H : 𝒜) : generator B 𝒜 H * generator B 𝒜 H 
   (isExteriorFamily_generator B 𝒜).mul_self H
 
 /-- Empty-intersection products vanish in the presentation. -/
-theorem word_eq_zero_of_inter_eq_bot {I : List 𝒜} (hI : I.Nodup)
+theorem word_eq_zero_of_inter_eq_bot {I : List 𝒜}
     (h : Arrangement.inter I = ⊥) : word (generator B 𝒜) I = 0 := by
-  rw [← quotient_word]
-  exact RelationQuotient.mk_eq_zero_of_mem ⟨I, hI, Or.inl ⟨h, rfl⟩⟩
+  classical
+  by_cases hI : I.Nodup
+  · rw [← quotient_word]
+    exact RelationQuotient.mk_eq_zero_of_mem ⟨I, hI, Or.inl ⟨h, rfl⟩⟩
+  · exact (isExteriorFamily_generator B 𝒜).word_eq_zero_of_not_nodup hI
 
 /-- The boundary of a nonempty dependent family vanishes in the presentation. -/
-theorem wordBoundary_eq_zero_of_isDependent {I : List 𝒜} (hI : I.Nodup)
+theorem wordBoundary_eq_zero_of_isDependent {I : List 𝒜}
     (h : Arrangement.IsDependent I) : wordBoundary (generator B 𝒜) I = 0 := by
-  rw [← quotient_wordBoundary]
-  exact RelationQuotient.mk_eq_zero_of_mem ⟨I, hI, Or.inr ⟨h, rfl⟩⟩
+  classical
+  by_cases hI : I.Nodup
+  · rw [← quotient_wordBoundary]
+    exact RelationQuotient.mk_eq_zero_of_mem ⟨I, hI, Or.inr ⟨h, rfl⟩⟩
+  · exact (isExteriorFamily_generator B 𝒜).wordBoundary_eq_zero_of_not_nodup hI
 
 /-- Words in the generators span the Orlik–Solomon algebra as a module. -/
 theorem span_range_word :
@@ -173,8 +189,8 @@ variable {B 𝒜}
 /-- The canonical generators satisfy precisely the relations defining the presentation. -/
 theorem isFamily_generator : IsFamily 𝒜 (generator B 𝒜) where
   toIsExteriorFamily := isExteriorFamily_generator B 𝒜
-  word_eq_zero _ := word_eq_zero_of_inter_eq_bot B 𝒜
-  wordBoundary_eq_zero _ := wordBoundary_eq_zero_of_isDependent B 𝒜
+  word_eq_zero _ _ := word_eq_zero_of_inter_eq_bot B 𝒜
+  wordBoundary_eq_zero _ _ := wordBoundary_eq_zero_of_isDependent B 𝒜
 
 /-- A ring homomorphism carries a family satisfying the presentation to another such family. -/
 theorem IsFamily.map {T' : Type*} [Ring T'] {x : 𝒜 → T} (hx : IsFamily 𝒜 x)
@@ -221,6 +237,35 @@ theorem lift_unique (x : 𝒜 → T) (hx : IsFamily 𝒜 x) (f : OSAlgebra B �
 
 end Universal
 
+/-! ### The empty arrangement -/
+
+/-- The unique family on the empty arrangement satisfies its presentation. -/
+theorem isFamily_empty : IsFamily (∅ : Arrangement k V)
+    (fun H ↦ (isEmptyElim H : B)) where
+  toIsExteriorFamily := ⟨fun H ↦ isEmptyElim H, fun H ↦ isEmptyElim H⟩
+  word_eq_zero I _ h := by
+    cases I with
+    | nil => simp at h
+    | cons H _ => exact isEmptyElim H
+  wordBoundary_eq_zero I _ h := by
+    cases I with
+    | nil => exact False.elim (Arrangement.isDependent_nil _ h)
+    | cons H _ => exact isEmptyElim H
+
+/-- The affine presentation of the empty arrangement is the coefficient ring. In particular,
+this calculation applies in dimension zero and with the zero coefficient ring.
+
+Blueprint: the empty-arrangement case of `lem:os-basic`. -/
+def emptyEquiv : OSAlgebra B (∅ : Arrangement k V) ≃ₐ[B] B :=
+  AlgEquiv.ofAlgHom (lift _ (isFamily_empty B)) (Algebra.ofId B _)
+    (Subsingleton.elim _ _)
+    (algHom_ext fun H ↦ isEmptyElim H)
+
+@[simp]
+theorem emptyEquiv_algebraMap (b : B) :
+    emptyEquiv B (k := k) (V := V) (algebraMap B (OSAlgebra B ∅) b) = b :=
+  (emptyEquiv B).commutes b
+
 /-! ### Linear descent and spanning -/
 
 section Linear
@@ -261,14 +306,12 @@ the old relations. -/
 theorem isFamily_inclusion (h : 𝒜 ≤ ℬ) :
     IsFamily 𝒜 (fun H ↦ generator B ℬ (Arrangement.inclusion h H)) where
   toIsExteriorFamily := (isExteriorFamily_generator B ℬ).comp _
-  word_eq_zero I hI he := by
+  word_eq_zero I _ he := by
     rw [← word_map]
-    exact word_eq_zero_of_inter_eq_bot B ℬ
-      (hI.map (Arrangement.inclusion_injective h)) (by simpa using he)
-  wordBoundary_eq_zero I hI hd := by
+    exact word_eq_zero_of_inter_eq_bot B ℬ (by simpa using he)
+  wordBoundary_eq_zero I _ hd := by
     rw [← wordBoundary_map]
     exact wordBoundary_eq_zero_of_isDependent B ℬ
-      (hI.map (Arrangement.inclusion_injective h))
       ((Arrangement.isDependent_map_inclusion h I).2 hd)
 
 /-- An inclusion of arrangements induces an algebra map of their affine presentations.
