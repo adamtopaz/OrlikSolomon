@@ -10,6 +10,7 @@ public import OrlikSolomon.Cohomology.BridgeData.Basic
 public import OrlikSolomon.Cohomology.BridgeData.Supports
 public import OrlikSolomon.Combinatorics.AlternatingSum
 public import OrlikSolomon.Combinatorics.Betti
+public import OrlikSolomon.Examples.Bridge
 public import OrlikSolomon.Examples.CoordinatePolynomials
 public import OrlikSolomon.Examples.Polynomials
 public import OrlikSolomon.Examples.Sanity
