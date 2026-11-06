@@ -16,6 +16,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | ------------------------------ | ---------------- |
 | `Grading/Basic`                | `def:grading`, `lem:extraction` |
 | `Grading/DirectSum`            | external direct sums in `lem:standard-bridge` |
+| `Grading/LinearImage`          | image decompositions for homogeneous module quotients |
 | `Grading/TensorProduct`        | product gradings, transport and the weighted tensor grading of `lem:os-basic` |
 | `Algebra/RelationQuotient`     | `def:twosided`, `lem:quotient-api` |
 | `Algebra/ExteriorWords`        | `lem:exterior-words`, `lem:boundary-expansion` |
@@ -45,7 +46,11 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/Generators`      | degree-one generator independence used in `cor:projective-betti` |
 | `Presentation/Grading`         | the weighted bigrading and component formula in `lem:os-basic` |
 | `Presentation/Realization`     | `lem:empty-relation`, `lem:dependent-relation`, `def:realization`, `lem:realization-basic` |
-| `Presentation/Cokernel`        | `lem:representatives`, `def:lift-map`, `lem:lift-surj` |
+| `Presentation/RepresentativeRelations` | the representative identities of `lem:representatives` |
+| `Presentation/CokernelData/Basic` | the module quotient and full-context linear descent in `def:lift-map` |
+| `Presentation/CokernelData/Words` | same-trace replacement and empty-trace vanishing in old word contexts |
+| `Presentation/Cokernel`        | the choice-independent map of `def:lift-map` and `lem:lift-surj` |
+| `Presentation/CokernelGrading` | the quotient decomposition and shift `(1,1)` in `def:lift-map` |
 | `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine`, `cor:ordinary` |
 | `Presentation/Projective`      | `lem:central-boundary`, `lem:projective-algebra`, `thm:projective` |
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
@@ -53,6 +58,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Combinatorics/Multiplicities` | the rest of `thm:betti`, `cor:projective-betti` |
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
+| `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
 | `Examples/Polynomials`         | polynomial regression examples |
 | `Examples/Sanity`              | the blueprint's regression examples |
 | `Examples/Presentation`        | two points of the affine line, the affine boundary guard, characteristic two and degenerate coefficients |
@@ -240,6 +246,16 @@ three rings. State results for every equation of `H`.
   `OSAlgebra.bigrading 𝒜 ℬ` has `R`-submodule pieces. It transports the weighted tensor
   grading along `OSAlgebra.baseChangeEquiv R B 𝒜`; `bigradingComponentEquiv` gives exterior
   degree `n` over `R` tensored with coefficient weight `w - n`. No flatness is assumed.
+- **Deletion cokernel:** `OSAlgebra.DeletionCokernel B 𝒜 H` is the quotient of the
+  `B`-module `OSAlgebra B 𝒜` by `deletionRange B 𝒜 H`, with quotient map `cokernelMk`.
+  It carries module structures over coefficient scalar rings, but no quotient-algebra
+  structure. `restrictionToCokernelOfRepresentatives` uses `liftLinear` after proving
+  vanishing on every full relation context; `restrictionToCokernel` is its canonical,
+  choice-independent version. Surjectivity uses word spanning, without a basis theorem.
+  The image pieces `cokernelGrading` form a `DirectSum.Decomposition`, and the restriction
+  map has shift `(1,1)`. The files under `CokernelData/` separate quotient and word
+  plumbing from the public construction. The range and quotient are reducible abbreviations,
+  so the linear lift composes directly with the generic `cokernelComparison` API.
 
 ## The cohomology structure
 

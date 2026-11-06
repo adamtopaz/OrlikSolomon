@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 import OrlikSolomonBook.Node
 import OrlikSolomon
@@ -31,22 +31,26 @@ The map $`s:A''\to Q` sends a word $`e_{L_1}\cdots e_{L_t}` to the class of $`e_
 This cannot be an algebra map, since its target is not an algebra and it raises degree.
 So it has to be built on the exterior algebra and then descended through the relations of $`A''` as a linear map.
 Showing that it kills a whole two-sided relation module requires expanding an arbitrary context $`urv`, and showing that each resulting term is zero or lies in the image of $`a`.
+The construction below proves this for every left and right context before applying the linear quotient lift.
+Changing an old representative changes its value only by an old element, even inside an old word.
+For surjectivity, words with no $`e_H` are old, repeated words vanish, and any remaining word moves $`e_H` to the front with its exterior sign.
+An empty old trace then kills the word; otherwise its factors can be replaced by representatives of the restricted hyperplanes.
 
 Once $`s` is known to be surjective, injectivity comes from an elementary diagram chase: the composite of $`s` with the map induced by the residue is $`\Phi_{\mathcal{A}''}`, which is bijective by the induction hypothesis.
 No comparison of ranks is used, which is essential because coefficients need not be a field.
 
-:::node "lem:representatives"
+:::node "lem:representatives" (decl := OrlikSolomon.OSAlgebra.generator_mul_eq_zero_of_disjoint) (decl := OrlikSolomon.OSAlgebra.generator_boundary_triple_of_same_trace) (decl := OrlikSolomon.OSAlgebra.generator_mul_generator_mul_generator_of_same_trace) (decl := OrlikSolomon.OSAlgebra.generator_mul_sub_generator_mul_of_same_trace) (decl := OrlikSolomon.OSAlgebra.generator_mul_sub_generator_mul_mem_deletionRange) (decl := OrlikSolomon.OSAlgebra.mul_mem_deletionRange) (decl := OrlikSolomon.OSAlgebra.word_mem_deletionRange) (decl := OrlikSolomon.OSAlgebra.generator_mul_wordBoundary_representatives)
 In $`A`, the following hold.
 If $`H\cap K=\varnothing` then $`e_He_K=0`.
 If $`K\ne K'` and $`H\cap K=H\cap K'` is a hyperplane in $`H`, then $`e_Ke_{K'}-e_He_{K'}+e_He_K=0` and $`e_He_Ke_{K'}=0`, so $`e_He_K-e_He_{K'}` lies in the image of $`a`, and it stays there after multiplying on either side by old words.
 If $`I` is a list of representatives of a nonempty dependent family in $`H`, then $`e_H\partial e_I=e_I`.
 :::
 
-:::node "def:lift-map"
+:::node "def:lift-map" (decl := OrlikSolomon.OSAlgebra.DeletionCokernel) (decl := OrlikSolomon.OSAlgebra.preRestrictionToCokernel_context) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernel) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernel_word) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernelOfRepresentatives_word) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernelOfRepresentatives_eq_restrictionToCokernel) (decl := OrlikSolomon.OSAlgebra.cokernelGradingDecomposition) (decl := OrlikSolomon.OSAlgebra.restrictionToCokernel_isHomogeneous)
 Choosing an old representative $`K_L` for each hyperplane $`L` of the restriction, the formula above defines a homogeneous $`B`-linear map $`s:A''\to Q` of shift $`(1,1)`, and this map does not depend on the representatives.
 :::
 
-:::node "lem:lift-surj"
+:::node "lem:lift-surj" (decl := OrlikSolomon.OSAlgebra.restrictionToCokernel_surjective)
 The map $`s:A''\to Q` is surjective.
 The proof uses no basis theorem for $`A''`.
 :::
