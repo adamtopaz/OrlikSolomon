@@ -5,6 +5,7 @@ public import OrlikSolomon.Algebra.Exact
 public import OrlikSolomon.Algebra.ExteriorWords
 public import OrlikSolomon.Algebra.RelationQuotient
 public import OrlikSolomon.Cohomology.Axioms
+public import OrlikSolomon.Cohomology.Deletion
 public import OrlikSolomon.Cohomology.DeletionPair
 public import OrlikSolomon.Cohomology.Logarithms
 public import OrlikSolomon.Combinatorics.AlternatingSum
