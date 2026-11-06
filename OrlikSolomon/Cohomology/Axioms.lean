@@ -26,6 +26,8 @@ are outputs of the proof.
   coefficients in the `R`-algebra `B` with weight grading `ℬ`.
 * `OrdinaryTheory.stdResidue`, `OrdinaryTheory.stdGysin`: the residue and Gysin maps of the standard
   pair `(A[t], A, A[t;t⁻¹], t)`, typed by `laurent A`, `A` and `polynomial A`.
+* `OrdinaryTheory.mapOverR`, `OrdinaryTheory.gysinOverR`, `OrdinaryTheory.residueOverR`: pullbacks,
+  Gysin maps and residues as `R`-linear maps, which is the form to use for components at `R = B`.
 * `OrdinaryTheory.gradeZeroEquiv`, `OrdinaryTheory.pointEquiv`, `OrdinaryTheory.polynomialEquiv`:
   the identifications `R ≃ ℬ 0`, `B ≃ C(k)` and `C(A) ≃ C(A[t])`.
 
@@ -87,8 +89,22 @@ The class `τ` of `lem:gm` is not a field: it is constructed from the fields bel
 ## Implementation notes
 
 `algebra`, `isScalarTower` and `gradedAlgebra` are instances, so `T.C.obj A` is an `R`-algebra with
-`R`-submodules `T.grading A i`. In the degenerate case `R = B` the two `B`-algebra structures on
-`T.C.obj A` agree by `isScalarTower`, but not definitionally.
+`R`-submodules `T.grading A i`, and `isScalarTower` says that its `R`-action is the restriction of
+its `B`-action along `R → B`.
+
+**The case `R = B`.** With the canonical `Algebra.id`, the object `T.C.obj A` has two `B`-algebra
+structures, one from `AlgCat` and one from `T.algebra`. They agree by `isScalarTower`, but not
+definitionally. So at `R = B`, a term that mixes a `B`-linear map with the pieces `T.grading A i`,
+such as `(T.gysin P).restrictScalars B` or `(T.isHomogeneousOfShift_gysin P).component h`, fails
+with an instance mismatch. There are two ways to avoid this:
+
+* prove the statement while `R` and `B` are separate variables, as every statement here is, and
+  specialize afterwards;
+* use `T.mapOverR`, `T.gysinOverR` and `T.residueOverR`, which are defined with `R` and `B` separate
+  and are `R`-linear for the structure `T.algebra`, as in
+  `(T.isHomogeneousOfShift_gysinOverR P).component h`.
+
+`Examples/Sanity` has a regression for the second.
 -/
 
 @[expose] public section
@@ -449,6 +465,25 @@ lemma exists_mem_grading_residue_eq {i j : ℤ × ℤ} (hij : i + (-1, -1) = j) 
     ∃ y ∈ T.grading P.compl i, T.residue P y = x :=
   (T.isHomogeneousOfShift_residue P).exists_mem_preimage_of_exact (T.exact_residue_gysin P) hij hx h
 
+/-- The residue lowers both degrees by one. -/
+lemma residue_mem_grading {p w : ℤ} {x : T.C.obj P.compl} (hx : x ∈ T.grading P.compl (p, w)) :
+    T.residue P x ∈ T.grading P.closed (p - 1, w - 1) :=
+  (T.isHomogeneousOfShift_residue P).map_mem (by simp [sub_eq_add_neg]) hx
+
+/-- The Gysin map raises the cohomological degree by two and the weight by one. -/
+lemma gysin_mem_grading {p w : ℤ} {x : T.C.obj P.closed} (hx : x ∈ T.grading P.closed (p, w)) :
+    T.gysin P x ∈ T.grading P.ambient (p + 2, w + 1) :=
+  T.isHomogeneousOfShift_gysin P hx
+
+/-- A piece of the open part vanishes when the same piece of the ambient space vanishes and so does
+the piece of the divisor one degree lower. This is the exact sequence in the form used for the
+dimension bound in `thm:generation`. -/
+lemma eq_zero_of_mem_grading_compl {p w : ℤ} (h₁ : ∀ x ∈ T.grading P.ambient (p, w), x = 0)
+    (h₂ : ∀ x ∈ T.grading P.closed (p - 1, w - 1), x = 0) {y : T.C.obj P.compl}
+    (hy : y ∈ T.grading P.compl (p, w)) : y = 0 :=
+  (T.isHomogeneousOfShift_map P.j).eq_zero_of_exact (T.isHomogeneousOfShift_residue P)
+    (T.exact_map_residue P) (add_zero _) (by simp [sub_eq_add_neg]) h₁ h₂ hy
+
 /-- A surjective residue forces the Gysin map to vanish. This and
 `injective_map_j_of_gysin_eq_zero` are the steps of `lem:ses` that follow from exactness alone. -/
 lemma gysin_eq_zero_of_surjective_residue (h : Function.Surjective (T.residue P)) :
@@ -544,6 +579,11 @@ lemma exact_map_stdResidue (A : SmoothAlg k) :
 lemma exact_stdResidue_stdGysin (A : SmoothAlg k) :
     Function.Exact (T.stdResidue A) (T.stdGysin A) :=
   T.exact_residue_gysin (standardPair A)
+
+/-- The residue of a standard pair lowers both degrees by one. -/
+lemma stdResidue_mem_grading {p w : ℤ} {x : T.C.obj (laurent A)}
+    (hx : x ∈ T.grading (laurent A) (p, w)) : T.stdResidue A x ∈ T.grading A (p - 1, w - 1) :=
+  T.residue_mem_grading (standardPair A) hx
 
 /-- Classes pulled back from `X × 𝔸¹` have zero residue. -/
 @[simp] lemma stdResidue_map_polynomialToLaurent (x : T.C.obj (polynomial A)) :
@@ -643,6 +683,50 @@ lemma residue_map_gmHom_eqnUnit (P : DivisorPair k) (x : T.C.obj (gm k)) :
   rwa [fromStandard_compl, fromStandard_closed] at h
 
 end Standard
+
+/-! ### `R`-linear forms
+
+Pullbacks, Gysin maps and residues are `B`-linear, hence `R`-linear by `isScalarTower`. These
+wrappers record this while `R` and `B` are still separate variables. To take components at `R = B`,
+use them rather than the `B`-linear maps: see the implementation notes in the module docstring. -/
+
+section OverR
+
+/-- The pullback along `f`, as an `R`-linear map. -/
+def mapOverR (f : A ⟶ D) : T.C.obj A →ₗ[R] T.C.obj D :=
+  (T.C.map f).hom.toLinearMap.restrictScalars R
+
+/-- The Gysin map of a pair, as an `R`-linear map. -/
+def gysinOverR (P : DivisorPair k) : T.C.obj P.closed →ₗ[R] T.C.obj P.ambient :=
+  (T.gysin P).restrictScalars R
+
+/-- The residue map of a pair, as an `R`-linear map. -/
+def residueOverR (P : DivisorPair k) : T.C.obj P.compl →ₗ[R] T.C.obj P.closed :=
+  (T.residue P).restrictScalars R
+
+@[simp] lemma mapOverR_apply (f : A ⟶ D) (x : T.C.obj A) : T.mapOverR f x = T.C.map f x := rfl
+
+@[simp] lemma gysinOverR_apply (P : DivisorPair k) (x : T.C.obj P.closed) :
+    T.gysinOverR P x = T.gysin P x :=
+  rfl
+
+@[simp] lemma residueOverR_apply (P : DivisorPair k) (x : T.C.obj P.compl) :
+    T.residueOverR P x = T.residue P x :=
+  rfl
+
+lemma isHomogeneousOfShift_mapOverR (f : A ⟶ D) :
+    IsHomogeneousOfShift (T.grading A) (T.grading D) 0 (T.mapOverR f) :=
+  T.isHomogeneousOfShift_map f
+
+lemma isHomogeneousOfShift_gysinOverR (P : DivisorPair k) :
+    IsHomogeneousOfShift (T.grading P.closed) (T.grading P.ambient) (2, 1) (T.gysinOverR P) :=
+  T.isHomogeneousOfShift_gysin P
+
+lemma isHomogeneousOfShift_residueOverR (P : DivisorPair k) :
+    IsHomogeneousOfShift (T.grading P.compl) (T.grading P.closed) (-1, -1) (T.residueOverR P) :=
+  T.isHomogeneousOfShift_residue P
+
+end OverR
 
 end OrdinaryTheory
 
