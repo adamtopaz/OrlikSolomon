@@ -21,5 +21,5 @@ description: Final checks and steps for opening a pull request on OrlikSolomon. 
    - what was added, with blueprint labels and Lean names;
    - any departure from the blueprint or from `docs/ARCHITECTURE.md`, and why;
    - the checks you actually ran and their results;
-   - the attribution lines described in `AGENTS.md` at the very end.
+   - any attribution lines `AGENTS.md` requires, at the very end.
 8. Check that CI started with `gh pr checks <n>`. Do not merge.

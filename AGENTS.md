@@ -52,7 +52,7 @@ Read these before working:
 - **Attribution:** if your harness specifies attribution lines, end every commit message
   and PR description with exactly those lines. Otherwise, Claude agents end commit messages
   with `Co-Authored-By: Claude <noreply@anthropic.com>`, and Codex agents with
-  `Co-Authored-By: Codex <noreply@openai.com>`.
+  `Co-Authored-By: Codex <noreply@openai.com>`. No PR footer is required in that case.
 - Project skills are in `.claude/skills/`. If you cannot invoke one by name, read its
   `SKILL.md` and follow it.
 
