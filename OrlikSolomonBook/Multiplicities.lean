@@ -33,7 +33,7 @@ For the empty arrangement, $`\chi=T^n` and $`P=1`.
 In general $`\chi_{\mathcal{A}}=\chi_{\mathcal{A}'}-\chi_{\mathcal{A}''}` and $`P_{\mathcal{A}}=P_{\mathcal{A}'}+tP_{\mathcal{A}''}`, so all coefficients of $`P_{\mathcal{A}}` are nonnegative.
 :::
 
-:::node "thm:betti"
+:::node "thm:betti" (decl := OrlikSolomon.OrdinaryTheory.exists_logMonomialBasis) (decl := OrlikSolomon.OrdinaryTheory.LogMonomialBasis.wordCount) (remaining := "the direct sum decomposition of each piece, and the basis of the ordinary diagonal, after the structure theorem (issue 21)")
 The recursive basis has exactly $`b_q(\mathcal{A})` words of length $`q`.
 Thus each $`H^{p,w}(U_{\mathcal{A}})` is a direct sum of $`b_p(\mathcal{A})` copies of $`B_{w-p}`, and the ordinary diagonal has an $`R`-basis of that cardinality.
 :::

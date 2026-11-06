@@ -28,7 +28,7 @@ Working only with the diagonal $`\bigoplus_q H^{q,q}` from the start would lose 
 
 No Künneth theorem, Poincaré duality, weights, resolution of singularities, or dimension bound for general smooth affine schemes is needed.
 
-:::node "def:cohomology" (decl := OrlikSolomon.OrdinaryTheory) (decl := OrlikSolomon.OrdinaryTheory.gradeZeroEquiv) (decl := OrlikSolomon.OrdinaryTheory.subsingleton_obj_of_subsingleton) (decl := OrlikSolomon.OrdinaryTheory.pointEquiv) (decl := OrlikSolomon.OrdinaryTheory.algebraMap_mem_grading_point_iff) (decl := OrlikSolomon.OrdinaryTheory.exists_algebraMap_eq_of_mem_grading_point) (decl := OrlikSolomon.OrdinaryTheory.polynomialEquiv) (decl := OrlikSolomon.OrdinaryTheory.map_compl_map_j) (remaining := "the sentence of C3 that iterating affine-line invariance gives the same conclusion for affine spaces, which is not yet stated at the level of cohomology (issue 13, through complement_empty_induction)")
+:::node "def:cohomology" (decl := OrlikSolomon.OrdinaryTheory) (decl := OrlikSolomon.OrdinaryTheory.gradeZeroEquiv) (decl := OrlikSolomon.OrdinaryTheory.subsingleton_obj_of_subsingleton) (decl := OrlikSolomon.OrdinaryTheory.pointEquiv) (decl := OrlikSolomon.OrdinaryTheory.algebraMap_mem_grading_point_iff) (decl := OrlikSolomon.OrdinaryTheory.exists_algebraMap_eq_of_mem_grading_point) (decl := OrlikSolomon.OrdinaryTheory.polynomialEquiv) (decl := OrlikSolomon.OrdinaryTheory.map_compl_map_j) (decl := OrlikSolomon.OrdinaryTheory.affineSpaceEquiv) (decl := OrlikSolomon.OrdinaryTheory.bijective_map_fromPoint_affineSpace) (decl := OrlikSolomon.OrdinaryTheory.eq_zero_of_mem_grading_affineSpace) (decl := OrlikSolomon.OrdinaryTheory.algebraMap_mem_grading_affineSpace_iff)
 The structure consists of the following data and axioms.
  * *C1.* A weight-graded commutative $`R`-algebra $`B=\bigoplus_w B_w`, with $`R` identified with $`B_0`, and for each $`X` an internally bigraded ring $`C(X)` that is a $`B`-algebra, with central $`B`-action and $`B_w` landing in bidegree $`(0,w)`.
  * *C2.* Functorial pullbacks, which are unital $`B`-algebra maps preserving bidegree, with homogeneous classes supercommuting according to cohomological degree.
@@ -40,7 +40,13 @@ The design for the formalization is that the total cohomology is a functor on sm
 No axiom about the empty object is needed, because the pair $`(A,1)` already forces the zero ring to have zero cohomology.
 :::
 
-:::node "lem:standard-bridge"
+:::node "lem:standard-bridge" (decl := OrlikSolomon.DegreewiseTheory) (decl := OrlikSolomon.SupportsAndPurity) (decl := OrlikSolomon.ofSupportsAndPurity) (decl := OrlikSolomon.ofSupportsAndPurity_exact_gysin_map) (decl := OrlikSolomon.ofSupportsAndPurity_exact_map_residue) (decl := OrlikSolomon.ofSupportsAndPurity_exact_residue_gysin)
 A cohomology presented in the familiar degreewise way, with products, twists, the point dimension axiom, affine-line invariance, localization with supports, oriented divisor purity, transverse naturality and the boundary projection formula, gives an instance of the structure.
 Its degreewise long exact sequence is recovered from the three total exactness statements by {bp "lem:extraction"}[homogeneous extraction].
+
+The constructor takes degreewise groups and pullbacks, separate groups with supports, the three exactness assertions of the degreewise localization sequence, and oriented purity equivalences.
+It constructs the total coefficient algebra, Gysin and residue maps and proves their exactness by taking finite-support direct sums over every bidegree.
+Its input assumes neither an ordinary theory nor total exactness.
+The homogeneous boundary and purity product identities also give linearity over all of $`B`, including coefficients of nonzero weight.
+This supplies an adapter for a standard theory; it does not construct singular, de Rham or étale cohomology in Lean.
 :::
