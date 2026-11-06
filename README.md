@@ -28,6 +28,9 @@ lake build
 On NixOS, run these inside `nix develop`, which provides the `cc` that Verso's native
 dependency needs.
 
+`scripts/check.sh` runs what CI runs: the build with warnings as errors, then an audit of
+the root imports and of the axioms that the library depends on.
+
 ## License
 
 Apache 2.0. See [`LICENSE`](LICENSE).
