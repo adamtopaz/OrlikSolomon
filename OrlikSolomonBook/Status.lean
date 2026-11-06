@@ -16,6 +16,9 @@ file := "status"
 %%%
 
 This table is generated when the book is built, from the same boxes that appear in the chapters, and it lists every node of the blueprint.
-A node is listed as formalized only if its box names Lean declarations that the build has checked.
+A node is listed as formalized only if its box names Lean declarations.
+For each of those, the build checks only that it exists, and that it depends on no `sorry` and on no axiom other than `propext`, `Classical.choice` and `Quot.sound`.
+That the declarations cover the node's statement, and that the prose around them is accurate, are checked by human or agent review, not by the build.
+So a row marked formalized records a reviewed judgement that rests on checked declarations, not a machine-checked claim about the node's wording.
 
 {statusOverview}

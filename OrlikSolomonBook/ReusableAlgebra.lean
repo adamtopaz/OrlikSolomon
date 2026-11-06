@@ -22,13 +22,14 @@ The rings involved are graded commutative but not commutative, so ordinary commu
 The sign in graded commutativity depends only on the cohomological degree, and $`2` is never assumed to be invertible, since the theorem must hold with coefficients in $`\mathbb{Z}/2`.
 Finally, the second induction needs to map out of an Orlik–Solomon algebra _linearly_, into a module that is not a ring, so a quotient with only an algebra universal property would not be enough.
 
-:::node "def:grading"
+:::node "def:grading" (decl := GradedAlgebra) (decl := OrlikSolomon.IsHomogeneousOfShift)
 An internal bigrading of an $`R`-algebra $`T` is a family of $`R`-submodules $`T_{p,w}`, for $`(p,w)\in\mathbb{Z}^2`, whose direct sum is $`T` through the inclusions, with $`1\in T_{0,0}` and $`T_{p,w}T_{q,v}\subseteq T_{p+q,w+v}`.
 The pieces are $`R`-submodules and not $`B`-submodules, because multiplying by $`B_v` changes the weight.
 A homogeneous map of shift $`(a,b)` sends $`T_{p,w}` into $`T'_{p+a,w+b}`.
+The formalization adds no new class for this: a bigrading is Mathlib's `GradedAlgebra` with degrees in $`\mathbb{Z}^2`, so the first statement below is for a general index type.
 :::
 
-:::node "lem:extraction"
+:::node "lem:extraction" (decl := OrlikSolomon.IsHomogeneousOfShift.exists_mem_preimage) (decl := OrlikSolomon.IsHomogeneousOfShift.ofBijective_symm) (decl := OrlikSolomon.IsHomogeneousOfShift.exact_iff_forall_mem) (decl := OrlikSolomon.IsHomogeneousOfShift.exact_iff_forall_component)
 A homogeneous element in the range of a homogeneous map has a homogeneous preimage of the corresponding degree, a bijective homogeneous map has a homogeneous inverse, and exactness of composable homogeneous maps can be tested in each shifted component.
 This is what lets the proof move between total cohomology and the individual groups $`H^{p,w}`.
 :::

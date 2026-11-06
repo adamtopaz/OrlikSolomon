@@ -15,7 +15,9 @@ This module defines what makes the book more than prose:
   Lean declarations that formalize it. The build **fails** if a name does not resolve, or if a
   declaration depends on `sorryAx` or on any axiom other than `propext`, `Classical.choice` and
   `Quot.sound`. A node that names no declaration renders as planned, and there is no other way to
-  obtain the status "formalized".
+  obtain the status "formalized". Those are the only checks: the directive cannot tell whether the
+  declarations cover the node's statement, and it accepts any proved declaration. That coverage,
+  and all prose, are the responsibility of review, and the book says so to its readers.
 * The `bp` role links to a node by its label, and shows its status.
 * The `statusOverview` and `statusSummary` commands render the status of all nodes.
 * `checkCompleteness` compares the labels covered by the book with those of the blueprint.
@@ -49,7 +51,8 @@ inductive Status where
   | deferred
   /-- Some declarations are checked, but part of the node is still missing. -/
   | partly
-  /-- Every named declaration resolved and depends only on the standard axioms. -/
+  /-- Every named declaration resolved and depends only on the standard axioms, and the directive
+  does not say that part of the node is missing. Review, not the build, judges that they cover it. -/
   | formalized
 deriving Repr, BEq, ToJson, FromJson
 
@@ -170,7 +173,7 @@ def statusBadge (data : NodeData) : Html :=
     | .planned => "Planned: not yet formalized"
     | .deferred => "Deferred: out of scope for now"
     | .partly => "Partly formalized"
-    | .formalized => "Formalized: checked at build time"
+    | .formalized => "Formalized: declarations checked, coverage reviewed"
   html%{<span class={s!"bp-badge bp-{data.status.word}"}>{txt text}</span>}
 
 /-- The title of a node, as "Lemma (Title)". -/
@@ -299,6 +302,25 @@ def checkDecl (x : Ident) : DocElabM (Name × DeclData) := withRef x do
   return (name, { name, module, lines })
 
 /--
+Runs `act`, dropping Verso's warnings that a declaration has no docstring. Verso has no option for
+this: `verso.docstring.allowMissing` only chooses between a warning and an error. Whether the
+library documents something is for the library's own checks, and Mathlib declarations often do not.
+Every other message is kept.
+-/
+private def withoutMissingDocWarnings {α : Type} (act : DocElabM α) : DocElabM α := do
+  let saved ← Core.getMessageLog
+  Core.setMessageLog {}
+  try
+    act
+  finally
+    let mut log := saved
+    for msg in (← Core.getMessageLog).toList do
+      let text ← msg.data.toString
+      unless msg.severity == .warning && (text.splitOn "is not documented.").length > 1 do
+        log := log.add msg
+    Core.setMessageLog log
+
+/--
 The block that renders the statement of a declaration. Its docstring is included, unless it uses
 Markdown that Verso cannot render. A docstring is written for the library and its readers, so it
 must never be able to break the book.
@@ -306,7 +328,7 @@ must never be able to break the book.
 def statementBlock (x : Ident) (name : Name) : DocElabM Term :=
   -- Verso's heuristic elaboration of code in docstrings would log noise for things like blueprint
   -- labels, and the book's own prose is the place for elaborated Lean.
-  withOptions (verso.docstring.elabMarkdown.set · false) do
+  withoutMissingDocWarnings <| withOptions (verso.docstring.elabMarkdown.set · false) do
     try
       docstring ⟨(x, name), true, false, true, none⟩
     catch e =>

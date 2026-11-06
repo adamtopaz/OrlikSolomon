@@ -180,6 +180,12 @@ itself has no dependency on Verso and no project-specific attributes:
 - Lean snippets in the text are elaborated against the library.
 - A completeness check compares blueprint labels with the labels the book covers.
 
+**This is the whole of what the build checks about a node.** It does not check that the named
+declarations cover the node's statement, and it would accept any proved declaration on any box. It
+does not check prose, inside or outside the boxes. Both are the responsibility of review: a reviewer
+of a change that names declarations must read them against the statement. The book tells its
+readers this on its first page and its status page.
+
 A node is presented like this, with its label as the first argument:
 
 ```
@@ -201,8 +207,9 @@ Prose about the lemma.
 Nodes are the theorem-like environments of `blueprint/*.tex` with their `\label`s, so section
 labels are not nodes. The parser rejects a `\label` that is on neither such an environment
 nor a section, and a theorem-like environment with no `\label`, so that a node cannot drop out
-of the check unnoticed. If a blueprint starts using, say, labelled equations, extend the
-parser in `OrlikSolomonBook/Blueprint.lean`.
+of the check unnoticed. A label used twice is rejected too, including across files, since a
+copied label would otherwise add a node with no new coverage obligation. If a blueprint starts
+using, say, labelled equations, extend the parser in `OrlikSolomonBook/Blueprint.lean`.
 
 Some choices here are deliberate:
 

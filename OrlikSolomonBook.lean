@@ -84,14 +84,22 @@ All of these are outputs of the proof.
 Every result appears in a box that shows its label in the [blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex) and a status:
  * *Planned* means that the result is in scope and no Lean declaration is attached to it yet. The text describes what is intended, and nothing has been checked.
  * *Deferred* means that the result is in the blueprint but outside the current scope of the project.
- * *Partly formalized* means that some of the result has been checked, and the box says what is missing.
- * *Formalized* means that the box names Lean declarations, and shows their statements with links to their source.
+ * *Partly formalized* means that the box names Lean declarations for part of the result, shows their statements with links to their source, and says what is missing.
+ * *Formalized* means that the box names Lean declarations and shows their statements with links to their source, and that review of the change found that they cover the whole result.
 
-A box cannot claim the last two statuses by assertion.
-They follow from naming declarations, and the build of this book fails if a named declaration does not exist, or if it depends on `sorryAx` or on any axiom other than Lean's standard `propext`, `Classical.choice` and `Quot.sound`.
-A second check fails the build if the blueprint has a node that the book does not present.
+*What the build checks.*
+A box cannot claim the last two statuses by assertion, because they follow from naming declarations.
+For each named declaration, the build of this book checks only that it exists, and that it depends on no `sorry` and on no axiom other than Lean's standard `propext`, `Classical.choice` and `Quot.sound`.
+A second check fails the build if the blueprint has a node that the book does not present, if the book presents a node twice, or if the blueprint uses a label twice.
 The {ref "status"}[status page] is generated from the same data.
-Prose outside the boxes is not checked by Lean, so when the text and a box disagree about what has been done, the box is right.
+
+*What the build does not check.*
+The build does not check that the named declarations cover the statement in their box.
+It would accept any proved declaration there, even one that has nothing to do with the result.
+It also does not check any prose, inside or outside the boxes.
+Both of these are checked by human or agent review of each change, not by the build, and review can make mistakes.
+So do not read *Formalized* as a machine-checked claim about the words in a box.
+What the build has checked is the declarations shown there, and you can compare their statements with the text yourself.
 
 {include 1 OrlikSolomonBook.Organization}
 

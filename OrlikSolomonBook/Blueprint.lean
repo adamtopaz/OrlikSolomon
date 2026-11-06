@@ -14,7 +14,9 @@ blueprint itself rather than against a list that could drift from it.
 
 The parser is deliberately strict. A `\label` that is attached neither to a theorem-like
 environment nor to a sectioning command is an error, and so is a theorem-like environment without
-a `\label`. This way no node can drop out of the completeness check unnoticed.
+a `\label`. So is a label used by two nodes, even in different files, because a copied label would
+otherwise add a node with a new statement and no new coverage obligation. This way no node can drop
+out of the completeness check unnoticed.
 -/
 
 open Lean
@@ -114,12 +116,18 @@ def parseNodes (src : String) : Except String (Array Node) := do
     throw s!"found {envCount} theorem-like environments but {nodes.size} labelled nodes"
   return nodes
 
+/-- The labels used by more than one node, each listed once. -/
+def duplicateLabels (nodes : Array Node) : List String :=
+  let labels := (nodes.map (·.label)).toList
+  (labels.filter (labels.count · > 1)).eraseDups
+
 /-- The directory of the blueprint, relative to the root of the repository. -/
 def directory : System.FilePath := "blueprint"
 
 /--
-Reads the nodes of every TeX file in `blueprint/`. The working directory must be the root of the
-repository, which it is for `lake build` and `lake exe book`.
+Reads the nodes of every TeX file in `blueprint/`, and fails if two of them have the same label.
+The working directory must be the root of the repository, which it is for `lake build` and
+`lake exe book`.
 -/
 def readNodes : IO (Array Node) := do
   unless ← directory.isDir do
@@ -133,6 +141,8 @@ def readNodes : IO (Array Node) := do
     match parseNodes (← IO.FS.readFile file) with
     | .ok found => nodes := nodes ++ found
     | .error e => throw <| .userError s!"{file}: {e}"
-  return nodes
+  match duplicateLabels nodes with
+  | [] => return nodes
+  | labels => throw <| .userError s!"the blueprint uses these labels more than once: {labels}"
 
 end OrlikSolomonBook.Blueprint
