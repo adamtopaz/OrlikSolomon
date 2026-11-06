@@ -312,7 +312,9 @@ lemma map_map (f : A ⟶ D) (g : D ⟶ E) (x : T.C.obj A) :
     T.C.map g (T.C.map f x) = T.C.map (f ≫ g) x := by
   simp
 
-@[simp] lemma map_algebraMap (f : A ⟶ D) (b : B) :
+/-- Pullbacks fix the classes of coefficients. This is not a `simp` lemma, because `simp` already
+proves it with `AlgHom.commutes`. -/
+lemma map_algebraMap (f : A ⟶ D) (b : B) :
     T.C.map f (algebraMap B (T.C.obj A) b) = algebraMap B (T.C.obj D) b :=
   (T.C.map f).hom.commutes b
 
