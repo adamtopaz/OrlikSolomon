@@ -69,6 +69,12 @@ Read these before working:
 - This is NixOS. Anything that compiles Verso's native dependency needs `cc`, so run it as
   `nix develop --command lake ...`. Ordinary library builds do not need this.
 - Search Mathlib locally with `grep` under `.lake/packages/mathlib/Mathlib`.
+- **Scratch files:** a harness scratchpad may be shared with other agents, so keep yours in a
+  directory named for your issue or PR, such as `issue-7/`. `lake env lean` ignores lakefile
+  options, so for scratch runs pass `-DmaxSynthPendingDepth=3 -DautoImplicit=false`.
+- **Never force-push or rewrite pushed history.** To update a branch you have already pushed,
+  run `git merge origin/main` and push normally. PRs are squashed on merge, so this leaves
+  `main` clean. Auto mode denies force-pushes: treat that as a rule, not as an obstacle.
 
 ## Lean standards
 
