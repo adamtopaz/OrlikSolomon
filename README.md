@@ -14,7 +14,7 @@ twists stay explicit.
 
 - Mathematical plan: [`blueprint/`](blueprint/arrangement_cohomology_lean_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- Contribution rules: [`AGENTS.md`](AGENTS.md)
+- Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)
 
 ## Building
 
