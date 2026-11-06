@@ -5,7 +5,7 @@ Authors: Adam Topaz, Claude
 -/
 module
 
-public import OrlikSolomon.Geometry.Hyperplane
+public import OrlikSolomon.Geometry.Chart
 
 /-!
 # Affine hyperplane arrangements
@@ -42,8 +42,9 @@ are constructed in `OrlikSolomon/Geometry/CoordinateRing.lean`.
 ## Blueprint
 
 `def:arrangement`, `def:deletion`, and the incidence part of `lem:restriction-geometry` about
-arrangements. See `OrlikSolomon/Geometry/Hyperplane.lean` for the rest of that lemma and
-`lem:equations`.
+arrangements. See `OrlikSolomon/Geometry/Hyperplane.lean` for `lem:equations`, and
+`OrlikSolomon/Geometry/Chart.lean` for the part of `lem:restriction-geometry` about a single
+restricted hyperplane.
 -/
 
 @[expose] public section
@@ -136,7 +137,7 @@ theorem eq_empty_or_exists_mem (𝒜 : Arrangement k V) : 𝒜 = ∅ ∨ ∃ H, 
 
 /-- A zero-dimensional space has only the empty arrangement. -/
 theorem eq_empty_of_subsingleton [Subsingleton V] (𝒜 : Arrangement k V) : 𝒜 = ∅ :=
-  ext fun H ↦ by simpa using fun hH ↦ IsHyperplane.not_of_subsingleton H (𝒜.isHyperplane hH)
+  ext fun H ↦ by simpa using fun hH ↦ not_isHyperplane_of_subsingleton H (𝒜.isHyperplane hH)
 
 /-- The arrangement formed by the hyperplanes in a finite set of affine subspaces, discarding the
 other members. This builds an arrangement from data that may contain empty sections or the whole
@@ -328,8 +329,8 @@ theorem card_restriction_lt (hH : H ∈ 𝒜) : (𝒜.restriction H).card < 𝒜
   (card_restriction_le 𝒜 H).trans_lt (card_deletion_lt hH)
 
 /-- Deletion-restriction induction on arrangements, over all finite-dimensional spaces `V` in the
-universe of `k`. A property that holds for empty arrangements, and that passes to `𝒜` from the
-deletion and the restriction of some `H ∈ 𝒜`, holds for all arrangements. -/
+universe of `k`. A property holds for all arrangements if it holds for empty arrangements and if,
+for every `𝒜` and every `H ∈ 𝒜`, it passes to `𝒜` from the deletion and the restriction of `H`. -/
 theorem induction
     {motive : ∀ (V : Type u) [AddCommGroup V] [Module k V] [FiniteDimensional k V],
       Arrangement k V → Prop}

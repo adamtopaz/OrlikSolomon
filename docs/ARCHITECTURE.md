@@ -18,7 +18,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Algebra/RelationQuotient`     | `def:twosided`, `lem:quotient-api` |
 | `Algebra/ExteriorWords`        | `lem:exterior-words`, `lem:boundary-expansion` |
 | `Algebra/Exact`                | `lem:basis-ses`, `lem:comparison` |
-| `Geometry/Hyperplane`          | hyperplanes and equations of `def:arrangement`, `lem:equations`, the incidence part of `lem:restriction-geometry` for one hyperplane |
+| `Geometry/Hyperplane`          | hyperplanes and equations of `def:arrangement`, `lem:equations` |
+| `Geometry/Chart`               | identifying `H` with `H.direction` in `def:deletion`, the incidence part of `lem:restriction-geometry` for one hyperplane |
 | `Geometry/Arrangement`         | `def:arrangement`, `def:deletion`, the incidence part of `lem:restriction-geometry` for arrangements |
 | `Geometry/SmoothAlg`           | `def:geometry-interface` |
 | `Geometry/CoordinateRing`      | coordinate rings and complements |
@@ -97,13 +98,18 @@ standard pair (`A = k`), the pair in `lem:log-mul` (`A = k[y;y⁻¹]`) and the p
 - `O(U_𝒜)` is a localization of `O(V)` at the equations of the hyperplanes. **It is never
   a subset of `V`**, since a complement can have no `k`-points (blueprint §3).
 - The restriction arrangement lives on `H.direction`, identified with `H` through a base
-  point chosen once, inside the definition. That definition is `chart H : H.direction →ᵃ[k] V`.
-  Move subspaces with `K.comap (chart H)` and `M.map (chart H)`, and state results through
-  `map_chart_comap_chart`, whose value is `H ⊓ K`, rather than through the base point.
+  point chosen once, inside the definition. That definition is `chart H : H.direction →ᵃ[k] V`,
+  which is `@[no_expose]`. Move subspaces with `K.comap (chart H)` and `M.map (chart H)`, and
+  state results through `map_chart_comap_chart`, whose value is `H ⊓ K`, rather than through the
+  base point. `chart H 0` still names that point, but nothing says which one it is, so a condition
+  such as `0 ∈ L` for `L` in a restriction cannot be decided and must not define "central".
 - Intersections are lattice operations on `AffineSubspace k V`, and "empty" is `⊥`:
   `⨅ i, H i` for families, `sInf S` for sets, and `Arrangement.inter I` for a list `I : List 𝒜`.
   `codim X` is the dimension of `V ⧸ X.direction`, and `Module.finrank k X.direction` is the
-  dimension of `X`. Both are meaningful only for `X ≠ ⊥`, so test for emptiness first.
+  dimension of `X`. Both are natural numbers, as exponents require, and they are meaningful only
+  for `X ≠ ⊥`, so test for emptiness first: `codim_bot` gives `codim ⊥ = finrank k V`. Mathlib's
+  `AffineSubspace.finDim : WithBot ℕ` is the same dimension with `⊥` as its value on `⊥`
+  (`AffineSubspace.finDim_eq_finrank`, `AffineSubspace.finDim_bot`).
 - `Arrangement.comap φ 𝒜` is the pullback along any affine map, keeping the preimages that are
   hyperplanes, and `𝒜.restriction H` is `𝒜.comap (chart H)`. It is a total function of `H`, with
   `Arrangement.mem_restriction` giving the blueprint's description when `H` is a hyperplane, and
