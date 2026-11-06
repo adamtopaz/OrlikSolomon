@@ -72,7 +72,7 @@ With the ambient space fixed, the statement would not supply its own induction h
 *
  * {ref "projective"}[Projective complements]
  * the affine theorem, applied to the central cone
- * the projective theorem, whose status is shown there
+ * the projective theorem, with a map defined using no hyperplane at infinity
 :::
 
 The axioms do not mention logarithmic classes, so the first step has to construct them.
