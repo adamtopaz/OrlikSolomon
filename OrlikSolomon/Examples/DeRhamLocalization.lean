@@ -111,19 +111,14 @@ open scoped Polynomial
 
 local notation "P" => (ZMod 2)[X]
 
-/-- The equation `f = X²` is zero in the quotient by it. -/
-theorem algebraMap_X_sq : algebraMap P (P ⧸ Ideal.span {(X ^ 2 : P)}) (X ^ 2) = 0 :=
-  Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self _)
-
 /-- Over `ZMod 2`, the conormal map of `f = X²` is not injective, because `df = 2X dX = 0` and `f`
 is not in `(f²)`. So the right exact sequence of `lem:dr-quotient` cannot be extended by a zero on
 the left without a hypothesis such as the smoothness of `lem:dr-conormal`. Here `S` is
 `(ZMod 2)[X]/(X²)`, which is not smooth over `ZMod 2`. -/
 theorem principalConormalMap_not_injective :
-    ¬ Function.Injective
-      (principalConormalMap (ZMod 2) (P ⧸ Ideal.span {(X ^ 2 : P)}) algebraMap_X_sq) := by
+    ¬ Function.Injective (principalConormalMap (ZMod 2) (X ^ 2 : P)) := by
   intro h
-  have hzero : principalConormalMap (ZMod 2) (P ⧸ Ideal.span {(X ^ 2 : P)}) algebraMap_X_sq
+  have hzero : principalConormalMap (ZMod 2) (X ^ 2 : P)
       ((Ideal.span {(X ^ 2 : P)}).toCotangent
         ⟨X ^ 2, Ideal.mem_span_singleton_self _⟩) = 0 := by
     rw [principalConormalMap_self, Derivation.leibniz_pow, ← Nat.cast_smul_eq_nsmul (ZMod 2) 2,
