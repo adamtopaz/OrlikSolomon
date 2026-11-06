@@ -403,6 +403,9 @@ section Systems
 
 variable {ι : Sort*} {f : ι → V →ᵃ[k] k} {H : ι → AffineSubspace k V}
 
+theorem mem_iInf_zeroLocus {v : V} : v ∈ ⨅ i, zeroLocus (f i) ↔ ∀ i, f i v = 0 := by
+  simp [AffineSubspace.mem_iInf_iff]
+
 /-- A nonempty common zero locus has direction the intersection of the kernels of the linear
 parts.
 

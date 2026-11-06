@@ -132,6 +132,20 @@ theorem _root_.OrlikSolomon.IsEquation.covers {f : V →ᵃ[k] k} (hf : IsEquati
 theorem Covers.mono (h : 𝒜 ≤ ℬ) (hL : 𝒜.Covers L) : ℬ.Covers L :=
   hL.imp_right fun h' ↦ IsConcreteLE.le_iff.1 h h'
 
+/-- A function whose zero locus is covered by an arrangement is not zero. -/
+theorem Covers.ne_zero {f : V →ᵃ[k] k} (hf : 𝒜.Covers (zeroLocus f)) : f ≠ 0 := by
+  rintro rfl
+  have htop : zeroLocus (0 : V →ᵃ[k] k) = ⊤ := zeroLocus_eq_top_iff.2 rfl
+  obtain h | h := hf
+  · exact AffineSubspace.bot_ne_top k V V (h.symm.trans htop)
+  · exact (𝒜.isHyperplane h).ne_top htop
+
+/-- A function with nonempty zero locus covered by an arrangement is not constant, so it is an
+equation of a hyperplane of the arrangement. -/
+theorem Covers.linear_ne_zero {f : V →ᵃ[k] k} (hf : 𝒜.Covers (zeroLocus f))
+    (h : zeroLocus f ≠ ⊥) : f.linear ≠ 0 :=
+  isHyperplane_zeroLocus_iff.1 (𝒜.isHyperplane (hf.resolve_left h))
+
 /-- If `φ` carries the complement of `ℬ` to that of `𝒜`, then what `𝒜` covers pulls back to
 something that `ℬ` covers. -/
 theorem Covers.comap {ℬ : Arrangement k W} {φ : W →ᵃ[k] V} (h : ∀ K ∈ 𝒜, ℬ.Covers (K.comap φ))

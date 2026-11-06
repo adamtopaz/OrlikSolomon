@@ -51,7 +51,8 @@ Write `T.stdResidue A` and `T.stdGysin A`, never `T.residue (standardPair A)`. T
 `T.residue (standardPair A)`; see the implementation notes in `Geometry/SmoothAlg`. Every field that
 is used at a standard pair has a typed form here, stated with `polynomialToLaurent A`,
 `polynomialLift (𝟙 A) 0` and so on, and `simp` and `rw` work on it as usual. A new family of pairs
-that lemmas will mention, such as the deletion pair, should get wrappers of the same kind.
+that lemmas will mention should get wrappers of the same kind, as the deletion pair does in
+`Cohomology/DeletionPair`.
 
 Pullbacks are written `T.C.map f`, coerced to a function, and `(T.C.map f).hom` is the underlying
 algebra map. The `simp` normal form of a composite is the nested `T.C.map g (T.C.map f x)`, because
@@ -81,9 +82,10 @@ The class `τ` of `lem:gm` is not a field: it is constructed from the fields bel
 | `residue_mul_map` | `lem:log-residue`, `lem:gm-product`, `lem:comparison-residue` |
 | `gysin_map` | no step of the blueprint's proof: C5 asks for the whole sequence to commute |
 
-`lem:standard-bridge` would build a term of this type by taking `C(A) = ⨁ H^{p,w}(A)`, with
-`grading` the images of the summands. The direct sum has its own `R`-algebra structure, which is why
-`algebra` is a field, tied to `B` by `isScalarTower`, rather than a structure defined through `B`.
+`ofSupportsAndPurity` in `Cohomology/Bridge` builds a term of this type by taking
+`C(A) = ⨁ H^{p,w}(A)`, with `grading` the images of the summands. The direct sum has its own
+`R`-algebra structure, which is why `algebra` is a field, tied to `B` by `isScalarTower`, rather
+than a structure defined through `B`.
 
 ## Implementation notes
 
@@ -128,9 +130,11 @@ map `O(Y) ⟶ O(X)` induces the pullback `C(Y) → C(X)` along `X → Y`.
 
 **Check against singular cohomology, by hand.** Every field was checked by hand against complex
 singular cohomology, and the comments on the fields record the outcome. This is a mathematical
-argument, not a formal one: no such instance exists in Lean. The only theory constructed here is the
-zero theory in `Examples/Sanity`, which tests the zero-ring edge case and not the substantive
-axioms. So the nonvacuity of the main theorem for nonzero coefficients rests on this check.
+argument, not a formal one: no such instance exists in Lean. The concrete theory instances
+currently constructed in Lean are the zero theories in `Examples/Sanity` and `Examples/Bridge`,
+which test the zero-ring edge case rather than the substantive axioms. The standard bridge
+constructs a theory from supplied degreewise inputs. Nonvacuity for nonzero coefficients rests on
+this hand check.
 
 The model is as follows, for `k = ℂ` or a chosen embedding `k → ℂ`, and any commutative ring `R`.
 Put `B = R[t, t⁻¹]` with `ℬ w = R t^w`, and `H^{p, w}(X) = H^p(X(ℂ); R) t^w`, so that
