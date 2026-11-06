@@ -21,7 +21,7 @@ The element `f` may be a unit, zero or nilpotent, and `A` may be the zero ring.
 ## Main definitions
 
 * `OrlikSolomon.DeRham.dlog k u`: the form `du / u` of a unit `u`.
-* `OrlikSolomon.DeRham.powerLocalizationEquiv T M n`: the identification `(Ω_A^n)_M ≃ Ω_T^n`.
+* `OrlikSolomon.DeRham.powerLocalizationEquiv k T M n`: the identification `(Ω_A^n)_M ≃ Ω_T^n`.
 * `OrlikSolomon.DeRham.extendDerivation T M δ`: the extension to `T` of a derivation on `A` with
   values in a `T`-module.
 
@@ -77,11 +77,11 @@ section Units
 
 variable {T : Type*} [CommRing T] [Algebra k T]
 
-/-- The quotient rule `D(u^m) = -m u^(m+1) Dg` for `u = g⁻¹`, for any derivation `D`. -/
+/-- The quotient rule `δ(u^m) = -m u^(m+1) δg` for `u = g⁻¹`, for any derivation `δ`. -/
 theorem leibniz_pow_of_mul_eq_one {N : Type*} [AddCommGroup N] [Module T N] [Module k N]
-    (D : Derivation k T N) {u g : T} (h : u * g = 1) (m : ℕ) :
-    D (u ^ m) = -(((m : T) * u ^ (m + 1)) • D g) := by
-  rw [Derivation.leibniz_pow, D.leibniz_of_mul_eq_one h, neg_smul]
+    (δ : Derivation k T N) {u g : T} (h : u * g = 1) (m : ℕ) :
+    δ (u ^ m) = -(((m : T) * u ^ (m + 1)) • δ g) := by
+  rw [Derivation.leibniz_pow, δ.leibniz_of_mul_eq_one h, neg_smul]
   cases m with
   | zero => simp
   | succ m =>
@@ -232,7 +232,6 @@ theorem d_invSelf_pow_smul_map [Algebra k A] [IsScalarTower k A T] (m : ℕ) (ω
 /-- The form `df / f` is closed.
 
 Blueprint: `lem:dr-localization`. -/
-@[simp]
 theorem d_invSelf_smul_diff : d k ((invSelf f : T) • diff k (algebraMap A T f)) = 0 := by
   have h := d_dlog k (IsLocalization.Away.algebraMap_isUnit (S := T) f).unit
   rwa [dlog_eq_smul k (v := (invSelf f : T)) (invSelf_mul_self f)] at h
@@ -241,6 +240,16 @@ theorem d_invSelf_smul_diff : d k ((invSelf f : T) • diff k (algebraMap A T f)
 theorem dlog_eq_invSelf_smul (h : IsUnit (algebraMap A T f)) :
     dlog k h.unit = (invSelf f : T) • diff k (algebraMap A T f) :=
   dlog_eq_smul k (invSelf_mul_self f)
+
+/-- The formula `d(f^{-m} ξ) = f^{-m} (dξ - m θ ∧ ξ)` for `θ = dlog` of the unit `f`.
+
+Blueprint: `lem:dr-localization`. -/
+theorem d_invSelf_pow_smul_eq_dlog (h : IsUnit (algebraMap A T f)) (m : ℕ) (ξ : Forms k T) :
+    d k ((invSelf f : T) ^ m • ξ) =
+      (invSelf f : T) ^ m • (d k ξ - (m : T) • (dlog k h.unit * ξ)) := by
+  have hinv : (↑h.unit⁻¹ : T) = invSelf f :=
+    Units.inv_eq_of_mul_eq_one_left (invSelf_mul_self f)
+  rw [← hinv, d_val_inv_pow_smul]
 
 end Away
 
@@ -265,7 +274,7 @@ end DerivationExt
 
 /-! ### Forms on a localization are a localization -/
 
-section Localization
+section LocalizedForms
 
 variable {A : Type*} [CommRing A] [Algebra k A]
   {T : Type*} [CommRing T] [Algebra k T] [Algebra A T] [IsScalarTower k A T]
@@ -279,6 +288,7 @@ instance isLocalizedModule_powerMap_kaehlerMap (M : Submonoid A) [IsLocalization
     IsLocalizedModule M (powerMap T (KaehlerDifferential.map k k A T) n) :=
   isLocalizedModule_powerMap T M n
 
+variable (k T) in
 /-- `Ω_T^n` is the base change of `Ω_A^n` along `A → T`, for any localization `T` of `A`. So
 `T ⊗[A] Ω_A^n ≃ₗ[T] Ω_T^n` is `IsBaseChange.equiv` of this statement.
 
@@ -295,7 +305,7 @@ instance isLocalizedModule_exteriorMap_kaehlerMap (M : Submonoid A) [IsLocalizat
   (isLocalizedModule_iff_isBaseChange M T _).2 (isBaseChange_exteriorMap T
     ((isLocalizedModule_iff_isBaseChange M T _).1 inferInstance))
 
-variable (T) in
+variable (k T) in
 /-- The identification `(Ω_A^n)_M ≃ Ω_T^n` of `A`-modules, for any localization `T` of `A` at a
 submonoid `M`. It sends `x / c` to `c⁻¹ • x`, by `powerLocalizationEquiv_mk`.
 
@@ -309,9 +319,9 @@ noncomputable def powerLocalizationEquiv (M : Submonoid A) [IsLocalization M T] 
 Blueprint: `lem:dr-localization`. -/
 theorem powerLocalizationEquiv_mk_of_mul_eq_one {M : Submonoid A} [IsLocalization M T] {n : ℕ}
     (x : ⋀[A]^n Ω[A⁄k]) (c : M) {u : T} (hu : u * algebraMap A T c = 1) :
-    powerLocalizationEquiv T M n (LocalizedModule.mk x c) =
+    powerLocalizationEquiv k T M n (LocalizedModule.mk x c) =
       u • Forms.mapPower (IsScalarTower.toAlgHom k A T) n x := by
-  have h : (c : A) • powerLocalizationEquiv T M n (LocalizedModule.mk x c) =
+  have h : (c : A) • powerLocalizationEquiv k T M n (LocalizedModule.mk x c) =
       powerMap T (KaehlerDifferential.map k k A T) n x :=
     IsLocalizedModule.mk'_cancel' (powerMap T (KaehlerDifferential.map k k A T) n) x c
   rw [Forms.mapPower_toAlgHom, ← h, ← algebraMap_smul T (c : A), smul_smul, hu, one_smul]
@@ -321,7 +331,7 @@ theorem powerLocalizationEquiv_mk_of_mul_eq_one {M : Submonoid A} [IsLocalizatio
 Blueprint: `lem:dr-localization`. -/
 theorem powerLocalizationEquiv_mk {M : Submonoid A} [IsLocalization M T] {n : ℕ}
     (x : ⋀[A]^n Ω[A⁄k]) (c : M) :
-    powerLocalizationEquiv T M n (LocalizedModule.mk x c) =
+    powerLocalizationEquiv k T M n (LocalizedModule.mk x c) =
       IsLocalization.mk' T (1 : A) c • Forms.mapPower (IsScalarTower.toAlgHom k A T) n x :=
   powerLocalizationEquiv_mk_of_mul_eq_one x c <| by
     rw [mul_comm, IsLocalization.mul_mk'_eq_mk'_of_mul, mul_one, IsLocalization.mk'_self]
@@ -331,7 +341,7 @@ theorem powerLocalizationEquiv_mk {M : Submonoid A} [IsLocalization M T] {n : �
 Blueprint: `lem:dr-localization`. -/
 theorem powerLocalizationEquiv_mk_pow (f : A) [IsLocalization.Away f T] {n : ℕ}
     (x : ⋀[A]^n Ω[A⁄k]) (m : ℕ) :
-    powerLocalizationEquiv T (Submonoid.powers f) n
+    powerLocalizationEquiv k T (Submonoid.powers f) n
         (LocalizedModule.mk x ⟨f ^ m, Submonoid.pow_mem _ (Submonoid.mem_powers f) m⟩) =
       (invSelf f : T) ^ m • Forms.mapPower (IsScalarTower.toAlgHom k A T) n x :=
   powerLocalizationEquiv_mk_of_mul_eq_one x _ <| by
@@ -349,8 +359,8 @@ theorem mapPower_powerLocalizationEquiv {M : Submonoid A} [IsLocalization M T]
     (φ : A →ₐ[k] A') (ψ : T →ₐ[k] T')
     (h : ψ.comp (IsScalarTower.toAlgHom k A T) = (IsScalarTower.toAlgHom k A' T').comp φ)
     (hM : ∀ c ∈ M, φ c ∈ M') {n : ℕ} (x : ⋀[A]^n Ω[A⁄k]) (c : M) :
-    Forms.mapPower ψ n (powerLocalizationEquiv T M n (LocalizedModule.mk x c)) =
-      powerLocalizationEquiv T' M' n
+    Forms.mapPower ψ n (powerLocalizationEquiv k T M n (LocalizedModule.mk x c)) =
+      powerLocalizationEquiv k T' M' n
         (LocalizedModule.mk (Forms.mapPower φ n x) ⟨φ c, hM c c.2⟩) := by
   have hc : ∀ a, ψ (algebraMap A T a) = algebraMap A' T' (φ a) := fun a =>
     AlgHom.congr_fun h a
@@ -465,7 +475,7 @@ end Forms
 
 /-! ### Extending a derivation to a localization -/
 
-section Derivation
+section ExtendDerivation
 
 variable {N : Type*} [AddCommGroup N] [Module T N] [Module A N] [IsScalarTower A T N]
   [Module k N] [IsScalarTower k A N] [IsScalarTower k T N]
@@ -476,7 +486,7 @@ It is the unique such extension, by `eq_extendDerivation`, and it is given by th
 `extendDerivation_invSelf_pow_mul`. This is the universal property behind
 `isLocalizedModule_powerMap_kaehlerMap`.
 
-Blueprint: the proof of `lem:dr-localization`, used by `lem:dr-normal-derivation`. -/
+Blueprint: the proof of `lem:dr-localization`, used by `lem:dr-cartan`. -/
 noncomputable def extendDerivation (M : Submonoid A) [IsLocalization M T]
     (δ : Derivation k A N) : Derivation k T N :=
   (((isLocalizedModule_iff_isBaseChange M T (KaehlerDifferential.map k k A T)).1 inferInstance).lift
@@ -508,8 +518,8 @@ theorem extendDerivation_invSelf_pow_mul (f : A) [IsLocalization.Away f T]
   congr 3
   ring
 
-end Derivation
+end ExtendDerivation
 
-end Localization
+end LocalizedForms
 
 end OrlikSolomon.DeRham

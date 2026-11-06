@@ -18,8 +18,8 @@ htmlSplit := .never
 
 *The de Rham instance is being formalized.*
 This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
-The exterior calculus and the de Rham dg algebra of an arbitrary algebra are formalized.
-Localization and quotients of forms, the algebra of a smooth pair, the cohomology and comparison arguments, and the final instance remain planned.
+The exterior calculus, the de Rham dg algebra of an arbitrary algebra, and its forms on a localization and on a principal quotient are formalized.
+The algebra of a smooth pair, the cohomology and comparison arguments, and the final instance remain planned.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
@@ -170,14 +170,14 @@ A $`k`-algebra map $`\phi:A\to A'` induces a dg algebra map $`\phi_*`, sending $
 The displayed formula also shows that the differential is unique with these properties, so it does not depend on the presentation.
 :::
 
-:::node "lem:dr-localization"
+:::node "lem:dr-localization" (decl := OrlikSolomon.DeRham.isLocalizedModule_powerMap_kaehlerMap) (decl := OrlikSolomon.DeRham.powerLocalizationEquiv) (decl := OrlikSolomon.DeRham.powerLocalizationEquiv_mk_pow) (decl := OrlikSolomon.DeRham.mapPower_powerLocalizationEquiv) (decl := OrlikSolomon.DeRham.d_invSelf_pow_smul) (decl := OrlikSolomon.DeRham.d_invSelf_pow_smul_map) (decl := OrlikSolomon.DeRham.d_invSelf_smul_diff) (decl := OrlikSolomon.DeRham.Forms.mapPower_eq_zero_iff_of_isLocalizationAway)
 For any $`A` and $`f\in A`, there are natural identifications $`\Omega_{A_f}^n\simeq(\Omega_A^n)_f`, and for $`m\ge0`
 $$`d(f^{-m}\omega)=f^{-m}d\omega-mf^{-m-1}df\wedge\omega.`
 In particular $`d(df/f)=0`.
 None of this requires the localization map to be injective.
 :::
 
-:::node "lem:dr-quotient"
+:::node "lem:dr-quotient" (decl := OrlikSolomon.DeRham.Forms.mapPower_surjective) (decl := OrlikSolomon.DeRham.Forms.mapPower_powerD) (decl := OrlikSolomon.DeRham.principalQuotientPowerEquiv) (decl := OrlikSolomon.DeRham.principalQuotientPowerEquiv_mk) (decl := OrlikSolomon.DeRham.differentialIdealPower_span_singleton_zero) (decl := OrlikSolomon.DeRham.differentialIdealPower_span_singleton_succ) (decl := OrlikSolomon.DeRham.principalConormalMap) (decl := OrlikSolomon.DeRham.principalConormalMap_self) (decl := OrlikSolomon.DeRham.exact_principalConormalMap) (decl := KaehlerDifferential.mapBaseChange_surjective)
 For $`S=A/(f)`, the restriction maps are surjective in each degree and commute with $`d`, and
 $$`\Omega_S^n\simeq\Omega_A^n\,/\,\bigl(f\Omega_A^n+df\wedge\Omega_A^{n-1}\bigr).`
 In particular there is a right exact conormal sequence
