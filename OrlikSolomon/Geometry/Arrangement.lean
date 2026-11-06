@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
@@ -14,7 +14,7 @@ An arrangement in a vector space `V` over a field `k` is a finite set of affine 
 file defines arrangements, their deletion and restriction with respect to a hyperplane, and the
 incidence data used by the Orlik-Solomon algebra and by induction on arrangements. It is all linear
 algebra over `k`, and it has no rings of functions: complements are not subsets of `V`, and they
-are constructed in `OrlikSolomon/Geometry/CoordinateRing.lean`.
+are constructed in `OrlikSolomon/Geometry/Complement.lean`.
 
 ## Main definitions
 
@@ -118,6 +118,10 @@ theorem fintypeCard_coe (𝒜 : Arrangement k V) : Fintype.card 𝒜 = 𝒜.card
 instance : EmptyCollection (Arrangement k V) :=
   ⟨⟨∅, by simp⟩⟩
 
+/-- The hyperplane set of the empty arrangement is empty. -/
+@[simp]
+theorem hyperplanes_empty : (∅ : Arrangement k V).hyperplanes = ∅ := rfl
+
 @[simp]
 theorem notMem_empty (H : AffineSubspace k V) : H ∉ (∅ : Arrangement k V) :=
   Finset.notMem_empty H
@@ -174,6 +178,12 @@ noncomputable def deletion (𝒜 : Arrangement k V) (H : AffineSubspace k V) : A
   { hyperplanes := 𝒜.hyperplanes.erase H
     isHyperplane_of_mem' := fun _ h ↦ 𝒜.isHyperplane_of_mem' _ (Finset.mem_of_mem_erase h) }
 
+open scoped Classical in
+/-- Deletion erases its hyperplane from the finite support. -/
+@[simp]
+theorem hyperplanes_deletion (𝒜 : Arrangement k V) (H : AffineSubspace k V) :
+    (𝒜.deletion H).hyperplanes = 𝒜.hyperplanes.erase H := rfl
+
 @[simp]
 theorem mem_deletion : K ∈ 𝒜.deletion H ↔ K ≠ H ∧ K ∈ 𝒜 := by
   classical
@@ -208,6 +218,15 @@ theorem mem_comap {φ : W →ᵃ[k] V} {L : AffineSubspace k W} :
   classical
   simp [comap, and_comm]
 
+/-- A hyperplane of `𝒜` whose preimage is not the whole of `W` has empty preimage, or a preimage in
+the pullback of `𝒜`. -/
+theorem comap_eq_bot_or_mem_comap (φ : W →ᵃ[k] V) (hK : K ∈ 𝒜) (h : K.comap φ ≠ ⊤) :
+    K.comap φ = ⊥ ∨ K.comap φ ∈ 𝒜.comap φ := by
+  obtain hb | ht | hyp := (𝒜.isHyperplane hK).comap_eq_bot_or_top_or_isHyperplane φ
+  · exact Or.inl hb
+  · exact absurd ht h
+  · exact Or.inr (mem_comap.2 ⟨hyp, K, hK, rfl⟩)
+
 end Comap
 
 /-- The restriction `𝒜''` of an arrangement to `H`, as an arrangement in the vector space
@@ -241,6 +260,23 @@ theorem mem_restriction (hH : IsHyperplane H) {L : AffineSubspace k H.direction}
   · rintro ⟨K, hK, hbot, rfl⟩
     obtain ⟨hne, hK⟩ := mem_deletion.1 hK
     exact ⟨(hH.isHyperplane_comap_chart_iff (𝒜.isHyperplane hK)).2 ⟨hne, hbot⟩, K, hK, rfl⟩
+
+open scoped Classical in
+/-- The traces of the deleted hyperplanes are precisely the restriction hyperplanes together
+with a possible empty trace. Erasing `⊥` removes it and `Finset.image` removes duplicates. -/
+theorem hyperplanes_restriction_eq_erase_image (𝒜 : Arrangement k V)
+    {H : AffineSubspace k V} (hH : IsHyperplane H) :
+    (𝒜.restriction H).hyperplanes =
+      ((𝒜.deletion H).hyperplanes.image (AffineSubspace.comap (chart H))).erase ⊥ := by
+  classical
+  ext L
+  rw [mem_hyperplanes, mem_restriction hH, Finset.mem_erase]
+  simp only [Finset.mem_image, mem_hyperplanes]
+  constructor
+  · rintro ⟨K, hK, hbot, rfl⟩
+    exact ⟨(comap_chart_eq_bot_iff hH.ne_bot).not.mpr hbot, K, hK, rfl⟩
+  · rintro ⟨hbot, K, hK, rfl⟩
+    exact ⟨K, hK, (comap_chart_eq_bot_iff hH.ne_bot).not.mp hbot, rfl⟩
 
 /-- Membership in the restriction, in terms of subspaces of `V`: `M` corresponds to a nonempty
 intersection `H ∩ K` with another hyperplane `K` of `𝒜`.
