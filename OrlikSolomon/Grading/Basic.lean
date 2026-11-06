@@ -172,7 +172,7 @@ protected theorem add [Add ι] [Add N] [AddMemClass τ N] {f₁ f₂ : M → N}
   fun _ _ hx ↦ add_mem (hf₁ hx) (hf₂ hx)
 
 /-- The negative of a map of shift `a` has shift `a`. -/
-protected theorem neg [Add ι] [InvolutiveNeg N] [NegMemClass τ N]
+protected theorem neg [Add ι] [Neg N] [NegMemClass τ N]
     (hf : IsHomogeneousOfShift ℳ 𝒩 a f) : IsHomogeneousOfShift ℳ 𝒩 a (-f) :=
   fun _ _ hx ↦ neg_mem (hf hx)
 
