@@ -7,8 +7,7 @@ module
 
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.MonoidAlgebra.Grading
-public import OrlikSolomon.Cohomology.Logarithms
-public import OrlikSolomon.Geometry.Deletion
+public import OrlikSolomon.Cohomology.Deletion
 public import OrlikSolomon.Geometry.Projective
 public import OrlikSolomon.Geometry.RelationTargets
 
@@ -18,9 +17,10 @@ public import OrlikSolomon.Geometry.RelationTargets
 This file collects consistency checks of the definitions against the blueprint's regression list.
 At present it covers the structure `OrdinaryTheory` of `def:cohomology`, in particular the
 blueprint's "zero coefficient ring" case and the case `R = B`, the logarithmic classes with
-coefficients in `ℤ/2`, the example of two points of `𝔸¹` over `F₂`, and its projective analogue. The
-other arrangement examples of that list will be added here as the modules they test appear. The
-example of one projective hyperplane is `SmoothAlg.projectiveComplementIsoAffineSpace`.
+coefficients in `ℤ/2`, the example of two points of `𝔸¹` over `F₂` and its projective analogue, and
+the first induction with zero coefficients and in dimension zero. The other arrangement examples of
+that list will be added here as the modules they test appear. The example of one projective
+hyperplane is `SmoothAlg.projectiveComplementIsoAffineSpace`.
 
 ## Main definitions
 
@@ -37,6 +37,12 @@ example of one projective hyperplane is `SmoothAlg.projectiveComplementIsoAffine
 * `OrlikSolomon.Sanity.threePoints`: the three rational points of `P¹` over `F₂`. Their complement
   has no `F₂`-points (`isEmpty_algHom_threePoints`), and its ring is nonzero
   (`nontrivial_complementRing_threePoints`).
+
+## Main results
+
+* `OrlikSolomon.Sanity.exists_logMonomialBasis_zeroTheory_twoPoints`: the first induction with zero
+  coefficients on a complement with no rational points. The recursive basis has two words of length
+  one, although over the zero ring every family is a basis.
 
 ## What these checks show, and what they do not
 
@@ -403,6 +409,49 @@ theorem mapUnits_complementRestriction_twoPoints :
     (isEquation_of_zeroLocus_mem zeroLocus_id_sub_one_mem_twoPoints) inf_zeroLocus_id_twoPoints
   obtain rfl : c = 1 := Units.ext ((by decide : ∀ a : ZMod 2, a ≠ 0 → a = 1) c c.ne_zero)
   simpa using hc
+
+/-- The two points have `b₁ = 2`, and this is what `thm:cohom-basis` counts. -/
+theorem bettiNumber_one_twoPoints : twoPoints.bettiNumber 1 = 2 := by
+  classical
+  have hne : zeroLocus (AffineMap.id (ZMod 2) (ZMod 2)) ≠
+      zeroLocus (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1) := fun h ↦
+    (mem_deletion.1 zeroLocus_id_sub_one_mem_deletion).1 h.symm
+  have h𝒜 : twoPoints.hyperplanes = {zeroLocus (AffineMap.id (ZMod 2) (ZMod 2)),
+      zeroLocus (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1)} := by
+    ext K
+    simp only [mem_hyperplanes, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨fun hK ↦ ?_, ?_⟩
+    · simpa using (mem_ofFinset.1 hK).1
+    · rintro (rfl | rfl)
+      exacts [zeroLocus_id_mem_twoPoints, zeroLocus_id_sub_one_mem_twoPoints]
+  simp [bettiNumber, poincarePolynomial_pair_disjoint twoPoints hne h𝒜 inf_zeroLocus_id_twoPoints,
+    Polynomial.coeff_one]
+
+/-- The first induction with zero coefficients, on a complement with no rational points. Over the
+zero ring every family is a basis, and yet the recursive basis of the two points has exactly two
+words of length one, so the count of `exists_logMonomialBasis` does not come from a rank. -/
+theorem exists_logMonomialBasis_zeroTheory_twoPoints :
+    ∃ b : (zeroTheory.{0, v, w, z} (ZMod 2)).LogMonomialBasis twoPoints, b.wordCount 1 = 2 :=
+  let ⟨b, hb⟩ := (zeroTheory.{0, v, w, z} (ZMod 2)).exists_logMonomialBasis twoPoints
+  ⟨b, (hb 1).trans bettiNumber_one_twoPoints⟩
+
+/-- The bound above the dimension holds on a complement with no rational points. -/
+example {R : Type v} [CommRing R] {B : Type w} [CommRing B] [Algebra R B]
+    {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ] (T : OrdinaryTheory.{0, v, w, z} (ZMod 2) ℬ) {w' : ℤ}
+    {x : T.C.obj (complement twoPoints)} (hx : x ∈ T.grading (complement twoPoints) (2, w')) :
+    x = 0 :=
+  T.eq_zero_of_mem_grading_of_finrank_lt twoPoints (by simp) hx
+
+/-- In dimension zero, there are no hyperplanes, and the bound says that all classes are in degree
+zero. -/
+example {k : Type u} [Field k] {R : Type v} [CommRing R] {B : Type w} [CommRing B] [Algebra R B]
+    {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ] (T : OrdinaryTheory.{u, v, w, z} k ℬ)
+    (𝒜 : Arrangement k PUnit.{u + 1}) {p w' : ℤ} (hp : p ≠ 0)
+    {x : T.C.obj (complement 𝒜)} (hx : x ∈ T.grading (complement 𝒜) (p, w')) : x = 0 := by
+  obtain hp | hp := hp.lt_or_gt
+  · exact T.eq_zero_of_mem_grading_of_neg 𝒜 hp hx
+  · exact T.eq_zero_of_mem_grading_of_finrank_lt 𝒜
+      (by simpa [Module.finrank_zero_of_subsingleton] using hp) hx
 
 end TwoPoints
 
