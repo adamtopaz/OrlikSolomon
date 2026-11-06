@@ -5,6 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
+public import Mathlib.LinearAlgebra.ExteriorAlgebra.Grading
 public import OrlikSolomon.Algebra.ExteriorWords
 public import OrlikSolomon.Algebra.RelationQuotient
 public import OrlikSolomon.Geometry.Arrangement
@@ -219,6 +220,172 @@ theorem lift_unique (x : 𝒜 → T) (hx : IsFamily 𝒜 x) (f : OSAlgebra B �
     fun h H ↦ h ▸ lift_generator x hx H⟩
 
 end Universal
+
+/-! ### Linear descent and spanning -/
+
+section Linear
+
+variable {N : Type*} [AddCommGroup N] [Module B N]
+
+/-- Linear maps out of the presentation agree if they agree on generator words. -/
+theorem linearMap_ext {f g : OSAlgebra B 𝒜 →ₗ[B] N}
+    (h : ∀ I : List 𝒜, f (word (generator B 𝒜) I) = g (word (generator B 𝒜) I)) : f = g :=
+  LinearMap.ext_on_range (span_range_word B 𝒜) h
+
+/-- A linear map on the exterior algebra descends when it kills every context of a relator.
+This version of descent, unlike algebra descent, can target a deletion cokernel.
+
+Blueprint: the linear descent used in `def:lift-map`. -/
+def liftLinear (f : ExteriorAlgebra B (𝒜 →₀ B) →ₗ[B] N)
+    (hf : ∀ u, ∀ r ∈ osRelations B 𝒜, ∀ v, f (u * r * v) = 0) :
+    OSAlgebra B 𝒜 →ₗ[B] N :=
+  RelationQuotient.liftLinear f (relationSubmodule_le_ker_iff.2 hf)
+
+@[simp]
+theorem liftLinear_quotient (f : ExteriorAlgebra B (𝒜 →₀ B) →ₗ[B] N)
+    (hf : ∀ u, ∀ r ∈ osRelations B 𝒜, ∀ v, f (u * r * v) = 0)
+    (a : ExteriorAlgebra B (𝒜 →₀ B)) :
+    liftLinear B 𝒜 f hf (quotient B 𝒜 a) = f a :=
+  rfl
+
+end Linear
+
+/-! ### Inclusions and deletion -/
+
+section Map
+
+variable {𝒜 ℬ 𝒞 : Arrangement k V}
+
+/-- An inclusion of arrangements carries the presentation generators to a family satisfying
+the old relations. -/
+theorem isFamily_inclusion (h : 𝒜 ≤ ℬ) :
+    IsFamily 𝒜 (fun H ↦ generator B ℬ (Arrangement.inclusion h H)) where
+  toIsExteriorFamily := (isExteriorFamily_generator B ℬ).comp _
+  word_eq_zero I hI he := by
+    rw [← word_map]
+    exact word_eq_zero_of_inter_eq_bot B ℬ
+      (hI.map (Arrangement.inclusion_injective h)) (by simpa using he)
+  wordBoundary_eq_zero I hI hd := by
+    rw [← wordBoundary_map]
+    exact wordBoundary_eq_zero_of_isDependent B ℬ
+      (hI.map (Arrangement.inclusion_injective h))
+      ((Arrangement.isDependent_map_inclusion h I).2 hd)
+
+/-- An inclusion of arrangements induces an algebra map of their affine presentations.
+Injectivity is a conclusion of the later structure theorem, not part of this construction. -/
+def map (h : 𝒜 ≤ ℬ) : OSAlgebra B 𝒜 →ₐ[B] OSAlgebra B ℬ :=
+  lift _ (isFamily_inclusion B h)
+
+@[simp]
+theorem map_generator (h : 𝒜 ≤ ℬ) (H : 𝒜) :
+    map B h (generator B 𝒜 H) = generator B ℬ (Arrangement.inclusion h H) :=
+  lift_generator _ _ H
+
+/-- Inclusions carry words to the same words with the letters included. -/
+theorem map_word (h : 𝒜 ≤ ℬ) (I : List 𝒜) :
+    map B h (word (generator B 𝒜) I) =
+      word (generator B ℬ) (I.map (Arrangement.inclusion h)) := by
+  simp [word_map]
+
+@[simp]
+theorem map_refl : map B (le_refl 𝒜) = AlgHom.id B (OSAlgebra B 𝒜) := by
+  ext H
+  rw [map_generator]
+  rfl
+
+@[simp]
+theorem map_comp (h : 𝒜 ≤ ℬ) (h' : ℬ ≤ 𝒞) :
+    (map B h').comp (map B h) = map B (h.trans h') := by
+  ext H
+  simp only [AlgHom.comp_apply, map_generator]
+  rfl
+
+variable (𝒜)
+
+/-- The deletion algebra map, preserving the generators of the deletion.
+
+Blueprint: the map `a` in `lem:os-basic`. -/
+def deletionMap (H : AffineSubspace k V) : OSAlgebra B (𝒜.deletion H) →ₐ[B] OSAlgebra B 𝒜 :=
+  map B (Arrangement.deletion_le 𝒜 H)
+
+@[simp]
+theorem deletionMap_generator (H : AffineSubspace k V) (K : 𝒜.deletion H) :
+    deletionMap B 𝒜 H (generator B (𝒜.deletion H) K) =
+      generator B 𝒜 (Arrangement.inclusion (Arrangement.deletion_le 𝒜 H) K) :=
+  map_generator B _ K
+
+end Map
+
+/-! ### The ordinary exterior degree -/
+
+/-- The internal grading by exterior degree. Coefficients have degree zero; the weight-graded
+coefficient refinement is constructed separately over the smaller coefficient ring.
+
+Blueprint: the exterior-degree part of `lem:os-basic`. -/
+def degree (n : ℕ) : Submodule B (OSAlgebra B 𝒜) :=
+  RelationQuotient.grading (osRelations B 𝒜)
+    (fun n : ℕ ↦ ⋀[B]^n (𝒜 →₀ B)) n
+
+/-- Each defining relator is homogeneous in exterior degree. -/
+theorem osRelations_homogeneous :
+    ∀ r ∈ osRelations B 𝒜,
+      SetLike.IsHomogeneousElem (fun n : ℕ ↦ ⋀[B]^n (𝒜 →₀ B)) r := by
+  rintro r ⟨I, _, ⟨_, rfl⟩ | ⟨_, rfl⟩⟩
+  · exact ⟨I.length, word_mem_exteriorPower B I⟩
+  · exact ⟨I.length - 1, wordBoundary_mem_exteriorPower B I⟩
+
+instance : GradedAlgebra (degree B 𝒜) :=
+  RelationQuotient.gradedAlgebra (fun n : ℕ ↦ ⋀[B]^n (𝒜 →₀ B))
+    (osRelations_homogeneous B 𝒜)
+
+/-- A word has degree equal to its length. -/
+theorem word_mem_degree (I : List 𝒜) :
+    word (generator B 𝒜) I ∈ degree B 𝒜 I.length := by
+  rw [← quotient_word]
+  exact RelationQuotient.mk_mem_grading (word_mem_exteriorPower B I)
+
+/-- Each generator has exterior degree one. -/
+theorem generator_mem_degree (H : 𝒜) : generator B 𝒜 H ∈ degree B 𝒜 1 := by
+  simpa only [word_singleton, List.length_singleton] using word_mem_degree B 𝒜 [H]
+
+/-- A signed boundary has degree one less than its word. -/
+theorem wordBoundary_mem_degree (I : List 𝒜) :
+    wordBoundary (generator B 𝒜) I ∈ degree B 𝒜 (I.length - 1) := by
+  rw [← quotient_wordBoundary]
+  exact RelationQuotient.mk_mem_grading (wordBoundary_mem_exteriorPower B I)
+
+/-- Words of length `n` span the degree `n` piece. -/
+theorem span_word_length (n : ℕ) :
+    Submodule.span B {y | ∃ I : List 𝒜, I.length = n ∧ word (generator B 𝒜) I = y} =
+      degree B 𝒜 n := by
+  change _ = (⋀[B]^n (𝒜 →₀ B)).map (quotient B 𝒜).toLinearMap
+  rw [← OrlikSolomon.span_word_length B n, Submodule.map_span]
+  congr 1
+  ext y
+  constructor
+  · rintro ⟨I, hI, rfl⟩
+    exact ⟨word (exteriorGen B) I, ⟨I, hI, rfl⟩, quotient_word B 𝒜 I⟩
+  · rintro ⟨_, ⟨I, hI, rfl⟩, rfl⟩
+    exact ⟨I, hI, (quotient_word B 𝒜 I).symm⟩
+
+/-- Inclusion maps preserve exterior degree. -/
+theorem map_mem_degree {ℬ : Arrangement k V} (h : 𝒜 ≤ ℬ) {n : ℕ} {x : OSAlgebra B 𝒜}
+    (hx : x ∈ degree B 𝒜 n) : map B h x ∈ degree B ℬ n := by
+  rw [← span_word_length] at hx
+  induction hx using Submodule.span_induction with
+  | mem x hx =>
+    obtain ⟨I, rfl, rfl⟩ := hx
+    rw [map_word]
+    simpa only [List.length_map] using word_mem_degree B ℬ (I.map (Arrangement.inclusion h))
+  | zero => simp
+  | add x y _ _ hx hy => simpa only [map_add] using Submodule.add_mem _ hx hy
+  | smul r x _ hx => simpa only [map_smul] using Submodule.smul_mem _ r hx
+
+/-- The deletion map preserves exterior degree. -/
+theorem deletionMap_mem_degree (H : AffineSubspace k V) {n : ℕ}
+    {x : OSAlgebra B (𝒜.deletion H)} (hx : x ∈ degree B (𝒜.deletion H) n) :
+    deletionMap B 𝒜 H x ∈ degree B 𝒜 n :=
+  map_mem_degree B _ _ hx
 
 end OSAlgebra
 
