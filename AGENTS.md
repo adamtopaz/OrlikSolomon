@@ -9,7 +9,10 @@ exposition, tied to the code and published on GitHub Pages.
 
 Read these before working:
 
-- `blueprint/arrangement_cohomology_lean_blueprint.tex`: authoritative for mathematics.
+- `blueprint/arrangement_cohomology_lean_blueprint.tex`: authoritative for mathematics of the
+  structure theorem.
+- `blueprint/de_rham_instance_blueprint.tex`: authoritative for mathematics of the de Rham
+  instance, milestone M5.
 - `docs/ARCHITECTURE.md`: authoritative for Lean design, names and module layout. The
   blueprint says its own Lean names and signatures are only proposals.
 
