@@ -73,6 +73,14 @@ def osRelations : Set (ExteriorAlgebra B (𝒜 →₀ B)) :=
     (Arrangement.inter I = ⊥ ∧ r = word (exteriorGen B) I ∨
       Arrangement.IsDependent I ∧ r = wordBoundary (exteriorGen B) I)}
 
+/-- Membership in the two families of affine Orlik–Solomon relators. -/
+@[simp]
+theorem mem_osRelations {r : ExteriorAlgebra B (𝒜 →₀ B)} :
+    r ∈ osRelations B 𝒜 ↔ ∃ I : List 𝒜, I.Nodup ∧
+      (Arrangement.inter I = ⊥ ∧ r = word (exteriorGen B) I ∨
+        Arrangement.IsDependent I ∧ r = wordBoundary (exteriorGen B) I) :=
+  Iff.rfl
+
 /-- The affine Orlik–Solomon algebra over a commutative coefficient ring. It is a ring rather
 than an ordinary commutative ring, and the exterior generators square to zero even in
 characteristic two.
@@ -158,6 +166,12 @@ theorem word_eq_zero_of_inter_eq_bot {I : List 𝒜}
   · rw [← quotient_word]
     exact RelationQuotient.mk_eq_zero_of_mem ⟨I, hI, Or.inl ⟨h, rfl⟩⟩
   · exact (isExteriorFamily_generator B 𝒜).word_eq_zero_of_not_nodup hI
+
+/-- The product of generators of disjoint hyperplanes vanishes in the presentation. -/
+theorem generator_mul_eq_zero_of_disjoint (H K : 𝒜)
+    (hHK : (H : AffineSubspace k V) ⊓ K = ⊥) :
+    generator B 𝒜 H * generator B 𝒜 K = 0 := by
+  simpa using word_eq_zero_of_inter_eq_bot B 𝒜 (I := [H, K]) (by simpa using hHK)
 
 /-- The boundary of a nonempty dependent family vanishes in the presentation. -/
 theorem wordBoundary_eq_zero_of_isDependent {I : List 𝒜}

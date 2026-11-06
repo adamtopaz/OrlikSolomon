@@ -34,6 +34,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Cohomology/Deletion`          | `lem:restriction-surj`, `lem:ses`, `thm:generation`, `thm:cohom-basis` |
 | `Presentation/Basic`           | `def:os`, the ordinary grading and deletion map of `lem:os-basic` |
 | `Presentation/BaseChange`      | coefficient base change in `lem:os-basic` |
+| `Presentation/Generators`      | degree-one generator independence used in `cor:projective-betti` |
 | `Presentation/Grading`         | the weighted bigrading and component formula in `lem:os-basic` |
 | `Presentation/Realization`     | `lem:empty-relation`, `lem:dependent-relation`, `def:realization`, `lem:realization-basic` |
 | `Presentation/Cokernel`        | `lem:representatives`, `def:lift-map`, `lem:lift-surj` |
