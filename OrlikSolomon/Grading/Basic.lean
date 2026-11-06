@@ -135,6 +135,11 @@ theorem isHomogeneousOfShift_prod_iff [Add ι] [Add κ] {ℳ : ι × κ → σ} 
 theorem isHomogeneousOfShift_id [AddZeroClass ι] : IsHomogeneousOfShift ℳ ℳ 0 (id : M → M) :=
   isHomogeneousOfShift_zero_iff.2 fun _ _ hx ↦ hx
 
+/-- Right multiplication by an element of degree `a` has shift `a`. -/
+theorem isHomogeneousOfShift_mul_right [Add ι] [Mul T] [SetLike σ T] {𝒜 : ι → σ}
+    [SetLike.GradedMul 𝒜] {t : T} (ht : t ∈ 𝒜 a) : IsHomogeneousOfShift 𝒜 𝒜 a (· * t) :=
+  fun _ _ hx ↦ SetLike.mul_mem_graded hx ht
+
 /-- Left multiplication by an element of degree `a` has shift `a`, when degrees commute. This is
 how logarithmic classes act in `lem:gm` and `lem:ses`, and `e_H` in `def:lift-map`. -/
 theorem isHomogeneousOfShift_mul_left [AddCommMagma ι] [Mul T] [SetLike σ T] {𝒜 : ι → σ}
@@ -166,11 +171,21 @@ protected theorem add [Add ι] [Add N] [AddMemClass τ N] {f₁ f₂ : M → N}
     IsHomogeneousOfShift ℳ 𝒩 a (f₁ + f₂) :=
   fun _ _ hx ↦ add_mem (hf₁ hx) (hf₂ hx)
 
+/-- The negative of a map of shift `a` has shift `a`. -/
+protected theorem neg [Add ι] [InvolutiveNeg N] [NegMemClass τ N]
+    (hf : IsHomogeneousOfShift ℳ 𝒩 a f) : IsHomogeneousOfShift ℳ 𝒩 a (-f) :=
+  fun _ _ hx ↦ neg_mem (hf hx)
+
 /-- A difference of maps of shift `a` has shift `a`. -/
 protected theorem sub [Add ι] [AddGroup N] [AddSubgroupClass τ N] {f₁ f₂ : M → N}
     (hf₁ : IsHomogeneousOfShift ℳ 𝒩 a f₁) (hf₂ : IsHomogeneousOfShift ℳ 𝒩 a f₂) :
     IsHomogeneousOfShift ℳ 𝒩 a (f₁ - f₂) :=
   fun _ _ hx ↦ sub_mem (hf₁ hx) (hf₂ hx)
+
+/-- A scalar multiple of a map of shift `a` has shift `a`, for scalars preserving each piece. -/
+protected theorem smul [Add ι] {R : Type*} [SMul R N] [SMulMemClass τ R N] (r : R)
+    (hf : IsHomogeneousOfShift ℳ 𝒩 a f) : IsHomogeneousOfShift ℳ 𝒩 a (r • f) :=
+  fun _ _ hx ↦ SMulMemClass.smul_mem r (hf hx)
 
 end IsHomogeneousOfShift
 
@@ -315,9 +330,10 @@ theorem ofBijective_symm (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hb : Function
     IsHomogeneousOfShift 𝒩 ℳ (-a) (Equiv.ofBijective f hb).symm :=
   hf.inverse (Equiv.ofBijective f hb).left_inv (Equiv.ofBijective f hb).right_inv
 
-/-- If `f` is a surjective homogeneous map and `h ∘ f` is homogeneous, then so is `h`. This needs
-a decomposition of `N`. When the pieces of `N` are by construction the images of those of `M`, as
-for `RelationQuotient.grading`, that description gives the conclusion directly. -/
+/-- If `f` is a surjective homogeneous map and `h ∘ f` is homogeneous, then so is `h`. This is the
+natural statement for a map `h` descended along a graded quotient map `f`. It needs a decomposition
+of `N`. When the pieces of `N` are by construction the images of those of `M`, as for
+`RelationQuotient.grading`, that description gives the conclusion directly. -/
 theorem of_comp_of_surjective [SetLike υ Q] {𝒬 : ι → υ} {h : N → Q}
     (hf : IsHomogeneousOfShift ℳ 𝒩 a f) (hs : Function.Surjective f)
     (hh : IsHomogeneousOfShift ℳ 𝒬 c (h ∘ f)) (hab : a + b = c) :
