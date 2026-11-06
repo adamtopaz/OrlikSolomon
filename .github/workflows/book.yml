@@ -21,8 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # Installs Lean and fetches Mathlib's cache. The build happens below, because the cache that
-      # this action saves is shared with the `CI` workflow, which does not build Verso.
+      # Installs Lean and fetches Mathlib's build from its own cache. The action's GitHub cache stays
+      # off, as in the `CI` workflow, because it would save all of `.lake` for every commit.
       - uses: leanprover/lean-action@v1
         with:
           auto-config: "false"
@@ -31,7 +31,10 @@ jobs:
 
       # This has to come after the step above, which clones the packages. Mathlib's build comes from
       # its own cache, so only the native objects that the executable links against are kept here.
-      - uses: actions/cache@v6
+      # They are about 250 MB, so only `main` saves them: a pull request restores the latest build
+      # from `main` and builds what it changed.
+      - id: restore
+        uses: actions/cache/restore@v6
         with:
           path: |
             .lake/build
@@ -43,6 +46,16 @@ jobs:
 
       - name: Build the book
         run: lake build OrlikSolomonBook book
+
+      - uses: actions/cache/save@v6
+        if: github.ref == 'refs/heads/main' && steps.restore.outputs.cache-hit != 'true'
+        with:
+          path: |
+            .lake/build
+            .lake/packages/*/.lake/build
+            !.lake/packages/mathlib/.lake/build
+            .lake/packages/mathlib/.lake/build/ir/**/*.c.o.*
+          key: ${{ steps.restore.outputs.cache-primary-key }}
 
       - name: Render the book and check that it covers the blueprint
         run: lake exe book --output _out/book
