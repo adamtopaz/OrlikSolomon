@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Init
+public import OrlikSolomon.Algebra.ExteriorWords
 
 /-!
 # OrlikSolomon
