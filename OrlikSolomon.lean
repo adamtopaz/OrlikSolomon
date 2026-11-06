@@ -15,6 +15,11 @@ public import OrlikSolomon.Cohomology.DeletionPair
 public import OrlikSolomon.Cohomology.Logarithms
 public import OrlikSolomon.Combinatorics.AlternatingSum
 public import OrlikSolomon.Combinatorics.Betti
+public import OrlikSolomon.DeRham.Exterior
+public import OrlikSolomon.DeRham.Exterior.BaseChange
+public import OrlikSolomon.DeRham.Exterior.Basic
+public import OrlikSolomon.DeRham.Exterior.Contraction
+public import OrlikSolomon.DeRham.Exterior.Quotient
 public import OrlikSolomon.Examples.Bridge
 public import OrlikSolomon.Examples.Cokernel
 public import OrlikSolomon.Examples.CoordinatePolynomials
