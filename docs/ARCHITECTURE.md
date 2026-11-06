@@ -58,7 +58,9 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Presentation/CokernelGrading` | the quotient decomposition and shift `(1,1)` in `def:lift-map` |
 | `Presentation/Structure`       | `lem:comparison-residue`, `thm:affine` |
 | `Presentation/Ordinary`        | `cor:ordinary`, and the direct sums and diagonal basis in `thm:betti` |
-| `Presentation/Projective`      | `thm:projective` |
+| `Presentation/Projective`      | the total bigraded equivalence of `thm:projective` |
+| `Presentation/ProjectiveGrading` | ordinary degree and coefficient extension on the projective kernel |
+| `Presentation/ProjectiveOrdinary` | the diagonal equivalence of `thm:projective` |
 | `Combinatorics/AlternatingSum` | duplicate-fiber and empty-trace cancellation in `lem:polynomial-recursion` |
 | `Combinatorics/Betti`          | `def:polynomials`, `lem:polynomial-recursion`, `lem:mobius` |
 | `Combinatorics/ProjectiveBetti` | pure cone/decone intersection sums and polynomials of `cor:projective-betti` |
@@ -227,6 +229,26 @@ three rings. State results for every equation of `H`.
 - `Geometry/ProjectiveScheme` is the only module that imports Mathlib's schemes. It adds about 250
   Mathlib modules to the closure of the root and of the book, about 11%. It is a leaf: nothing else
   in the library may import it, so the proof of the structure theorem stays free of schemes.
+
+### Projective structure maps
+
+`OrdinaryTheory.projectiveEquiv P` identifies the boundary kernel over `B` with the total
+cohomology of `projectiveComplement P`. It is the unique descent of affine realization on the
+cone along the injective map `projectiveToCone`; no hyperplane or equation is a parameter.
+`projectiveEquiv_eq_map_section` computes it using every hyperplane at infinity, and
+`projectiveEquiv_difference` and `logClass_projectiveRatioUnit_eq_of_ker_eq` give the ratio formula
+for arbitrary equations and its equation independence. `toAlgHom_projectiveEquiv_unique` also
+characterizes the map solely by ratios for any family of equations of the hyperplane labels.
+`projectiveComponentEquiv` restricts the
+bigrading-preserving equivalence to actual `R`-submodule pieces.
+
+`OSAlgebra.projectiveDegree` is the inherited ordinary grading on the boundary kernel, and
+`projectiveCoefficientMap` extends coefficients there. `OrdinaryTheory.projectiveDegreeEquiv`
+identifies degree `q` over `R` with `H^{q,q}`; `projectiveDiagonalEquiv` assembles these into the
+canonical graded `R`-algebra equivalence with the external diagonal direct sum. Surjectivity is
+proved on the cone using the affine degree equivalence and the injectivity of coefficient
+extension to detect a zero boundary; no flatness assumption is introduced. The integer scalar
+conversions documented for `Presentation/Ordinary` apply here as well.
 
 ## Algebra
 

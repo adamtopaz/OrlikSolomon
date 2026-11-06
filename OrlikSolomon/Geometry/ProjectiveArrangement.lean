@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
@@ -252,6 +252,10 @@ noncomputable def coneHyperplaneEquiv (P : ProjectiveArrangement k W) : P ≃ P.
       fun L ↦ by
         obtain ⟨H, hH, hL⟩ := mem_cone.1 L.2
         exact ⟨⟨H, hH⟩, Subtype.ext hL⟩⟩
+
+/-- A nonempty projective arrangement has a nonempty central cone arrangement. -/
+instance nonempty_cone (P : ProjectiveArrangement k W) [Nonempty P] : Nonempty P.cone :=
+  P.coneHyperplaneEquiv.symm.nonempty
 
 @[simp]
 theorem coe_coneHyperplaneEquiv (H : P) :
