@@ -22,4 +22,7 @@ For each of those, the build checks only that it exists, and that it depends on 
 That the declarations cover the node's statement, and that the prose around them is accurate, are checked by human or agent review, not by the build.
 So a row marked formalized records a reviewed judgement that rests on checked declarations, not a machine-checked claim about the node's wording.
 
+Formalized does not mean unconditional.
+Every result that mentions cohomology is proved for an arbitrary value of the structure {ref "axioms"}[of the axioms], and no nonzero value has been constructed in Lean.
+
 {statusOverview}

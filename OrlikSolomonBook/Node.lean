@@ -19,6 +19,8 @@ This module defines what makes the book more than prose:
   declarations cover the node's statement, and it accepts any proved declaration. That coverage,
   and all prose, are the responsibility of review, and the book says so to its readers.
 * The `bp` role links to a node by its label, and shows its status.
+* The `statement` directive sets a main theorem apart, on the first page and at its chapter. It
+  claims no status of its own: what it shows is prose, elaborated Lean and `bp` links.
 * The `statusOverview` and `statusSummary` commands render the status of all nodes.
 * `checkCompleteness` compares the labels covered by the book with those of the blueprint.
 
@@ -162,11 +164,65 @@ a + .bp-badge, .bp-overview .bp-badge { font-size: 0.7em; }
   text-align: left;
   vertical-align: top;
 }
-.bp-overview-table td:last-child code { overflow-wrap: anywhere; }
+.bp-overview { overflow-x: auto; }
+.bp-overview-table td:last-child { font-size: 0.85em; }
+.bp-overview-table td:last-child code { overflow-wrap: break-word; }
+.bp-decls { margin-top: 0.5rem; }
+.bp-decls > summary {
+  cursor: pointer;
+  font-family: var(--verso-text-font-family);
+  font-size: 0.9em;
+}
+.bp-statement {
+  border: 1px solid #0969da;
+  border-left-width: 0.25rem;
+  background: #f6faff;
+  margin: 1.25rem 0;
+  padding: 0.5rem 0.75rem;
+}
+/* A wide formula scrolls inside its box instead of leaving it, on a narrow screen. */
+.bp-node code.math.display, .bp-statement code.math.display {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+/* The sidebar of a chapter lists its sections and nodes, not every declaration in their boxes. */
+.split-toc li:has(> a > code:only-child) { display: none; }
+"#
+
+/--
+Opens the collapsed lists of declarations that contain the target of a link, because not every
+browser does this by itself when it follows a link to a fragment.
+-/
+def revealTargetJs : String := r#"
+(function () {
+  function reveal() {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    const target = id && document.getElementById(id);
+    if (!target) return;
+    for (let d = target.closest("details"); d; d = d.parentElement.closest("details")) {
+      d.open = true;
+    }
+    target.scrollIntoView();
+  }
+  window.addEventListener("hashchange", reveal);
+  document.addEventListener("DOMContentLoaded", reveal);
+})();
 "#
 
 /-- Escaped text, as an HTML fragment. -/
 private def txt (s : String) : Html := .text s
+
+/-- A declaration name that may break across lines only after a dot or an underscore. -/
+private def breakableName (name : String) : Array Html := Id.run do
+  let mut out : Array Html := #[]
+  let mut piece := ""
+  for c in name.toList do
+    piece := piece.push c
+    if c == '.' || c == '_' then
+      out := (out.push (txt piece)).push html%{<wbr/>}
+      piece := ""
+  return out.push (txt piece)
 
 /-- The badge that states the status of a node. This text is the book's claim about the node. -/
 def statusBadge (data : NodeData) : Html :=
@@ -255,6 +311,28 @@ block_extension Block.formal (json : String) where
           {txt "In "}<code>{txt decl.module.toString}</code>{txt ". "}{source}
         </p>
       </div>
+    }
+
+/-
+The declarations of a node, collapsed so that a chapter reads as prose. The argument is how many
+there are. They are in the page whether or not the list is open, and the status page names them all.
+-/
+block_extension Block.formalList (count : Nat) where
+  data := .num count
+  extraCss := {⟨nodeCss⟩}
+  extraJs := {⟨revealTargetJs⟩}
+  traverse _ _ _ := pure none
+  toTeX := none
+  toHtml := some fun _ goB _ data contents => do
+    let count := match data with
+      | .num n => n.mantissa.toNat
+      | _ => 0
+    let noun := if count == 1 then "declaration" else "declarations"
+    return html%{
+      <details class="bp-decls">
+        <summary>{txt s!"Lean: {count} {noun}, with statements and links to their source"}</summary>
+        {← contents.mapM goB}
+      </details>
     }
 
 /-- The arguments of the `node` directive. -/
@@ -384,9 +462,47 @@ def node : DirectiveExpanderOf NodeConfig
           #[$statement])
     let data : NodeData :=
       { index, node := bpNode, status, decls := checked.map (·.2), remaining }
+    let declarations ← if formal.isEmpty then pure #[] else
+      pure #[← ``(Verso.Doc.Block.other (Block.formalList $(quote formal.size)) #[$formal,*])]
     ``(Verso.Doc.Block.other
         (Block.node $(quote (toJson data).compress))
-        #[$(body ++ formal),*])
+        #[$(body ++ declarations),*])
+
+/- A main theorem, set apart from the prose, with its title. -/
+block_extension Block.statement (title : String) where
+  data := .str title
+  extraCss := {⟨nodeCss⟩}
+  traverse _ _ _ := pure none
+  toTeX := none
+  toHtml := some fun _ goB _ data contents => do
+    let title := match data with
+      | .str t => t
+      | _ => ""
+    return html%{
+      <div class="bp-statement">
+        <div class="bp-head"><span class="bp-name">{txt title}</span></div>
+        {← contents.mapM goB}
+      </div>
+    }
+
+/-- The argument of the `statement` directive. -/
+structure StatementConfig where
+  /-- The title of the theorem. -/
+  title : String
+
+instance : FromArgs StatementConfig DocElabM where
+  fromArgs := StatementConfig.mk <$> .positional `title .string
+
+/--
+Sets a main theorem apart, as in `:::statement "Main theorem"`. This is not a node: a node appears
+exactly once in the book, while the main theorems appear on the first page and at their chapter. It
+has no status, so anything in it that claims to be formalized must be elaborated Lean or a `bp` link.
+-/
+@[directive]
+def statement : DirectiveExpanderOf StatementConfig
+  | { title }, contents => do
+    let body ← contents.mapM elabBlock
+    ``(Verso.Doc.Block.other (Block.statement $(quote title)) #[$body,*])
 
 /-- The nodes covered by the book, ordered as in the blueprint. -/
 def coveredNodes (state : TraverseState) : Array NodeData := Id.run do
@@ -520,7 +636,7 @@ block_extension Block.statusOverview where
         | .ok dest => dest.link
         | .error _ => "#"
       let decls : Array Html := data.decls.map fun d =>
-        html%{<div><code>{txt d.name.toString}</code></div>}
+        html%{<div><code>{breakableName d.name.toString}</code></div>}
       html%{
         <tr>
           <td><a href={link}><code>{txt data.node.label}</code></a></td>
