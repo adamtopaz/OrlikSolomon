@@ -30,6 +30,7 @@ map. No hypothesis on `k` beyond being a commutative ring is needed.
 * `SmoothAlg.point k`, `SmoothAlg.polynomial A`, `SmoothAlg.laurent A`, `SmoothAlg.gm k`: the
   coordinate rings `k`, `A[t]`, `A[t;t⁻¹]` and `k[t;t⁻¹]` of the point, of `X × 𝔸¹`, of `X × 𝔾ₘ`
   and of `𝔾ₘ`, with universal properties `polynomialLift`, `laurentLift` and `gmHom`.
+* `SmoothAlg.zero k`: the zero ring, the coordinate ring of the empty scheme.
 * `SmoothAlg.gmHom u`: the map `k[t;t⁻¹] ⟶ A` attached to a unit `u` of `A`, which replaces a
   regular map `X → 𝔾ₘ`.
 * `OrlikSolomon.DivisorPair k`: certified smooth-divisor pairs `(X, D, U)`, with `D` cut out by a
@@ -38,6 +39,8 @@ map. No hypothesis on `k` beyond being a commutative ring is needed.
 * `DivisorPair.standardPair A`: the pair `(A[t], A, A[t;t⁻¹], t)`.
 * `DivisorPair.standardLift`, `DivisorPair.standardMap`, `DivisorPair.fromStandard`: the
   transverse morphisms out of a standard pair.
+* `DivisorPair.emptyDivisor A D`: the pair `(A, D, A, 1)` for a zero ring `D`, whose divisor is
+  empty.
 
 ## Main results
 
@@ -72,9 +75,22 @@ never fires. Use `polynomialC`, `polynomialX`, `laurentC` and `laurentT` rather 
 `X` and `T`; the lemmas `polynomialC_apply`, `polynomialX_eq`, `laurentC_apply` and `coe_laurentT`
 are the bridge to them.
 
-Morphisms of `DivisorPair k` with source or target `standardPair A` have
-`(standardPair A).ambient` in their types rather than `polynomial A`. Use `change` to restate such a
-goal before calling `simp` on a coerced morphism.
+`standardPair` is a `def` too, and so should any pair be that lemmas will mention, such as the
+deletion pair. With `abbrev standardPair` this file still builds, but a `simp` lemma about the
+residue of a standard pair silently never fires. The price is that `(standardPair A).closed` is only
+defeq to `A`, and not at reducible transparency, and likewise for `.ambient` and `.compl`. So for a
+class `x` on `laurent A`, the term `T.residue (standardPair A) x` of `Cohomology/Axioms` is not
+type-correct at the transparency `rw` and `simp` use:
+
+* `rw` fails under it, even with `map_sub`, though `rw` with a lemma about that exact term works;
+* plain `simp` applies `standardPair_compl` and `standardPair_closed` inside the types of the
+  coercions, after which neither a lemma about that term nor `add_zero` on a sum containing it
+  fires, though `simp only` with them does.
+
+Do not reach for `change` at each step. Use wrappers typed by the literal objects, as
+`T.stdResidue A` and `T.stdGysin A` are in `Cohomology/Axioms`, and state lemmas about those. The
+same cause explains why `simp only [standardPair_eqnUnit]` applied to its own statement stops at a
+goal with identical sides, of different types at reducible transparency; `rw` and `exact` close it.
 -/
 
 @[expose] public section
@@ -107,13 +123,16 @@ instance smooth_laurentPolynomial [Algebra.Smooth k R] : Algebra.Smooth k R[T;T�
   have : Algebra.Smooth R[X] R[T;T⁻¹] := .of_isLocalization_Away Polynomial.X
   .comp k R[X] R[T;T⁻¹]
 
+/-- The zero ring is smooth over any ring: it is the localization away from `0`. -/
+instance smooth_punit : Algebra.Smooth k PUnit :=
+  have : IsLocalization.Away (0 : k) PUnit :=
+    .mk _ (isUnit_of_subsingleton _) (fun _ ↦ ⟨0, 0, Subsingleton.elim _ _⟩)
+      fun _ _ _ ↦ ⟨1, by simp⟩
+  .of_isLocalization_Away (0 : k)
+
 variable {R} in
 /-- The variable `T`, as a unit of the Laurent polynomial ring. -/
-def laurentPolynomialT : R[T;T⁻¹]ˣ where
-  val := LaurentPolynomial.T 1
-  inv := LaurentPolynomial.T (-1)
-  val_inv := by rw [← LaurentPolynomial.T_add, add_neg_cancel, LaurentPolynomial.T_zero]
-  inv_val := by rw [← LaurentPolynomial.T_add, neg_add_cancel, LaurentPolynomial.T_zero]
+def laurentPolynomialT : R[T;T⁻¹]ˣ := unitOfInvertible (LaurentPolynomial.T 1)
 
 variable {k R} in
 /-- The `k`-algebra map `R[T;T⁻¹] → S` extending `φ : R → S` and sending `T` to the unit `u`. -/
@@ -214,6 +233,21 @@ instance : Unique (point k ⟶ A) where
 
 @[simp] lemma fromPoint_comp (f : A ⟶ B) : fromPoint A ≫ f = fromPoint B :=
   Subsingleton.elim _ _
+
+/-! ### The zero ring -/
+
+variable (k) in
+/-- The zero ring, which is the coordinate ring of the empty scheme. -/
+def zero : SmoothAlg k := of k PUnit
+
+instance : Subsingleton (zero k) := inferInstanceAs (Subsingleton PUnit)
+
+/-- There is exactly one map to a zero ring: it is terminal in `SmoothAlg k`. -/
+instance [Subsingleton B] : Unique (A ⟶ B) where
+  default := ofHom default
+  uniq _ := by
+    ext
+    exact Subsingleton.elim _ _
 
 /-! ### Polynomial algebras -/
 
@@ -433,9 +467,12 @@ The conditions certify `closed` as `ambient ⧸ (eqn)` and `compl` as `ambient[1
 requiring them to be those rings literally, which lets a pair of arrangement complements form a pair
 directly, with no transport.
 
-**The non-zero-divisor condition is essential.** For `eqn = 0` on a nonzero ring the open part is
-empty, and exactness would force a bijective Gysin map of shift `(2, 1)` on every smooth algebra,
-contradicting the dimension axiom. See `docs/ARCHITECTURE.md`.
+**The non-zero-divisor condition is essential.** If `eqn = 0` were allowed on a nonzero ambient
+ring, the open part would be empty and exactness would force a bijective Gysin map of shift `(2, 1)`
+on that ring. For the ambient ring `k` this contradicts the dimension axiom of a **nonzero** theory.
+It does not contradict the zero theory, and `0` is a non-zero-divisor of the zero ring, which stays
+allowed. Units are allowed too, as in `emptyDivisor`. No stronger condition is needed: see
+`docs/ARCHITECTURE.md`.
 
 Blueprint: `def:geometry-interface`. -/
 structure DivisorPair where
@@ -451,11 +488,19 @@ structure DivisorPair where
   j : ambient ⟶ compl
   /-- The equation of the divisor. -/
   eqn : ambient
+  /-- The map `i` is surjective, so `closed` is a quotient of `ambient` and `D` is a closed
+  subscheme of `X`. -/
   surjective_i : Function.Surjective i
+  /-- The kernel of `i` is generated by `eqn`. With `surjective_i`, this identifies `closed` with
+  `ambient ⧸ (eqn)`, so `D` is exactly the zero locus of `eqn`. -/
   ker_i : RingHom.ker (SmoothAlg.algHom i) = Ideal.span {eqn}
+  /-- The map `j` exhibits `compl` as the localization `ambient[1/eqn]`, for the algebra structure
+  that `j` itself defines. So `U` is exactly the complement of `D` in `X`. -/
   isLocalization_j :
     letI := (SmoothAlg.algHom j).toRingHom.toAlgebra
     IsLocalization.Away eqn compl
+  /-- The equation is a non-zero-divisor of `ambient`, so `D` is an effective Cartier divisor and
+  contains no component of `X`. Units are allowed, which gives an empty `D`. -/
   eqn_mem_nonZeroDivisors : eqn ∈ nonZeroDivisors ambient
 
 namespace DivisorPair
@@ -557,8 +602,15 @@ structure Hom (P Q : DivisorPair k) where
   closed : P.closed ⟶ Q.closed
   /-- The map of open parts. -/
   compl : P.compl ⟶ Q.compl
+  /-- The maps of ambient algebras and of divisors commute with `i`: the map `X_Q → X_P` restricts
+  to the given map `D_Q → D_P`. -/
   i_comp : P.i ≫ closed = ambient ≫ Q.i
+  /-- The maps of ambient algebras and of open parts commute with `j`: the map `X_Q → X_P` restricts
+  to the given map `U_Q → U_P`. -/
   j_comp : P.j ≫ compl = ambient ≫ Q.j
+  /-- Transversality: the ambient map sends `P.eqn` to a multiple of `Q.eqn` by a unit of
+  `Q.ambient`, so `D_P` pulls back to exactly `D_Q`. This excludes `z ↦ x²`, which also commutes
+  with `i` and `j` but multiplies the residue by two. -/
   associated_eqn : Associated (ambient P.eqn) Q.eqn
 
 attribute [reassoc] Hom.i_comp Hom.j_comp
@@ -615,6 +667,40 @@ def homOfAmbient (f : P.ambient ⟶ Q.ambient) (hf : Associated (f P.eqn) Q.eqn)
 
 @[simp] lemma homOfAmbient_ambient (f : P.ambient ⟶ Q.ambient)
     (hf : Associated (f P.eqn) Q.eqn) : (homOfAmbient f hf).ambient = f := rfl
+
+/-! ### The empty divisor -/
+
+/-- The pair `(A, D, A, 1)` for a zero ring `D`, which is the empty divisor of `X`, cut out by the
+equation `1`. Its open map is an isomorphism, so its exact sequence shows that the cohomology of `D`
+vanishes, with no separate axiom for the empty object: see
+`OrdinaryTheory.subsingleton_obj_of_subsingleton`.
+
+Blueprint: item C2 of `def:cohomology`. -/
+def emptyDivisor (A D : SmoothAlg k) [Subsingleton D] : DivisorPair k where
+  ambient := A
+  closed := D
+  compl := A
+  i := default
+  j := 𝟙 A
+  eqn := 1
+  surjective_i _ := ⟨0, Subsingleton.elim _ _⟩
+  ker_i := by
+    rw [Ideal.span_singleton_one, eq_top_iff]
+    exact fun _ _ ↦ Subsingleton.elim _ _
+  isLocalization_j := IsLocalization.away_of_isUnit_of_bijective _ isUnit_one Function.bijective_id
+  eqn_mem_nonZeroDivisors := one_mem _
+
+section EmptyDivisor
+
+variable (A D : SmoothAlg k) [Subsingleton D]
+
+@[simp] lemma emptyDivisor_ambient : (emptyDivisor A D).ambient = A := rfl
+@[simp] lemma emptyDivisor_closed : (emptyDivisor A D).closed = D := rfl
+@[simp] lemma emptyDivisor_compl : (emptyDivisor A D).compl = A := rfl
+@[simp] lemma emptyDivisor_j : (emptyDivisor A D).j = 𝟙 A := rfl
+@[simp] lemma emptyDivisor_eqn : (emptyDivisor A D).eqn = 1 := rfl
+
+end EmptyDivisor
 
 /-! ### The standard pairs -/
 

@@ -70,9 +70,12 @@ that one family of pairs (below) covers every standard pair.
 Certifying instead of using `A ⧸ (f)` and `Localization.Away f` literally lets
 `O(U_𝒜')`, `O(U_𝒜'')` and `O(U_𝒜)` form a pair directly, with no transport.
 
-**The non-zero-divisor condition is essential, not cosmetic.** For `eqn = 0` the open part
-is empty and exactness would force a bijective Gysin map of shift `(2, 1)` on every smooth
-algebra, which contradicts the dimension axiom.
+**The non-zero-divisor condition is essential, not cosmetic.** If `eqn = 0` were allowed on
+a nonzero ambient ring, the open part would be empty and exactness would force a bijective
+Gysin map of shift `(2, 1)` on that ring. For the ambient ring `k` this contradicts the
+dimension axiom of a **nonzero** theory. It does not contradict the zero theory, and `0` is a
+non-zero-divisor of the zero ring, which stays allowed. No stronger condition is needed: units
+are allowed (the empty divisor `emptyDivisor`, cut out by `1`), and so is the zero ambient ring.
 
 A *transverse morphism* of pairs `P → Q` is a triple of maps commuting with `i` and `j`
 such that the ambient map sends `P.eqn` to a **unit multiple** of `Q.eqn`. The unit is
@@ -83,11 +86,19 @@ standard pair (`A = k`), the pair in `lem:log-mul` (`A = k[y;y⁻¹]`) and the p
 `lem:gm-product`. The only other family is the deletion pair
 `(O(U_𝒜'), O(U_𝒜''), O(U_𝒜), f_H)`.
 
-**Objects are `def`s.** An object of `SmoothAlg k` that lemmas will mention should be a `def`
-built from `SmoothAlg.of`, as `point`, `polynomial` and `laurent` are, and not an `abbrev`.
+**Objects and pairs are `def`s.** An object of `SmoothAlg k` that lemmas will mention should be a
+`def` built from `SmoothAlg.of`, as `point`, `polynomial` and `laurent` are, and not an `abbrev`.
 `simp` indexes the source and target of a coerced morphism, and a reducible object produces keys
 that differ between when a lemma is added and when a goal is matched, so a lemma about such a
 coercion silently never fires. See the implementation notes in `Geometry/SmoothAlg`.
+
+The same holds for pairs: `standardPair` and the deletion pair stay `def`s. With
+`abbrev standardPair` the library still builds, but a `simp` lemma about the residue of a standard
+pair silently never fires. The friction this leaves is that `(standardPair A).closed` is `A` only
+at default transparency, so `rw` and `simp` cannot work under `T.residue (standardPair A)`. Handle
+it with **typed wrappers**, not with `change`: `T.stdResidue A : C (laurent A) →ₗ[B] C A` and
+`T.stdGysin A : C A →ₗ[B] C (polynomial A)`, with lemmas stated about them. A new family of pairs
+used this way needs its own wrappers.
 
 ### Coordinate rings and arrangements
 
@@ -154,19 +165,29 @@ coercion silently never fires. See the implementation notes in `Geometry/SmoothA
   `ℬ : ℤ → Submodule R B`, with `R` identified with `ℬ 0`.
 - Its total cohomology is a functor `SmoothAlg k ⥤ AlgCat B`, with each value internally
   bigraded by `R`-submodules. `AlgCat` is not commutative, as required.
-- The dimension axiom says `B → C(k)` is bijective and carries `ℬ w` onto degree `(0, w)`,
-  with every other degree zero.
+- Each value also carries an `R`-algebra structure as a field, tied to `B` by `IsScalarTower`, so
+  that a direct sum can keep the structure it already has.
+- The dimension axiom says `B → C(k)` is bijective, with every degree `(p, w)` for `p ≠ 0` zero.
+  C1 sends `ℬ w` into degree `(0, w)` for every `A`, and it follows that `B → C(k)` carries `ℬ w`
+  onto degree `(0, w)` (`algebraMap_mem_grading_point_iff`).
 - Affine-line invariance is stated for `A → A[t]` over every smooth `A`.
-- The residue and Gysin maps of C4 and C5 exist for every `DivisorPair`, and residue
-  naturality is stated for every transverse morphism.
+- The residue and Gysin maps of C4 and C5 exist for every `DivisorPair`, and residue and Gysin
+  naturality are stated for every transverse morphism. The proof uses only the residue square; the
+  Gysin square is there because C5 asks for the whole sequence to commute.
 - The boundary projection formula is stated only for `α` of degree `(1, 1)`, as the
   blueprint allows. A weaker hypothesis gives a stronger theorem.
-- It has no axiom for the empty object: the pair `(A, 1)` already forces the zero ring to
-  have zero cohomology.
+- It has no axiom for the empty object: the pair `emptyDivisor A D`, which is `(A, 1)` for a zero
+  ring `D`, already forces the zero ring to have zero cohomology
+  (`subsingleton_obj_of_subsingleton`).
 
 Every field must hold in real theories, so check each one against singular cohomology when
-you add it. An unsatisfiable structure would make the main theorem vacuous.
-`Examples/Sanity` should contain the zero theory as a basic consistency check.
+you add it. An unsatisfiable structure would make the main theorem vacuous. The docstrings of
+`OrdinaryTheory` record that check, which is by hand: only the coefficient axiom
+`R ≃ ℬ 0` of the model `B = R[t, t⁻¹]` is checked in Lean.
+
+`Examples/Sanity` contains the zero theory as a basic consistency check. It must have zero
+coefficients, because `R ≃ ℬ 0` and `B ≃ C(k)` must still hold. It tests the zero-ring edge case,
+not the substantive axioms.
 
 ## Exposition
 
@@ -174,10 +195,64 @@ The Verso book in `OrlikSolomonBook/` is tied to the code at build time, while t
 itself has no dependency on Verso and no project-specific attributes:
 
 - Each blueprint node in the book names its Lean declarations in a custom directive. The
-  build **fails** if a name does not resolve or the declaration depends on `sorryAx`, so
-  the text cannot drift from the code.
+  build **fails** if a name does not resolve or the declaration depends on `sorryAx`, or on
+  any axiom other than `propext`, `Classical.choice` and `Quot.sound`, so the text cannot
+  drift from the code.
 - Lean snippets in the text are elaborated against the library.
 - A completeness check compares blueprint labels with the labels the book covers.
+
+**This is the whole of what the build checks about a node.** It does not check that the named
+declarations cover the node's statement, and it would accept any proved declaration on any box. It
+does not check prose, inside or outside the boxes. Both are the responsibility of review: a reviewer
+of a change that names declarations must read them against the statement. The book tells its
+readers this on its first page and its status page.
+
+A node is presented like this, with its label as the first argument:
+
+```
+:::node "lem:gm" (decl := OrlikSolomon.gmDecomposition)
+Prose about the lemma.
+:::
+```
+
+- With no `decl`, the node renders as **planned**. With `+deferred`, it renders as
+  **deferred**, for what "Scope" below leaves out. Naming declarations is the only way to
+  make a node render as formalized.
+- If the declarations cover only part of a node, say so with `(remaining := "...")`, and it
+  renders as partly formalized. A node split across modules should use this until it is
+  finished.
+- The role `{bp "lem:gm"}[text]` links to a node and shows its status, so that a reference
+  in the prose cannot claim more than the node's own box. Empty text shows the node's name.
+- `{statusSummary}` and `{statusOverview}` are generated from what the directives recorded.
+
+Nodes are the theorem-like environments of `blueprint/*.tex` with their `\label`s, so section
+labels are not nodes. The parser rejects a `\label` that is on neither such an environment
+nor a section, and a theorem-like environment with no `\label`, so that a node cannot drop out
+of the check unnoticed. A label used twice is rejected too, including across files, since a
+copied label would otherwise add a node with no new coverage obligation. If a blueprint starts
+using, say, labelled equations, extend the parser in `OrlikSolomonBook/Blueprint.lean`.
+
+Some choices here are deliberate:
+
+- **Book files are not Lean `module`s**, unlike the library. A plain `import` loads the
+  private level of the library's data. Under `module`, a batch build does not see declaration
+  ranges or docstrings, which the book renders. Axiom checks work either way, and a proof that
+  changes to `sorry` rebuilds the book across module boundaries, with no statement changing.
+  A chapter should import `OrlikSolomon` rather than Mathlib directly, because a plain import
+  of Mathlib produces a warning.
+- **The executable links the library natively, and with it Mathlib's closure.** This is the
+  standard Verso setup, and the alternative of loading the chapters at run time needs
+  `unsafe`. With a closure of 2542 modules, compiling the objects took 25 core-minutes and
+  the binary was 149 MB. The objects are shared between worktrees and cached by the `Book`
+  workflow. Use `lake build OrlikSolomonBook` to check the book without linking.
+- **`lake exe book` has checks of its own**: unresolved cross-references and the completeness
+  check, which reads the blueprint afresh. `scripts/check-book-output.mjs` then checks the
+  generated pages. Verso renders formulas with `throwOnError: false`, so without this script a
+  bad formula would only appear as red text on the site.
+
+The `Book` workflow runs all of this on pull requests and deploys `main` to
+<https://adamtopaz.github.io/OrlikSolomon/>. Links to the source use the commit that
+`git rev-parse HEAD` reports when the book is rendered.
 
 ## Scope
 
