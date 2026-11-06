@@ -46,7 +46,7 @@ theorem poincarePolynomial_of_boolean (𝒜 : Arrangement k V)
       apply Finset.sum_congr rfl
       intro S hS
       have hsub := Finset.mem_powerset.1 hS
-      rw [poincareWeight, ite_eq_right (hne S hsub), hcodim S hsub, zsmul_eq_mul,
+      rw [poincareWeight_of_ne_bot (hne S hsub), hcodim S hsub, zsmul_eq_mul,
         Int.cast_pow, Int.cast_neg, Int.cast_one, ← mul_pow]
       simp
     _ = (1 + Polynomial.X) ^ 𝒜.hyperplanes.card := by

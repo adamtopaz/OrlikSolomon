@@ -7,6 +7,7 @@ public import OrlikSolomon.Algebra.RelationQuotient
 public import OrlikSolomon.Cohomology.Axioms
 public import OrlikSolomon.Combinatorics.AlternatingSum
 public import OrlikSolomon.Combinatorics.Betti
+public import OrlikSolomon.Examples.CoordinatePolynomials
 public import OrlikSolomon.Examples.Polynomials
 public import OrlikSolomon.Examples.Sanity
 public import OrlikSolomon.Geometry.Arrangement

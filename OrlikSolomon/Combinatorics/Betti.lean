@@ -246,7 +246,7 @@ theorem poincarePolynomial_eq_sum (𝒜 : Arrangement k V) :
   intro S _
   by_cases hS : sInf (S : Set (AffineSubspace k V)) = ⊥
   · simp [hS]
-  · simp only [poincareWeight_of_ne_bot hS, zsmul_eq_mul]
+  · simp only [poincareWeight_of_ne_bot hS, ite_eq_left hS, zsmul_eq_mul]
     rw [neg_pow (Polynomial.X : ℤ[X])]
     simp only [pow_add, map_mul, map_pow, map_neg, map_one, Int.cast_pow, Int.cast_neg,
       Int.cast_one, mul_assoc]
