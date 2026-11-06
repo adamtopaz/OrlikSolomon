@@ -4,6 +4,7 @@ public import Mathlib.Init
 public import OrlikSolomon.Algebra.Exact
 public import OrlikSolomon.Algebra.ExteriorWords
 public import OrlikSolomon.Algebra.RelationQuotient
+public import OrlikSolomon.Algebra.SymmetricGrading
 public import OrlikSolomon.Cohomology.Axioms
 public import OrlikSolomon.Cohomology.Bridge
 public import OrlikSolomon.Cohomology.BridgeData.Basic
@@ -25,6 +26,10 @@ public import OrlikSolomon.Geometry.Complement
 public import OrlikSolomon.Geometry.CoordinateRing
 public import OrlikSolomon.Geometry.Deletion
 public import OrlikSolomon.Geometry.Hyperplane
+public import OrlikSolomon.Geometry.Projective
+public import OrlikSolomon.Geometry.ProjectiveArrangement
+public import OrlikSolomon.Geometry.ProjectiveRing
+public import OrlikSolomon.Geometry.ProjectiveScheme
 public import OrlikSolomon.Geometry.RelationTargets
 public import OrlikSolomon.Geometry.SmoothAlg
 public import OrlikSolomon.Grading.Basic
