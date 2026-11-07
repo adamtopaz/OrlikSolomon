@@ -50,7 +50,8 @@ The Gysin map of `def:dr-gysin` is `[γ] ↦ [dλ]`, for `λ ∈ L^(q+1)` with `
 
 The same data, for Mathlib's long exact sequence, are `logResidueShortComplex` and
 `logResidueShortExact`, with the blueprint's shift `shiftedComplex`: the modules `Ω_S^n` in degree
-`n + 1` with differential `-d`, and zero in degree zero.
+`n + 1` with differential `-d`, and zero in degree zero. `DeRham/Maps/Gysin` uses the statements on
+elements and not this one, so no connecting map needs reconciling.
 
 ## Main definitions
 
