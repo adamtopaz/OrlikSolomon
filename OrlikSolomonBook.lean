@@ -279,16 +279,18 @@ Both theorems are conditional, and this is the most important thing to understan
 The cohomology theory is the argument `T`, an arbitrary value of the structure {name OrlikSolomon.OrdinaryTheory}`OrdinaryTheory`, whose fields are the axioms: products, a dimension axiom at the point, affine-line invariance, and compatible localization and divisor purity.
 The theorems hold for every value of this structure, and they say nothing about any cohomology theory until someone supplies such a value for that theory.
 
-*No nonzero value of this structure has been constructed in Lean.*
-The only values in the library are zero theories, with zero coefficients, and these test edge cases without touching the substantive axioms.
+*One nonzero value of this structure is constructed in Lean: algebraic de Rham cohomology.*
+For every field $`k` of characteristic zero, {name OrlikSolomon.DeRham.ordinaryTheory}`DeRham.ordinaryTheory` `k` is a value of the structure, with coefficients $`k[t,t^{-1}]`, following the [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex) as described at the end of this page.
+Its coefficient ring and its cohomology of the point are nonzero, and every field is proved, so the axioms are not vacuous.
+The other values in the library are zero theories, with zero coefficients, and these test edge cases without touching the substantive axioms.
+
+For every other cohomology theory the theorems remain conditional.
 That the axioms hold for complex singular cohomology has been checked by hand, field by field, and the checks are recorded in the comments of the source.
 For geometric $`\ell`-adic cohomology the source records the analogous interpretation, together with what an instance would still have to supply.
 These are mathematical arguments and not formal proofs.
 So the library does not yet contain a theorem about singular or $`\ell`-adic cohomology.
 To obtain one, you must construct a value of the structure, and {bp "lem:standard-bridge"}[the bridge] reduces this to the familiar degreewise inputs: groups, products, pullbacks, localization with supports and oriented purity.
 {ref "axioms"}[The chapter on the axioms] explains each field, the checks and the bridge.
-A de Rham instance is in progress, following the [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), as described at the end of this page.
-It is not part of what is proved here.
 
 The axioms are deliberately much weaker than the conclusion.
 No axiom asserts that logarithmic classes exist or generate, that the arrangement relations hold, that residues are surjective, that Gysin maps vanish, that a deletion sequence is short exact, that anything is free, or the structure theorems themselves.
@@ -325,11 +327,12 @@ Both of these are checked by human or agent review of each change, not by the bu
 So do not read *Formalized* as a machine-checked claim about the words in a box.
 What the build has checked is the declarations shown there, and you can compare their statements with the text yourself.
 
-*A de Rham instance in progress.*
+*A de Rham instance.*
 The status lines at the top of this page count two blueprints separately.
-The second plans a value of the structure of axioms: algebraic de Rham cohomology over a field of characteristic zero, which would show that the axioms have a nonzero model and would give a form of the theorem with no hypothetical cohomology theory in it.
-Some of its algebraic foundations are formalized, but the library does not yet contain this instance.
-{ref "de-rham"}[Its chapter] presents the plan.
+The second constructs a value of the structure of axioms: algebraic de Rham cohomology over a field of characteristic zero.
+That value is formalized, so the axioms have a nonzero model in Lean.
+The forms of the two theorems with no hypothetical cohomology theory in them, which instantiate the theorems at this value and identify the generators with the classes of the forms $`df/f`, are still planned.
+{ref "de-rham"}[Its chapter] presents the construction and what remains.
 The main theorem does not depend on it: the dependence runs the other way.
 
 {include 1 OrlikSolomonBook.Organization}

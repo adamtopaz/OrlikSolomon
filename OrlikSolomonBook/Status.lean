@@ -23,6 +23,7 @@ That the declarations cover the node's statement, and that the prose around them
 So a row marked formalized records a reviewed judgement that rests on checked declarations, not a machine-checked claim about the node's wording.
 
 Formalized does not mean unconditional.
-Every result that mentions cohomology is proved for an arbitrary value of the structure {ref "axioms"}[of the axioms], and no nonzero value has been constructed in Lean.
+Every result of the first blueprint that mentions cohomology is proved for an arbitrary value of the structure {ref "axioms"}[of the axioms].
+The de Rham instance is one nonzero value, for fields of characteristic zero, and no value has been constructed in Lean for singular or $`\ell`-adic cohomology.
 
 {statusOverview}

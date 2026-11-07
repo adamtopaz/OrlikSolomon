@@ -74,9 +74,9 @@ With the ambient space fixed, the statement would not supply its own induction h
  * the affine theorem, applied to the central cone
  * the projective theorem, with a map defined using no hyperplane at infinity
 *
- * {ref "de-rham"}[A de Rham instance], in progress
+ * {ref "de-rham"}[A de Rham instance]
  * the structure of the axioms, and the affine and projective theorems
- * a nonzero value of the structure, and forms of those theorems with no hypothetical cohomology theory
+ * a nonzero value of the structure and, still planned, forms of those theorems with no hypothetical cohomology theory
 :::
 
 The axioms do not mention logarithmic classes, so the first step has to construct them.

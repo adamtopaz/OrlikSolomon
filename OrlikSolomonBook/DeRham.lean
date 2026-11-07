@@ -6,7 +6,7 @@ Authors: Adam Topaz, Claude, Codex
 import OrlikSolomonBook.Node
 import OrlikSolomon
 
-open Verso.Genre Manual
+open Verso.Genre Manual InlineLean
 open OrlikSolomonBook
 
 #doc (Manual) "A de Rham instance of the axioms" =>
@@ -16,16 +16,19 @@ file := "de-rham"
 htmlSplit := .never
 %%%
 
-*The de Rham instance is being formalized.*
+*The de Rham instance is constructed in Lean.*
 This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
+For every field $`k` of characteristic zero, {name OrlikSolomon.DeRham.ordinaryTheory}`DeRham.ordinaryTheory` `k` is a value of the structure of axioms: algebraic de Rham cohomology, with coefficients $`k[t,t^{-1}]`.
+Its coefficient ring and its cohomology of the point are nonzero, and every field of the structure is proved for it, none weakened and none replaced by a hypothesis.
+This is {bp "thm:dr-instance"}[].
+
 The exterior calculus and the de Rham dg algebra of an arbitrary algebra, including its differential and cohomology algebra, are formalized, together with forms on localizations and principal quotients.
 The polynomial decomposition of forms and the integration homotopy are formalized as well, including the cohomology equivalence whose inverse is induced by evaluation at zero.
 Projectivity in every form degree, injectivity of regular scalar multiplication and of restriction into localization, conormal splitting, global and localized normal derivations, and wedge exactness modulo the divisor are also formalized, as are logarithmic forms and the residue sequence of a smooth divisor.
 Cartan calculus, the pole filtration, contraction of its positive quotients, and finite reduction to logarithmic cohomology are formalized.
 The residue and Gysin maps before the twist, their long exact sequence and projection formula, and their naturality for morphisms that need not be flat are formalized too.
-So are the Laurent-twisted functor and the fields of the structure of axioms that precede the Gysin and residue maps.
-The remaining fields and the final instance remain planned.
-The library therefore still contains no nonzero value of the structure of axioms.
+So are the Laurent-twisted functor, the twisted Gysin and residue maps, and every field of the structure of axioms.
+What remains planned is {bp "lem:dr-tau"}[], which identifies the logarithmic classes of the instance with the classes of the forms $`da/a`, the corollaries {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[], which instantiate the main theorems at it, and some of the worked regressions.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
 
@@ -33,23 +36,45 @@ The {ref "status"}[status page] counts these nodes apart from those of the main 
 
 The main theorem of this book is conditional.
 It holds for every value of the structure of axioms in {bp "def:cohomology"}[], and by itself it says nothing about any particular cohomology theory.
-The only values of that structure in the library today are zero theories, with zero coefficients.
-The second blueprint plans one substantive value: algebraic de Rham cohomology of smooth algebras over a field $`k` of characteristic zero.
-This serves two purposes.
+Apart from zero theories, with zero coefficients, the library contains one value of that structure: algebraic de Rham cohomology of smooth algebras over a field $`k` of characteristic zero.
+It serves two purposes.
 
 *Showing that the axioms are not vacuous.*
-{bp "thm:dr-instance"}[] would give a value of the structure whose coefficient ring and whose cohomology of the point are nonzero.
-So the axioms would be known in Lean to have a nonzero model, with every field proved and none weakened.
+{bp "thm:dr-instance"}[] gives a value of the structure whose coefficient ring and whose cohomology of the point are nonzero.
+So the axioms are known in Lean to have a nonzero model, with every field proved and none weakened.
+Its only hypotheses are that $`k` is a field and has characteristic zero:
+
+```lean -show
+noncomputable section
+open OrlikSolomon
+universe u
+```
+
+```lean
+example (k : Type u) [Field k] [CharZero k] :
+    OrdinaryTheory k (laurentGrading k) :=
+  DeRham.ordinaryTheory k
+```
+
+It depends only on the standard axioms of Lean's logic, and the build fails if this output changes:
+
+```lean (name := axiomsOfDeRhamOrdinaryTheory)
+#print axioms DeRham.ordinaryTheory
+```
+```leanOutput axiomsOfDeRhamOrdinaryTheory
+'OrlikSolomon.DeRham.ordinaryTheory' depends on axioms: [propext, Classical.choice, Quot.sound]
+```
 
 *Giving an unconditional corollary.*
-{bp "cor:dr-affine"}[] would instantiate {bp "thm:affine"}[] to give, for every split affine arrangement $`\mathcal{A}` over such a field,
+{bp "cor:dr-affine"}[], which is still planned, will instantiate {bp "thm:affine"}[] to give, for every split affine arrangement $`\mathcal{A}` over such a field,
 $$`\operatorname{OS}_k(\mathcal{A})\simeq_k\bigoplus_{q\ge0}H^q_{\mathrm{dR}}(U_{\mathcal{A}}/k),\qquad e_H\longmapsto[df_H/f_H],`
 a statement with no hypothetical cohomology theory in it.
-{bp "cor:dr-projective"}[] would do the same for nonempty split projective arrangements.
+{bp "cor:dr-projective"}[] will do the same for nonempty split projective arrangements.
 The proof about arrangements is not repeated, and the construction of the instance does not mention arrangements at all: they enter only when the existing theorems are instantiated.
 
 This is one theory.
-It would give no theorem about singular, $`\ell`-adic or rigid cohomology, and the main theorem would stay stated for every value of the structure.
+It gives no theorem about singular, $`\ell`-adic or rigid cohomology.
+For those the main theorem remains conditional, the checks of its axioms against singular and $`\ell`-adic cohomology remain arguments by hand, and the main theorem stays stated for every value of the structure.
 
 # The strategy: no coordinate cover
 %%%
@@ -403,19 +428,24 @@ This functor and grading satisfy every field of the structure that precedes the 
 In particular the map $`B\to C(k)` is bijective, the point has no cohomology in nonzero cohomological degrees, and $`C(A)\to C(A[z])` is bijective for every smooth $`A`.
 :::
 
-:::node "def:dr-twisted-maps"
+:::node "def:dr-twisted-maps" (decl := OrlikSolomon.DeRham.TwistedCohomology.twistMap) (decl := OrlikSolomon.DeRham.TwistedCohomology.gysin) (decl := OrlikSolomon.DeRham.TwistedCohomology.residue) (decl := OrlikSolomon.DeRham.gysin_twistedClass) (decl := OrlikSolomon.DeRham.residue_twistedClass)
 For a fixed divisor pair, the canonical construction is transported along the maps of the pair, and $`G` and $`r` are extended $`B`-linearly by
 $$`g(y\,t^w)=G(y)t^{w+1},\qquad R(x\,t^w)=r(x)t^{w-1}.`
 These are the proposed Gysin and residue fields of the structure.
+
+In Lean nothing needs to be transported: a divisor pair is itself a smooth principal pair, with its open part as the localization.
 :::
 
-:::node "thm:dr-ordinary-localization"
+:::node "thm:dr-ordinary-localization" (decl := OrlikSolomon.DeRham.TwistedCohomology.isHomogeneousOfShift_gysin) (decl := OrlikSolomon.DeRham.TwistedCohomology.isHomogeneousOfShift_residue) (decl := OrlikSolomon.DeRham.TwistedCohomology.exact_gysin_map) (decl := OrlikSolomon.DeRham.TwistedCohomology.exact_map_residue) (decl := OrlikSolomon.DeRham.TwistedCohomology.exact_residue_gysin) (decl := OrlikSolomon.DeRham.TwistedCohomology.gysin_map) (decl := OrlikSolomon.DeRham.TwistedCohomology.residue_map) (decl := OrlikSolomon.DeRham.TwistedCohomology.residue_mul_map)
 The maps $`g` and $`R` have shifts $`(2,1)` and $`(-1,-1)`.
 They satisfy $`\operatorname{im}g=\ker C(j)`, $`\operatorname{im}C(j)=\ker R` and $`\operatorname{im}R=\ker g`, and they commute with every morphism of divisor pairs.
 Moreover $`R(\alpha\,C(j)\beta)=R(\alpha)\,C(i)\beta` for $`\alpha\in C(A_f)_{1,1}` and $`\beta\in C(A)`.
+
+In Lean the exactness comes from flatness: $`k[t,t^{-1}]` is free over $`k`, so tensoring with it preserves exactness, and $`t^w` is a unit.
+The projection formula is proved for every $`\alpha`, with no condition on its degree.
 :::
 
-:::node "thm:dr-instance" (decl := OrlikSolomon.DeRham.nontrivial_coefficients) (decl := OrlikSolomon.DeRham.nontrivialObjPoint) (remaining := "The value of the structure, which needs the Gysin and residue maps and their fields")
+:::node "thm:dr-instance" (decl := OrlikSolomon.DeRham.ordinaryTheory) (decl := OrlikSolomon.DeRham.nontrivial_coefficients) (decl := OrlikSolomon.DeRham.nontrivialOrdinaryTheoryObjPoint)
 For every field $`k` of characteristic zero, this data defines a value of the structure `OrdinaryTheory`, with $`R=k` and $`B=k[t,t^{-1}]`.
 The coefficient ring and the cohomology of the point are nonzero.
 All fields hold for every smooth algebra and every divisor pair, without assuming anything about arrangements, connectedness or nonemptiness, or flatness of morphisms.

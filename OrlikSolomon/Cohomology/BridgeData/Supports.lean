@@ -40,8 +40,8 @@ The Thom isomorphism and these products hold for any commutative `R`, including 
 two and the zero ring. A geometric étale interpretation instead uses oriented divisor purity
 with the same twist shift, with `ℓ` invertible and the geometric point convention described in
 `BridgeData/Basic`. Passing finite-coefficient localization to an integral `ℓ`-adic theory and
-implementing coherent twist products remain obligations of such a model. No nonzero model is
-constructed here, and no such passage is an assumption of this bridge theorem.
+implementing coherent twist products remain obligations of such a model. No singular or étale
+model is constructed here, and no such passage is an assumption of this bridge theorem.
 
 Mixed products of a supported class and an ambient class encode the usual boundary projection
 formula and the compatibility of oriented purity with products. These give coefficient linearity

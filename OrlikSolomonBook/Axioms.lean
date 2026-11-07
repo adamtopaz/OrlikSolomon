@@ -72,10 +72,10 @@ The statements about the empty object and about affine spaces are consequences o
 A structure with unsatisfiable axioms would make the main theorem vacuous, so each field has to hold in real theories.
 Here is the exact state of that check.
 
-*In Lean, there is no nonzero instance.*
-The values of the structure constructed in Lean are the zero theories {name OrlikSolomon.Sanity.zeroTheory}`zeroTheory` and {name OrlikSolomon.Sanity.zeroBridgeTheory}`zeroBridgeTheory`, with zero coefficients, the second built by the bridge below from zero degreewise data.
-A nonzero value, algebraic de Rham cohomology in characteristic zero, is being built in {ref "de-rham"}[its own chapter].
-Some algebraic foundations are formalized, but the instance itself has not been constructed.
+*In Lean, there is one nonzero instance.*
+For every field $`k` of characteristic zero, {name OrlikSolomon.DeRham.ordinaryTheory}`DeRham.ordinaryTheory` `k` is a value of the structure: algebraic de Rham cohomology, with $`R=k` and $`B=k[t,t^{-1}]`, constructed in {ref "de-rham"}[its own chapter].
+Its coefficient ring and its cohomology of the point are nonzero, and every field is proved for it, none weakened, so the axioms are not vacuous.
+The other values of the structure constructed in Lean are the zero theories {name OrlikSolomon.Sanity.zeroTheory}`zeroTheory` and {name OrlikSolomon.Sanity.zeroBridgeTheory}`zeroBridgeTheory`, with zero coefficients, the second built by the bridge below from zero degreewise data.
 
 ```lean -show
 noncomputable section
@@ -84,15 +84,19 @@ universe u v w z t
 ```
 
 ```lean
+example (k : Type u) [Field k] [CharZero k] :
+    OrdinaryTheory k (laurentGrading k) :=
+  DeRham.ordinaryTheory k
+
 example (k : Type u) [CommRing k] :
     OrdinaryTheory.{u, v, w, z} k
       Sanity.zeroWeight.{v, w} :=
   Sanity.zeroTheory k
 ```
 
-These values show that the fields can be satisfied at all, and they test the zero-ring edge case.
+The zero theories test the zero-ring edge case.
 They say nothing about the substantive axioms, all of which hold in them trivially.
-The one nontrivial thing checked in Lean about a nonzero model is the coefficient axiom $`R\simeq B_0` for $`B=R[t,t^{-1}]`, which is {name OrlikSolomon.Sanity.bijective_algebraMap_laurentWeight}`bijective_algebraMap_laurentWeight`.
+For the model of singular cohomology below, the one thing checked in Lean is its coefficient axiom $`R\simeq B_0` for $`B=R[t,t^{-1}]`, which is {name OrlikSolomon.Sanity.bijective_algebraMap_laurentWeight}`bijective_algebraMap_laurentWeight`.
 
 *By hand, for singular cohomology.*
 Every field has been checked by hand against complex singular cohomology, in the model above, for a field with a chosen embedding in $`\mathbb{C}`.
