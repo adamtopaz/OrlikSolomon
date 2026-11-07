@@ -32,6 +32,7 @@ public import OrlikSolomon.DeRham.Exterior
 public import OrlikSolomon.DeRham.Exterior.BaseChange
 public import OrlikSolomon.DeRham.Exterior.Basic
 public import OrlikSolomon.DeRham.Exterior.Contraction
+public import OrlikSolomon.DeRham.Exterior.Projective
 public import OrlikSolomon.DeRham.Exterior.Quotient
 public import OrlikSolomon.DeRham.Homotopy
 public import OrlikSolomon.DeRham.Homotopy.Degree
@@ -42,6 +43,7 @@ public import OrlikSolomon.DeRham.Localization
 public import OrlikSolomon.DeRham.PrincipalQuotient
 public import OrlikSolomon.DeRham.SmoothPair
 public import OrlikSolomon.DeRham.SmoothPair.Koszul
+public import OrlikSolomon.DeRham.SmoothPair.Projective
 public import OrlikSolomon.Examples.AffineLines
 public import OrlikSolomon.Examples.Bridge
 public import OrlikSolomon.Examples.Cokernel

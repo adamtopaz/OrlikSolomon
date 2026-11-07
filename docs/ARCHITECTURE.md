@@ -78,6 +78,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Complex`               | `complex`, the cochain complex of `def:dr-complex`, and its functoriality; the module to import |
 | `DeRham/Exterior/Basic`        | exterior words, signs and homogeneous components, and the maps `⋀_A M → ⋀_S M'` along a change of rings, for `lem:dr-exterior` and `thm:dr-dga` |
 | `DeRham/Exterior/Contraction`  | `lem:dr-contraction`, naturality of contraction for `lem:dr-cartan`, and the decomposition `M = K ⊕ A e` for `lem:dr-polynomial-splitting` |
+| `DeRham/Exterior/Projective`   | exterior powers of any projective module are projective, used by `lem:dr-projective` |
 | `DeRham/Exterior/BaseChange`   | base change in `lem:dr-exterior`, for any `IsBaseChange`, including localizations |
 | `DeRham/Exterior/Quotient`     | the quotient formula in `lem:dr-exterior` |
 | `DeRham/Exterior`              | the kernel of `⋀_A^n M → ⋀_S^n M'` for surjections of rings and of modules, the form used by `lem:dr-presentation` and `lem:dr-quotient`; the module to import |
@@ -89,6 +90,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Localization`          | `lem:dr-localization`, for any `IsLocalization`; `dlog`, and the extension of derivations |
 | `DeRham/PrincipalQuotient`     | `lem:dr-quotient`, for any surjection of algebras with principal kernel |
 | `DeRham/SmoothPair/Koszul`    | `lem:dr-modf-koszul`: wedge exactness modulo a smooth principal divisor in every degree |
+| `DeRham/SmoothPair/Projective` | `lem:dr-projective`: projectivity in every form degree, regular scalar action and injectivity into localization |
 | `DeRham/SmoothPair`           | the conormal splitting of `lem:dr-conormal`, and the global and localized derivations of `lem:dr-normal-derivation` |
 | `Examples/AffineLines`        | concurrent lines and the triangle, including the nonempty-intersection guard |
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
@@ -541,14 +543,13 @@ declaration names are proposals, as with the first blueprint.
 
 The namespace is `OrlikSolomon.DeRham`. Exterior calculus, the dg algebra and its differential,
 its cohomology algebra, polynomial-form decomposition and homotopy invariance, forms on
-localizations and principal quotients, conormal splitting, global and localized normal derivations,
-and wedge exactness modulo the divisor exist; the other parts below remain planned. The table
-groups modules by issues #72–#83. The conormal and normal-derivation results need only Mathlib's
-Kähler differentials and formal-smoothness lifts.
-Normalizing a derivation on `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge
-exactness uses exterior contraction; neither requires the de Rham differential. All of
-`lem:dr-projective` remains in #77: projectivity of every form degree, injectivity of multiplication
-by a regular element, and injectivity into localization.
+localizations and principal quotients, projectivity and regular scalar action in every form degree,
+injectivity into localization, conormal splitting, global and localized normal derivations, and
+wedge exactness modulo the divisor exist; the other parts below remain planned.
+The table groups modules by issues #72–#83. The conormal and normal-derivation results need only
+Mathlib's Kähler differentials and formal-smoothness lifts. Normalizing a derivation on
+`A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge exactness uses exterior
+contraction; neither requires the de Rham differential.
 
 | Module under `OrlikSolomon/` | Blueprint labels |
 | ---------------------------- | ---------------- |
@@ -557,7 +558,9 @@ by a regular element, and injectivity into localization.
 | `DeRham/Localization`, `DeRham/PrincipalQuotient` | `lem:dr-localization`, `lem:dr-quotient` |
 | `DeRham/Cohomology`          | `def:dr-cohomology` |
 | `DeRham/Homotopy`            | `lem:dr-polynomial-splitting`, `thm:dr-homotopy` |
-| `DeRham/SmoothPair`          | `lem:dr-projective`, `lem:dr-conormal`, `lem:dr-normal-derivation`, `lem:dr-modf-koszul` |
+| `DeRham/SmoothPair`          | `lem:dr-conormal`, `lem:dr-normal-derivation` |
+| `DeRham/SmoothPair/Projective` | `lem:dr-projective` |
+| `DeRham/SmoothPair/Koszul`   | `lem:dr-modf-koszul` |
 | `DeRham/Log`                 | `def:dr-log`, `lem:dr-log-dga`, `lem:dr-regularity`, `def:dr-residue`, `thm:dr-residue-sequence`, `lem:dr-form-projection` |
 | `DeRham/Pole`                | `lem:dr-cartan`, `lem:dr-euler`, `def:dr-pole-filtration`, `lem:dr-pole-quotient`, `thm:dr-pole-contraction`, `lem:dr-filtration-reduction`, `thm:dr-comparison` |
 | `DeRham/Maps`                | `def:dr-gysin`, `lem:dr-exactness`, `thm:dr-projection`, `thm:dr-log-naturality`, `thm:dr-naturality` |
@@ -623,6 +626,16 @@ The conormal splitting requires only formal smoothness of `A/(f)`;
 `exists_normalDerivation_modulo` additionally uses formal smoothness of `A`. Both allow unit
 equations, the zero ring and disconnected algebras. The latter asserts `v(f) = 1 + f*h`, with
 normalization to one only after localizing at `v(f)`.
+
+`DeRham/Exterior/Projective` proves that exterior powers of an arbitrary projective module are
+projective: apply `exteriorPower.map` to its free-module splitting and use Mathlib's freeness of
+exterior powers of free modules. `DeRham/SmoothPair/Projective` combines this instance with
+`Algebra.FormallySmooth.projective_kaehlerDifferential`. Its regularity and localization
+injectivity lemmas assume only projectivity of `Ω[A⁄k]`, which formal smoothness supplies.
+`isSMulRegular_forms` reuses flat-module regularity, and
+`Forms.injective_mapPower_of_isLocalizationAway` uses the criterion that some power of the equation
+kills a form in the localization kernel. All form degrees, unit equations and the zero algebra are
+included, without finite presentation or smoothness of a quotient.
 
 ### Forms on localizations and on quotients
 
@@ -720,10 +733,11 @@ smoothness of the coefficient algebra.
 
 The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Its opening
 names the exterior calculus, dg algebra, cohomology algebra, polynomial homotopy, forms on
-localizations and quotients, conormal splitting, normal derivations and modulo-divisor wedge
-exactness as formalized, and lists what remains. The first page, `Organization` and the
-chapter on the axioms say the instance is in progress. No nonzero value of `OrdinaryTheory` has
-been constructed. The build does not check that prose, so keep it current as nodes land. The PR
+localizations and quotients, projectivity and regularity of forms, injectivity into localization,
+conormal splitting, normal derivations and modulo-divisor wedge exactness as formalized, and lists
+what remains. The first page, `Organization` and the chapter on the axioms say the instance is in
+progress. No nonzero value of `OrdinaryTheory` has been constructed. The build does not check that
+prose, so keep it current as nodes land. The PR
 that proves `thm:dr-instance` must update the sentences saying that no nonzero value
 of the structure has been constructed: on the first page, in the chapter on the axioms, on the
 status page and in `README.md`.

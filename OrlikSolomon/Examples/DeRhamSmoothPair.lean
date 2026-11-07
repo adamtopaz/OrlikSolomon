@@ -1,11 +1,13 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Codex
+Authors: Adam Topaz, Codex, Claude
 -/
 module
 
 public import OrlikSolomon.DeRham.SmoothPair
+public import OrlikSolomon.DeRham.SmoothPair.Projective
+public import OrlikSolomon.Geometry.SmoothAlg
 public import Mathlib.RingTheory.Smooth.Pi
 public import Mathlib.RingTheory.Smooth.StandardSmoothCotangent
 public import Mathlib.Algebra.Polynomial.Div
@@ -16,10 +18,13 @@ public import Mathlib.Algebra.Polynomial.Div
 For `A = k × k[X]` and `f = (1,X)`, the divisor is smooth and the conormal sequence
 splits, but no derivation takes `f` to one in `A`. The global normal derivation theorem
 still applies: the required normalization is only modulo `f`.
-Unit equations and the actual zero algebra also satisfy the theorem.
+Unit equations and the actual zero algebra also satisfy the theorem. In every exterior degree,
+forms are projective on the zero algebra and inject into localization for unit equations,
+including the intrinsic complement map of the zero divisor pair.
 
-Blueprint: `lem:dr-conormal`, `lem:dr-normal-derivation`, `prop:dr-product-example`,
-`prop:dr-unit-example` and the one-form part of `prop:dr-zero-example`.
+Blueprint: `lem:dr-projective`, `lem:dr-conormal`, `lem:dr-normal-derivation`,
+`prop:dr-product-example`, `prop:dr-unit-example` and the one-form part of
+`prop:dr-zero-example`.
 -/
 
 @[expose] public section
@@ -185,6 +190,30 @@ theorem zero_exists_normalDerivation_modulo :
     ∃ (v : Derivation k PUnit PUnit) (h : PUnit), v 0 = 1 + (0 : PUnit) * h :=
   DeRham.exists_normalDerivation_modulo (k := k) (0 : PUnit)
     ⟨fun _ _ ↦ Subsingleton.elim _ _, fun _ _ ↦ Subsingleton.elim _ _⟩
+
+/-- The actual zero object has projective forms in every degree, including degree zero. -/
+example (n : ℕ) :
+    Module.Projective (SmoothAlg.zero k) (⋀[SmoothAlg.zero k]^n Ω[SmoothAlg.zero k⁄k]) :=
+  inferInstance
+
+/-- A unit equation acts injectively on forms in every degree. -/
+example [Algebra.FormallySmooth k A] (u : Aˣ) (n : ℕ) :
+    IsSMulRegular (⋀[A]^n Ω[A⁄k]) (u : A) :=
+  DeRham.isSMulRegular_forms u.isUnit.mem_nonZeroDivisors n
+
+/-- Restriction to any certified localization at a unit equation is injective on forms. -/
+example [Algebra.FormallySmooth k A] {T : Type*} [CommRing T] [Algebra k T] [Algebra A T]
+    [IsScalarTower k A T] (u : Aˣ) [IsLocalization.Away (u : A) T] (n : ℕ) :
+    Function.Injective (DeRham.Forms.mapPower (IsScalarTower.toAlgHom k A T) n) :=
+  DeRham.Forms.injective_mapPower_of_isLocalizationAway u.isUnit.mem_nonZeroDivisors n
+
+/-- The library's zero pair has an injective complement map on forms, with no extra instances. -/
+example (n : ℕ) :
+    Function.Injective (DeRham.Forms.mapPower
+      (SmoothAlg.algHom (DivisorPair.emptyDivisor (SmoothAlg.zero k) (SmoothAlg.zero k)).j) n) :=
+  DeRham.Forms.injective_mapPower_of_isLocalizationAway
+    (T := (DivisorPair.emptyDivisor (SmoothAlg.zero k) (SmoothAlg.zero k)).compl)
+    (DivisorPair.emptyDivisor (SmoothAlg.zero k) (SmoothAlg.zero k)).eqn_mem_nonZeroDivisors n
 
 end UnitsAndZero
 
