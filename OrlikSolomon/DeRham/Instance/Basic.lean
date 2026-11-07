@@ -38,9 +38,8 @@ The fields of `OrdinaryTheory`, in order:
 | `eq_zero_of_mem_grading_point` | `TwistedCohomology.eq_zero_of_mem_grading_point` |
 | `bijective_map_polynomialC` | `bijective_twistedCohomologyFunctor_map_polynomialC` |
 
-`Examples/DeRhamInstance` fills the structure with these, taking the remaining fields as arguments,
-which checks that each of them has the exact shape of its field. That is a test of shape: the
-remaining fields are not hypotheses of anything here.
+`DeRham/Instance` fills the remaining fields and assembles the instance,
+`OrlikSolomon.DeRham.ordinaryTheory k`.
 
 When `k` is nonzero, the coefficient ring and the value at the point are nonzero:
 `nontrivial_coefficients`, and the instance on `(twistedCohomologyFunctor k).obj (point k)`.
@@ -56,9 +55,9 @@ they are typed differently.
 
 So state and prove computations on `TwistedCohomology k A`, where `simp` works, and pass between the
 two once, with `exact` or `change`. The lemmas `twistedCohomologyFunctor_map_apply` and
-`twistedCohomologyFunctor_map_tmul` are `rfl`. `Examples/DeRhamInstance` shows this on a conditional
-test value of the structure, given its remaining fields: reading a homogeneous class as
-`T w ⊗ₜ c`, and assembling
+`twistedCohomologyFunctor_map_tmul` are `rfl`. For the instance itself, `DeRham/Instance` adds
+`twistedClass w c`, the class `T w ⊗ₜ c` typed in the theory, on which `simp` computes directly.
+`Examples/DeRhamInstance` uses it to read a homogeneous class as `T w ⊗ₜ c`, and to assemble
 `OS_k(𝒜) ≃ₐ[k] H^•_dR(U_𝒜)` from `OrdinaryTheory.diagonalEquiv` and
 `TwistedCohomology.diagonalEquiv`.
 

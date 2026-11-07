@@ -33,8 +33,10 @@ commutative ring `R`. This verifies the fields as follows:
   `bijective_map_polynomialC` is homotopy invariance for the contractible factor `ℂ`.
 
 This model uses the specified Laurent coefficient algebra; it does not interpret an arbitrary
-weight-graded `B` as singular cohomology. The only concrete theory instances constructed in Lean
-are the zero theories in `Examples/Sanity` and `Examples/Bridge`.
+weight-graded `B` as singular cohomology. It is checked by hand, not in Lean: no singular or étale
+instance is constructed. The values of `OrdinaryTheory` constructed in Lean are the zero theories in
+`Examples/Sanity` and `Examples/Bridge`, and the de Rham instance of `DeRham/Instance`, which is
+built directly rather than through this bridge.
 
 For geometric étale cohomology the analogous input uses `H^p(X_{k^sep}; ℤ_ℓ(w))`, with `ℓ`
 invertible in the base field and a separably closed geometric point. Arithmetic cohomology of

@@ -40,7 +40,9 @@ public import OrlikSolomon.DeRham.Homotopy.Degree
 public import OrlikSolomon.DeRham.Homotopy.Differential
 public import OrlikSolomon.DeRham.Homotopy.Integration
 public import OrlikSolomon.DeRham.Homotopy.Polynomial
+public import OrlikSolomon.DeRham.Instance
 public import OrlikSolomon.DeRham.Instance.Basic
+public import OrlikSolomon.DeRham.Instance.Maps
 public import OrlikSolomon.DeRham.Instance.Twisted
 public import OrlikSolomon.DeRham.Localization
 public import OrlikSolomon.DeRham.Log

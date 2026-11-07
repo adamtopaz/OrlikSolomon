@@ -48,8 +48,10 @@ hyperplane is `SmoothAlg.projectiveComplementIsoAffineSpace`.
 
 `zeroTheory` shows that the fields of `OrdinaryTheory` can be satisfied at all, and it tests the
 zero-ring edge case. It says nothing about the substantive axioms, because every field holds in it
-trivially. The check of those axioms is the comparison with complex singular cohomology by hand,
-recorded in the docstring of `OrdinaryTheory`, which is not formalized.
+trivially. Those axioms are checked in Lean by the de Rham instance `DeRham.ordinaryTheory k` of
+`DeRham/Instance`, for a field `k` of characteristic zero, whose coefficients and point are nonzero.
+The comparison with complex singular cohomology, recorded in the docstring of `OrdinaryTheory`, is
+by hand and is not formalized.
 
 The zero theory must have zero coefficients: a theory with `B = 0` has `R = 0`, since `R` is
 identified with the weight-zero part of `B` (`subsingleton_coefficients_of_subsingleton`). A theory

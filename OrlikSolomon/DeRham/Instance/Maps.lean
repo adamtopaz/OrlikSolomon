@@ -13,12 +13,12 @@ public import OrlikSolomon.DeRham.Maps
 # The twisted Gysin and residue maps
 
 For a smooth principal pair `(f, φ : A → S)` and a localization `L` of `A` away from `f`, this file
-extends the maps of `DeRham/Maps` to `C(-) = k[T;T⁻¹] ⊗[k] H^•_dR(-)` and proves that the extensions
-have every property that `OrdinaryTheory` asks of a Gysin map and a residue:
+extends the maps of `DeRham/Maps` to `C(-) = k[T;T⁻¹] ⊗[k] H^•_dR(-)` and proves that the
+extensions have every property that `OrdinaryTheory` asks of a Gysin map and a residue:
 `g(T^w y) = T^(w+1) G(y)` and `R(T^w x) = T^(w-1) r(x)`.
 
-This file does not mention `SmoothAlg k` or `DivisorPair k`, and `k` is any commutative ring in which
-positive integers are units. `DeRham/Instance` applies it to a divisor pair.
+This file does not mention `SmoothAlg k` or `DivisorPair k`, and `k` is any commutative ring in
+which positive integers are units. `DeRham/Instance` applies it to a divisor pair.
 
 ## Main definitions
 
@@ -84,10 +84,10 @@ theorem twistMap_T_tmul (w v : ℤ) (f : M →ₗ[k] N) (c : M) :
     twistMap w f (T v ⊗ₜ[k] c) = T (v + w) ⊗ₜ[k] f c := by
   rw [twistMap_tmul, add_comm, LaurentPolynomial.T_add]
 
-/-- The value of `twistMap` is `T^w` times the value of `lTensor`. -/
+/-- The value of `twistMap` is `T^w` times the value of the base change. -/
 theorem twistMap_apply (w : ℤ) (f : M →ₗ[k] N) (x : k[T;T⁻¹] ⊗[k] M) :
-    twistMap w f x = (T w : k[T;T⁻¹]) • f.lTensor k[T;T⁻¹] x := by
-  rw [twistMap, LinearMap.smul_apply, LinearMap.baseChange_eq_lTensor]
+    twistMap w f x = (T w : k[T;T⁻¹]) • f.baseChange k[T;T⁻¹] x :=
+  rfl
 
 /-- Multiplication by `T^w` is injective on any `k[T;T⁻¹]`-module, since `T^w` is a unit. -/
 theorem T_smul_eq_zero {M : Type*} [AddCommGroup M] [Module k[T;T⁻¹] M] {w : ℤ} {x : M} :
@@ -99,16 +99,19 @@ is a unit. Nothing is assumed about `k`.
 
 Blueprint: `thm:dr-ordinary-localization`, the total exactness. -/
 theorem exact_twistMap {f : M →ₗ[k] N} {g : N →ₗ[k] Q} (h : Function.Exact f g) (v w : ℤ) :
-    Function.Exact (twistMap v f) (twistMap w g) := fun y ↦ by
-  rw [twistMap_apply, T_smul_eq_zero, Module.Flat.lTensor_exact k[T;T⁻¹] h y]
+    Function.Exact (twistMap v f) (twistMap w g) := by
+  have hb : Function.Exact (f.baseChange k[T;T⁻¹]) (g.baseChange k[T;T⁻¹]) := by
+    rw [LinearMap.baseChange_eq_lTensor, LinearMap.baseChange_eq_lTensor]
+    exact Module.Flat.lTensor_exact k[T;T⁻¹] h
+  intro y
+  rw [twistMap_apply, T_smul_eq_zero, hb y]
   constructor
   · rintro ⟨x, rfl⟩
     refine ⟨(T (-v) : k[T;T⁻¹]) • x, ?_⟩
-    rw [map_smul, twistMap_apply, smul_smul, ← LaurentPolynomial.T_add]
-    simp
+    rw [twistMap_apply, map_smul, smul_smul, ← LaurentPolynomial.T_add, add_neg_cancel,
+      LaurentPolynomial.T_zero, one_smul]
   · rintro ⟨x, rfl⟩
-    refine ⟨(T v : k[T;T⁻¹]) • x, ?_⟩
-    rw [map_smul, twistMap_apply]
+    exact ⟨(T v : k[T;T⁻¹]) • x, by rw [twistMap_apply, map_smul]⟩
 
 end Twist
 
@@ -244,7 +247,8 @@ theorem exact_residue_gysin (h : IsSmoothPrincipalPair f φ) :
 variable {L}
 
 /-- **The projection formula** `R(α C(j)β) = R(α) C(i)β`, with no sign. It reduces to `T^w a` and
-`T^v b`, for which it is `thm:dr-projection` with the powers of `T` pulled out, since `T` is central.
+`T^v b`, for which it is `thm:dr-projection` with the powers of `T` pulled out, since `T` is
+central.
 It holds for every `α`, and not only for `α` of bidegree `(1, 1)`.
 
 Blueprint: `thm:dr-ordinary-localization`. -/

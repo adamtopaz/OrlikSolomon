@@ -128,13 +128,17 @@ cohomology `C(X) = ⨁_{(p, w)} H^{p, w}(X)`, a possibly noncommutative `B`-alge
 Cohomology is **covariant** on `SmoothAlg k`, whose morphisms run in the direction of algebras: a
 map `O(Y) ⟶ O(X)` induces the pullback `C(Y) → C(X)` along `X → Y`.
 
+**Values in Lean.** For every field `k` of characteristic zero, `DeRham.ordinaryTheory k` in
+`DeRham/Instance` is a value of this structure: algebraic de Rham cohomology, with `R = k` and
+`B = k[t, t⁻¹]`. Its coefficient ring and its cohomology of the point are nonzero, so the axioms
+have a nonzero model in Lean. The other values constructed in Lean are the zero theories in
+`Examples/Sanity` and `Examples/Bridge`, which test the zero-ring edge case rather than the
+substantive axioms. The standard bridge constructs a theory from supplied degreewise inputs.
+
 **Check against singular cohomology, by hand.** Every field was checked by hand against complex
 singular cohomology, and the comments on the fields record the outcome. This is a mathematical
-argument, not a formal one: no such instance exists in Lean. The concrete theory instances
-currently constructed in Lean are the zero theories in `Examples/Sanity` and `Examples/Bridge`,
-which test the zero-ring edge case rather than the substantive axioms. The standard bridge
-constructs a theory from supplied degreewise inputs. Nonvacuity for nonzero coefficients rests on
-this hand check.
+argument, not a formal one: no singular instance exists in Lean, so a statement about singular
+cohomology still needs a value of this structure for it.
 
 The model is as follows, for `k = ℂ` or a chosen embedding `k → ℂ`, and any commutative ring `R`.
 Put `B = R[t, t⁻¹]` with `ℬ w = R t^w`, and `H^{p, w}(X) = H^p(X(ℂ); R) t^w`, so that
