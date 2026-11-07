@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Codex
+Authors: Adam Topaz, Codex, Claude
 -/
 module
 
@@ -17,7 +17,8 @@ constructions are used for the boundary kernel in blueprint `lem:projective-alge
 
 * `isInternal_comap_subtype` proves that the intersections form an internal direct sum.
 * `homogeneousSubmoduleDecomposition` packages that sum as a decomposition.
-* `homogeneousSubalgebraGradedAlgebra` gives the inherited graded algebra structure.
+* `homogeneousSubalgebraGradedAlgebra` gives the inherited graded algebra structure, and
+  `coe_decompose_homogeneousSubalgebra` says that it computes the same components.
 -/
 
 @[expose] public section
@@ -88,6 +89,23 @@ noncomputable def homogeneousSubalgebraGradedAlgebra
   have hi : IsInternal (fun i ↦ (𝒜 i).comap S.val.toLinearMap) :=
     isInternal_comap_subtype 𝒜 S.toSubmodule hS
   exact hi.gradedAlgebra
+
+/-- The components of an element of a homogeneous subalgebra are its components in the ambient
+algebra. This holds for whatever decomposition is in scope, since a decomposition is unique. -/
+theorem coe_decompose_homogeneousSubalgebra
+    [Decomposition (fun i ↦ (𝒜 i).comap S.val.toLinearMap)] (x : S) (i : ι) :
+    ((decompose (fun i ↦ (𝒜 i).comap S.val.toLinearMap) x i : S) : A) =
+      decompose 𝒜 (x : A) i := by
+  induction x using Decomposition.inductionOn (fun i ↦ (𝒜 i).comap S.val.toLinearMap) with
+  | zero => simp
+  | @homogeneous j m =>
+    have hm : ((m : S) : A) ∈ 𝒜 j := m.2
+    obtain rfl | hij := eq_or_ne j i
+    · rw [decompose_of_mem_same (fun i ↦ (𝒜 i).comap S.val.toLinearMap) m.2,
+        decompose_of_mem_same 𝒜 hm]
+    · rw [decompose_of_mem_ne (fun i ↦ (𝒜 i).comap S.val.toLinearMap) m.2 hij,
+        decompose_of_mem_ne 𝒜 hm hij, ZeroMemClass.coe_zero]
+  | add x y hx hy => simp [decompose_add, hx, hy]
 
 end Subalgebra
 

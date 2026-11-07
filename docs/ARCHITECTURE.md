@@ -66,6 +66,10 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Combinatorics/Moebius`         | the finite nonempty intersection poset, its Mathlib Möbius function and both formulas of `lem:mobius`; pure combinatorics |
 | `Combinatorics/ProjectiveBetti` | pure cone/decone intersection sums and polynomials of `cor:projective-betti` |
 | `Combinatorics/Multiplicities` | cohomological pieces and decone word counts of `cor:projective-betti` |
+| `DeRham/Cohomology/Basic`      | `def:dr-cohomology`: `cycles`, `boundaries`, `Cohomology`, classes, functoriality and chain homotopies |
+| `DeRham/Cohomology/Degree`     | `def:dr-cohomology`: the degree pieces, `ker d / im d`, graded commutativity and the grading by `ℤ` |
+| `DeRham/Cohomology/Point`      | `H⁰`, and the fact `H^*(k) = k` used by `lem:dr-ordinary-basic` |
+| `DeRham/Cohomology`            | the comparison with Mathlib's homology of `complex k A`; the module to import |
 | `DeRham/Complex/Forms`         | `def:dr-forms`: `Forms`, the universal differential `diff`, and induction on the words `a₀ da₁ ∧ ⋯ ∧ daₙ` |
 | `DeRham/Complex/Differential`  | `d`, the characterizing formula, `d² = 0`, signed Leibniz and uniqueness, for `def:dr-complex` and `thm:dr-dga` |
 | `DeRham/Complex/Functoriality` | `Forms.map`, with identity and composition, in `thm:dr-dga`, and the bridge to `exteriorMap` |
@@ -85,6 +89,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
 | `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
+| `Examples/DeRhamCohomology`    | exact forms are not an ideal of all forms, `X²` in characteristic two, the point over `ℤ` and `ZMod 2`, the zero algebra |
 | `Examples/DeRhamComplex`     | `d` is not linear over the algebra, characteristic two and the zero algebra |
 | `Examples/DeRhamLocalization` | nilpotent, zero and unit equations; a conormal map that is not injective over `ZMod 2` |
 | `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
@@ -529,14 +534,14 @@ field may be weakened, and no comparison or exactness statement may become a hyp
 declaration names are proposals, as with the first blueprint.
 
 The namespace is `OrlikSolomon.DeRham`. Exterior calculus, the dg algebra and its differential,
-forms on localizations and on principal quotients, conormal splitting, global and localized normal
-derivations, and wedge exactness modulo the divisor exist; the other parts below remain planned. Each
-row of this table is one of issues #72–#83, in order. The conormal and normal-derivation results need
-only Mathlib's Kähler differentials and formal-smoothness lifts. Normalizing a derivation on
-`A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge exactness uses exterior
-contraction; neither requires the de Rham differential. All of `lem:dr-projective` remains in #77:
-projectivity of every form degree, injectivity of multiplication by a regular element, and injectivity
-into localization.
+its cohomology algebra, forms on localizations and principal quotients, conormal splitting, global
+and localized normal derivations, and wedge exactness modulo the divisor exist; the other parts
+below remain planned. Each row of this table is one of issues #72–#83, in order. The conormal and
+normal-derivation results need only Mathlib's Kähler differentials and formal-smoothness lifts.
+Normalizing a derivation on `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge
+exactness uses exterior contraction; neither requires the de Rham differential. All of
+`lem:dr-projective` remains in #77: projectivity of every form degree, injectivity of multiplication
+by a regular element, and injectivity into localization.
 
 | Module under `OrlikSolomon/` | Blueprint labels |
 | ---------------------------- | ---------------- |
@@ -642,9 +647,55 @@ normalization to one only after localizing at `v(f)`.
   imports `DeRham/SmoothPair`, which uses only Mathlib. `Examples/DeRhamLocalization` shows that the
   map need not be injective.
 
+### Cohomology
+
+- **Total cohomology comes first, and its degrees are submodules of it.** `Cohomology k A` is one
+  type and `Cohomology.degree k A n` is a `k`-submodule. The reason is the design of `d`: it is an
+  operator on the total algebra, and the two facts that make the quotient exist, `d_mul` and
+  `mul_d_of_d_eq_zero`, have no degree hypothesis. Building the degrees first would need a product
+  `H^p × H^q → H^(p+q)` with casts along `p + q`, and then a direct sum with the same structure,
+  which `OrdinaryTheory` only wants as an internal grading of one type in any case.
+- **The quotient.** `cycles k A` is a `k`-subalgebra of forms, and `boundaries k A` is a
+  `TwoSidedIdeal` of it. It is not an ideal of all forms: `not_exists_d_eq_X_smul_diff_X` is the
+  counterexample. `Cohomology k A` is the `RelationQuotient` of that ideal used as its own set of
+  relators, and `mem_relationSubmodule_coe_twoSidedIdeal` says that this adds nothing. Those
+  relators are not homogeneous, since a sum of boundaries in two degrees is a boundary, so the
+  grading uses `RelationQuotient.gradedAlgebraOfIsHomogeneous`, whose hypothesis is on `J(ℛ)` and not
+  on `ℛ`. Like `OSAlgebra`, it is a `def` with its own `SMul` transport.
+- **Classes.** A class is `Cohomology.mk x hx`, with `hx : d k x = 0`. `simp` combines operations
+  into one class, as in `mk_mul : mk x hx * mk y hy = mk (x * y) _`, because the other direction is
+  not a rewrite rule: `x * y` can be closed when `x` and `y` are not. Use `mk_eq_zero_iff`,
+  `mk_eq_mk_iff`, `Cohomology.induction`, `induction_degree`, `lift` and `liftLinear`, and do not
+  unfold the quotient.
+- **Degrees.** `Cohomology.degree k A n` is indexed by `ℕ`, with `gradedAlgebraDegree` and
+  `decompose_mk`. `Cohomology.grading k A p` is the same grading indexed by `ℤ`, with
+  `grading_natCast` and `grading_of_neg`: it is `coarsenGrading` along `ℕ → ℤ`, so that the signs
+  of `isGradedCommutative_grading` and the first index of a bigrading agree. `degreeEquiv` and
+  `homologyIso` say that a piece is `ker d / im d`, respectively Mathlib's homology of `complex k A`,
+  and `coe_homologyIso_hom_homologyπ` says which map that is. `rangeD k A n` is the image of `d`,
+  with degree `-1` being zero, so `n = 0` is no exception. A homogeneous exact form has a homogeneous
+  primitive, by `mk_eq_zero_iff_of_mem_exteriorPower_succ`.
+- **Chain homotopies.** `map_eq_map_of_homotopy` takes an additive operator `K` on total forms with
+  `φ_* - ψ_* = d K + K d`, for `thm:dr-homotopy`. `lem:dr-filtration-reduction` is an argument about
+  submodules of forms and their quotients, and it needs nothing from this module.
+- **For the instance.** The value of the functor should be `B ⊗[k] Cohomology k A`, with `B` on the
+  **left**, which departs from the order the blueprint writes: Mathlib's `B`-algebra structure on a
+  tensor product is on the left factor. The bigrading is then
+  `coarsenGrading (tensorProductGrading ℬ (Cohomology.grading k A)) swap`, for
+  `swap : (w, p) ↦ (p, w)`, and its instances exist. This, its sign, the functor laws and the point
+  field were checked in a scratch file, and they are for `DeRham/Instance` to state.
+- **The cohomology of a dg subalgebra `L` of forms,** as in `thm:dr-comparison`, is not generic here,
+  since a shared layer would wrap every lemma above for one other use. It takes about 30 lines with
+  the same tools: the subalgebra `L ⊓ cycles k A`, the `TwoSidedIdeal` of the `d y` for `y ∈ L`, its
+  `RelationQuotient`, and `RelationQuotient.liftAlgHom` of `Cohomology.mkₐ` for the map to
+  `Cohomology k A`. The only hypothesis is `involute x ∈ L` for `x ∈ L`, for `x ∧ dy = d (σ x ∧ y)`,
+  and it holds because `L` is homogeneous. `homogeneousSubalgebraGradedAlgebra` and
+  `gradedAlgebraOfIsHomogeneous` give its grading, and `RelationQuotient.liftLinear` gives `H(ρ)`.
+
 The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Its opening
-names the exterior calculus, dg algebra, forms on localizations and quotients, conormal splitting,
-normal derivations and modulo-divisor wedge exactness as formalized, and lists what remains. The first page, `Organization` and the
+names the exterior calculus, dg algebra, cohomology algebra, forms on localizations and quotients,
+conormal splitting, normal derivations and modulo-divisor wedge exactness as formalized, and lists
+what remains. The first page, `Organization` and the
 chapter on the axioms say the instance is in progress. No nonzero value of `OrdinaryTheory` has
 been constructed. The build does not check that prose, so keep it current as nodes land. The PR
 that proves `thm:dr-instance` must update the sentences saying that no nonzero value

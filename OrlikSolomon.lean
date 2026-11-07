@@ -18,6 +18,10 @@ public import OrlikSolomon.Combinatorics.Betti
 public import OrlikSolomon.Combinatorics.Moebius
 public import OrlikSolomon.Combinatorics.Multiplicities
 public import OrlikSolomon.Combinatorics.ProjectiveBetti
+public import OrlikSolomon.DeRham.Cohomology
+public import OrlikSolomon.DeRham.Cohomology.Basic
+public import OrlikSolomon.DeRham.Cohomology.Degree
+public import OrlikSolomon.DeRham.Cohomology.Point
 public import OrlikSolomon.DeRham.Complex
 public import OrlikSolomon.DeRham.Complex.Differential
 public import OrlikSolomon.DeRham.Complex.Forms
@@ -37,10 +41,11 @@ public import OrlikSolomon.Examples.AffineLines
 public import OrlikSolomon.Examples.Bridge
 public import OrlikSolomon.Examples.Cokernel
 public import OrlikSolomon.Examples.CoordinatePolynomials
-public import OrlikSolomon.Examples.Degenerate
+public import OrlikSolomon.Examples.DeRhamCohomology
 public import OrlikSolomon.Examples.DeRhamComplex
 public import OrlikSolomon.Examples.DeRhamLocalization
 public import OrlikSolomon.Examples.DeRhamSmoothPair
+public import OrlikSolomon.Examples.Degenerate
 public import OrlikSolomon.Examples.Exterior
 public import OrlikSolomon.Examples.Moebius
 public import OrlikSolomon.Examples.Ordinary
