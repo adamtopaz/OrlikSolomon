@@ -1455,8 +1455,9 @@ into other files updates this table.
 | `DeRham/Schemes/Forms`, the module to import, over `DeRham/Schemes/Forms/Presheaf`, `DeRham/Schemes/Forms/Sheaf`, `DeRham/Schemes/Forms/Affine` and `DeRham/Schemes/Forms/Pullback` | `def:geo-forms-sheaf`, `thm:geo-forms-comparison` | #115 |
 | `DeRham/Schemes/Affine`, `DeRham/Schemes/Instance`, `DeRham/Schemes/Corollaries` | `def:geo-dr-cohomology`, `thm:geo-dr-instance`, `cor:geo-dr-arrangements` | #116 |
 | `DeRham/Schemes/Forms/Associated` | structure-sheaf-linear associated-module comparison and distinguished-open fraction formulas, extending `thm:geo-forms-comparison` | #117 |
-| `DeRham/Schemes/Log`, the module to import | `thm:geo-log-sheaves`: umbrella for the five files below | #117 |
-| `DeRham/Schemes/Log/Basic` | the global theta section, regular-plus-left-theta map, its image sheaf, dg operations, complex and signed closed shift | #117 |
+| `DeRham/Schemes/Log`, the module to import | `thm:geo-log-sheaves`: umbrella for the six files below | #117 |
+| `DeRham/Schemes/Log/Basic` | the global theta section, regular-plus-left-theta map, its image sheaf, complex and signed closed shift | #117 |
+| `DeRham/Schemes/Log/Algebra` | wedge products and dg algebra identities on the logarithmic image sheaves, descended from local normal forms and characterized by the actual complement inclusion | #117 |
 | `DeRham/Schemes/Log/Affine` | affine-neighborhood pairs, associated-module image comparison and affine cochain isomorphisms | #117 |
 | `DeRham/Schemes/Log/Residue` | residue descent, signs, sheaf short exactness and comparison of the affine residue short complex | #117 |
 | `DeRham/Schemes/Log/Comparison` | stalkwise quasi-isomorphism from the old pole theorem | #117 |
