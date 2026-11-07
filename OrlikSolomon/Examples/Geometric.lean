@@ -7,6 +7,8 @@ module
 
 public import OrlikSolomon.Cohomology.Geometric.Bridge
 public import OrlikSolomon.Examples.Bridge
+public import OrlikSolomon.Examples.Geometric.Acceptance
+public import OrlikSolomon.Examples.Geometric.DeRhamAcceptance
 public import OrlikSolomon.Presentation.Geometric
 
 /-!

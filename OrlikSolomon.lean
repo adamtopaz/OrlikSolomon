@@ -106,6 +106,8 @@ public import OrlikSolomon.Examples.DeRhamSmoothPair
 public import OrlikSolomon.Examples.Degenerate
 public import OrlikSolomon.Examples.Exterior
 public import OrlikSolomon.Examples.Geometric
+public import OrlikSolomon.Examples.Geometric.Acceptance
+public import OrlikSolomon.Examples.Geometric.DeRhamAcceptance
 public import OrlikSolomon.Examples.Moebius
 public import OrlikSolomon.Examples.Ordinary
 public import OrlikSolomon.Examples.Parallel
