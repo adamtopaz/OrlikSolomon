@@ -435,7 +435,7 @@ The supports-and-purity bridge constructs the geometric theory from degreewise c
 The logarithmic classes of global units and the decomposition of the cohomology of a product with the multiplicative group are formalized on every object of a domain, affine or not.
 The sheaves of relative forms now have their differential, wedge product and scheme pullbacks, with the canonical comparison to algebraic forms on affine schemes.
 So are both structure theorems on the actual arrangement opens, for a theory on any admissible domain, obtained from the theorems of this page by transport and not by a second proof.
-Applying the affine transport to the existing de Rham theory gives a nonzero theory on smooth affine schemes; its interpretation through sheaf forms remains planned.
+Applying the affine transport to the existing de Rham theory gives a nonzero theory on smooth affine schemes, whose cohomology is the cohomology of global sheaf forms, so the Orlik–Solomon theorems hold unconditionally for the de Rham cohomology of the actual open subschemes.
 {ref "geometric"}[Its chapter] presents it, and its nodes are counted separately above.
 Nothing on this page depends on it: the dependence runs the other way.
 

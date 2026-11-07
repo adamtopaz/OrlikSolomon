@@ -70,11 +70,15 @@ public import OrlikSolomon.DeRham.Pole.Filtration
 public import OrlikSolomon.DeRham.Pole.Quotient
 public import OrlikSolomon.DeRham.Pole.Reduction
 public import OrlikSolomon.DeRham.PrincipalQuotient
+public import OrlikSolomon.DeRham.Schemes.Affine
+public import OrlikSolomon.DeRham.Schemes.Corollaries
 public import OrlikSolomon.DeRham.Schemes.Forms
 public import OrlikSolomon.DeRham.Schemes.Forms.Affine
 public import OrlikSolomon.DeRham.Schemes.Forms.Presheaf
 public import OrlikSolomon.DeRham.Schemes.Forms.Pullback
 public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
+public import OrlikSolomon.DeRham.Schemes.GlobalSections
+public import OrlikSolomon.DeRham.Schemes.Instance
 public import OrlikSolomon.DeRham.SmoothPair
 public import OrlikSolomon.DeRham.SmoothPair.Koszul
 public import OrlikSolomon.DeRham.SmoothPair.Projective
