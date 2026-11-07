@@ -22,7 +22,7 @@ theory, including the actual zero theory. Over the zero ring, neither a basis st
 existential word family determines the count: other sizes are possible. The integer polynomial
 defines the Betti numbers, and the empty/deletion recursion in the proof supplies a word family
 with matching counts. `exists_logMonomialBasis_decone_threePoints_zeroTheory` checks this matching
-family in the concrete example. No nonzero theory instance is built.
+family in the concrete example. These regressions instantiate no nonzero theory.
 The integer example checks the documented scalar conversion for the diagonal theorem.
 
 Blueprint: regression example 8 and the projective form of example 7.

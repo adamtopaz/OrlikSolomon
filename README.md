@@ -11,14 +11,17 @@ complement. The base field is arbitrary, coefficients need not form a field, and
 twists stay explicit.
 
 **Status:** the affine and projective structure theorems and their corollaries are proved,
-for any structure satisfying the axioms. No nonzero instance of that structure is constructed
-in Lean, so the library is not yet a theorem about any named cohomology theory, and a de Rham
-instance is in progress. The empty projective arrangement is excluded. The
+for any structure satisfying the axioms. A nonzero instance of that structure is constructed in
+Lean: algebraic de Rham cohomology over a field of characteristic zero, so the axioms are not
+vacuous. The forms of the theorems stated for de Rham cohomology itself are still in progress.
+For any other cohomology theory, such as singular or ℓ-adic cohomology, the theorems remain
+conditional: the axioms have been checked by hand against singular cohomology, and interpreted by
+hand for ℓ-adic cohomology, but not in Lean. The empty projective arrangement is excluded. The
 [book](https://adamtopaz.github.io/OrlikSolomon/) states the theorems and has the details.
 
 - Exposition, tied to the code: <https://adamtopaz.github.io/OrlikSolomon/>
 - Mathematical plan: [`blueprint/`](blueprint/arrangement_cohomology_lean_blueprint.tex)
-- De Rham instance of the axioms, in progress:
+- De Rham instance of the axioms:
   [`blueprint/`](blueprint/de_rham_instance_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)
