@@ -5,7 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import OrlikSolomon.DeRham.Instance
+public import OrlikSolomon.DeRham.Corollaries
 public import OrlikSolomon.Cohomology.Logarithms
 public import OrlikSolomon.Examples.DeRhamMaps
 
@@ -34,24 +34,16 @@ open CategoryTheory
 open scoped LaurentPolynomial
 namespace OrlikSolomon.DeRham.Examples
 open SmoothAlg DivisorPair
-private def unitClass {k A : Type*} [CommRing k] [CommRing A] [Algebra k A]
-    (u : Aˣ) : Cohomology k A := Cohomology.mk (dlog k u) (d_dlog k u)
-
-private theorem map_unitClass {k A B : Type*} [CommRing k] [CommRing A]
-    [CommRing B] [Algebra k A] [Algebra k B] (f : A →ₐ[k] B) (u : Aˣ) :
-    Cohomology.map f (unitClass u) = unitClass (Units.map (f : A →* B) u) :=
-  (Cohomology.map_mk f _ _).trans (Cohomology.mk_congr (Forms.map_dlog f u) _)
-
 variable (k : Type*) [Field k] [CharZero k]
 
 /-- The class of the logarithmic coordinate form on `A[y,y⁻¹]`. -/
 def laurentThetaClass (A : SmoothAlg k) : Cohomology k (laurent A) :=
-  Cohomology.mk (dlog k (laurentT A)) (d_dlog k _)
+  dlogClass k (laurentT A)
 
 omit [CharZero k] in
 private theorem laurentThetaClass_mem_degree (A : SmoothAlg k) :
     laurentThetaClass k A ∈ Cohomology.degree k (laurent A) 1 :=
-  Cohomology.mk_mem_degree (dlog_mem_exteriorPower_one k _) _
+  dlogClass_mem_degree _
 
 private def forgetTwist (A : SmoothAlg k) :
     (ordinaryTheory k).C.obj A →ₐ[k] Cohomology k A := TwistedCohomology.evalOne k A
@@ -67,38 +59,15 @@ private theorem forgetTwist_twistedClass (A : SmoothAlg k) (w : ℤ) (c : Cohomo
 
 /-- The punctured-line generator `[dx/x]` has actual untwisted residue one. -/
 theorem gm_residue_theta : residue (standardPair (point k)).compl (isUnit_natCast_add_one k)
-    (standardPair (point k)).isSmoothPrincipalPair (laurentThetaClass k (point k)) = 1 := by
-  have hθ : theta k (standardPair (point k)).eqn (standardPair (point k)).compl =
-      dlog k (laurentT (point k)) :=
-    (standardPair (point k)).theta_eq_dlog_eqnUnit.trans
-      (congrArg (dlog k) (standardPair_eqnUnit _))
-  exact (congrArg (residue (standardPair (point k)).compl (isUnit_natCast_add_one k)
-    (standardPair (point k)).isSmoothPrincipalPair)
-    (Cohomology.mk_congr hθ _)).symm.trans (residue_mk_theta_localization _ _ _)
-
-private theorem tau_eq_twistedClass :
-    (ordinaryTheory k).tau = twistedClass 1 (laurentThetaClass k (point k)) := by
-  symm
-  apply (ordinaryTheory k).eq_tau_of_mem_grading
-  · exact twistedClass_mem_grading_natCast_iff.2 (laurentThetaClass_mem_degree k _)
-  · rw [stdResidue_twistedClass, gm_residue_theta]
-    exact twistedClass_zero_one
+    (standardPair (point k)).isSmoothPrincipalPair (laurentThetaClass k (point k)) = 1 :=
+  residue_dlogClass (T := (standardPair (point k)).compl) (isUnit_natCast_add_one k)
+    (standardPair (point k)).isSmoothPrincipalPair (u := laurentT (point k))
+    (polynomialToLaurent_polynomialX (point k)).symm
 
 /-- The normalized twisted punctured-line class is exactly `[dx/x]T`. -/
 theorem gm_normalized_tau :
     (ordinaryTheory k).tau = twistedClass 1 (laurentThetaClass k (point k)) :=
-  tau_eq_twistedClass k
-
-private theorem logClass_laurentT_eq_twistedClass (A : SmoothAlg k) :
-    (ordinaryTheory k).logClass (laurentT A) = twistedClass 1 (laurentThetaClass k A) := by
-  rw [OrdinaryTheory.logClass, tau_eq_twistedClass, map_twistedClass]
-  apply congrArg (twistedClass 1)
-  change Cohomology.map (algHom (gmHom (laurentT A)))
-    (Cohomology.mk (dlog k (laurentT (point k))) _) =
-    Cohomology.mk (dlog k (laurentT A)) _
-  rw [Cohomology.map_mk]
-  exact Cohomology.mk_congr ((Forms.map_dlog _ _).trans
-    (congrArg (dlog k) (mapUnits_gmHom_laurentT _))) _
+  ordinaryTheory_tau
 
 /-- The untwisted map `(b,c) ↦ b + [dy/y]c` on a Laurent extension. -/
 def laurentCohomologyMap (A : SmoothAlg k) :
@@ -110,7 +79,7 @@ def laurentCohomologyMap (A : SmoothAlg k) :
 private theorem laurentCohomologyMap_twistedClass (A : SmoothAlg k) (b c : Cohomology k A) :
     (ordinaryTheory k).gmProductEquiv A (twistedClass 0 b, twistedClass (-1) c) =
       twistedClass 0 (laurentCohomologyMap k A (b, c)) := by
-  simp only [OrdinaryTheory.gmProductEquiv_apply, logClass_laurentT_eq_twistedClass,
+  simp only [OrdinaryTheory.gmProductEquiv_apply, ordinaryTheory_logClass,
     map_twistedClass, twistedClass_mul_twistedClass, Int.reduceAdd]
   exact ((twistedClass 0).map_add _ _).symm
 
@@ -119,7 +88,7 @@ private theorem forgetTwist_gmProductEquiv (A : SmoothAlg k)
     forgetTwist k (laurent A) ((ordinaryTheory k).gmProductEquiv A (b, c)) =
       laurentCohomologyMap k A (forgetTwist k A b, forgetTwist k A c) := by
   simp only [OrdinaryTheory.gmProductEquiv_apply, map_add, map_mul, forgetTwist_map,
-    logClass_laurentT_eq_twistedClass, forgetTwist_twistedClass]
+    ordinaryTheory_logClass, forgetTwist_twistedClass]
   rfl
 
 /-- The actual cohomology of a Laurent extension splits into the regular and logarithmic terms.
@@ -329,9 +298,9 @@ private theorem torusSwap_inner :
   exact AddMonoidAlgebra.commAlgEquiv_single_zero_single _
 
 omit [CharZero k] in
-private theorem torusX_eq_unitClass : torusX k =
-    unitClass (mapUnits (laurentC (gm k)) (laurentT (point k))) :=
-  map_unitClass (algHom (laurentC (gm k))) (laurentT (point k))
+private theorem torusX_eq_dlogClass : torusX k =
+    dlogClass k (mapUnits (laurentC (gm k)) (laurentT (point k))) :=
+  map_dlogClass (algHom (laurentC (gm k))) (laurentT (point k))
 
 omit [CharZero k] in
 /-- Coordinate interchange exchanges the actual logarithmic classes. -/
@@ -339,12 +308,12 @@ theorem torusSwap_map_X :
     Cohomology.map (algHom (torusSwap k)) (torusX k) = torusY k := by
   calc
     _ = Cohomology.map (algHom (torusSwap k))
-        (unitClass (mapUnits (laurentC (gm k)) (laurentT (point k)))) :=
-      congrArg (Cohomology.map (algHom (torusSwap k))) (torusX_eq_unitClass k)
-    _ = unitClass
+        (dlogClass k (mapUnits (laurentC (gm k)) (laurentT (point k)))) :=
+      congrArg (Cohomology.map (algHom (torusSwap k))) (torusX_eq_dlogClass k)
+    _ = dlogClass k
         (mapUnits (torusSwap k) (mapUnits (laurentC (gm k)) (laurentT (point k)))) :=
-      map_unitClass _ _
-    _ = unitClass (laurentT (gm k)) := congrArg unitClass (torusSwap_inner k)
+      map_dlogClass _ _
+    _ = dlogClass k (laurentT (gm k)) := congrArg (dlogClass k) (torusSwap_inner k)
     _ = _ := rfl
 
 omit [CharZero k] in
@@ -352,11 +321,11 @@ omit [CharZero k] in
 theorem torusSwap_map_Y :
     Cohomology.map (algHom (torusSwap k)) (torusY k) = torusX k := by
   calc
-    _ = unitClass (mapUnits (torusSwap k) (laurentT (gm k))) :=
-      map_unitClass _ _
-    _ = unitClass (mapUnits (laurentC (gm k)) (laurentT (point k))) :=
-      congrArg unitClass (torusSwap_outer k)
-    _ = _ := (torusX_eq_unitClass k).symm
+    _ = dlogClass k (mapUnits (torusSwap k) (laurentT (gm k))) :=
+      map_dlogClass _ _
+    _ = dlogClass k (mapUnits (laurentC (gm k)) (laurentT (point k))) :=
+      congrArg (dlogClass k) (torusSwap_outer k)
+    _ = _ := (torusX_eq_dlogClass k).symm
 
 /-- Residue along the coefficient coordinate `x`, transported by the explicit coordinate swap.
 The ordinary standard-pair residue on this model is residue along `y`. -/
