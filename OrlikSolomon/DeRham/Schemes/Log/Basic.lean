@@ -121,7 +121,109 @@ theorem thetaWedgeSheaf_unit (n : ℕ) (U : X.left.Opensᵒᵖ)
   exact ConcreteCategory.congr_hom
     (NatTrans.congr_app (toSheafify_naturality _ (thetaWedgePresheaf X v n)) U) a |>.symm
 
+/-- Left multiplication by the logarithmic form of a unit is linear over regular functions.
+The differential itself remains only base-ring linear. -/
+theorem thetaWedgeSheaf_smul (n : ℕ) (U : X.left.Opens) (r : Γ(X.left, U))
+    (a : (formsSheaf k X n).obj.obj (op U)) :
+    (thetaWedgeSheaf X v n).hom.app (op U) (formsSheafSMul k X n U r a) =
+      formsSheafSMul k X (n + 1) U r ((thetaWedgeSheaf X v n).hom.app (op U) a) := by
+  have : Presheaf.IsLocallySurjective (_root_.Opens.grothendieckTopology X.left)
+      (formsSheafUnit k X n) := by
+    change Presheaf.IsLocallySurjective _ (toSheafify _ (formsPresheaf k X n))
+    infer_instance
+  apply (formsSheaf k X (n + 1)).isSeparated _ _
+    (Presheaf.imageSieve_mem _ (formsSheafUnit k X n) a)
+  rintro V f ⟨b, hb⟩
+  have hθ (x : (formsSheaf k X n).obj.obj (op U)) :
+      (formsSheaf k X (n + 1)).obj.map f.op ((thetaWedgeSheaf X v n).hom.app (op U) x) =
+        (thetaWedgeSheaf X v n).hom.app (op V) ((formsSheaf k X n).obj.map f.op x) :=
+    (ConcreteCategory.congr_hom ((thetaWedgeSheaf X v n).hom.naturality f.op) x).symm
+  change (formsSheaf k X (n + 1)).obj.map f.op
+      ((thetaWedgeSheaf X v n).hom.app (op U) (formsSheafSMul k X n U r a)) =
+    (formsSheaf k X (n + 1)).obj.map f.op
+      (formsSheafSMul k X (n + 1) U r ((thetaWedgeSheaf X v n).hom.app (op U) a))
+  rw [hθ, formsSheafSMul_naturality, formsSheafSMul_naturality, hθ]
+  have hb' : (formsSheafUnit k X n).app (op V) b = (formsSheaf k X n).obj.map f.op a := hb
+  rw [← hb']
+  let c : ⋀[sectionAlgebra k X V]^n Ω[sectionAlgebra k X V⁄k] := b
+  let r' : sectionAlgebra k X V := sectionRestriction k X f r
+  let t : ⋀[sectionAlgebra k X V]^(n + 1) Ω[sectionAlgebra k X V⁄k] :=
+    (thetaWedgePresheaf X v n).app (op V) c
+  have ht : (thetaWedgeSheaf X v n).hom.app (op V)
+      ((formsSheafUnit k X n).app (op V) c) =
+        (formsSheafUnit k X (n + 1)).app (op V) t :=
+    thetaWedgeSheaf_unit X v n (op V) c
+  have hr : (thetaWedgePresheaf X v n).app (op V) (r' • c) = r' • t :=
+    Subtype.ext (mul_smul_comm _ _ _)
+  calc
+    _ = (thetaWedgeSheaf X v n).hom.app (op V)
+        ((formsSheafUnit k X n).app (op V) (r' • c)) :=
+      congrArg ((thetaWedgeSheaf X v n).hom.app (op V))
+        (formsSheafSMul_unit k X n V r' c)
+    _ = (formsSheafUnit k X (n + 1)).app (op V)
+        ((thetaWedgePresheaf X v n).app (op V) (r' • c)) :=
+      thetaWedgeSheaf_unit X v n (op V) (r' • c)
+    _ = (formsSheafUnit k X (n + 1)).app (op V) (r' • t) := congrArg _ hr
+    _ = formsSheafSMul k X (n + 1) V r'
+        ((formsSheafUnit k X (n + 1)).app (op V) t) :=
+      (formsSheafSMul_unit k X (n + 1) V r' t).symm
+    _ = _ := congrArg (formsSheafSMul k X (n + 1) V r') ht.symm
+
 end Unit
+
+section UnitPullback
+
+variable {X Y : Over (Spec (CommRingCat.of k))} (g : X ⟶ Y)
+  (v : (sectionAlgebra k Y ⊤)ˣ)
+
+private theorem restrictedUnit_pullback (U : Y.left.Opens) :
+    Units.map (sectionPullback g U).toMonoidHom (restrictedUnit Y v U) =
+      restrictedUnit X (Units.map (sectionPullbackTop g).toMonoidHom v) (g.left ⁻¹ᵁ U) := by
+  apply Units.ext
+  exact ConcreteCategory.congr_hom (g.left.naturality U.leTop.op)
+    (v : sectionAlgebra k Y ⊤)
+
+/-- Exterior multiplication by a unit's logarithmic form commutes with arbitrary pullback.
+This equality includes open restrictions and affine comparison isomorphisms, and requires no
+flatness hypothesis. -/
+theorem thetaWedgeSheaf_pullback (n : ℕ) :
+    thetaWedgeSheaf Y v n ≫ formsSheafPullback g (n + 1) =
+      formsSheafPullback g n ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) g.left.base).map
+          (thetaWedgeSheaf X (Units.map (sectionPullbackTop g).toMonoidHom v) n) := by
+  apply ObjectProperty.hom_ext
+  apply sheafify_hom_ext (_root_.Opens.grothendieckTopology Y.left) _ _
+    ((TopCat.Sheaf.pushforward (ModuleCat k) g.left.base).obj
+      (formsSheaf k X (n + 1))).property
+  ext U a
+  change (formsSheafPullback g (n + 1)).hom.app U
+      ((thetaWedgeSheaf Y v n).hom.app U ((formsSheafUnit k Y n).app U a)) =
+    (thetaWedgeSheaf X (Units.map (sectionPullbackTop g).toMonoidHom v) n).hom.app
+      (op (g.left ⁻¹ᵁ U.unop))
+        ((formsSheafPullback g n).hom.app U ((formsSheafUnit k Y n).app U a))
+  have hθ (Z : Over (Spec (CommRingCat.of k))) (w : (sectionAlgebra k Z ⊤)ˣ)
+      (V : Z.left.Opensᵒᵖ) (z : (formsPresheaf k Z n).obj V) :
+      (thetaWedgeSheaf Z w n).hom.app V ((formsSheafUnit k Z n).app V z) =
+        (formsSheafUnit k Z (n + 1)).app V ((thetaWedgePresheaf Z w n).app V z) :=
+    (ConcreteCategory.congr_hom
+      (NatTrans.congr_app (toSheafify_naturality _ (thetaWedgePresheaf Z w n)) V) z).symm
+  have hu (m : ℕ) (z : (formsPresheaf k Y m).obj U) :
+      (formsSheafPullback g m).hom.app U ((formsSheafUnit k Y m).app U z) =
+        (formsSheafUnit k X m).app (op (g.left ⁻¹ᵁ U.unop))
+          ((formsPresheafPullback g m).app U z) :=
+    ConcreteCategory.congr_hom (NatTrans.congr_app (formsSheafPullback_unit g m) U) z
+  rw [hθ, hu, hu, hθ]
+  congr 1
+  apply Subtype.ext
+  change Forms.map (sectionPullback g U.unop)
+    (dlog k (restrictedUnit Y v U.unop) * a.val) =
+      dlog k (restrictedUnit X (Units.map (sectionPullbackTop g).toMonoidHom v)
+        (g.left ⁻¹ᵁ U.unop)) * Forms.map (sectionPullback g U.unop) a.val
+  rw [map_mul, Forms.map_dlog]
+  congr 2
+  exact restrictedUnit_pullback g v U.unop
+
+end UnitPullback
 
 section Shift
 
@@ -337,6 +439,38 @@ def logSheafD (n : ℕ) : logSheaf P n ⟶ logSheaf P (n + 1) :=
 instance logToOpenSheaf_mono (n : ℕ) : Mono (logToOpenSheaf P n) := by
   change Mono ((HomologicalComplex.eval _ _ n).map (image.ι (logGeneratorComplexNat P)))
   infer_instance
+
+/-- In degree zero, regular forms cover the logarithmic sheaf: there is no negative-degree
+form contributing a logarithmic summand. -/
+instance regularToLogSheaf_zero_epi : Epi (regularToLogSheaf P 0) := by
+  let K := formsComplexNat k P.ambient.obj
+  let L := shiftedAmbientComplexNat P
+  have hL : IsZero (L.X 0) := isZero_zero _
+  have : IsIso (biprod.inl : K.X 0 ⟶ K.X 0 ⊞ L.X 0) := by
+    refine ⟨⟨biprod.fst, biprod.inl_fst, ?_⟩⟩
+    apply biprod.hom_ext
+    · simp only [Category.assoc, biprod.inl_fst, Category.comp_id, Category.id_comp]
+    · exact hL.eq_of_tgt _ _
+  have : IsIso ((biprod.inl : K ⟶ K ⊞ L).f 0) := by
+    rw [← HomologicalComplex.inl_biprodXIso_inv]
+    infer_instance
+  have : Epi ((factorThruImage (logGeneratorComplexNat P)).f 0) :=
+    (HomologicalComplex.eval _ _ 0).map_epi _
+  change Epi ((biprod.inl : K ⟶ K ⊞ L).f 0 ≫
+    (factorThruImage (logGeneratorComplexNat P)).f 0)
+  infer_instance
+
+/-- Degree-zero logarithmic forms are the image of the ordinary regular-form pullback. -/
+def logSheafZeroImageIso : image (formsSheafPullback P.j.hom 0) ≅ logSheaf P 0 :=
+  (image.isoStrongEpiMono (regularToLogSheaf P 0) (logToOpenSheaf P 0)
+    (regularToLogSheaf_comp_logToOpenSheaf P 0)).symm
+
+/-- The degree-zero image comparison preserves the inclusion in complement forms. -/
+@[reassoc (attr := simp)] theorem logSheafZeroImageIso_hom_logToOpenSheaf :
+    (logSheafZeroImageIso P).hom ≫ logToOpenSheaf P 0 =
+      image.ι (formsSheafPullback P.j.hom 0) :=
+  image.isoStrongEpiMono_inv_comp_mono (regularToLogSheaf P 0) (logToOpenSheaf P 0)
+    (regularToLogSheaf_comp_logToOpenSheaf P 0)
 
 /-- The regular-plus-left-theta map in positive degrees. Its image is precisely the logarithmic
 sheaf, whereas sections of that sheaf need only have such normal forms locally. -/
