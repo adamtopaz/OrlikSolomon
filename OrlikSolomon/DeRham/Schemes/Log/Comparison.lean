@@ -14,6 +14,7 @@ public import Mathlib.CategoryTheory.Limits.Preserves.FunctorCategory
 public import Mathlib.Topology.Sheaves.Abelian
 public import OrlikSolomon.DeRham.Log
 public import OrlikSolomon.DeRham.Pole.Degree
+public import OrlikSolomon.DeRham.Schemes.Log.Restriction
 
 /-!
 # Logarithmic comparisons and detection on stalks
@@ -37,6 +38,8 @@ the degreewise primitive criteria, including degree zero.
 * `presheafComplex_stalk_quasiIso_of_basis` and `sheafComplex_quasiIso_of_basis`:
   quasi-isomorphisms on the section complexes of a basis induce quasi-isomorphisms on
   stalks and, for sheaves, on the sheaf complexes.
+* `logSheafComparison_of_units` and `logSheafComparison`: the actual logarithmic inclusion
+  is a quasi-isomorphism of sheaf complexes, proved on affine neighborhoods and then stalks.
 -/
 
 @[expose] public section
@@ -317,5 +320,42 @@ theorem sheafComplex_quasiIso_of_basis
     (((TopCat.Sheaf.forget (ModuleCat.{u} k) X).mapHomologicalComplex c).map f) hB hf x
 
 end BasisComparison
+
+section GeometricComparison
+
+variable {k : Type u} [CommRing k] {D : SmoothDomain k} (P : DivisorPair D)
+
+/-- The inclusion of logarithmic forms in the ordinary direct-image de Rham complex is a
+quasi-isomorphism when positive integers are units in the base ring. The proof compares sections
+on every affine neighborhood with the existing pole theorem, then passes to stalks.
+It does not apply underived global sections to a quasi-isomorphism.
+
+Blueprint: `thm:geo-log-sheaves`. -/
+theorem logSheafComparison_of_units (hUnits : ∀ n : ℕ, IsUnit (n + 1 : k)) :
+    QuasiIso (logToOpenComplexNat P) := by
+  apply sheafComplex_quasiIso_of_basis k P.ambient.obj.left (logToOpenComplexNat P)
+    (B := P.ambient.obj.left.affineOpens)
+    (by simpa only [Opens.IsBasis] using P.ambient.obj.left.isBasis_affineOpens)
+  intro U hU
+  let V : P.ambient.obj.left.affineOpens := ⟨U, hU⟩
+  change QuasiIso
+    (((sheafSectionsFunctor (k := k) P.ambient.obj.left V.1).mapHomologicalComplex
+      (.up ℕ)).map (logToOpenComplexNat P))
+  let Q := affineNeighborhoodAlgebraicPair P V
+  exact (quasiIso_iff_of_arrow_mk_iso _ _
+    (Arrow.isoMk (affineNeighborhoodLogComplexIso P V) (affineNeighborhoodOpenComplexIso P V)
+      (affineNeighborhoodLogComplexIso_toOpen P V))).1
+        (algebraicLogToLocalization_quasiIso k Q.eqn Q.compl hUnits Q.isSmoothPrincipalPair)
+
+end GeometricComparison
+
+/-- Over a characteristic-zero field, logarithmic forms are quasi-isomorphic to the ordinary
+direct image of forms on the complement, as complexes of sheaves. This is a stalkwise statement;
+it makes no comparison with derived direct image or non-affine global cohomology.
+
+Blueprint: `thm:geo-log-sheaves`. -/
+theorem logSheafComparison {k : Type u} [Field k] [CharZero k] {D : SmoothDomain k}
+    (P : DivisorPair D) : QuasiIso (logToOpenComplexNat P) :=
+  logSheafComparison_of_units P fun n => isUnit_iff_ne_zero.2 (Nat.cast_add_one_ne_zero n)
 
 end OrlikSolomon.Geometric.DeRham
