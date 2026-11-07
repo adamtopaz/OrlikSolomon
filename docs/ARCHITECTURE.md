@@ -970,9 +970,9 @@ Stage G0 (#107, #108) is formalized to the extent indicated below: `def:geo-doma
 `lem:geo-affine-pairs`, `lem:geo-products` and `thm:geo-units`, described in "Schemes, domains and
 affine duality" below, and `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-cartesian` and
 `thm:geo-pair-duality`, described in "Principal pairs" below. The Cartesian node remains partial:
-its Tor-sheaf and conormal comparisons are not stated. So are `def:geo-projective` and, except for
-its affine sides, `thm:geo-projective-geometry` (#112), described in "Projective complements on
-schemes". Stage G1 (#109) is formalized: `def:geo-theory`, `lem:geo-restriction`,
+its Tor-sheaf and conormal comparisons are not stated. `def:geo-projective` and, except for its
+affine sides, `thm:geo-projective-geometry` (#112) are also formalized, as described in "Projective
+complements on schemes". Stage G1 (#109) is formalized: `def:geo-theory`, `lem:geo-restriction`,
 `lem:geo-empty`, `thm:geo-to-algebraic` and `thm:geo-from-algebraic`, described in "Geometric
 cohomology and affine transport" below. The other declaration names remain proposals.
 
