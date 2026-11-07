@@ -9,19 +9,25 @@ public import OrlikSolomon.DeRham.Schemes.Log.Affine
 public import OrlikSolomon.DeRham.Schemes.Log.Basic
 public import OrlikSolomon.DeRham.Log
 public import Mathlib.Topology.Sheaves.Stalks
+public import Mathlib.Topology.Sheaves.LocallySurjective
 
 /-!
 # Residue and exactness of logarithmic forms on schemes
 
-Regular forms inject into complement forms and hence into the logarithmic image sheaves.
-The affine-local argument works over every commutative base ring, with no hypothesis on
-characteristic, nontriviality, points, or the ambient domain beyond `SmoothDomain`.
+The local formula `ρ(ω + θ ∧ η) = η|D` descends to the logarithmic image sheaf. It gives a
+degreewise short exact sequence of sheaf complexes from regular forms to logarithmic forms
+to divisor forms shifted with differential `-d`. All arguments work over every commutative
+base ring, without characteristic, nontriviality, points or ambient affineness hypotheses.
 
 ## Main results
 
 * `formsSheafPullback_injective_affineOpen`: injectivity on each affine neighborhood.
 * `formsSheafPullback_mono`: the regular-form map to the complement is a monomorphism.
 * `regularToLogSheaf_mono`: the left inclusion into logarithmic forms is a monomorphism.
+* `logResidueSheaf`, `logMkSheaf_residue`: residue and its local normal-form formula.
+* `logResidueSheaf_d`: residue anticommutes with the differential.
+* `logResidueComplexNat`: the residue map of sheaf complexes to the signed shift.
+* `logResidueShortComplexNat_shortExact`: the sheaf residue sequence is short exact.
 
 Blueprint: `thm:geo-log-sheaves`.
 -/
@@ -30,6 +36,7 @@ Blueprint: `thm:geo-log-sheaves`.
 noncomputable section
 open CategoryTheory CategoryTheory.Limits CategoryTheory.Preadditive
 open Opposite AlgebraicGeometry
+open scoped ZeroObject
 open OrlikSolomon.DeRham
 universe u
 namespace OrlikSolomon.Geometric.DeRham
@@ -478,5 +485,308 @@ Blueprint: `thm:geo-log-sheaves`. -/
 
 
 end ResidueMap
+
+/-- Degreewise regularity of a logarithmic term transports through compatible algebra
+equivalences.
+-/
+lemma theta_regular_of_equiv (Q : OrlikSolomon.DivisorPair k)
+    {A B C : Type u} [CommRing A] [CommRing B] [CommRing C]
+    [Algebra k A] [Algebra k B] [Algebra k C]
+    (j : A →ₐ[k] B) (i : A →ₐ[k] C) (v : Bˣ)
+    (eA : A ≃ₐ[k] Q.ambient) (eB : B ≃ₐ[k] Q.compl) (eC : C ≃ₐ[k] Q.closed)
+    (hj : eB.toAlgHom.comp j = (SmoothAlg.algHom Q.j).comp eA.toAlgHom)
+    (hi : eC.toAlgHom.comp i = (SmoothAlg.algHom Q.i).comp eA.toAlgHom)
+    (hu : Units.map eB.toAlgHom.toMonoidHom v = Q.eqnUnit)
+    (n : ℕ) (η : ⋀[A]^n Ω[A⁄k]) (h : Forms.map i η.val = 0) :
+    ∃ ω : ⋀[A]^(n + 1) Ω[A⁄k], Forms.map j ω.val = dlog k v * Forms.map j η.val := by
+  have hQ : Forms.map (SmoothAlg.algHom Q.i) (Forms.map eA.toAlgHom η.val) = 0 := by
+    rw [Forms.map_map, ← hi, ← Forms.map_map, h, map_zero]
+  have hdeg := (Forms.mapPower eA.toAlgHom n η).property
+  obtain ⟨ω, hω, hωeq⟩ := mem_regularPower.1
+    ((Q.isSmoothPrincipalPair.theta_mul_map_mem_regularPower_iff Q.compl hdeg).2 hQ)
+  let ωA := Forms.mapPower eA.symm.toAlgHom (n + 1) ⟨ω, hω⟩
+  refine ⟨ωA, ?_⟩
+  apply (Forms.mapEquiv eB).injective
+  change Forms.map eB.toAlgHom (Forms.map j ωA.val) =
+    Forms.map eB.toAlgHom (dlog k v * Forms.map j η.val)
+  rw [Forms.map_map eB.toAlgHom j ωA.val, hj, map_mul, Forms.map_dlog,
+    Forms.map_map eB.toAlgHom j η.val, hj,
+    ← Forms.map_map (SmoothAlg.algHom Q.j) eA.toAlgHom ωA.val,
+    ← Forms.map_map (SmoothAlg.algHom Q.j) eA.toAlgHom η.val]
+  have hleft : Forms.map eA.toAlgHom ωA.val = ω :=
+    (Forms.mapEquiv eA).apply_symm_apply ω
+  change Units.map (eB.toAlgHom : B →* Q.compl) v = Q.eqnUnit at hu
+  rw [hleft, hu, ← Q.theta_eq_dlog_eqnUnit]
+  exact hωeq
+
+/-- A coefficient vanishing on the divisor has a logarithmic term with an ambient primitive of the
+correct degree. -/
+lemma affineNeighborhood_theta_regular (P : DivisorPair D)
+    (V : P.ambient.obj.left.affineOpens) (n : ℕ)
+    (η : ⋀[sectionAlgebra k P.ambient.obj V.1]^n Ω[sectionAlgebra k P.ambient.obj V.1⁄k])
+    (h : Forms.map (sectionPullback P.i.hom V.1) η.val = 0) :
+    ∃ ω : ⋀[sectionAlgebra k P.ambient.obj V.1]^(n + 1)
+        Ω[sectionAlgebra k P.ambient.obj V.1⁄k],
+      Forms.map (sectionPullback P.j.hom V.1) ω.val =
+        dlog k (Units.map (sectionRestriction k P.compl.obj
+          (P.j.hom.left ⁻¹ᵁ V.1).leTop).toMonoidHom
+            (show (sectionAlgebra k P.compl.obj ⊤)ˣ from P.eqnUnit)) *
+          Forms.map (sectionPullback P.j.hom V.1) η.val :=
+  theta_regular_of_equiv (affineNeighborhoodAlgebraicPair P V)
+    (sectionPullback P.j.hom V.1) (sectionPullback P.i.hom V.1) _
+    (openSectionAlgebraEquiv P.ambient.obj V.1)
+    (openSectionAlgebraEquiv P.compl.obj (P.j.hom.left ⁻¹ᵁ V.1))
+    (openSectionAlgebraEquiv P.closed.obj (P.i.hom.left ⁻¹ᵁ V.1))
+    (openSectionAlgebraEquiv_comp P.j.hom V.1)
+    (openSectionAlgebraEquiv_comp P.i.hom V.1)
+    (affineNeighborhood_eqnUnit P V) n η h
+
+/-- On an affine neighborhood, a coefficient restricting to zero on the divisor gives a regular
+logarithmic term. -/
+lemma affineOpen_theta_regular (P : DivisorPair D)
+    (V : P.ambient.obj.left.affineOpens) (n : ℕ)
+    (η : (formsSheaf k P.ambient.obj n).obj.obj (op V.1))
+    (h : formsSheafPullbackAt P.i.hom V.1 n η = 0) :
+    ∃ ω : (formsSheaf k P.ambient.obj (n + 1)).obj.obj (op V.1),
+      formsSheafPullbackAt P.j.hom V.1 (n + 1) ω =
+        (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op (P.j.hom.left ⁻¹ᵁ V.1))
+          (formsSheafPullbackAt P.j.hom V.1 n η) := by
+  have hJ : IsAffineOpen (P.j.hom.left ⁻¹ᵁ V.1) :=
+    inferInstanceAs (IsAffine (affineNeighborhoodPair P V).compl.obj.left)
+  have hI : IsAffineOpen (P.i.hom.left ⁻¹ᵁ V.1) :=
+    inferInstanceAs (IsAffine (affineNeighborhoodPair P V).closed.obj.left)
+  obtain ⟨b, rfl⟩ := (affineOpenFormsComparison P.ambient.obj V.1 V.2 n).surjective η
+  have hB : Forms.mapPower (sectionPullback P.i.hom V.1) n b = 0 :=
+    (affineOpenFormsComparison P.closed.obj _ hI n).injective
+      ((affineOpenFormsComparison_pull P.i.hom V.1 V.2 hI n b).symm.trans
+        (h.trans (affineOpenFormsComparison P.closed.obj _ hI n).map_zero.symm))
+  obtain ⟨a, ha⟩ := affineNeighborhood_theta_regular P V n b (congrArg Subtype.val hB)
+  have ha' : Forms.mapPower (sectionPullback P.j.hom V.1) (n + 1) a =
+      leftDlogPower (Units.map (sectionRestriction k P.compl.obj
+        (P.j.hom.left ⁻¹ᵁ V.1).leTop).toMonoidHom
+        (show (sectionAlgebra k P.compl.obj ⊤)ˣ from P.eqnUnit)) n
+        (Forms.mapPower (sectionPullback P.j.hom V.1) n b) := Subtype.ext ha
+  refine ⟨affineOpenFormsComparison P.ambient.obj V.1 V.2 (n + 1) a, ?_⟩
+  have hθ := (congrArg
+    ((thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op (P.j.hom.left ⁻¹ᵁ V.1)))
+      (affineOpenFormsComparison_pull P.j.hom V.1 V.2 hJ n b)).trans
+        (thetaWedgeSheaf_affineOpenFormsComparison P.compl.obj _ hJ P.eqnUnit n
+          (Forms.mapPower (sectionPullback P.j.hom V.1) n b))
+  exact (affineOpenFormsComparison_pull P.j.hom V.1 V.2 hJ (n + 1) a).trans
+    ((congrArg (affineOpenFormsComparison P.compl.obj _ hJ (n + 1)) ha').trans hθ.symm)
+
+/-- A normal form with vanishing divisor coefficient is the pullback of an ambient form of the same
+degree. -/
+lemma affineOpen_normalForm_regular (P : DivisorPair D)
+    (V : P.ambient.obj.left.affineOpens) (n : ℕ)
+    (ω : (formsSheaf k P.ambient.obj (n + 1)).obj.obj (op V.1))
+    (η : (formsSheaf k P.ambient.obj n).obj.obj (op V.1))
+    (h : formsSheafPullbackAt P.i.hom V.1 n η = 0) :
+    ∃ α : (formsSheaf k P.ambient.obj (n + 1)).obj.obj (op V.1),
+      formsSheafPullbackAt P.j.hom V.1 (n + 1) α =
+        formsSheafPullbackAt P.j.hom V.1 (n + 1) ω +
+          (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op (P.j.hom.left ⁻¹ᵁ V.1))
+            (formsSheafPullbackAt P.j.hom V.1 n η) := by
+  obtain ⟨δ, hδ⟩ := affineOpen_theta_regular P V n η h
+  exact ⟨ω + δ, ((formsSheafPullbackAt P.j.hom V.1 (n + 1)).map_add ω δ).trans
+    (congrArg (formsSheafPullbackAt P.j.hom V.1 (n + 1) ω + ·) hδ)⟩
+
+
+/-- Every represented logarithmic section with zero residue on an affine neighborhood has a regular
+preimage. -/
+lemma affineOpen_logMkSheaf_regular (P : DivisorPair D)
+    (V : P.ambient.obj.left.affineOpens) (n : ℕ)
+    (ρ : logSheaf P (n + 1) ⟶ closedFormsSheaf P n)
+    (hρ : logMkSheaf P n ≫ ρ = biprod.snd ≫ formsSheafPullback P.i.hom n)
+    (t : ((formsSheaf k P.ambient.obj (n + 1) ⊞ formsSheaf k P.ambient.obj n).obj.obj (op V.1)))
+    (h : ρ.hom.app (op V.1) ((logMkSheaf P n).hom.app (op V.1) t) = 0) :
+    ∃ α : (formsSheaf k P.ambient.obj (n + 1)).obj.obj (op V.1),
+      (regularToLogSheaf P (n + 1)).hom.app (op V.1) α =
+        (logMkSheaf P n).hom.app (op V.1) t := by
+  let ω : (formsSheaf k P.ambient.obj (n + 1)).obj.obj (op V.1) :=
+    ((biprod.fst : formsSheaf k P.ambient.obj (n + 1) ⊞ formsSheaf k P.ambient.obj n ⟶ _).hom.app
+      (op V.1)) t
+  let η : (formsSheaf k P.ambient.obj n).obj.obj (op V.1) :=
+    ((biprod.snd : formsSheaf k P.ambient.obj (n + 1) ⊞ formsSheaf k P.ambient.obj n ⟶ _).hom.app
+      (op V.1)) t
+  have hη := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) hρ) (op V.1)) t
+  change ρ.hom.app (op V.1) ((logMkSheaf P n).hom.app (op V.1) t) =
+    formsSheafPullbackAt P.i.hom V.1 n η at hη
+  obtain ⟨α, hα⟩ := affineOpen_normalForm_regular P V n ω η (hη.symm.trans h)
+  refine ⟨α, ?_⟩
+  have hinj : Function.Injective ((logToOpenSheaf P (n + 1)).hom.app (op V.1)) := by
+    apply (ConcreteCategory.mono_iff_injective_of_preservesPullback _).1
+    exact (NatTrans.mono_iff_mono_app _).1 inferInstance (op V.1)
+  apply hinj
+  have hreg := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom)
+      (regularToLogSheaf_comp_logToOpenSheaf P (n + 1))) (op V.1)) α
+  have hnf := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom)
+      (logMkSheaf_comp_logToOpenSheaf P n)) (op V.1)) t
+  have hm : logNormalFormSheaf P n =
+      biprod.fst ≫ formsSheafPullback P.j.hom (n + 1) +
+        biprod.snd ≫ formsSheafPullback P.j.hom n ≫
+          (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).map
+            (thetaWedgeSheaf P.compl.obj P.eqnUnit n) :=
+    biprod.desc_eq
+  have hnormal := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) hm) (op V.1)) t
+  change (logNormalFormSheaf P n).hom.app (op V.1) t =
+    formsSheafPullbackAt P.j.hom V.1 (n + 1) ω +
+      (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op (P.j.hom.left ⁻¹ᵁ V.1))
+        (formsSheafPullbackAt P.j.hom V.1 n η) at hnormal
+  exact hreg.trans (hα.trans (hnormal.symm.trans hnf.symm))
+
+
+/-- The kernel of residue vanishes in the cokernel of the regular-form inclusion, checked by local
+normal forms. -/
+lemma kernel_logResidueSheaf_cokernel_regular (P : DivisorPair D) (n : ℕ) :
+    kernel.ι (logResidueSheaf P n) ≫ cokernel.π (regularToLogSheaf P (n + 1)) = 0 := by
+  have hloc : TopCat.Presheaf.IsLocallySurjective (logMkSheaf P n).hom :=
+    (TopCat.Sheaf.isLocallySurjective_iff_epi _).2 inferInstance
+  let N := formsSheaf k P.ambient.obj (n + 1) ⊞ formsSheaf k P.ambient.obj n
+  let L := logSheaf P (n + 1)
+  let C := closedFormsSheaf P n
+  let T := cokernel (regularToLogSheaf P (n + 1))
+  let π := cokernel.π (regularToLogSheaf P (n + 1))
+  apply ObjectProperty.hom_ext
+  ext U s
+  let y := (kernel.ι (logResidueSheaf P n)).hom.app U s
+  change π.hom.app U y = 0
+  apply TopCat.Presheaf.section_ext T U.unop
+  intro p hp
+  obtain ⟨W, iWU, ⟨t, ht⟩, hpW⟩ := hloc.imageSieve_mem y p hp
+  obtain ⟨_, ⟨V, hV, rfl⟩, hpV, hVW⟩ :=
+    P.ambient.obj.left.isBasis_affineOpens.exists_subset_of_mem_open hpW W.2
+  let iVW : V ⟶ W := homOfLE hVW
+  let iVU : V ⟶ U.unop := iVW ≫ iWU
+  let tV := N.obj.map iVW.op t
+  have htV : (logMkSheaf P n).hom.app (op V) tV = L.obj.map iVU.op y := by
+    calc
+      _ = L.obj.map iVW.op ((logMkSheaf P n).hom.app (op W) t) :=
+        ConcreteCategory.congr_hom ((logMkSheaf P n).hom.naturality iVW.op) t
+      _ = L.obj.map iVW.op (L.obj.map iWU.op y) := congrArg (L.obj.map iVW.op) ht
+      _ = _ := by
+        rw [← ConcreteCategory.comp_apply, ← CategoryTheory.Functor.map_comp]
+        rfl
+  have hker := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom)
+      (kernel.condition (logResidueSheaf P n))) U) s
+  change (logResidueSheaf P n).hom.app U y = 0 at hker
+  have hr : (logResidueSheaf P n).hom.app (op V)
+      ((logMkSheaf P n).hom.app (op V) tV) = 0 := by
+    calc
+      _ = (logResidueSheaf P n).hom.app (op V) (L.obj.map iVU.op y) :=
+        congrArg ((logResidueSheaf P n).hom.app (op V)) htV
+      _ = C.obj.map iVU.op ((logResidueSheaf P n).hom.app U y) :=
+        ConcreteCategory.congr_hom ((logResidueSheaf P n).hom.naturality iVU.op) y
+      _ = 0 := (congrArg (C.obj.map iVU.op) hker).trans (C.obj.map iVU.op).hom.map_zero
+  obtain ⟨α, hα⟩ := affineOpen_logMkSheaf_regular P ⟨V, hV⟩ n
+    (logResidueSheaf P n) (logMkSheaf_residue P n) tV hr
+  have hf := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom)
+      (cokernel.condition (regularToLogSheaf P (n + 1)))) (op V)) α
+  change π.hom.app (op V) ((regularToLogSheaf P (n + 1)).hom.app (op V) α) = 0 at hf
+  have hz : π.hom.app (op V) ((logMkSheaf P n).hom.app (op V) tV) = 0 :=
+    (congrArg (π.hom.app (op V)) hα.symm).trans hf
+  have hres : T.obj.map iVU.op (π.hom.app U y) = 0 := by
+    calc
+      _ = π.hom.app (op V) (L.obj.map iVU.op y) :=
+        (ConcreteCategory.congr_hom (π.hom.naturality iVU.op) y).symm
+      _ = π.hom.app (op V) ((logMkSheaf P n).hom.app (op V) tV) :=
+        congrArg (π.hom.app (op V)) htV.symm
+      _ = 0 := hz
+  exact (TopCat.Presheaf.germ_res_apply T.obj iVU p hpV (π.hom.app U y)).symm.trans
+    ((congrArg (TopCat.Presheaf.germ T.obj V p hpV) hres).trans
+      ((TopCat.Presheaf.germ T.obj V p hpV).hom.map_zero.trans
+        (TopCat.Presheaf.germ T.obj U.unop p hp).hom.map_zero.symm))
+
+/-- The regular inclusion and residue form an exact sequence of sheaves in every positive
+logarithmic degree.
+Blueprint: `thm:geo-log-sheaves`. -/
+lemma logResidueSheaf_exact (P : DivisorPair D) (n : ℕ) :
+    (ShortComplex.mk (regularToLogSheaf P (n + 1)) (logResidueSheaf P n)
+      (regularToLogSheaf_residue P n)).Exact := by
+  rw [ShortComplex.exact_iff_kernel_ι_comp_cokernel_π_zero]
+  exact kernel_logResidueSheaf_cokernel_regular P n
+
+
+section ResidueComplex
+
+variable (P : DivisorPair D)
+
+/-- The differential of a degree-zero logarithmic form has zero residue. -/
+@[reassoc (attr := simp)] theorem logSheafD_zero_residue :
+    logSheafD P 0 ≫ logResidueSheaf P 0 = 0 := by
+  apply (cancel_epi (regularToLogSheaf P 0)).1
+  rw [← Category.assoc, regularToLogSheaf_d, Category.assoc,
+    regularToLogSheaf_residue, comp_zero, comp_zero]
+
+/-- Residue as a map of sheaf complexes to the divisor complex shifted with differential `-d`.
+It is zero in degree zero, and the usual residue in each positive degree.
+
+Blueprint: `thm:geo-log-sheaves`. -/
+def logResidueComplexNat : logComplexNat P ⟶ shiftedClosedComplexNat P := by
+  refine CochainComplex.ofHom (fun | 0 => 0 | n + 1 => logResidueSheaf P n) ?_
+  rintro (_ | n)
+  · simp only [zero_comp]
+    exact (logSheafD_zero_residue P).symm
+  · change logResidueSheaf P n ≫ (shiftedClosedComplexNat P).d (n + 1) (n + 1 + 1) =
+      logSheafD P (n + 1) ≫ logResidueSheaf P (n + 1)
+    exact (congrArg (fun δ : closedFormsSheaf P n ⟶ closedFormsSheaf P (n + 1) =>
+      logResidueSheaf P n ≫ δ) (shiftedClosedComplexNat_d P n)).trans
+        ((comp_neg _ _).trans (logResidueSheaf_d P n).symm)
+
+/-- Residue has zero component in degree zero. -/
+@[simp] theorem logResidueComplexNat_f_zero : (logResidueComplexNat P).f 0 = 0 := rfl
+/-- In positive degrees, complex residue is the sheaf residue. -/
+theorem logResidueComplexNat_f_succ (n : ℕ) :
+    (logResidueComplexNat P).f (n + 1) = logResidueSheaf P n := rfl
+
+/-- The positive component of complex residue, transported to the named divisor-form target. -/
+@[simp] theorem logResidueComplexNat_component_succ (n : ℕ) :
+    (logResidueComplexNat P).f (n + 1) ≫
+        eqToHom (shiftedClosedComplexNat_X_succ P n) = logResidueSheaf P n := by
+  change logResidueSheaf P n ≫ 𝟙 _ = logResidueSheaf P n
+  exact Category.comp_id _
+
+/-- Regular forms have zero residue as a map of complexes. -/
+@[reassoc (attr := simp)] theorem regularToLogComplexNat_residue :
+    regularToLogComplexNat P ≫ logResidueComplexNat P = 0 := by
+  apply HomologicalComplex.hom_ext
+  rintro (_ | n)
+  · change regularToLogSheaf P 0 ≫ 0 = 0
+    exact comp_zero
+  · exact regularToLogSheaf_residue P n
+
+
+/-- The logarithmic residue sequence as a short complex of sheaf complexes. The final complex
+is the divisor direct image shifted up one degree, with differential `-d`.
+
+Blueprint: `thm:geo-log-sheaves`. -/
+def logResidueShortComplexNat :
+    ShortComplex (CochainComplex (TopCat.Sheaf (ModuleCat k) P.ambient.obj.left) ℕ) :=
+  ShortComplex.mk (regularToLogComplexNat P) (logResidueComplexNat P)
+    (regularToLogComplexNat_residue P)
+
+/-- The logarithmic residue sequence is degreewise short exact on every admissible domain.
+This is sheaf exactness; it does not pass underived global sections through a short exact sequence
+on an arbitrary non-affine scheme.
+
+Blueprint: `thm:geo-log-sheaves`. -/
+theorem logResidueShortComplexNat_shortExact : (logResidueShortComplexNat P).ShortExact := by
+  apply HomologicalComplex.shortExact_of_degreewise_shortExact
+  rintro (_ | n)
+  · change (ShortComplex.mk (regularToLogSheaf P 0) (0 : logSheaf P 0 ⟶ 0)
+      (by simp)).ShortExact
+    exact { exact := (ShortComplex.exact_iff_epi _ rfl).2 inferInstance }
+  · change (ShortComplex.mk (regularToLogSheaf P (n + 1)) (logResidueSheaf P n)
+      (regularToLogSheaf_residue P n)).ShortExact
+    exact { exact := logResidueSheaf_exact P n }
+
+
+end ResidueComplex
 
 end OrlikSolomon.Geometric.DeRham
