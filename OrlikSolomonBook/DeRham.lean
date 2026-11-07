@@ -28,7 +28,7 @@ Projectivity in every form degree, injectivity of regular scalar multiplication 
 Cartan calculus, the pole filtration, contraction of its positive quotients, and finite reduction to logarithmic cohomology are formalized.
 The residue and Gysin maps before the twist, their long exact sequence and projection formula, and their naturality for morphisms that need not be flat are formalized too.
 So are the Laurent-twisted functor, the twisted Gysin and residue maps, and every field of the structure of axioms.
-What remains planned is {bp "lem:dr-tau"}[], which identifies the logarithmic classes of the instance with the classes of the forms $`da/a`, the corollaries {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[], which instantiate the main theorems at it, and some of the worked regressions.
+What remains planned is {bp "lem:dr-tau"}[], which identifies the logarithmic classes of the instance with the classes of the forms $`da/a`, the corollaries {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[], which instantiate the main theorems at it.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
 
@@ -477,18 +477,18 @@ The empty projective arrangement needs a separate calculation and is not include
 These calculations test the maps and the signs, and not just the dimension of the answer.
 Unless stated otherwise, $`k` is a field of characteristic zero.
 
-:::node "prop:dr-gm-example"
+:::node "prop:dr-gm-example" (decl := OrlikSolomon.DeRham.Examples.laurentThetaClass) (decl := OrlikSolomon.DeRham.Examples.gmCohomologyEquiv) (decl := OrlikSolomon.DeRham.Examples.gmCohomologyEquiv_apply) (decl := OrlikSolomon.DeRham.Examples.gmCohomologyEquiv_mem_degree_zero_iff) (decl := OrlikSolomon.DeRham.Examples.gmCohomologyEquiv_mem_degree_one_iff) (decl := OrlikSolomon.DeRham.Examples.gm_eq_zero_of_mem_degree_succ_succ) (decl := OrlikSolomon.DeRham.Examples.gm_residue_theta) (decl := OrlikSolomon.DeRham.Examples.gm_normalized_tau)
 For $`A=k[x]` and $`f=x`, we have $`H^0_{\mathrm{dR}}(A_f)=k`, $`H^1_{\mathrm{dR}}(A_f)=k[dx/x]` and $`H^n_{\mathrm{dR}}(A_f)=0` for $`n>1`.
 Moreover $`r([dx/x])=1`, and the twisted normalized class is $`[dx/x]\,t`.
 :::
 
-:::node "prop:dr-unit-example" (decl := IsLocalization.atUnit) (decl := OrlikSolomon.Sanity.unit_quotient_subsingleton) (decl := OrlikSolomon.Sanity.zeroDerivation_unit_normal) (decl := OrlikSolomon.Sanity.unit_exists_normalDerivation_modulo) (decl := OrlikSolomon.DeRham.Examples.isSmoothPrincipalPair_of_isUnit) (decl := OrlikSolomon.DeRham.Examples.ofRegular_bijective) (decl := OrlikSolomon.DeRham.Examples.unitPolynomial_logComparison) (remaining := "The cohomological residue and Gysin maps, and the exactness fields.")
+:::node "prop:dr-unit-example" (decl := IsLocalization.atUnit) (decl := OrlikSolomon.Sanity.zeroDerivation_unit_normal) (decl := OrlikSolomon.DeRham.Examples.unit_closed_subsingleton) (decl := OrlikSolomon.DeRham.Examples.unit_logForms_eq_top) (decl := OrlikSolomon.DeRham.Examples.unit_twistedCohomologyMap_bijective) (decl := OrlikSolomon.DeRham.Examples.unit_gysin_eq_zero) (decl := OrlikSolomon.DeRham.Examples.unit_residue_eq_zero) (decl := OrlikSolomon.DeRham.Examples.unit_twistedGysin_eq_zero) (decl := OrlikSolomon.DeRham.Examples.unit_twistedResidue_eq_zero)
 If $`f` is a unit in a smooth $`A`, then $`S=0`, $`A_f\simeq A` and $`L^\bullet=\Omega_A^\bullet`.
 Residue and Gysin are both zero, and all the exactness fields reduce to the identity isomorphism on $`C(A)`.
 In the contraction one may take $`v=0` and $`h=-f^{-1}`, which confirms that no step assumed a nonempty divisor.
 :::
 
-:::node "prop:dr-product-example" (decl := OrlikSolomon.Sanity.productPolynomialEquation_regular) (decl := OrlikSolomon.Sanity.productPolynomialQuotientEquiv) (decl := OrlikSolomon.Sanity.productPolynomialNormal) (decl := OrlikSolomon.Sanity.productPolynomialNormal_equation) (decl := OrlikSolomon.Sanity.productPolynomial_conormalFunctional_df) (decl := OrlikSolomon.Sanity.productPolynomial_splitConormalSequence_df) (decl := OrlikSolomon.Sanity.productPolynomial_exists_normalDerivation_modulo) (decl := OrlikSolomon.Sanity.productPolynomial_no_global_normal) (decl := OrlikSolomon.DeRham.Examples.productPolynomial_isSmoothPrincipalPair) (decl := OrlikSolomon.DeRham.Examples.productPolynomial_logResidue_theta) (decl := OrlikSolomon.DeRham.Examples.productPolynomial_logComparison_and_no_global_normal) (decl := OrlikSolomon.DeRham.Examples.productPolynomial_euler_normal_modulo) (remaining := "The identification of the localization and the de Rham cohomology of the product.")
+:::node "prop:dr-product-example" (decl := OrlikSolomon.Sanity.productPolynomialQuotientEquiv) (decl := OrlikSolomon.DeRham.Examples.productLocalizationEquiv) (decl := OrlikSolomon.DeRham.Examples.productLaurentCohomologyEquiv) (decl := OrlikSolomon.DeRham.Examples.productCohomologyEquiv) (decl := OrlikSolomon.DeRham.Examples.productCohomologyEquiv_mem_degree_iff) (decl := OrlikSolomon.DeRham.Examples.product_eq_zero_of_mem_degree_succ_succ) (decl := OrlikSolomon.DeRham.Examples.productCohomologyEquiv_generator) (decl := OrlikSolomon.DeRham.Examples.product_residue_generator) (decl := OrlikSolomon.Sanity.productPolynomialNormal_equation) (decl := OrlikSolomon.Sanity.productPolynomial_no_global_normal)
 For $`A=k\times k[z]` and $`f=(1,z)`, we have $`S\simeq k`, $`A_f\simeq k\times k[z,z^{-1}]`, $`H^0_{\mathrm{dR}}(A_f)=k\times k` and $`H^1_{\mathrm{dR}}(A_f)=k[(0,dz/z)]`.
 All higher groups vanish, and the residue takes $`(0,dz/z)` to $`1` on $`S`.
 
@@ -496,25 +496,25 @@ This divisor lies on one connected component, and it is why the derivation is on
 Taking $`v=(0,\partial_z)` gives $`v(f)=(0,1)=1+f(-1,0)`, while $`df=(0,dz)` is not unimodular on all of $`A`.
 :::
 
-:::node "prop:dr-zero-example" (decl := OrlikSolomon.smooth_punit) (decl := OrlikSolomon.SmoothAlg.zero) (decl := OrlikSolomon.Sanity.zero_exists_normalDerivation_modulo) (decl := OrlikSolomon.DeRham.Examples.isSmoothPrincipalPair_of_subsingleton) (decl := OrlikSolomon.DeRham.Examples.zero_logComparison) (remaining := "Vanishing of forms and de Rham cohomology, the twisted theory and its pair axioms.")
+:::node "prop:dr-zero-example" (decl := OrlikSolomon.smooth_punit) (decl := OrlikSolomon.SmoothAlg.zero) (decl := OrlikSolomon.Sanity.zero_exists_normalDerivation_modulo) (decl := OrlikSolomon.DeRham.Examples.isSmoothPrincipalPair_of_subsingleton) (decl := OrlikSolomon.DeRham.Examples.zero_form_eq_zero) (decl := OrlikSolomon.DeRham.Examples.zero_cohomology_eq_zero) (decl := OrlikSolomon.DeRham.Examples.zero_twistedCohomology_eq_zero) (decl := OrlikSolomon.DeRham.ordinaryTheory)
 For $`A=0`, every form and cohomology module is zero, $`C(A)` is the zero $`B`-algebra, and the fields for divisor pairs hold for its unique equation.
 The zero algebra is formally smooth and finitely presented, so it really is an object of the category, and no nontriviality can be imposed on general objects.
 :::
 
-:::node "prop:dr-crossing-example"
+:::node "prop:dr-crossing-example" (decl := OrlikSolomon.DeRham.Examples.crossingEquation_mem_nonZeroDivisors) (decl := OrlikSolomon.DeRham.Examples.crossingDivisor_not_formallySmooth) (decl := OrlikSolomon.DeRham.Examples.crossing_kaehler_restriction_ne_zero) (decl := OrlikSolomon.DeRham.Examples.crossing_theta_mul) (decl := OrlikSolomon.DeRham.Examples.crossing_logMk_eq) (decl := OrlikSolomon.DeRham.Examples.crossing_no_residue)
 For $`A=k[x,y]` and $`f=xy`, the element $`f` is a non-zero-divisor but $`S=A/(xy)` is not smooth.
 The regularity criterion fails: with $`\eta=y\,dx`, the form $`\frac{d(xy)}{xy}\wedge\eta=dy\wedge dx` is regular, while $`\eta|_S\ne0` in $`\Omega_S^1`.
 So the same logarithmic form has two presentations whose proposed residues disagree, which is the exact way in which this divisor is excluded.
 :::
 
-:::node "prop:dr-morphism-examples"
+:::node "prop:dr-morphism-examples" (decl := OrlikSolomon.DeRham.Examples.unitChangeHom) (decl := OrlikSolomon.DeRham.Examples.flat_unitChangeHom_ambient) (decl := OrlikSolomon.DeRham.Examples.unitChange_residue_theta) (decl := OrlikSolomon.DeRham.Examples.nonFlatHom) (decl := OrlikSolomon.DeRham.Examples.not_flat_nonFlatAmbient) (decl := OrlikSolomon.DeRham.Examples.nonFlatHom_gysin_map) (decl := OrlikSolomon.DeRham.Examples.nonFlatHom_residue_map) (decl := OrlikSolomon.DeRham.Examples.ramifiedAmbient_not_pairHom) (decl := OrlikSolomon.DeRham.Examples.ramified_map_theta) (decl := OrlikSolomon.DeRham.Examples.ramified_residue_theta) (decl := OrlikSolomon.DeRham.Examples.ramified_logResidue_theta_ne_one)
 These test the precise condition on morphisms.
  * For $`k[z]\to k[x,y,y^{-1}]` with $`z\mapsto xy` and target equation $`f'=x`, the residue of $`d(xy)/(xy)` is $`1`. This map is flat.
  * A morphism of admissible pairs that is not flat is $`(k[z,v],z)\to(k[x,y,y^{-1}],x)` with $`z\mapsto xy` and $`v\mapsto0`, and residue and Gysin naturality still hold.
  * The map $`(k[z],z)\to(k[x],x)` with $`z\mapsto x^2` is not a morphism of pairs, since $`x^2` is not a unit multiple of $`x`. Its pulled-back logarithmic form has residue $`2`, not $`1`.
 :::
 
-:::node "prop:dr-torus-example"
+:::node "prop:dr-torus-example" (decl := OrlikSolomon.DeRham.Examples.torusX) (decl := OrlikSolomon.DeRham.Examples.torusY) (decl := OrlikSolomon.DeRham.Examples.torusCohomologyEquiv) (decl := OrlikSolomon.DeRham.Examples.torusCohomologyEquiv_apply) (decl := OrlikSolomon.DeRham.Examples.torusCohomologyEquiv_mem_grading_iff) (decl := OrlikSolomon.DeRham.Examples.torus_eq_zero_of_mem_degree_succ_succ_succ) (decl := OrlikSolomon.DeRham.Examples.torusX_mul_self) (decl := OrlikSolomon.DeRham.Examples.torusY_mul_self) (decl := OrlikSolomon.DeRham.Examples.torus_anticommute) (decl := OrlikSolomon.DeRham.Examples.torusResidueX_top) (decl := OrlikSolomon.DeRham.Examples.torus_residue_inner_mul_outer)
 For $`T=k[x^{\pm1},y^{\pm1}]`, put $`e_x=dx/x` and $`e_y=dy/y`.
 Then $`H^0_{\mathrm{dR}}(T)=k`, $`H^1_{\mathrm{dR}}(T)=k[e_x]\oplus k[e_y]` and $`H^2_{\mathrm{dR}}(T)=k[e_x\wedge e_y]`, with all higher groups zero and the exterior multiplication on these generators.
 The residue along $`x=0` in the ambient $`k[x,y^{\pm1}]` sends $`[e_x\wedge e_y]` to $`[e_y]`.
@@ -522,7 +522,7 @@ Along $`y=0`, it sends the same ordered class to $`-[e_x]`.
 No Künneth theorem is used.
 :::
 
-:::node "prop:dr-characteristic-p"
+:::node "prop:dr-characteristic-p" (decl := OrlikSolomon.DeRham.Examples.d_algebraMap_X_pow_charP) (decl := OrlikSolomon.DeRham.Examples.X_pow_ne_C) (decl := OrlikSolomon.DeRham.Examples.not_surjective_twisted_map_C_of_charP) (decl := OrlikSolomon.DeRham.Examples.polynomialCharacteristicForm_class_ne_zero) (decl := OrlikSolomon.DeRham.Examples.laurentCharacteristicForm_eq_T_smul_diff) (decl := OrlikSolomon.DeRham.Examples.laurentCharacteristicForm_class_ne_zero) (decl := OrlikSolomon.DeRham.Examples.laurentCharacteristicForm_not_cohomologous_log) (decl := OrlikSolomon.DeRham.Examples.not_surjective_logToLocalization_of_charP)
 If $`k` is a field of characteristic $`p>0`, the affine-line axiom fails for this model.
 In $`k[z]`, the form $`z^{p-1}dz` is a nonzero cohomology class, and $`z^p` is a nonconstant cocycle of degree zero.
 The pole argument fails as well: for $`f=z`, the closed form $`z^{-p-1}dz` is not exact and cannot be represented by a logarithmic form.
