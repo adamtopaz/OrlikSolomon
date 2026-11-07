@@ -80,6 +80,7 @@ public import OrlikSolomon.DeRham.Schemes.Forms.Pullback
 public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
 public import OrlikSolomon.DeRham.Schemes.GlobalSections
 public import OrlikSolomon.DeRham.Schemes.Instance
+public import OrlikSolomon.DeRham.Schemes.Log.Naturality
 public import OrlikSolomon.DeRham.Schemes.Log.Projection
 public import OrlikSolomon.DeRham.SmoothPair
 public import OrlikSolomon.DeRham.SmoothPair.Koszul
