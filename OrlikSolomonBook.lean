@@ -433,6 +433,7 @@ Its formalized foundations include: admissible domains of smooth schemes, the eq
 The geometric cohomology structure and both affine transports are also formalized, with canonical graded comparisons commuting with Gysin and residue.
 The supports-and-purity bridge constructs the geometric theory from degreewise cohomology with products, localization and purity on any admissible domain, including non-affine objects, and commutes with restriction and affine transport.
 The logarithmic classes of global units and the decomposition of the cohomology of a product with the multiplicative group are formalized on every object of a domain, affine or not.
+The sheaves of relative forms now have their differential, wedge product and scheme pullbacks, with the canonical comparison to algebraic forms on affine schemes.
 Applying the affine transport to the existing de Rham theory gives a nonzero theory on smooth affine schemes; its interpretation through sheaf forms and the structure theorems on actual arrangement opens remain planned.
 {ref "geometric"}[Its chapter] presents the plan, and its nodes are counted separately above.
 Nothing on this page depends on it: the dependence runs the other way.
