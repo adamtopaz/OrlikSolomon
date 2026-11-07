@@ -29,6 +29,7 @@ authors := ["Adam Topaz", "Claude", "Codex"]
 
 This book explains a formalization, in Lean and Mathlib, of the Orlik–Solomon structure theorem for the cohomology of complements of hyperplane arrangements, in affine space and in projective space.
 Both theorems are proved, for every cohomology theory that satisfies the axioms.
+For algebraic de Rham cohomology over a field of characteristic zero, which the library proves satisfies the axioms, they are also proved as theorems with no hypothetical cohomology theory in them, as explained below.
 The book is written for a working mathematician who wants to know what exactly is proved, from what, and how.
 No knowledge of Lean is needed: the prose stands on its own, and the Lean statements are shown so that you can compare them with the mathematics.
 
@@ -275,7 +276,7 @@ The hypothesis on cohomology is not among these axioms: it is the argument `T`, 
 ```
 
 *What is conditional.*
-Both theorems are conditional, and this is the most important thing to understand about them.
+As stated, both theorems are conditional, and this is the most important thing to understand about them.
 The cohomology theory is the argument `T`, an arbitrary value of the structure {name OrlikSolomon.OrdinaryTheory}`OrdinaryTheory`, whose fields are the axioms: products, a dimension axiom at the point, affine-line invariance, and compatible localization and divisor purity.
 The theorems hold for every value of this structure, and they say nothing about any cohomology theory until someone supplies such a value for that theory.
 
@@ -284,6 +285,95 @@ For every field $`k` of characteristic zero, {name OrlikSolomon.DeRham.ordinaryT
 Its coefficient ring and its cohomology of the point are nonzero, and every field is proved, so the axioms are not vacuous.
 The other values in the library are zero theories, with zero coefficients, and these test edge cases without touching the substantive axioms.
 
+*Unconditional theorems for algebraic de Rham cohomology.*
+Instantiating both theorems at this value, and removing the formal variable $`t`, gives two theorems with no hypothetical cohomology theory in them: {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[].
+For every field $`k` of characteristic zero, every arrangement $`\mathcal{A}` in a finite-dimensional $`k`-vector space and every nonempty arrangement $`\mathcal{P}` in $`\mathbb{P}^n_k`, there are isomorphisms of graded $`k`-algebras
+$$`\operatorname{OS}_k(\mathcal{A})\simeq\bigoplus_{q\ge0}H^q_{\mathrm{dR}}(U_{\mathcal{A}}/k),\quad e_H\longmapsto\Bigl[\frac{df_H}{f_H}\Bigr],\qquad\overline{\operatorname{OS}}_k(\mathcal{P})\simeq\bigoplus_{q\ge0}H^q_{\mathrm{dR}}(U_{\mathcal{P}}/k),\quad e_i-e_j\longmapsto\Bigl[\frac{d(\ell_i/\ell_j)}{\ell_i/\ell_j}\Bigr].`
+Here $`H^\bullet_{\mathrm{dR}}(X/k)` is algebraic de Rham cohomology, the cohomology of the complex of Kähler differential forms of the coordinate ring of $`X`, and the formulas hold for all equations $`f_H` and $`\ell_i`.
+In Lean, with the variables above and the one extra hypothesis that $`k` has characteristic zero, the affine theorem, its formula on generators, its grading and its form as a direct sum are:
+
+```lean
+variable [CharZero k]
+
+example :
+    OSAlgebra k 𝒜 ≃ₐ[k]
+      DeRham.Cohomology k (complement 𝒜) :=
+  DeRham.affineEquiv 𝒜
+
+example {f : V →ᵃ[k] k} (H : 𝒜) (hf : IsEquation f H) :
+    DeRham.affineEquiv 𝒜 (generator k 𝒜 H) =
+      DeRham.dlogClass k
+        (complementUnit 𝒜 f (hf.covers H.2)) :=
+  DeRham.affineEquiv_generator_of_isEquation H hf
+
+example {q : ℕ} {x : OSAlgebra k 𝒜} :
+    DeRham.affineEquiv 𝒜 x ∈
+        DeRham.Cohomology.degree k (complement 𝒜) q ↔
+      x ∈ degree k 𝒜 q :=
+  DeRham.affineEquiv_mem_degree_iff
+
+example :
+    OSAlgebra k 𝒜 ≃ₐ[k]
+      ⨁ q : ℕ, DeRham.Cohomology.degree k
+        (complement 𝒜) q :=
+  DeRham.affineDirectSumEquiv 𝒜
+```
+
+The projective theorem and its formula on differences are:
+
+```lean
+example :
+    projectiveAlgebra k P.cone_isCentral ≃ₐ[k]
+      DeRham.Cohomology k (projectiveComplement P) :=
+  DeRham.projectiveEquiv P
+
+example {ℓ ℓ' : Module.Dual k W}
+    (hℓ : LinearMap.ker ℓ ∈ P)
+    (hℓ' : LinearMap.ker ℓ' ∈ P) :
+    DeRham.projectiveEquiv P
+        (projectiveDifference k P.cone_isCentral
+          (P.coneHyperplaneEquiv ⟨_, hℓ⟩)
+          (P.coneHyperplaneEquiv ⟨_, hℓ'⟩)) =
+      DeRham.dlogClass k (projectiveRatioUnit hℓ hℓ') :=
+  DeRham.projectiveEquiv_difference hℓ hℓ'
+```
+
+In these statements, {name OrlikSolomon.DeRham.Cohomology}`DeRham.Cohomology` `k X` is the de Rham cohomology algebra $`H^\bullet_{\mathrm{dR}}(X/k)`, {name OrlikSolomon.DeRham.Cohomology.degree}`DeRham.Cohomology.degree` `k X q` is its part $`H^q_{\mathrm{dR}}(X/k)` of degree $`q`, and {name OrlikSolomon.DeRham.dlogClass}`DeRham.dlogClass` `k u` is the class $`[du/u]` of a unit $`u`.
+The units {name OrlikSolomon.SmoothAlg.complementUnit}`complementUnit` `𝒜 f _` and {name OrlikSolomon.SmoothAlg.projectiveRatioUnit}`projectiveRatioUnit` `hℓ hℓ'` are the function $`f` on $`U_{\mathcal{A}}` and the ratio $`\ell/\ell'` on $`U_{\mathcal{P}}`.
+No argument is a cohomology theory, and these declarations depend only on the standard axioms of Lean's logic:
+
+```lean (name := axiomsOfDeRhamAffine)
+#print axioms DeRham.affineEquiv
+```
+```leanOutput axiomsOfDeRhamAffine
+'OrlikSolomon.DeRham.affineEquiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+```
+
+```lean (name := axiomsOfDeRhamAffineGenerator)
+#print axioms DeRham.affineEquiv_generator_of_isEquation
+```
+```leanOutput axiomsOfDeRhamAffineGenerator
+'OrlikSolomon.DeRham.affineEquiv_generator_of_isEquation' depends on axioms: [propext, Classical.choice, Quot.sound]
+```
+
+```lean (name := axiomsOfDeRhamProjective)
+#print axioms DeRham.projectiveEquiv
+```
+```leanOutput axiomsOfDeRhamProjective
+'OrlikSolomon.DeRham.projectiveEquiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+```
+
+```lean (name := axiomsOfDeRhamProjectiveDifference)
+#print axioms DeRham.projectiveEquiv_difference
+```
+```leanOutput axiomsOfDeRhamProjectiveDifference
+'OrlikSolomon.DeRham.projectiveEquiv_difference' depends on axioms: [propext, Classical.choice, Quot.sound]
+```
+
+These are theorems about one cohomology theory, algebraic de Rham cohomology, over fields of characteristic zero.
+The other statements of the main theorem hold for the de Rham value of the structure as well, by instantiation, but they are about its twisted algebra $`H^\bullet_{\mathrm{dR}}(X/k)\otimes_kk[t,t^{-1}]` and say nothing more about de Rham cohomology.
+
+*Other theories.*
 For every other cohomology theory the theorems remain conditional.
 That the axioms hold for complex singular cohomology has been checked by hand, field by field, and the checks are recorded in the comments of the source.
 For geometric $`\ell`-adic cohomology the source records the analogous interpretation, together with what an instance would still have to supply.
@@ -331,8 +421,8 @@ What the build has checked is the declarations shown there, and you can compare 
 The status lines at the top of this page count two blueprints separately.
 The second constructs a value of the structure of axioms: algebraic de Rham cohomology over a field of characteristic zero.
 That value is formalized, so the axioms have a nonzero model in Lean.
-The forms of the two theorems with no hypothetical cohomology theory in them, which instantiate the theorems at this value and identify the generators with the classes of the forms $`df/f`, are still planned.
-{ref "de-rham"}[Its chapter] presents the construction and what remains.
+So are the forms of the two theorems with no hypothetical cohomology theory in them, which instantiate the theorems at this value and identify the generators with the classes of the forms $`df/f`, as stated above.
+{ref "de-rham"}[Its chapter] presents the construction and the worked regressions.
 The main theorem does not depend on it: the dependence runs the other way.
 
 {include 1 OrlikSolomonBook.Organization}

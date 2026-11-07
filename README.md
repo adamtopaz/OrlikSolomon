@@ -13,11 +13,63 @@ twists stay explicit.
 **Status:** the affine and projective structure theorems and their corollaries are proved,
 for any structure satisfying the axioms. A nonzero instance of that structure is constructed in
 Lean: algebraic de Rham cohomology over a field of characteristic zero, so the axioms are not
-vacuous. The forms of the theorems stated for de Rham cohomology itself are still in progress.
-For any other cohomology theory, such as singular or ℓ-adic cohomology, the theorems remain
-conditional: the axioms have been checked by hand against singular cohomology, and interpreted by
-hand for ℓ-adic cohomology, but not in Lean. The empty projective arrangement is excluded. The
-[book](https://adamtopaz.github.io/OrlikSolomon/) states the theorems and has the details.
+vacuous. Instantiated there, the theorems become unconditional statements about algebraic de Rham
+cohomology, shown below. For any other cohomology theory, such as singular or ℓ-adic cohomology,
+the theorems remain conditional: the axioms have been checked by hand against singular cohomology,
+and interpreted by hand for ℓ-adic cohomology, but not in Lean. The empty projective arrangement
+is excluded. The [book](https://adamtopaz.github.io/OrlikSolomon/) states the theorems and has the
+details.
+
+**The theorems for algebraic de Rham cohomology.** For every field `k` of characteristic zero,
+every arrangement `𝒜` of affine hyperplanes in a finite-dimensional `k`-vector space `V`, and every
+nonempty arrangement `P` of hyperplanes in the projective space of `W`, there are isomorphisms of
+graded `k`-algebras
+
+```text
+OS_k(𝒜) ≃ ⨁_q H^q_dR(U_𝒜/k),   e_H ↦ [df_H/f_H],
+pOS_k(P) ≃ ⨁_q H^q_dR(U_P/k),   e_i - e_j ↦ [d(ℓ_i/ℓ_j)/(ℓ_i/ℓ_j)],
+```
+
+for all equations `f_H` and `ℓ_i`. No cohomology theory is a parameter. In Lean:
+
+```lean
+open OrlikSolomon OrlikSolomon.SmoothAlg OrlikSolomon.OSAlgebra
+open scoped DirectSum
+
+variable {k : Type u} [Field k] [CharZero k]
+  {V : Type u} [AddCommGroup V] [Module k V] [FiniteDimensional k V] (𝒜 : Arrangement k V)
+  {W : Type u} [AddCommGroup W] [Module k W] [FiniteDimensional k W]
+  (P : ProjectiveArrangement k W) [Nonempty P]
+
+-- `cor:dr-affine`, graded by `DeRham.affineEquiv_mem_degree_iff`
+example : OSAlgebra k 𝒜 ≃ₐ[k] DeRham.Cohomology k (complement 𝒜) :=
+  DeRham.affineEquiv 𝒜
+
+example : OSAlgebra k 𝒜 ≃ₐ[k] ⨁ q : ℕ, DeRham.Cohomology.degree k (complement 𝒜) q :=
+  DeRham.affineDirectSumEquiv 𝒜
+
+example {f : V →ᵃ[k] k} (H : 𝒜) (hf : IsEquation f H) :
+    DeRham.affineEquiv 𝒜 (generator k 𝒜 H) =
+      DeRham.dlogClass k (complementUnit 𝒜 f (hf.covers H.2)) :=
+  DeRham.affineEquiv_generator_of_isEquation H hf
+
+-- `cor:dr-projective`, graded by `DeRham.projectiveEquiv_mem_degree_iff`
+example :
+    projectiveAlgebra k P.cone_isCentral ≃ₐ[k] DeRham.Cohomology k (projectiveComplement P) :=
+  DeRham.projectiveEquiv P
+
+example {ℓ ℓ' : Module.Dual k W} (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
+    DeRham.projectiveEquiv P (projectiveDifference k P.cone_isCentral
+        (P.coneHyperplaneEquiv ⟨_, hℓ⟩) (P.coneHyperplaneEquiv ⟨_, hℓ'⟩)) =
+      DeRham.dlogClass k (projectiveRatioUnit hℓ hℓ') :=
+  DeRham.projectiveEquiv_difference hℓ hℓ'
+```
+
+Here `DeRham.Cohomology k X` is the algebraic de Rham cohomology `H^•_dR(X/k)`, the cohomology of
+the complex of Kähler differential forms of the coordinate ring of `X`, and `DeRham.dlogClass k u`
+is the class `[du/u]` of a unit `u`. These declarations depend only on the axioms `propext`,
+`Classical.choice` and `Quot.sound`. The build of the book checks this every time it runs, and its
+first page shows the statements, elaborated, with the output of `#print axioms`.
 
 - Exposition, tied to the code: <https://adamtopaz.github.io/OrlikSolomon/>
 - Mathematical plan: [`blueprint/`](blueprint/arrangement_cohomology_lean_blueprint.tex)

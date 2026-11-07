@@ -9,6 +9,7 @@ public import OrlikSolomon.Examples.DeRhamCalculations
 public import OrlikSolomon.Examples.DeRhamCharacteristic
 public import OrlikSolomon.Examples.DeRhamCohomology
 public import OrlikSolomon.Examples.DeRhamComplex
+public import OrlikSolomon.Examples.DeRhamCorollaries
 public import OrlikSolomon.Examples.DeRhamCrossing
 public import OrlikSolomon.Examples.DeRhamHomotopy
 public import OrlikSolomon.Examples.DeRhamInstance

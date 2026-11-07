@@ -109,10 +109,11 @@ The analogous interpretation uses $`H^p(X_{k^{\mathrm{sep}}};\mathbb{Z}_\ell(w))
 The source comments record this too, and they also record what a Lean instance would still have to supply: passing from finite-coefficient localization to an integral $`\ell`-adic theory, and implementing coherent twists with strict products.
 
 *Which theories are intended, and which are not.*
-Geometric Betti and $`\ell`-adic cohomology are the intended ordinary instances, and algebraic de Rham cohomology in characteristic zero and rigid cohomology are further intended examples, with their localization and purity theorems to be supplied when building each instance.
+Geometric Betti and $`\ell`-adic cohomology are the intended ordinary instances, and rigid cohomology is a further intended example, with its localization and purity theorems to be supplied when building an instance.
+Algebraic de Rham cohomology in characteristic zero is the one such example built in Lean, and instantiating the main theorems at it gives {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[].
 Ordinary crystalline cohomology of a nonproper variety is not automatically an instance, because affine-line invariance fails in the naive theory.
 Arithmetic cohomology over a nonclosed field generally has higher Galois cohomology at the point and fails the dimension axiom.
-None of this is formalized: these are the boundaries of application, not extra hypotheses of the theorem.
+The checks and exclusions for the remaining theories are not formalized: they describe the boundaries of application, not extra hypotheses of the theorem.
 
 # The bridge from a degreewise theory
 

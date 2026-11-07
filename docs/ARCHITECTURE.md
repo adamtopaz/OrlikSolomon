@@ -78,6 +78,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Complex/Polynomial`    | the formula of `lem:dr-polynomial-dga` |
 | `DeRham/Complex/Presentation`  | `lem:dr-presentation`, for any surjection of algebras and for the canonical presentation |
 | `DeRham/Complex`               | `complex`, the cochain complex of `def:dr-complex`, and its functoriality; the module to import |
+| `DeRham/Corollaries`           | `dlogClass`, `lem:dr-tau`, `cor:dr-affine` and `cor:dr-projective`: the structure theorems for `H^•_dR`, with no cohomology theory as a parameter |
 | `DeRham/Exterior/Basic`        | exterior words, signs and homogeneous components, and the maps `⋀_A M → ⋀_S M'` along a change of rings, for `lem:dr-exterior` and `thm:dr-dga` |
 | `DeRham/Exterior/Contraction`  | `lem:dr-contraction`, naturality of contraction for `lem:dr-cartan`, and the decomposition `M = K ⊕ A e` for `lem:dr-polynomial-splitting` |
 | `DeRham/Exterior/Projective`   | exterior powers of any projective module are projective, used by `lem:dr-projective` |
@@ -126,6 +127,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/DeRhamCharacteristic` | actual characteristic-`p` failures of affine-line invariance and logarithmic comparison, with nonzero polynomial and Laurent classes |
 | `Examples/DeRhamCohomology`    | exact forms are not an ideal of all forms, `X²` in characteristic two, the point over `ℤ` and `ZMod 2`, the zero algebra |
 | `Examples/DeRhamComplex`     | `d` is not linear over the algebra, characteristic two and the zero algebra |
+| `Examples/DeRhamCorollaries` | the de Rham corollaries for one point and two rational points of `𝔸¹` and two points of `ℙ¹`: values on generators, nonvanishing, independence, a zero product and dimensions |
 | `Examples/DeRhamCrossing`     | the nonsmooth crossing divisor, a regular logarithmic wedge with nonzero proposed residue, and the resulting contradiction between presentations |
 | `Examples/DeRhamHomotopy`     | rational dual numbers, zero coefficients, homotopy normalization and failure of the integration hypothesis in characteristic two |
 | `Examples/DeRhamInstance`     | the instance is not a zero theory: its point, its residue and `τ` are nonzero; consumers of the instance; signs by cohomological degree, the zero algebra and characteristic two |
@@ -581,9 +583,9 @@ localizations and principal quotients, projectivity and regular scalar action in
 injectivity into localization, conormal splitting, global and localized normal derivations, wedge
 exactness modulo the divisor, logarithmic forms with their residue sequence, global logarithmic
 comparison, the residue and Gysin maps with their long exact sequence, projection formula and
-naturality, the Laurent-twisted functor, and the instance `ordinaryTheory k` with all 22 fields
-exist. `lem:dr-tau` and the two corollaries remain planned; all eight worked regression nodes are
-formalized.
+naturality, the Laurent-twisted functor, the instance `ordinaryTheory k` with all 22 fields,
+`lem:dr-tau` and the two corollaries `cor:dr-affine` and `cor:dr-projective` exist. All eight
+worked regression nodes are formalized.
 The table groups modules by issues #72–#83. The conormal and normal-derivation results need only
 Mathlib's Kähler differentials and formal-smoothness lifts. Normalizing a derivation on
 `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge exactness uses exterior
@@ -906,13 +908,40 @@ smoothness of the coefficient algebra.
   `Examples/DeRhamInstance` checks this, and builds the equivalence of `cor:dr-affine` on the
   instance.
 
+### The corollaries
+
+- **No theory in the statements.** `DeRham/Corollaries` states the structure theorems for
+  `DeRham.Cohomology k A` and its degrees `Cohomology.degree k A q`. The corollary statements mention
+  neither `OrdinaryTheory` nor `k[T;T⁻¹]`, except `affineEquiv_apply` and `projectiveEquiv_apply`,
+  which say how the maps are built. The hypotheses are `[Field k] [CharZero k]` and those of the
+  arrangement, and nothing else.
+- **Total cohomology first, the direct sum second.** `affineEquiv 𝒜 : OSAlgebra k 𝒜 ≃ₐ[k]
+  Cohomology k (complement 𝒜)` is the primary form, as total cohomology is everywhere in
+  `DeRham`, with `affineEquiv_mem_degree_iff` for the grading. `affineDirectSumEquiv` is the
+  blueprint's display `⨁ q, H^q_dR`, obtained by composing with `decomposeAlgEquiv`, and
+  `affineDegreeEquiv q` is the piece of degree `q`. The projective forms are the same with
+  `projective` in their names. Each is the main theorem's diagonal equivalence followed by the
+  inverse of `TwistedCohomology.diagonalEquiv`.
+- **The class `[du/u]`.** `dlogClass k u` is `Cohomology.mk (dlog k u) _`, for any algebra over any
+  commutative ring, with `k` and `u` explicit. The generator formulas are stated with it:
+  `affineEquiv_generator` (`simp`, the chosen equation), `affineEquiv_generator_zeroLocus`
+  (`simp high`) and `affineEquiv_generator_of_isEquation` (any equation), as for
+  `OrdinaryTheory.realizationOverR`, and `projectiveEquiv_difference` and its `_of_ker_eq` form.
+- **`lem:dr-tau`.** `ordinaryTheory_tau` is proved by `eq_tau_of_mem_grading` from
+  `residue_dlogClass`, the residue of `[df/f]` for any smooth principal pair. Since
+  `(standardPair A).compl` is `laurent A` only at default transparency, its last step is an `exact`.
+  `ordinaryTheory_logClass` is naturality. It is not a `simp` lemma: `simp` rewrites arguments first,
+  and the generic lemmas about `logClass`, such as `residue_logClass_eqnUnit`, would stop firing on
+  the instance. `evalOne_logClass` is the `simp` form used to remove `t`.
+
 The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Its opening
-says that the instance is constructed, names what it rests on, and lists what remains: `lem:dr-tau`,
-the two corollaries. The first page, `Organization`, the chapter on the axioms, the status page and
-`README.md` describe the resulting state: one nonzero value of
-`OrdinaryTheory` is constructed, the de Rham instance for fields of characteristic zero; the
-theorems remain conditional for every other theory; and the checks against singular and `ℓ`-adic
-cohomology are by hand. The docstrings of `OrdinaryTheory`, `BridgeData/Basic` and `Examples/Sanity`
-also name the instance. The build does not check that prose, so keep it current as nodes land. The
-PR that proves `cor:dr-affine` and `cor:dr-projective` must update the sentences that call them
-planned, on the first page, in `Organization`, in the de Rham chapter and in `README.md`.
+says that the instance, the two corollaries and all eight worked regressions are formalized, and
+names what they rest on. The first page, `Organization`, the chapter on the
+axioms, the status page and `README.md` describe the resulting state: one nonzero value of
+`OrdinaryTheory` is constructed, the de Rham instance for fields of characteristic zero; the affine
+and projective theorems hold unconditionally for algebraic de Rham cohomology over such fields, as
+`DeRham.affineEquiv` and `DeRham.projectiveEquiv`; the theorems remain conditional for every other
+theory; and the checks against singular and `ℓ`-adic cohomology are by hand. The first page shows
+the two corollaries as elaborated Lean, with `#print axioms`. The docstrings of `OrdinaryTheory`,
+`BridgeData/Basic` and `Examples/Sanity` also name the instance. The build does not check that
+prose, so keep it current as nodes land.
