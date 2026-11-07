@@ -1412,8 +1412,8 @@ maps on distinguished opens with localized linear maps, prove preservation of mo
 homology, and give `tilde_map_exact` for arbitrary module sequences. There is no finite-
 generation or nonzero-ring assumption, and no higher-cohomology vanishing assertion.
 
-The `DeRham/Schemes/Forms` umbrella and its `Presheaf`, `Sheaf`, `Affine` and `Pullback` files
-use `OrlikSolomon.Geometric.DeRham` and import no G0 module. They work over any commutative base
+The `DeRham/Schemes/Forms` umbrella and its `Presheaf`, `Sheaf`, `Affine`, `Associated` and
+`Pullback` files use `OrlikSolomon.Geometric.DeRham` and import no G0 module. They work over any commutative base
 ring and on any object of `Over (Spec k)`. `sectionAlgebra k X U` bundles regular functions with
 the base-ring action; `formsPresheaf` applies the existing exterior-power forms and their
 functorial maps to it. `formsSheaf` sheafifies in `k`-modules. Mathlib's presheaf-of-modules
@@ -1440,9 +1440,13 @@ asserted to be a map of structure-sheaf modules.
 sheaf using the existing localization theorem for algebraic forms. `specFormsSheafAssociatedIso`
 exposes the associated-sheaf identification after forgetting scalar actions, with its
 localization formula. The literal `formsSheafUnit` is invertible on each distinguished open of a
-spectrum and on global sections of every affine scheme. `affineFormsComparison` is that
-canonical degreewise comparison, with differential, wedge, unit and pullback formulas. The
-private affine transport uses Mathlib's `Scheme.isoSpec`, retaining independence from the
+spectrum and on every affine open of an arbitrary ambient scheme, including global sections of
+every affine scheme. `affineFormsComparison` is the canonical global comparison for an affine
+scheme, with differential, wedge, unit and pullback formulas; `affineOpenFormsComparison` gives
+the affine-open evaluation. `Forms/Associated` provides the structure-sheaf-linear comparison
+`specFormsModuleSheafAssociatedIso`, its distinguished-open fraction formulas, and
+`affineOpenModuleFormsComparison`. Open restrictions agree through `formsSheafRestrictionIso`.
+The private affine transport uses Mathlib's `Scheme.isoSpec`, retaining independence from the
 geometric-domain layer. Its global function algebra is the bundled `sectionAlgebra k X ⊤`; any
 other bundled presentation is compared by its algebra isomorphism. These results do not identify
 underived global sections with hypercohomology and do not construct an instance on non-affine
@@ -1523,7 +1527,7 @@ zero, `i_*Ω_D^n` in degree `n + 1`, and differential `-d`. Residue is normalize
 a sign. The residue sequence works over a commutative base ring.
 
 `affineLogComparison`, `affineLogComplexIso` and `affineLogResidueShortComplexIso` identify the
-affine global sequence and its three arrows with the existing algebraic sequence. Their
+three terms and both maps of the affine global sequence with the existing algebraic sequence. Their
 representative formulas identify the old algebraic logarithmic sequence with the actual affine
 global sheaf sequence. In `Schemes/Instance`, `residue_globalClass` and
 `gysin_globalClass_of_logResidue_eq` identify its residue and Gysin on these sheaf representatives.

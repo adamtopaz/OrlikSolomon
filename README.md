@@ -79,8 +79,9 @@ first page shows the statements, elaborated, with the output of `#print axioms`.
   affine and projective complements, geometric axioms, affine transports, the supports-and-purity
   bridge, logarithmic classes, sheaves of forms with affine evaluation, the affine and projective
   structure theorems on schemes, and the de Rham instance on smooth affine schemes with the
-  unconditional de Rham theorems for the actual open subschemes formalized to the extent indicated
-  in their book boxes:
+  unconditional de Rham theorems for the actual open subschemes, together with the logarithmic
+  sheaf residue sequence and its local comparison, formalized to the extent indicated in their
+  book boxes:
   [`blueprint/`](blueprint/geometric_refactor_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)

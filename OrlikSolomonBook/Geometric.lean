@@ -539,7 +539,7 @@ where the shifted complex has differential $`-d`.
 The inclusion $`L^\bullet\to j_*\Omega^\bullet_{U/k}` is a quasi-isomorphism of complexes of sheaves.
 All these maps are natural for morphisms of pairs, with the projection identity on forms and exactly the existing signs.
 The residue sequence, products and naturality hold over every commutative base ring; positive-integer inverses enter only in the local quasi-isomorphism.
-On an affine pair, the complex of global logarithmic sections and all three arrows of its residue sequence are identified with the existing algebraic sequence by {name OrlikSolomon.Geometric.DeRham.affineLogResidueShortComplexIso}`affineLogResidueShortComplexIso`.
+On an affine pair, the three complexes and both maps of the global residue sequence are identified with the existing algebraic sequence by {name OrlikSolomon.Geometric.DeRham.affineLogResidueShortComplexIso}`affineLogResidueShortComplexIso`.
 The proof of the sheaf quasi-isomorphism applies the existing pole theorem on affine neighborhoods and then uses exact filtered colimits to pass to stalks.
 
 This is a statement about sheaves.
