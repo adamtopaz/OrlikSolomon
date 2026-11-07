@@ -111,6 +111,7 @@ variable {k : Type u} [CommRing k] {D : SmoothDomain k} {R : Type v} [CommRing R
   (E : DegreewiseTheory.{u, v, w, z} D ℬ)
 
 /-- The covariant core on the opposite of the scheme domain. -/
+@[implicit_reducible]
 def toCore : CategoricalDegreewiseTheory D.Objᵒᵖ (op D.point)
     (fun X ↦ op (D.prodAffineLine X.unop))
     (fun X ↦ (D.prodAffineLineFst X.unop).op) ℬ where
@@ -441,6 +442,7 @@ variable {k : Type u} [CommRing k] {D : SmoothDomain k} {R : Type v} [CommRing R
 
 /-- Degreewise products, localization and oriented purity give an ordinary theory on the entire
 admissible domain, by the common direct-sum construction. Blueprint: `thm:geo-bridge`. -/
+@[implicit_reducible]
 def ofSupportsAndPurity : OrdinaryTheory D ℬ where
   bijective_algebraMap_gradeZero := E.bijective_algebraMap_gradeZero
   C := E.toCore.functor
