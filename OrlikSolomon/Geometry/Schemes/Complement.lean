@@ -28,7 +28,8 @@ This is the module to import for stage G2 of the geometric refactor blueprint on
 
 A consumer that transports an existing theorem about `SmoothAlg.complement 𝒜` to the scheme `U_𝒜`
 in a domain `D` composes with pullback along `SmoothDomain.complementIsoSpec D 𝒜`, and uses
-`SmoothDomain.complementIsoSpec_hom_appTop_complementUnit` for generators,
+`SmoothDomain.complementIsoSpec_hom_appTop_complementUnit` or its unit form
+`SmoothDomain.map_complementIsoSpec_hom_complementUnit` for generators,
 `SmoothDomain.complementMap_comp_complementIsoSpec_hom` and its variants for naturality, and
 `DivisorPair.deletionPairIsoSpec` for residues.
 -/
