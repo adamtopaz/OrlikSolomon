@@ -568,6 +568,19 @@ theorem formsSheafOne_d : formsSheafOne k X ≫ (formsSheafD k X 0).hom = 0 := b
     simp
   rw [formsSheafOne, Category.assoc, formsSheafUnit_d, ← Category.assoc, h, Limits.zero_comp]
 
+/-- The unit sections commute with restriction to smaller opens. -/
+@[simp] theorem formsSheafOneSection_naturality {U V : X.left.Opensᵒᵖ} (i : U ⟶ V) :
+    (formsSheaf k X 0).obj.map i (formsSheafOneSection k X U) =
+      formsSheafOneSection k X V := by
+  exact (ConcreteCategory.congr_hom ((formsSheafOne k X).naturality i) (1 : k)).symm
+
+/-- Every unit section has zero differential. -/
+@[simp] theorem formsSheafOneSection_d (U : X.left.Opensᵒᵖ) :
+    (formsSheafD k X 0).hom.app U (formsSheafOneSection k X U) = 0 := by
+  change ((formsSheafOne k X ≫ (formsSheafD k X 0).hom).app U) (1 : k) = 0
+  rw [formsSheafOne_d]
+  rfl
+
 /-- The existing structure-sheaf action, expressed on the base-linear sheaf carrier. -/
 def formsSheafSMul (n : ℕ) (U : X.left.Opens) (r : Γ(X.left, U))
     (a : (formsSheaf k X n).obj.obj (op U)) : (formsSheaf k X n).obj.obj (op U) :=
