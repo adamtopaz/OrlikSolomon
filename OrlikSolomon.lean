@@ -70,6 +70,7 @@ public import OrlikSolomon.DeRham.PrincipalQuotient
 public import OrlikSolomon.DeRham.Schemes.Affine
 public import OrlikSolomon.DeRham.Schemes.Forms
 public import OrlikSolomon.DeRham.Schemes.Forms.Affine
+public import OrlikSolomon.DeRham.Schemes.Forms.Associated
 public import OrlikSolomon.DeRham.Schemes.Forms.Presheaf
 public import OrlikSolomon.DeRham.Schemes.Forms.Pullback
 public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
