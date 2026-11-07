@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Algebra.DirectSum.Algebra
 public import OrlikSolomon.Cohomology.Axioms
+public import OrlikSolomon.Cohomology.BridgeData.Category
 public import OrlikSolomon.Grading.DirectSum
 
 /-!
@@ -127,6 +128,29 @@ variable {k : Type u} [CommRing k] {R : Type v} [CommRing R]
   {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ]
   (D : DegreewiseTheory.{u, v, w, z} k ℬ)
 
+/-- The category-independent degreewise data underlying the algebraic bridge. -/
+def toCore :
+    CategoricalDegreewiseTheory (SmoothAlg k) (point k) polynomial polynomialC ℬ where
+  H := D.H
+  addCommGroup := D.addCommGroup
+  module := D.module
+  gRing := D.gRing
+  gAlgebra := D.gAlgebra
+  coeff := D.coeff
+  coeff_one := D.coeff_one
+  coeff_mul := D.coeff_mul
+  bijective_algebraMap_gradeZero := D.bijective_algebraMap_gradeZero
+  graded_comm := D.graded_comm
+  map := D.map
+  map_id := D.map_id
+  map_comp := D.map_comp
+  map_one := D.map_one
+  map_mul := D.map_mul
+  map_coeff := D.map_coeff
+  bijective_coeff_point := D.bijective_coeff_point
+  eq_zero_point := D.eq_zero_point
+  bijective_map_line := D.bijective_map_polynomialC
+
 /-- Total cohomology, as the external direct sum over cohomological degree and twist. -/
 abbrev Total (A : SmoothAlg k) := ⨁ i, D.H A i
 
@@ -139,235 +163,128 @@ abbrev incl (A : SmoothAlg k) (i : ℤ × ℤ) : D.H A i →ₗ[R] D.Total A :=
 lemma incl_mul_incl (A : SmoothAlg k) {i j : ℤ × ℤ} (x : D.H A i) (y : D.H A j) :
     D.incl A i x * D.incl A j y =
       D.incl A (i + j) (GradedMonoid.GMul.mul x y) :=
-  DirectSum.of_mul_of x y
+  D.toCore.incl_mul_incl A x y
 
 /-- The homogeneous coefficient maps, extended to the direct sum of the weights of `B`. -/
 def coeffSum (A : SmoothAlg k) : (⨁ w, ℬ w) →ₐ[R] D.Total A :=
-  DirectSum.toAlgebra R _ (fun w ↦ (D.incl A (0, w)).comp (D.coeff A w))
-    (by
-      change D.incl A 0
-        (D.coeff A 0 (GradedMonoid.GOne.one (A := fun w ↦ ℬ w))) = 1
-      rw [D.coeff_one]
-      rfl)
-    (fun {w v} b c ↦ by
-      simp only [LinearMap.comp_apply, D.coeff_mul, DirectSum.lof_eq_of,
-        DirectSum.of_mul_of]
-      rfl)
+  D.toCore.coeffSum A
 
 /-- The coefficient algebra map `B → C(A)`, assembled from the homogeneous coefficient maps. -/
 def coeffMap (A : SmoothAlg k) : B →ₐ[R] D.Total A :=
-  (D.coeffSum A).comp (DirectSum.decomposeAlgEquiv ℬ).toAlgHom
+  D.toCore.coeffMap A
 
 @[simp]
 lemma coeffMap_coe (A : SmoothAlg k) {w : ℤ} (b : ℬ w) :
-    D.coeffMap A (b : B) = D.incl A (0, w) (D.coeff A w b) := by
-  change D.coeffSum A (DirectSum.decompose ℬ (b : B)) = _
-  rw [DirectSum.decompose_coe]
-  change DirectSum.toModule R ℤ (D.Total A)
-      (fun w ↦ (D.incl A (0, w)).comp (D.coeff A w))
-      (DirectSum.lof R _ (fun w ↦ ℬ w) w b) = _
-  rw [DirectSum.toModule_lof]
-  rfl
+    D.coeffMap A (b : B) = D.incl A (0, w) (D.coeff A w b) :=
+  D.toCore.coeffMap_coe A b
 
 /-- Homogeneous classes supercommute in total cohomology. -/
 lemma incl_mul_comm (A : SmoothAlg k) {i j : ℤ × ℤ} (x : D.H A i) (y : D.H A j) :
     D.incl A i x * D.incl A j y = (i.1 * j.1).negOnePow •
-      (D.incl A j y * D.incl A i x) := by
-  simp only [incl, DirectSum.lof_eq_of, DirectSum.of_mul_of]
-  rw [DirectSum.of_eq_of_gradedMonoid_eq (D.graded_comm A x y), map_zsmul_unit]
+      (D.incl A j y * D.incl A i x) :=
+  D.toCore.incl_mul_comm A x y
 
 /-- Coefficients are central, since their cohomological degree is zero. -/
 lemma coeffMap_commutes (A : SmoothAlg k) (b : B) (x : D.Total A) :
-    D.coeffMap A b * x = x * D.coeffMap A b := by
-  induction b using DirectSum.Decomposition.inductionOn ℬ with
-  | zero => simp
-  | @homogeneous w b =>
-    rw [D.coeffMap_coe]
-    induction x using DirectSum.induction_on with
-    | zero => simp
-    | of i x => simpa only [incl, DirectSum.lof_eq_of, Int.zero_mul,
-        Int.negOnePow_zero, one_smul] using D.incl_mul_comm A (D.coeff A w b) x
-    | add x y hx hy => simp [mul_add, add_mul, hx, hy]
-  | add b c hb hc => simp [mul_add, add_mul, hb, hc]
+    D.coeffMap A b * x = x * D.coeffMap A b :=
+  D.toCore.coeffMap_commutes A b x
 
 /-- The central `B`-algebra structure on total cohomology. -/
 instance algebra (A : SmoothAlg k) : Algebra B (D.Total A) :=
-  (D.coeffMap A).toRingHom.toAlgebra' (D.coeffMap_commutes A)
+  D.toCore.algebra A
 
 instance isScalarTower (A : SmoothAlg k) : IsScalarTower R B (D.Total A) :=
-  IsScalarTower.of_algebraMap_eq fun r ↦ (D.coeffMap A).commutes r |>.symm
+  D.toCore.isScalarTower A
 
 @[simp]
 lemma algebraMap_coe (A : SmoothAlg k) {w : ℤ} (b : ℬ w) :
     algebraMap B (D.Total A) (b : B) = D.incl A (0, w) (D.coeff A w b) :=
-  D.coeffMap_coe A b
+  D.toCore.algebraMap_coe A b
 
 /-- Pullback on total cohomology as an `R`-algebra map, obtained by summing degreewise pullback. -/
 def mapTotalR {A E : SmoothAlg k} (f : A ⟶ E) : D.Total A →ₐ[R] D.Total E :=
-  DirectSum.toAlgebra R _ (fun i ↦ (D.incl E i).comp (D.map f i))
-    (by
-      change D.incl E 0 (D.map f 0 GradedMonoid.GOne.one) = 1
-      rw [D.map_one]
-      rfl)
-    (fun {i j} x y ↦ by
-      simp only [LinearMap.comp_apply, D.map_mul, DirectSum.lof_eq_of,
-        DirectSum.of_mul_of])
+  D.toCore.mapTotalR f
 
 @[simp]
 lemma mapTotalR_incl {A E : SmoothAlg k} (f : A ⟶ E) (i : ℤ × ℤ) (x : D.H A i) :
-    D.mapTotalR f (D.incl A i x) = D.incl E i (D.map f i x) := by
-  change DirectSum.toModule R (ℤ × ℤ) (D.Total E)
-      (fun j ↦ (D.incl E j).comp (D.map f j)) (D.incl A i x) = _
-  rw [DirectSum.toModule_lof]
-  rfl
+    D.mapTotalR f (D.incl A i x) = D.incl E i (D.map f i x) :=
+  D.toCore.mapTotalR_incl f i x
 
 /-- Pulling back a summand and then taking its component gives the original degreewise map. -/
 lemma component_mapTotalR_incl {A E : SmoothAlg k} (f : A ⟶ E) (i : ℤ × ℤ) :
     (DirectSum.component R _ (D.H E) i).comp
-        ((D.mapTotalR f).toLinearMap.comp (D.incl A i)) = D.map f i := by
-  ext x
-  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, D.mapTotalR_incl,
-    DirectSum.component.lof_self]
+        ((D.mapTotalR f).toLinearMap.comp (D.incl A i)) = D.map f i :=
+  D.toCore.component_mapTotalR_incl f i
 
 /-- Total pullback preserves the full coefficient ring. -/
 lemma mapTotalR_coeffMap {A E : SmoothAlg k} (f : A ⟶ E) (b : B) :
-    D.mapTotalR f (D.coeffMap A b) = D.coeffMap E b := by
-  induction b using DirectSum.Decomposition.inductionOn ℬ with
-  | zero => simp
-  | homogeneous b => simp only [D.coeffMap_coe, D.mapTotalR_incl, D.map_coeff]
-  | add b c hb hc => simp [hb, hc]
+    D.mapTotalR f (D.coeffMap A b) = D.coeffMap E b :=
+  D.toCore.mapTotalR_coeffMap f b
 
 /-- Pullback on total cohomology as a `B`-algebra map. -/
 def mapTotal {A E : SmoothAlg k} (f : A ⟶ E) : D.Total A →ₐ[B] D.Total E :=
-  { (D.mapTotalR f).toRingHom with commutes' := D.mapTotalR_coeffMap f }
+  D.toCore.mapTotal f
 
 @[simp]
 lemma mapTotal_incl {A E : SmoothAlg k} (f : A ⟶ E) (i : ℤ × ℤ) (x : D.H A i) :
     D.mapTotal f (D.incl A i x) = D.incl E i (D.map f i x) :=
-  D.mapTotalR_incl f i x
+  D.toCore.mapTotal_incl f i x
 
 /-- The additive map underlying total pullback is the componentwise direct-sum map. -/
 lemma mapTotal_eq_lmap {A E : SmoothAlg k} (f : A ⟶ E) :
-    (D.mapTotal f : D.Total A → D.Total E) = DirectSum.lmap (D.map f) := by
-  funext x
-  induction x using DirectSum.induction_on with
-  | zero => simp only [map_zero]
-  | of i x => exact (D.mapTotal_incl f i x).trans (DirectSum.lmap_lof _ _ _).symm
-  | add x y hx hy => simp only [map_add, hx, hy]
+    (D.mapTotal f : D.Total A → D.Total E) = DirectSum.lmap (D.map f) :=
+  D.toCore.mapTotal_eq_lmap f
 
 /-- The internal bigrading on total cohomology, given by the original summands. -/
 def grading (A : SmoothAlg k) : ℤ × ℤ → Submodule R (D.Total A) :=
-  directSumGrading (R := R) (D.H A)
+  D.toCore.grading A
 
 instance gradedAlgebra (A : SmoothAlg k) : GradedAlgebra (D.grading A) :=
-  directSumGradedAlgebra (D.H A)
+  D.toCore.gradedAlgebra A
 
 /-- Homogeneous coefficient classes land in cohomological degree zero. -/
 lemma algebraMap_mem_grading (A : SmoothAlg k) {w : ℤ} {b : B} (hb : b ∈ ℬ w) :
-    algebraMap B (D.Total A) b ∈ D.grading A (0, w) := by
-  rw [D.algebraMap_coe A ⟨b, hb⟩]
-  exact lof_mem_directSumGrading (D.H A) _ _
+    algebraMap B (D.Total A) b ∈ D.grading A (0, w) :=
+  D.toCore.algebraMap_mem_grading A hb
 
 /-- The `R`-algebra pullback preserves bidegrees with the original direct-sum scalar structure.
 This form can be used to take components when `R` and `B` coincide. -/
 lemma isHomogeneousOfShift_mapTotalR {A E : SmoothAlg k} (f : A ⟶ E) :
-    IsHomogeneousOfShift (D.grading A) (D.grading E) 0 (D.mapTotalR f) := by
-  rintro i _ ⟨x, rfl⟩
-  rw [D.mapTotalR_incl, add_zero]
-  exact lof_mem_directSumGrading (D.H E) _ _
+    IsHomogeneousOfShift (D.grading A) (D.grading E) 0 (D.mapTotalR f) :=
+  D.toCore.isHomogeneousOfShift_mapTotalR f
 
 /-- Total pullbacks preserve bidegrees. -/
 lemma isHomogeneousOfShift_mapTotal {A E : SmoothAlg k} (f : A ⟶ E) :
-    IsHomogeneousOfShift (D.grading A) (D.grading E) 0 (D.mapTotal f) := by
-  rintro i _ ⟨x, rfl⟩
-  rw [D.mapTotal_incl, add_zero]
-  exact lof_mem_directSumGrading (D.H E) _ _
+    IsHomogeneousOfShift (D.grading A) (D.grading E) 0 (D.mapTotal f) :=
+  D.toCore.isHomogeneousOfShift_mapTotal f
 
 /-- The total ring is graded commutative in cohomological degree. -/
-lemma isGradedCommutative (A : SmoothAlg k) : IsGradedCommutative (D.grading A) Prod.fst := by
-  rintro i j _ _ ⟨x, rfl⟩ ⟨y, rfl⟩
-  exact D.incl_mul_comm A x y
+lemma isGradedCommutative (A : SmoothAlg k) : IsGradedCommutative (D.grading A) Prod.fst :=
+  D.toCore.isGradedCommutative A
 
 /-- Taking a weight component commutes with the coefficient map to the point. -/
 lemma component_coeffMap_point (b : B) (w : ℤ) :
     DirectSum.component R _ (D.H (point k)) (0, w) (D.coeffMap (point k) b) =
-      D.coeff (point k) w (DirectSum.decompose ℬ b w) := by
-  induction b using DirectSum.Decomposition.inductionOn ℬ with
-  | zero => simp
-  | @homogeneous v b =>
-    obtain rfl | hv := eq_or_ne v w
-    · rw [D.coeffMap_coe, DirectSum.component.lof_self, DirectSum.decompose_coe,
-        DirectSum.of_eq_same]
-    · rw [D.coeffMap_coe, DirectSum.component.of]
-      split_ifs with h
-      · exact (hv (congrArg Prod.snd h)).elim
-      · have hz : DirectSum.decompose ℬ (b : B) w = 0 :=
-          Subtype.ext (DirectSum.decompose_of_mem_ne ℬ b.2 hv)
-        rw [hz, map_zero]
-  | add b c hb hc => simp [hb, hc]
+      D.coeff (point k) w (DirectSum.decompose ℬ b w) :=
+  D.toCore.component_coeffMap_point b w
 
 /-- The total coefficient map to the point is bijective, from the degreewise dimension axiom. -/
-lemma bijective_coeffMap_point : Function.Bijective (D.coeffMap (point k)) := by
-  constructor
-  · intro b c h
-    apply (DirectSum.decompose ℬ).injective
-    apply DFinsupp.ext
-    intro w
-    apply (D.bijective_coeff_point w).1
-    rw [← D.component_coeffMap_point, ← D.component_coeffMap_point, h]
-  · intro x
-    induction x using DirectSum.induction_on with
-    | zero => exact ⟨0, map_zero _⟩
-    | of i x =>
-      rcases i with ⟨p, w⟩
-      by_cases hp : p = 0
-      · subst p
-        obtain ⟨b, rfl⟩ := (D.bijective_coeff_point w).2 x
-        exact ⟨b, D.coeffMap_coe (point k) b⟩
-      · exact ⟨0, by rw [D.eq_zero_point hp x, map_zero, map_zero]⟩
-    | add x y hx hy =>
-      obtain ⟨b, rfl⟩ := hx
-      obtain ⟨c, rfl⟩ := hy
-      exact ⟨b + c, map_add _ _ _⟩
+lemma bijective_coeffMap_point : Function.Bijective (D.coeffMap (point k)) :=
+  D.toCore.bijective_coeffMap_point
 
 /-- The total cohomology of the point vanishes in nonzero cohomological degrees. -/
 lemma eq_zero_of_mem_grading_point {p w : ℤ} (hp : p ≠ 0) {x : D.Total (point k)}
-    (hx : x ∈ D.grading (point k) (p, w)) : x = 0 := by
-  obtain ⟨x, rfl⟩ := hx
-  rw [D.eq_zero_point hp x, map_zero]
+    (hx : x ∈ D.grading (point k) (p, w)) : x = 0 :=
+  D.toCore.eq_zero_of_mem_grading_point hp hx
 
 /-- Degreewise affine-line invariance gives bijectivity on total cohomology. -/
 lemma bijective_mapTotal_polynomialC (A : SmoothAlg k) :
-    Function.Bijective (D.mapTotal (polynomialC A)) := by
-  rw [D.mapTotal_eq_lmap]
-  exact ⟨(DirectSum.lmap_injective _).2 fun i ↦ (D.bijective_map_polynomialC A i).1,
-    (DirectSum.lmap_surjective _).2 fun i ↦ (D.bijective_map_polynomialC A i).2⟩
+    Function.Bijective (D.mapTotal (polynomialC A)) :=
+  D.toCore.bijective_mapTotal_line A
 
 /-- The total cohomology functor, constructed from degreewise groups and pullbacks. -/
-def functor : SmoothAlg k ⥤ AlgCat.{z} B where
-  obj A := AlgCat.of B (D.Total A)
-  map f := AlgCat.ofHom (D.mapTotal f)
-  map_id A := by
-    apply AlgCat.hom_ext
-    apply AlgHom.ext
-    intro x
-    induction x using DirectSum.induction_on with
-    | zero => exact map_zero _
-    | of i x =>
-      change D.mapTotal (𝟙 A) (D.incl A i x) = D.incl A i x
-      rw [D.mapTotal_incl, D.map_id]
-    | add x y hx hy => simp only [map_add, hx, hy]
-  map_comp f g := by
-    apply AlgCat.hom_ext
-    apply AlgHom.ext
-    intro x
-    induction x using DirectSum.induction_on with
-    | zero => simp only [map_zero]
-    | of i x =>
-      change D.mapTotal (f ≫ g) (D.incl _ i x) =
-        D.mapTotal g (D.mapTotal f (D.incl _ i x))
-      rw [D.mapTotal_incl, D.mapTotal_incl, D.mapTotal_incl, D.map_comp]
-    | add x y hx hy => simp only [map_add, hx, hy]
+def functor : SmoothAlg k ⥤ AlgCat.{z} B :=
+  D.toCore.functor
 
 end DegreewiseTheory
 

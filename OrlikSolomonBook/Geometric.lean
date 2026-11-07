@@ -16,11 +16,12 @@ file := "geometric"
 htmlSplit := .never
 %%%
 
-*The foundations, complements as open subschemes, geometric axioms, affine transports, logarithmic classes, sheaves of relative forms, both structure theorems on schemes and the de Rham instance on smooth affine schemes with its corollaries are formalized.*
+*The foundations, complements as open subschemes, geometric axioms, affine transports, the supports-and-purity bridge, logarithmic classes, sheaves of relative forms, both structure theorems on schemes and the de Rham instance on smooth affine schemes with its corollaries are formalized.*
 It presents the plan in the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
-Of its 42 nodes, thirty are formalized and three partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports], the three nodes on {bp "def:geo-log"}[logarithmic classes and the product with $`\mathbb{G}_m`], the two {ref "geo-structure"}[structure theorems on schemes], the three nodes on {bp "def:geo-forms-sheaf"}[sheaves of relative forms and affine evaluation], and the three nodes on {bp "def:geo-dr-cohomology"}[de Rham cohomology of smooth affine schemes and its instance].
+Of its 42 nodes, thirty-two are formalized, three partly formalized and seven remain planned, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports], the two nodes on {bp "def:geo-supports"}[degreewise supports and purity], the three nodes on {bp "def:geo-log"}[logarithmic classes and the product with $`\mathbb{G}_m`], the two {ref "geo-structure"}[structure theorems on schemes], the three nodes on {bp "def:geo-forms-sheaf"}[sheaves of relative forms and affine evaluation], and the three nodes on {bp "def:geo-dr-cohomology"}[de Rham cohomology of smooth affine schemes and its instance].
 The partial nodes are {bp "thm:geo-cartesian"}[], whose Tor-sheaf and conormal statements remain, {bp "thm:geo-transport-all"}[], a rule about every old statement, which is formalized by its comparison and the laws it obeys rather than by one Lean statement, and {bp "thm:geo-dr-instance"}[], whose Gysin and residue maps are compared with the global logarithmic sequence of the algebra of global functions but not yet with the global sections of the sheaf logarithmic sequence of {bp "thm:geo-log-sheaves"}[] (#117).
 The geometric theory has exactly the old 22 fields, and its affine transports preserve the grading, coefficient maps, pullbacks, Gysin and residue, with both triangle identities.
+The supports-and-purity bridge assembles these fields from degreewise cohomology with localization and purity on every object of the domain and commutes with restriction and affine transport.
 The logarithmic class of a global unit and the decomposition of the cohomology of $`X\times_S\mathbb{G}_m` hold on every object of the domain, affine or not.
 The affine and projective structure theorems hold on the actual open subschemes, for a theory on any admissible domain, such as all smooth schemes.
 The sheaves of forms have their differential, wedge products and arbitrary scheme pullbacks; affine evaluation agrees with the existing algebraic forms.
@@ -265,7 +266,7 @@ A pair with a unit equation has $`D=\varnothing` and $`U\simeq X`, and its Gysin
 The proof transports the algebraic consequence of exactness for an empty-divisor pair, so no axiom about the empty scheme is needed, and it holds for zero coefficients too.
 :::
 
-:::node "def:geo-supports"
+:::node "def:geo-supports" (decl := OrlikSolomon.Geometric.DegreewiseTheory) (decl := OrlikSolomon.Geometric.SupportsAndPurity) (decl := OrlikSolomon.Geometric.DegreewiseTheory.toCore) (decl := OrlikSolomon.Geometric.SupportsAndPurity.toCore) (decl := OrlikSolomon.Geometric.DegreewiseTheory.restrict) (decl := OrlikSolomon.Geometric.SupportsAndPurity.restrict) (decl := OrlikSolomon.Geometric.DegreewiseTheory.toAlgebraic) (decl := OrlikSolomon.Geometric.SupportsAndPurity.toAlgebraic) (decl := OrlikSolomon.Geometric.SupportsAndPurity.forgetTotal_incl) (decl := OrlikSolomon.Geometric.SupportsAndPurity.boundaryTotal_incl) (decl := OrlikSolomon.Geometric.SupportsAndPurity.purityTotal_incl)
 A geometric degreewise theory has $`R`-modules $`H^{p,w}(X)`, indexed products, graded commutativity by $`p`, contravariant pullbacks that preserve degrees, and the degreewise coefficient, point and affine-line conditions of the existing bridge, with morphisms of schemes in place of algebra maps and the projection from $`X\times_S\mathbb{A}^1` in place of the polynomial inclusion.
 For a pair, a package of supports and purity consists of $`R`-modules $`H_D^{p,w}(X)` and maps
 $$`a:H_D^{p,w}(X)\to H^{p,w}(X),\qquad\delta:H^{p,w}(U)\to H_D^{p+1,w}(X),\qquad\vartheta:H^{p,w}(D)\xrightarrow{\ \sim\ }H_D^{p+2,w+1}(X),`
@@ -274,11 +275,12 @@ $$`a(x\cdot y)=a(x)\,y,\qquad\vartheta(x\,i^*y)=\vartheta(x)\cdot y,\qquad\delta
 The last formula has no sign.
 :::
 
-:::node "thm:geo-bridge"
+:::node "thm:geo-bridge" (decl := OrlikSolomon.Geometric.ofSupportsAndPurity) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_restrict) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_toAlgebraic) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_pull_incl) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_gysin_apply) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_residue_apply) (decl := OrlikSolomon.Geometric.gysinDegreewiseOfSupportsAndPurity_incl) (decl := OrlikSolomon.Geometric.residueDegreewiseOfSupportsAndPurity_incl) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_exact_gysin_pull) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_exact_pull_residue) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_exact_residue_gysin)
 These data give a geometric ordinary theory with
 $$`C(X)=\bigoplus_{p,w}H^{p,w}(X),\qquad G=a\vartheta,\qquad r=\vartheta^{-1}\delta,`
 and the construction commutes with restriction of domains and with affine duality.
 The proofs are those of {bp "lem:standard-bridge"}[], whose algebraic lemmas are reused.
+All integer bidegrees are included in the sum. Total exactness follows from degreewise exactness and finite support; it is not an input, and the bridge applies to non-affine objects too.
 :::
 
 # Complements as open subschemes

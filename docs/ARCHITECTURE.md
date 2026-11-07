@@ -41,6 +41,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Geometry/ProjectiveScheme`    | `O(U_P)` as the complement in Mathlib's `Proj`, its independence of equations, and the intersection of charts in `def:geo-projective` |
 | `Cohomology/Axioms`            | `def:cohomology` |
 | `Cohomology/BridgeData/Basic`   | degreewise products, coefficients and pullbacks for `lem:standard-bridge` |
+| `Cohomology/BridgeData/Category` | category-independent degreewise products, coefficients, pullbacks, total algebra and point/line comparisons for `lem:standard-bridge` and `thm:geo-bridge` |
+| `Cohomology/BridgeData/CategorySupports` | generic pair diagrams, supports and purity; shared total exactness, shifts, coefficient linearity, naturality and projection for `lem:standard-bridge` and `thm:geo-bridge` |
 | `Cohomology/BridgeData/Supports` | degreewise localization with supports and oriented purity for `lem:standard-bridge` |
 | `Cohomology/DeletionPair`      | `lem:log-residue` for deletion pairs, and the residue and Gysin maps of a deletion, typed |
 | `Cohomology/Bridge`            | `lem:standard-bridge` |
@@ -970,9 +972,11 @@ Stage G0 (#107, #108) is formalized to the extent indicated below: `def:geo-doma
 `lem:geo-affine-pairs`, `lem:geo-products` and `thm:geo-units`, described in "Schemes, domains and
 affine duality" below, and `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-cartesian` and
 `thm:geo-pair-duality`, described in "Principal pairs" below. The Cartesian node remains partly
-formalized: its Tor-sheaf and conormal comparisons are not stated. Stage G1 (#109) is formalized:
+formalized: its Tor-sheaf and conormal comparisons are not stated. Stage G1 is formalized:
 `def:geo-theory`, `lem:geo-restriction`, `lem:geo-empty`, `thm:geo-to-algebraic` and
-`thm:geo-from-algebraic`, described in "Geometric cohomology and affine transport" below. Stage G2 is
+`thm:geo-from-algebraic` (#109), described in "Geometric cohomology and affine transport" below,
+and `def:geo-supports` and `thm:geo-bridge` (#110), described in "Geometric supports and purity"
+below. Stage G2 is
 formalized: `def:geo-affine-space`, `def:geo-complement`, `thm:geo-complement-spec`, `thm:geo-deletion`
 and `thm:geo-small-targets` (#111), described in "Arrangement complements on schemes", and
 `def:geo-projective` and `thm:geo-projective-geometry` (#112, with its affine sides from #111),
@@ -1279,6 +1283,20 @@ for every empty scheme from the algebraic empty-divisor consequence of exactness
 therefore has zero Gysin and residue. No empty-scheme axiom is added. Transport of the existing
 nonzero de Rham theory is a geometric theory on affines, identified with the cohomology of global
 sheaf forms in "The de Rham instance on affine schemes".
+
+### Geometric supports and purity
+
+The supports-and-purity bridge shares a category-independent covariant core in
+`BridgeData/Category` and `BridgeData/CategorySupports`. The original `DegreewiseTheory` and
+`SupportsAndPurity` record declarations remain intact. Their `toCore` adapters and thin wrappers
+retain the existing constructors, projections, method names, statements and simp API. Direct-sum
+algebra, exactness, shifts, coefficient linearity, naturality and projection are proved once in
+the common core. `CovariantPairDiagram` supplies the three object functors and the closed/open
+natural transformations. The geometric inputs use this core on `D.Objᵒᵖ` and
+`(DivisorPair D)ᵒᵖ`, so the constructed theory works on every admissible domain, including
+non-affines. Public component formulas identify pullback, Gysin and residue with the original
+degreewise maps and prove compatibility with domain restriction and affine transport. No total
+exactness or arrangement conclusion is assumed.
 
 ### Geometric logarithms
 
