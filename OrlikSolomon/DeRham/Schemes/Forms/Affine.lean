@@ -523,7 +523,16 @@ variable [IsAffine Y.left]
 lemma affineFormsComparison_pull (g : X ⟶ Y) (n : ℕ)
     (x : ⋀[sectionAlgebra k Y ⊤]^n Ω[sectionAlgebra k Y ⊤⁄k]) :
     (formsSheafPullback g n).hom.app (op ⊤) (affineFormsComparison Y n x) =
-      affineFormsComparison X n (Forms.mapPower (sectionPullback g ⊤) n x) :=
+      affineFormsComparison X n (Forms.mapPower (sectionPullbackTop g) n x) :=
   formsSheafPullback_unit_apply g n (op ⊤) x
+
+
+/-- The affine comparison intertwines the typed global pullback maps. -/
+@[simp] lemma affineFormsComparison_pullTop {X Y : Over (Spec (CommRingCat.of k))}
+    [IsAffine X.left] [IsAffine Y.left] (g : X ⟶ Y) (n : ℕ)
+    (x : ⋀[sectionAlgebra k Y ⊤]^n Ω[sectionAlgebra k Y ⊤⁄k]) :
+    formsSheafPullbackTop g n (affineFormsComparison Y n x) =
+      affineFormsComparison X n (Forms.mapPower (sectionPullbackTop g) n x) :=
+  affineFormsComparison_pull g n x
 
 end OrlikSolomon.Geometric.DeRham

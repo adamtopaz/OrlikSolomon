@@ -16,12 +16,13 @@ file := "geometric"
 htmlSplit := .never
 %%%
 
-*The foundations, complements as open subschemes, geometric axioms and affine transports are formalized.*
+*The foundations, complements, geometric axioms, affine transports and sheaves of relative forms are formalized.*
 It presents the plan in the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
-Of its 42 nodes, twenty are formalized and one partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], and the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports].
+Of its 42 nodes, twenty-three are formalized and one partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports], and the three nodes on {bp "def:geo-forms-sheaf"}[sheaves of relative forms and affine evaluation].
 The partial node is {bp "thm:geo-cartesian"}[], whose Tor-sheaf and conormal statements remain.
 The geometric theory has exactly the old 22 fields, and its affine transports preserve the grading, coefficient maps, pullbacks, Gysin and residue, with both triangle identities.
-The structure theorems on actual arrangement opens and the de Rham realization through sheaf forms remain planned.
+The sheaves of forms have their differential, wedge products and arbitrary scheme pullbacks; affine evaluation agrees with the existing algebraic forms.
+The structure theorems on actual arrangement opens and the de Rham realization through these comparisons remain planned.
 Every other box below is marked as planned, and for those the blueprint's proposed names under `OrlikSolomon.Geometric` do not exist yet, so this chapter does not list them.
 The statements and arguments in the planned boxes are the blueprint's, and no machine has checked them.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem and of the de Rham instance.
@@ -438,7 +439,7 @@ So extending the instance to all smooth schemes needs hypercohomology of the de 
 These are substantive prerequisites, which is why non-affine de Rham cohomology is a separate project and not part of this plan.
 The planned geometric theorem would accept such an instance with no change, on the domain of all smooth schemes or of smooth separated schemes of finite type, and nothing in the plan depends on it.
 
-:::node "lem:geo-module-gluing"
+:::node "lem:geo-module-gluing" (decl := AlgebraicGeometry.tilde.functor) (decl := AlgebraicGeometry.tilde.isoTop) (decl := OrlikSolomon.Geometric.tilde_map_basicOpen_eq_localized) (decl := OrlikSolomon.Geometric.tilde_map_exact)
 For a commutative ring $`A` and an $`A`-module $`M`, the rule $`D(a)\mapsto M_a` on basic opens, with the localization maps as restrictions, defines the associated sheaf $`\widetilde{M}` on $`\operatorname{Spec}A`, with $`\Gamma(\operatorname{Spec}A,\widetilde{M})\simeq M` naturally in $`A` and $`M`.
 Associated sheaves preserve exact sequences.
 This includes the zero ring and modules that are not finitely generated.
@@ -446,20 +447,22 @@ This includes the zero ring and modules that are not finitely generated.
 It says nothing about vanishing of higher sheaf cohomology, and Mathlib already provides associated sheaves and their global sections.
 :::
 
-:::node "def:geo-forms-sheaf"
+:::node "def:geo-forms-sheaf" (decl := OrlikSolomon.Geometric.DeRham.formsSheaf) (decl := OrlikSolomon.Geometric.DeRham.formsModuleSheaf) (decl := OrlikSolomon.Geometric.DeRham.formsComplex_isZero_of_neg) (decl := OrlikSolomon.Geometric.DeRham.formsSheafZeroIso) (decl := OrlikSolomon.Geometric.DeRham.formsSheafD_comp) (decl := OrlikSolomon.Geometric.DeRham.formsSheafMul_assoc) (decl := OrlikSolomon.Geometric.DeRham.formsSheafMul_comm) (decl := OrlikSolomon.Geometric.DeRham.formsSheafMul_leibniz) (decl := OrlikSolomon.Geometric.DeRham.formsSheafMul_one_left) (decl := OrlikSolomon.Geometric.DeRham.formsSheafMul_one_right) (decl := OrlikSolomon.Geometric.DeRham.specFormsSheafAssociatedIso)
 For a scheme $`X` over $`S`, let $`\Omega^n_{X/k}` be the sheafification of the presheaf
 $$`V\longmapsto\Omega^n_{\Gamma(V,\mathcal{O}_X)/k}`
 on the open subsets of $`X`, in $`k`-modules and keeping the structure of $`\mathcal{O}_X`-module, and put $`\Omega^n_{X/k}=0` for $`n<0`.
 Sheafifying the existing differential and wedge product makes $`\Omega^\bullet_{X/k}` a sheaf of dg algebras.
 Its differential is a map of sheaves of $`k`-modules, and in general not of $`\mathcal{O}_X`-modules.
+The retained module action agrees with multiplication by a degree-zero function, by {name OrlikSolomon.Geometric.DeRham.formsSheafWedge_zero_eq_smul}`formsSheafWedge_zero_eq_smul`.
 
 On an affine open $`\operatorname{Spec}A`, sheafification does not change the value: by {bp "lem:dr-localization"}[] and {bp "lem:geo-module-gluing"}[], the sheaf there is the one associated with $`\Omega^n_{A/k}`.
 :::
 
-:::node "thm:geo-forms-comparison"
+:::node "thm:geo-forms-comparison" (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_d) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_wedge) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_one) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_pull) (decl := OrlikSolomon.Geometric.DeRham.formsSheafPullback_id) (decl := OrlikSolomon.Geometric.DeRham.formsSheafPullback_comp) (decl := OrlikSolomon.Geometric.DeRham.formsSheafPullback_mul) (decl := OrlikSolomon.Geometric.DeRham.formsComplexNatInverseImage) (decl := OrlikSolomon.Geometric.DeRham.formsModuleSheafInverseImage) (decl := OrlikSolomon.Geometric.DeRham.formsModuleSheafInverseImage_adjunction_app)
 For affine $`X` with $`A=\Gamma(X,\mathcal{O}_X)` there is a canonical isomorphism of dg algebras
 $$`\Omega^\bullet_{A/k}\xrightarrow{\ \sim\ }\Gamma(X,\Omega^\bullet_{X/k}).`
 Every morphism $`g:X\to Y` over $`S` induces a functorial map $`g^{-1}\Omega^\bullet_{Y/k}\to\Omega^\bullet_{X/k}` of complexes of sheaves of $`k`-modules that preserves products, and in degree $`n` it is the usual pullback of forms.
+In each degree this also gives the usual $`\mathcal{O}_X`-linear map $`g^*\Omega^n_{Y/k}\to\Omega^n_{X/k}`; the differential remains only $`k`-linear.
 For affine $`X` and $`Y`, the induced map on global forms is the existing map of forms along $`\Gamma(g)`.
 No flatness of $`g` is used.
 :::

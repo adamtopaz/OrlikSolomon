@@ -173,7 +173,7 @@ def formsPresheafMul (p q : ℕ) :
     exact ((Forms.map (sectionRestriction k X i.unop)).map_mul a'.val b'.val).symm
 
 /-- On elementary tensors the natural product is the existing exterior product. -/
-@[simp] theorem formsPresheafMul_tmul (p q : ℕ) (U : X.left.Opensᵒᵖ)
+theorem formsPresheafMul_tmul (p q : ℕ) (U : X.left.Opensᵒᵖ)
     (a : ⋀[sectionAlgebra k X U.unop]^p Ω[sectionAlgebra k X U.unop⁄k])
     (b : ⋀[sectionAlgebra k X U.unop]^q Ω[sectionAlgebra k X U.unop⁄k]) :
     (formsPresheafMul k X p q).app U (a ⊗ₜ[k] b) =
@@ -195,7 +195,7 @@ def formsPresheafOne : 𝟙_ (X.left.Opensᵒᵖ ⥤ ModuleCat k) ⟶ formsPresh
     simp
 
 /-- The presheaf unit sends the scalar one to the exterior unit. -/
-@[simp] theorem formsPresheafOne_one (U : X.left.Opensᵒᵖ) :
+theorem formsPresheafOne_one (U : X.left.Opensᵒᵖ) :
     (formsPresheafOne k X).app U (1 : k) =
       (⟨1, SetLike.one_mem_graded _⟩ : ⋀[sectionAlgebra k X U.unop]^0
         Ω[sectionAlgebra k X U.unop⁄k]) := by

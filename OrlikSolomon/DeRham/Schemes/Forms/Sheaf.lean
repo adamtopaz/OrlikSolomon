@@ -149,14 +149,14 @@ private theorem formsSheaf_algebraMap_smul (n : ℕ) (U : X.left.Opensᵒᵖ)
       map_smul' r x := formsSheaf_algebraMap_smul k X n (op U) r x }
 
 /-- The public additive carrier comparison agrees with the base-linear comparison on sections. -/
-@[simp] theorem formsModuleSheaf_presheaf_hom_app (n : ℕ) (U : X.left.Opens)
+theorem formsModuleSheaf_presheaf_hom_app (n : ℕ) (U : X.left.Opens)
     (a : Γ(formsModuleSheaf k X n, U)) :
     (eqToHom (formsModuleSheaf_presheaf k X n)).app (op U) a =
       (formsModuleSheafBaseIso k X n U).hom a := by
   rfl
 
 /-- The inverse additive carrier comparison agrees with the inverse base-linear comparison. -/
-@[simp] theorem formsModuleSheaf_presheaf_inv_app (n : ℕ) (U : X.left.Opens)
+theorem formsModuleSheaf_presheaf_inv_app (n : ℕ) (U : X.left.Opens)
     (a : (formsSheaf k X n).obj.obj (op U)) :
     (eqToHom (formsModuleSheaf_presheaf k X n).symm).app (op U) a =
       (formsModuleSheafBaseIso k X n U).inv a := by

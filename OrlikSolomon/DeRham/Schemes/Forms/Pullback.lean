@@ -162,7 +162,7 @@ theorem formsSheafPullback_unit (g : X ⟶ Y) (n : ℕ) :
   toSheafify_sheafifyLift _ _ _
 
 /-- The representative formula for pullback on an individual open. -/
-@[simp] theorem formsSheafPullback_unit_apply (g : X ⟶ Y) (n : ℕ)
+theorem formsSheafPullback_unit_apply (g : X ⟶ Y) (n : ℕ)
     (U : Y.left.Opensᵒᵖ) (x : (formsPresheaf k Y n).obj U) :
     (formsSheafPullback g n).hom.app U ((formsSheafUnit k Y n).app U x) =
       (formsSheafUnit k X n).app (op (g.left ⁻¹ᵁ U.unop))
@@ -265,7 +265,7 @@ theorem formsSheafPullback_wedge (g : X ⟶ Y) (p q : ℕ) (U : Y.left.Opensᵒ�
   ConcreteCategory.congr_hom (NatTrans.congr_app (formsSheafPullback_mul g p q) U) (a ⊗ₜ[k] b)
 
 /-- On degree zero, pullback is the usual pullback of regular functions. -/
-@[simp] theorem formsSheafPullback_zero (g : X ⟶ Y) (U : Y.left.Opensᵒᵖ)
+theorem formsSheafPullback_zero (g : X ⟶ Y) (U : Y.left.Opensᵒᵖ)
     (r : sectionAlgebra k Y U.unop) :
     (formsSheafPullback g 0).hom.app U ((formsSheafZeroIso k Y).hom.hom.app U r) =
       (formsSheafZeroIso k X).hom.hom.app (op (g.left ⁻¹ᵁ U.unop))
@@ -303,7 +303,7 @@ def formsModuleSheafPullbackPresheaf (g : X ⟶ Y) (n : ℕ) :
       (eqToHom (formsModuleSheaf_presheaf k X n).symm)
 
 /-- The additive module pullback is the original base-linear pullback between carriers. -/
-@[simp] theorem formsModuleSheafPullbackPresheaf_app (g : X ⟶ Y) (n : ℕ) (U : Y.left.Opens)
+theorem formsModuleSheafPullbackPresheaf_app (g : X ⟶ Y) (n : ℕ) (U : Y.left.Opens)
     (a : Γ(formsModuleSheaf k Y n, U)) :
     (formsModuleSheafPullbackPresheaf g n).app (op U) a =
       (formsModuleSheafBaseIso k X n (g.left ⁻¹ᵁ U)).inv
@@ -359,7 +359,7 @@ def formsModuleSheafPullback (g : X ⟶ Y) (n : ℕ) : formsModuleSheaf k Y n �
   rfl
 
 /-- The module-valued and base-linear pullbacks agree under the carrier comparisons. -/
-@[simp] theorem formsModuleSheafPullback_app (g : X ⟶ Y) (n : ℕ) (U : Y.left.Opens)
+theorem formsModuleSheafPullback_app (g : X ⟶ Y) (n : ℕ) (U : Y.left.Opens)
     (a : Γ(formsModuleSheaf k Y n, U)) :
     (formsModuleSheafBaseIso k X n (g.left ⁻¹ᵁ U)).hom
       ((formsModuleSheafPullback g n).app U a) =
@@ -494,5 +494,68 @@ def formsComplexNatInverseImage (g : X ⟶ Y) :
 /-- In each degree, inverse-image complex pullback is the original sheaf inverse-image map. -/
 @[simp] theorem formsComplexNatInverseImage_f (g : X ⟶ Y) (n : ℕ) :
     (formsComplexNatInverseImage g).f n = formsSheafInverseImage g n := rfl
+
+/-- Pullback of global functions, typed at the displayed top opens. -/
+def sectionPullbackTop (g : X ⟶ Y) : sectionAlgebra k Y ⊤ →ₐ[k] sectionAlgebra k X ⊤ :=
+  sectionPullback g ⊤
+
+/-- Global function pullback is the pullback on the top open. -/
+@[simp] theorem sectionPullback_top_apply (g : X ⟶ Y) (r : sectionAlgebra k Y ⊤) :
+    sectionPullback g ⊤ r = sectionPullbackTop g r := rfl
+
+@[simp] theorem sectionPullbackTop_id :
+    sectionPullbackTop (𝟙 X) = AlgHom.id k (sectionAlgebra k X ⊤) := by
+  ext r
+  rfl
+
+/-- Pullback of global functions is contravariantly functorial. -/
+theorem sectionPullbackTop_comp {Z : Over (Spec (CommRingCat.of k))}
+    (f : X ⟶ Y) (g : Y ⟶ Z) :
+    sectionPullbackTop (f ≫ g) = (sectionPullbackTop f).comp (sectionPullbackTop g) := by
+  ext r
+  rfl
+
+/-- Pullback of global sheaf forms, typed at the displayed top opens. -/
+def formsSheafPullbackTop (g : X ⟶ Y) (n : ℕ) :
+    (formsSheaf k Y n).obj.obj (op ⊤) →ₗ[k] (formsSheaf k X n).obj.obj (op ⊤) :=
+  ((formsSheafPullback g n).hom.app (op ⊤)).hom
+
+/-- Pullback on the top open agrees with the typed global map. -/
+@[simp] theorem formsSheafPullback_app_top (g : X ⟶ Y) (n : ℕ)
+    (x : (formsSheaf k Y n).obj.obj (op ⊤)) :
+    (formsSheafPullback g n).hom.app (op ⊤) x = formsSheafPullbackTop g n x := rfl
+
+@[simp] theorem formsSheafPullbackTop_id (n : ℕ) :
+    formsSheafPullbackTop (𝟙 X) n = LinearMap.id := by
+  apply LinearMap.ext
+  intro x
+  exact ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) (formsSheafPullback_id n)) (op ⊤)) x
+
+/-- Pullback of global forms is contravariantly functorial. -/
+theorem formsSheafPullbackTop_comp {Z : Over (Spec (CommRingCat.of k))}
+    (f : X ⟶ Y) (g : Y ⟶ Z) (n : ℕ) :
+    formsSheafPullbackTop (f ≫ g) n =
+      (formsSheafPullbackTop f n).comp (formsSheafPullbackTop g n) := by
+  apply LinearMap.ext
+  intro x
+  exact ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun h => h.hom) (formsSheafPullback_comp f g n)) (op ⊤)) x
+
+/-- Global pullback preserves wedge products on the displayed carriers. -/
+theorem formsSheafPullbackTop_wedge (g : X ⟶ Y) (p q : ℕ)
+    (a : (formsSheaf k Y p).obj.obj (op ⊤)) (b : (formsSheaf k Y q).obj.obj (op ⊤)) :
+    formsSheafPullbackTop g (p + q) (formsSheafWedge k Y p q (op ⊤) a b) =
+      formsSheafWedge k X p q (op ⊤)
+        (formsSheafPullbackTop g p a) (formsSheafPullbackTop g q b) :=
+  formsSheafPullback_wedge g p q (op ⊤) a b
+
+/-- Global pullback commutes with the differential on the displayed carriers. -/
+theorem formsSheafPullbackTop_d (g : X ⟶ Y) (n : ℕ)
+    (a : (formsSheaf k Y n).obj.obj (op ⊤)) :
+    (formsSheafD k X n).hom.app (op ⊤) (formsSheafPullbackTop g n a) =
+      formsSheafPullbackTop g (n + 1) ((formsSheafD k Y n).hom.app (op ⊤) a) :=
+  ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun h => h.hom) (formsSheafPullback_d g n)) (op ⊤)) a
 
 end OrlikSolomon.Geometric.DeRham
