@@ -9,6 +9,7 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import OrlikSolomon.DeRham.Complex
 public import OrlikSolomon.DeRham.Log.Basic
+public import OrlikSolomon.DeRham.Log.Cohomology
 public import OrlikSolomon.DeRham.Log.Residue
 public import OrlikSolomon.Geometry.SmoothAlg
 
@@ -33,7 +34,8 @@ primary. The logarithmic forms `logForms k f T` are a subalgebra of `Forms k T`,
 `obtain ⟨⟨ω, η⟩, rfl⟩ := logMk_surjective k f T x` is the way to start a proof. The degrees are
 submodules `logPower k f T n`, of which `mem_logPower_zero` and `mem_logPower_succ` are the
 description in terms of elements, and `powerToLog`, `logPowerD` and `logPowerResidue` are the typed
-maps for this file's complexes.
+maps for this file's complexes. `LogCohomology k f T` is the cohomology of the logarithmic forms,
+and `LogCohomology.toCohomology` is the map of `thm:dr-comparison`.
 
 ## What `def:dr-gysin` uses
 

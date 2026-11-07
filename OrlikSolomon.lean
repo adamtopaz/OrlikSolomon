@@ -44,6 +44,7 @@ public import OrlikSolomon.DeRham.Instance.Twisted
 public import OrlikSolomon.DeRham.Localization
 public import OrlikSolomon.DeRham.Log
 public import OrlikSolomon.DeRham.Log.Basic
+public import OrlikSolomon.DeRham.Log.Cohomology
 public import OrlikSolomon.DeRham.Log.Residue
 public import OrlikSolomon.DeRham.PrincipalQuotient
 public import OrlikSolomon.DeRham.SmoothPair

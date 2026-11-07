@@ -92,6 +92,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Instance/Basic`        | the functor of `def:dr-twisted-functor` on `SmoothAlg k`, and every field of `lem:dr-ordinary-basic` |
 | `DeRham/Localization`          | `lem:dr-localization`, for any `IsLocalization`; `dlog`, and the extension of derivations |
 | `DeRham/Log/Basic`             | `def:dr-log`, `lem:dr-log-dga`: `theta`, `logForms`, `logPower`, `logMk`, the differential and the ideal `f L^•`; no smoothness |
+| `DeRham/Log/Cohomology`        | `LogCohomology`, its grading, and the algebra maps `H^•(A) → H^•(L) → H^•(T)`, for `thm:dr-comparison` and `lem:dr-exactness`; no smoothness |
 | `DeRham/Log/Residue`           | `IsSmoothPrincipalPair`, `lem:dr-regularity`, `def:dr-residue`, `thm:dr-residue-sequence` on elements, `lem:dr-form-projection` |
 | `DeRham/Log`                   | `logComplex`, `shiftedComplex`, `logResidueShortExact` of `thm:dr-residue-sequence`, and `DivisorPair.isSmoothPrincipalPair`; the module to import |
 | `DeRham/PrincipalQuotient`     | `lem:dr-quotient`, for any surjection of algebras with principal kernel |
@@ -739,13 +740,15 @@ included, without finite presentation or smoothness of a quotient.
   `φ_* - ψ_* = d K + K d`, for `thm:dr-homotopy`. `lem:dr-filtration-reduction` is an argument about
   submodules of forms and their quotients, and it needs nothing from this module.
 - **For the instance.** See "The Laurent-twisted theory" below.
-- **The cohomology of a dg subalgebra `L` of forms,** as in `thm:dr-comparison`, is not generic here,
-  since a shared layer would wrap every lemma above for one other use. It takes about 30 lines with
-  the same tools: the subalgebra `L ⊓ cycles k A`, the `TwoSidedIdeal` of the `d y` for `y ∈ L`, its
-  `RelationQuotient`, and `RelationQuotient.liftAlgHom` of `Cohomology.mkₐ` for the map to
-  `Cohomology k A`. The only hypothesis is `involute x ∈ L` for `x ∈ L`, for `x ∧ dy = d (σ x ∧ y)`,
-  and it holds because `L` is homogeneous. `homogeneousSubalgebraGradedAlgebra` and
-  `gradedAlgebraOfIsHomogeneous` give its grading, and `RelationQuotient.liftLinear` gives `H(ρ)`.
+- **The cohomology of the logarithmic forms** is `LogCohomology k f T`, in `DeRham/Log/Cohomology`.
+  It is not generic in a dg subalgebra, since a shared layer would wrap every lemma above for one
+  other use. It is built the same way: `logCycles k f T` is the subalgebra `L ⊓ cycles k T`,
+  `logBoundaries k f T` is the `TwoSidedIdeal` of the `d y` for `y ∈ L`, and it is their
+  `RelationQuotient`. The grade involution preserves `L`, which gives `x ∧ dy = d (σ x ∧ y)`, and `L`
+  is homogeneous, which gives the grading. A class is `LogCohomology.mk x hx`, with
+  `x : logForms k f T` and `hx : logD k f T x = 0`, since that is the type `logResidue` takes. The
+  map of `thm:dr-comparison` is `LogCohomology.toCohomology k f T`, and
+  `bijective_toCohomology_of_forall` says what its bijectivity means for forms.
 
 ### Polynomial homotopy
 
