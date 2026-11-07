@@ -317,6 +317,7 @@ lemma bijective_mapTotal_line (A : C) :
     (DirectSum.lmap_surjective _).2 fun i ↦ (D.bijective_map_line A i).2⟩
 
 /-- The total cohomology functor, constructed from degreewise groups and pullbacks. -/
+@[implicit_reducible]
 def functor : C ⥤ AlgCat.{z} B where
   obj A := AlgCat.of B (D.Total A)
   map f := AlgCat.ofHom (D.mapTotal f)

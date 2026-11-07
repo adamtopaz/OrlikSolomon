@@ -119,7 +119,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/SmoothPair/Projective` | `lem:dr-projective`: projectivity in every form degree, regular scalar action and injectivity into localization |
 | `DeRham/SmoothPair`           | the conormal splitting of `lem:dr-conormal`, and the global and localized derivations of `lem:dr-normal-derivation` |
 | `Examples/AffineLines`        | concurrent lines and the triangle, including the nonempty-intersection guard |
-| `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
+| `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components; `simp` on the component formulas of both bridges |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
 | `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
 | `Examples/DeRham`             | umbrella for the de Rham worked regressions and excluded cases; the module to import |
@@ -1312,6 +1312,19 @@ natural transformations. The geometric inputs use this core on `D.Objᵒᵖ` and
 non-affines. Public component formulas identify pullback, Gysin and residue with the original
 degreewise maps and prove compatibility with domain restriction and affine transport. No total
 exactness or arrangement conclusion is assumed.
+
+The constructions on this path are `@[implicit_reducible]`, like the named objects of the scheme
+layer: both `ofSupportsAndPurity`, `CategoricalDegreewiseTheory.functor`, the algebraic
+`DegreewiseTheory.functor`, and the two `DegreewiseTheory.toCore` adapters. A component formula
+such as `ofSupportsAndPurity_pull_incl` is an equation in the carrier of
+`(ofSupportsAndPurity E S).obj X`, but its right side is an element of `E.Total X`, and the two
+types agree only by unfolding these definitions. When `simp` or `rw` instantiates a rule, Lean
+compares the type of each term assigned to a variable of the rule with the type of that variable
+at implicit transparency. Without the attribute, `simp` therefore rewrote the left side and then
+could not close the resulting goal `a = a` with `eq_self` (#132). `Examples/Bridge` checks the
+formulas for pullback and Gysin with plain `simp`. Simp keys are computed at reducible
+transparency and type class search runs at instance transparency, so neither sees through these
+definitions.
 
 ### Geometric logarithms
 
