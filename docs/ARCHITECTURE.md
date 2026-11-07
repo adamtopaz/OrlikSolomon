@@ -988,10 +988,10 @@ is partly formalized, by the comparison `transportAffineDevelopment` and its law
 about every old statement is not one Lean statement. Stage G4 (#115), `lem:geo-module-gluing`,
 `def:geo-forms-sheaf` and `thm:geo-forms-comparison`, is formalized as described in "Relative
 forms as sheaves". Stage G5 (#116) is formalized as described in "The de Rham instance on affine
-schemes": `def:geo-dr-cohomology` and `cor:geo-dr-arrangements`, and `thm:geo-dr-instance` partly,
-since the comparison of its Gysin and residue maps with the global sections of the sheaf
-logarithmic sequence needs `thm:geo-log-sheaves` (#117). The other declaration names remain
-proposals.
+schemes": `def:geo-dr-cohomology`, `cor:geo-dr-arrangements` and `thm:geo-dr-instance`.
+Stage G6 (#117), `thm:geo-log-sheaves`, proves the logarithmic sheaf sequence and local comparison,
+including agreement of the instance's Gysin and residue maps on global sheaf representatives.
+The worked geometric regressions of #118 remain planned.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1524,12 +1524,14 @@ a sign. The residue sequence works over a commutative base ring.
 
 `affineLogComparison`, `affineLogComplexIso` and `affineLogResidueShortComplexIso` identify the
 affine global sequence and its three arrows with the existing algebraic sequence. Their
-representative formulas supply comparisons against the old algebraic logarithmic sequence,
-for #116 to identify its residue and Gysin maps. Gysin retains the representative convention
+representative formulas identify the old algebraic logarithmic sequence with the actual affine
+global sheaf sequence. In `Schemes/Instance`, `residue_globalClass` and
+`gysin_globalClass_of_logResidue_eq` identify its residue and Gysin on these sheaf representatives.
+Gysin retains the representative convention
 `[γ] ↦ [dλ]`; a generic connecting-map convention is not assumed.
 
-Positive-integer inverses enter only in `Comparison`, which proves that inclusion into the
-ordinary direct-image de Rham complex is a quasi-isomorphism on stalks. Neither this result
+Positive-integer inverses enter only in `Comparison`, where `logSheafComparison` proves that
+inclusion into the ordinary direct-image de Rham complex is a quasi-isomorphism on stalks. Neither this result
 nor the sheaf short exact sequence is passed through underived global sections on a
 non-affine scheme.
 
