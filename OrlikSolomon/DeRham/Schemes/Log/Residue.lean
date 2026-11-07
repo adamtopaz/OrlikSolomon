@@ -134,4 +134,61 @@ instance regularToLogSheaf_mono (P : DivisorPair D) (n : ℕ) :
   have := formsSheafPullback_mono P n
   exact mono_of_mono_fac (regularToLogSheaf_comp_logToOpenSheaf P n)
 
+/-- Pullback of algebraic forms to the smooth divisor is surjective on every affine neighborhood. -/
+lemma affineNeighborhoodClosedForms_surjective (P : DivisorPair D)
+    (V : P.ambient.obj.left.affineOpens) (n : ℕ) :
+    Function.Surjective (Forms.mapPower (sectionPullback P.i.hom V.1) n) := by
+  let Q := affineNeighborhoodAlgebraicPair P V
+  let eA := openSectionAlgebraEquiv P.ambient.obj V.1
+  let eB := openSectionAlgebraEquiv P.closed.obj (P.i.hom.left ⁻¹ᵁ V.1)
+  have hi : eB.toAlgHom.comp (sectionPullback P.i.hom V.1) =
+      (SmoothAlg.algHom Q.i).comp eA.toAlgHom :=
+    openSectionAlgebraEquiv_comp P.i.hom V.1
+  intro x
+  obtain ⟨z, hz⟩ := Forms.mapPower_surjective Q.surjective_i n
+    (Forms.mapPower eB.toAlgHom n x)
+  refine ⟨Forms.mapPower eA.symm.toAlgHom n z, ?_⟩
+  apply Subtype.ext
+  apply (Forms.mapEquiv eB).injective
+  change Forms.map eB.toAlgHom
+      (Forms.map (sectionPullback P.i.hom V.1)
+        (Forms.map eA.symm.toAlgHom z.val)) = Forms.map eB.toAlgHom x.val
+  rw [Forms.map_map, hi, ← Forms.map_map]
+  rw [show Forms.map eA.toAlgHom (Forms.map eA.symm.toAlgHom z.val) = z.val from
+    (Forms.mapEquiv eA).apply_symm_apply z.val]
+  exact congrArg Subtype.val hz
+
+/-- Forms on the divisor lift to regular ambient forms on every affine open of the ambient. -/
+lemma formsSheafPullback_surjective_affineOpen (P : DivisorPair D)
+    (V : P.ambient.obj.left.affineOpens) (n : ℕ) :
+    Function.Surjective ((formsSheafPullback P.i.hom n).hom.app (op V.1)) := by
+  have hV : IsAffineOpen (P.i.hom.left ⁻¹ᵁ V.1) := by
+    exact inferInstanceAs (IsAffine (affineNeighborhoodPair P V).closed.obj.left)
+  intro x
+  obtain ⟨x, rfl⟩ := (affineOpenFormsComparison P.closed.obj _ hV n).surjective x
+  obtain ⟨y, hy⟩ := affineNeighborhoodClosedForms_surjective P V n x
+  refine ⟨affineOpenFormsComparison P.ambient.obj V.1 V.2 n y, ?_⟩
+  exact (formsSheafPullback_unit_apply P.i.hom n (op V.1) y).trans
+    (congrArg ((formsSheafUnit k P.closed.obj n).app
+      (op (P.i.hom.left ⁻¹ᵁ V.1))) hy)
+
+/-- Restricting forms to the smooth principal divisor is an epimorphism of sheaves.
+This is a local assertion, with no global-section exactness claim on a non-affine ambient. -/
+lemma formsSheafPullback_epi (P : DivisorPair D) (n : ℕ) :
+    Epi (formsSheafPullback P.i.hom n) := by
+  constructor
+  intro F g h hgh
+  apply ObjectProperty.hom_ext
+  apply TopCat.Sheaf.hom_ext _ _
+    (show TopologicalSpace.Opens.IsBasis
+        (Set.range (fun V : P.ambient.obj.left.affineOpens => V.1)) by
+      simpa only [Subtype.range_coe_subtype, Set.ofPred_mem_eq] using
+        P.ambient.obj.left.isBasis_affineOpens)
+  intro U
+  ext x
+  obtain ⟨y, rfl⟩ := formsSheafPullback_surjective_affineOpen P U n x
+  exact ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) hgh) (op U.1)) y
+
+
 end OrlikSolomon.Geometric.DeRham
