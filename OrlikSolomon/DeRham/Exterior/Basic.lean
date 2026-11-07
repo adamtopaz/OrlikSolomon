@@ -201,6 +201,17 @@ theorem exteriorProj_of_mem {n : ℕ} {x : ExteriorAlgebra A M} (hx : x ∈ ⋀[
     (exteriorProj n x : ExteriorAlgebra A M) = x :=
   congrArg Subtype.val (exteriorProj_coe ⟨x, hx⟩)
 
+/-- The components of a homogeneous element in other degrees vanish. -/
+theorem exteriorProj_of_mem_of_ne {m n : ℕ} (hmn : m ≠ n) {x : ExteriorAlgebra A M}
+    (hx : x ∈ ⋀[A]^m M) : exteriorProj n x = 0 :=
+  Subtype.ext (DirectSum.decompose_of_mem_ne (fun i : ℕ => ⋀[A]^i M) hx hmn)
+
+/-- An element of the exterior algebra is determined by its homogeneous components. -/
+theorem eq_of_forall_exteriorProj_eq {x y : ExteriorAlgebra A M}
+    (h : ∀ n, exteriorProj n x = exteriorProj n y) : x = y := by
+  refine (DirectSum.decompose (fun i : ℕ => ⋀[A]^i M)).injective (DFinsupp.ext fun n => ?_)
+  exact Subtype.ext (congrArg Subtype.val (h n))
+
 /-- The degree `n + 1` component of `m ∧ y` is `m ∧` the degree `n` component of `y`. -/
 theorem exteriorProj_ι_mul (m : M) (n : ℕ) (y : ExteriorAlgebra A M) :
     exteriorProj (n + 1) (ι A m * y) = wedgeLeft m n (exteriorProj n y) := by

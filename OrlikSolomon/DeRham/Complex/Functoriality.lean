@@ -52,6 +52,12 @@ variable {k : Type u} [CommRing k]
   {A' : Type v'} [CommRing A'] [Algebra k A']
   {A'' : Type v''} [CommRing A''] [Algebra k A'']
 
+variable (k) in
+/-- The grade involution negates the form `da`. -/
+@[simp]
+theorem involute_diff (a : A) : CliffordAlgebra.involute (diff k a) = -diff k a :=
+  CliffordAlgebra.involute_ι _
+
 namespace Forms
 
 /-- The `k`-algebra map on forms induced by a `k`-algebra map `φ : A → A'`, sending
@@ -128,6 +134,32 @@ theorem map_mem_exteriorPower (φ : A →ₐ[k] A') {n : ℕ} {x : Forms k A}
   | add x _ y _ hx hy =>
     rw [map_add]
     exact add_mem hx hy
+
+/-- The map on forms commutes with the grade involution, which is the sign `(-1)^p` in degree `p`.
+
+Blueprint: `thm:dr-dga`. -/
+@[simp]
+theorem map_involute (φ : A →ₐ[k] A') (x : Forms k A) :
+    map φ (CliffordAlgebra.involute x) = CliffordAlgebra.involute (map φ x) := by
+  have key : (map φ).comp (CliffordAlgebra.involute.restrictScalars k) =
+      (CliffordAlgebra.involute.restrictScalars k).comp (map φ) := by
+    ext a <;> simp
+  exact AlgHom.congr_fun key x
+
+/-- The map on forms commutes with taking homogeneous components.
+
+Blueprint: `thm:dr-dga`, since the map preserves degrees. -/
+theorem coe_exteriorProj_map (φ : A →ₐ[k] A') (n : ℕ) (x : Forms k A) :
+    (exteriorProj n (map φ x) : Forms k A') = map φ (exteriorProj n x : Forms k A) := by
+  induction x using Forms.induction with
+  | word a l =>
+    have hx := smul_word_diff_mem_exteriorPower k a (rfl : l.length = l.length)
+    by_cases h : l.length = n
+    · subst h
+      rw [exteriorProj_of_mem hx, exteriorProj_of_mem (map_mem_exteriorPower φ hx)]
+    · rw [exteriorProj_of_mem_of_ne h hx, exteriorProj_of_mem_of_ne h (map_mem_exteriorPower φ hx)]
+      simp
+  | add x y hx hy => simp only [map_add, Submodule.coe_add, hx, hy]
 
 /-- The identity induces the identity.
 
