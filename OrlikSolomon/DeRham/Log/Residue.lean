@@ -294,6 +294,7 @@ theorem logResidue_smul (h : IsSmoothPrincipalPair f φ) (a : A) (x : logForms k
     logResidue T h (a • x) = φ a • logResidue T h x :=
   map_smulₛₗ (logResidue T h) a x
 
+variable (T) in
 /-- The residue, as a `k`-linear map. Its underlying function is `logResidue`.
 
 Blueprint: `def:dr-residue`. -/
@@ -306,7 +307,7 @@ noncomputable def logResidueₗ (h : IsSmoothPrincipalPair f φ) : logForms k f 
 
 @[simp]
 theorem logResidueₗ_apply (h : IsSmoothPrincipalPair f φ) (x : logForms k f T) :
-    logResidueₗ h x = logResidue T h x :=
+    logResidueₗ T h x = logResidue T h x :=
   rfl
 
 /-- The residue anticommutes with the differential: `ρ d = -d ρ`. This is the chain map condition
@@ -406,7 +407,7 @@ Blueprint: `def:dr-residue`. -/
 noncomputable def logPowerResidue (h : IsSmoothPrincipalPair f φ) (n : ℕ) :
     logPower k f T (n + 1) →ₗ[k] ⋀[S]^n Ω[S⁄k] :=
   LinearMap.codRestrict ((⋀[S]^n Ω[S⁄k]).restrictScalars k)
-    ((logResidueₗ h).comp ((logPowerToLogForms k f T (n + 1)).restrictScalars k))
+    ((logResidueₗ T h).comp ((logPowerToLogForms k f T (n + 1)).restrictScalars k))
     fun x => logResidue_mem_exteriorPower h x.2
 
 @[simp]

@@ -230,8 +230,8 @@ theorem theta_mem_logForms : θ ∈ logForms k f T := by
   simpa using theta_mul_map_mem_logForms k f T 1
 
 /-- The surjection `(ω, η) ↦ ω + θ ∧ η` from pairs of forms on `A` onto logarithmic forms. It is
-`A`-linear. Its kernel is described by `IsSmoothPrincipalPair.logMk_eq_zero_iff`, and it is how
-`logResidue` is defined.
+`A`-linear. For a smooth principal pair, `IsSmoothPrincipalPair.map_eq_zero_of_logMk_eq_zero` says
+that its kernel restricts to zero on `S`, and that is how `logResidue` is defined.
 
 Blueprint: `def:dr-log`. -/
 noncomputable def logMk : (Forms k A × Forms k A) →ₗ[A] logForms k f T where
