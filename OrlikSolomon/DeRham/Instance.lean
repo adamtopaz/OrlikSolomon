@@ -148,14 +148,18 @@ section Fields
 theorem ordinaryTheory_C : (ordinaryTheory k).C = twistedCohomologyFunctor k :=
   rfl
 
+/-- The bigrading of the instance is `TwistedCohomology.grading`, with `H^p T^w` in bidegree
+`(p, w)`. -/
 theorem ordinaryTheory_grading (A : SmoothAlg k) :
     (ordinaryTheory k).grading A = TwistedCohomology.grading k A :=
   rfl
 
+/-- The Gysin map of the instance at a divisor pair is the twisted Gysin map at its open part. -/
 theorem ordinaryTheory_gysin (P : DivisorPair k) :
     (ordinaryTheory k).gysin P = TwistedCohomology.gysin P.compl P.isSmoothPrincipalPair :=
   rfl
 
+/-- The residue of the instance at a divisor pair is the twisted residue at its open part. -/
 theorem ordinaryTheory_residue (P : DivisorPair k) :
     (ordinaryTheory k).residue P =
       TwistedCohomology.residue P.compl (isUnit_natCast_add_one k) P.isSmoothPrincipalPair :=
