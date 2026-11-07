@@ -642,6 +642,43 @@ image of the corresponding complement forms. -/
     infer_instance
   exact asIso (openFormsPullback e.inv n)
 
+/-- On global sections, transport of complement forms is the usual pullback along the
+complement component of the inverse pair isomorphism. -/
+lemma pairOpenFormsIso_hom_appTop (e : P ≅ Q) (n : ℕ)
+    (x : (formsSheaf k P.compl.obj n).obj.obj (op ⊤)) :
+    dsimp% (pairOpenFormsIso e n).hom.hom.app (op ⊤) x =
+      formsSheafPullbackTop e.inv.compl.hom n x := by
+  change (openFormsPullback e.inv n).hom.app (op ⊤) x = _
+  dsimp only [openFormsPullback]
+  let E := sheafToPresheaf (_root_.Opens.grothendieckTopology P.ambient.obj.left)
+    (ModuleCat.{u} k) ⋙ (evaluation _ _).obj (op ⊤)
+  have he : e.inv.compl.hom ≫ P.j.hom = Q.j.hom ≫ e.inv.ambient.hom :=
+    (congrArg (fun f => f.hom) e.inv.j_comp).symm
+  have hc : (pairOpenPushforwardIso e.inv).hom.app (formsSheaf k Q.compl.obj n) =
+      eqToHom (congrArg
+        (fun t : Q.compl.obj ⟶ P.ambient.obj =>
+          (TopCat.Sheaf.pushforward (ModuleCat k) t.left.base).obj
+            (formsSheaf k Q.compl.obj n)) he) := by
+    dsimp only [pairOpenPushforwardIso, eqToIso]
+    exact eqToHom_app _ _
+  have h : E.map ((pairOpenPushforwardIso e.inv).hom.app (formsSheaf k Q.compl.obj n)) =
+      𝟙 ((formsSheaf k Q.compl.obj n).obj.obj (op ⊤)) := by
+    rw [hc]
+    exact (eqToHom_map E _).trans (by rfl)
+  exact ConcreteCategory.congr_hom h (formsSheafPullbackTop e.inv.compl.hom n x)
+
+/-- The global complement-form map of a pair isomorphism, with the section carriers explicit. -/
+def pairOpenFormsPullbackTop (e : P ≅ Q) (n : ℕ) :
+    (formsSheaf k P.compl.obj n).obj.obj (op ⊤) →ₗ[k]
+      (formsSheaf k Q.compl.obj n).obj.obj (op ⊤) :=
+  ((pairOpenFormsIso e n).hom.hom.app (op ⊤)).hom
+
+/-- The typed global complement-form map is ordinary pullback on the complement. -/
+lemma pairOpenFormsPullbackTop_eq (e : P ≅ Q) (n : ℕ) :
+    pairOpenFormsPullbackTop e n = formsSheafPullbackTop e.inv.compl.hom n := by
+  ext x
+  exact pairOpenFormsIso_hom_appTop e n x
+
 /-- The complement-forms comparison commutes with regular-form restriction. -/
 @[reassoc] theorem pairOpenFormsIso_regular (e : P ≅ Q) (n : ℕ) :
     formsSheafPullback e.inv.ambient.hom n ≫
