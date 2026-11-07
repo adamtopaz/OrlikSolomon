@@ -13,6 +13,8 @@ public import OrlikSolomon.Cohomology.BridgeData.Basic
 public import OrlikSolomon.Cohomology.BridgeData.Supports
 public import OrlikSolomon.Cohomology.Deletion
 public import OrlikSolomon.Cohomology.DeletionPair
+public import OrlikSolomon.Cohomology.Geometric.Axioms
+public import OrlikSolomon.Cohomology.Geometric.Transport
 public import OrlikSolomon.Cohomology.Logarithms
 public import OrlikSolomon.Combinatorics.AlternatingSum
 public import OrlikSolomon.Combinatorics.Betti
@@ -118,6 +120,12 @@ public import OrlikSolomon.Geometry.RelationTargets
 public import OrlikSolomon.Geometry.Schemes.AffineDuality
 public import OrlikSolomon.Geometry.Schemes.AffinePairs
 public import OrlikSolomon.Geometry.Schemes.Basic
+public import OrlikSolomon.Geometry.Schemes.Complement
+public import OrlikSolomon.Geometry.Schemes.Complement.AffineSpace
+public import OrlikSolomon.Geometry.Schemes.Complement.Basic
+public import OrlikSolomon.Geometry.Schemes.Complement.Deletion
+public import OrlikSolomon.Geometry.Schemes.Complement.Targets
+public import OrlikSolomon.Geometry.Schemes.Decone
 public import OrlikSolomon.Geometry.Schemes.ModuleGluing
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Basic
