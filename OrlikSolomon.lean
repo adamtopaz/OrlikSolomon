@@ -119,6 +119,7 @@ public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Certificates
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Duality
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Standard
 public import OrlikSolomon.Geometry.Schemes.Products
+public import OrlikSolomon.Geometry.Schemes.Projective
 public import OrlikSolomon.Geometry.Schemes.Units
 public import OrlikSolomon.Geometry.SmoothAlg
 public import OrlikSolomon.Grading.Basic
