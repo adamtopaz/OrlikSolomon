@@ -5,11 +5,12 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
+public import OrlikSolomon.DeRham.Schemes.Forms.Pullback
+public import Mathlib.AlgebraicGeometry.AffineScheme
 public import OrlikSolomon.Geometry.Schemes.ModuleGluing
 public import Mathlib.CategoryTheory.Sites.PreservesLocallyBijective
 /-!
-# Relative forms on affine spectra
+# Affine evaluation of relative forms
 
 The canonical sheafification map for relative forms is an isomorphism on every distinguished
 open of an affine spectrum, including the whole spectrum. The construction uses Mathlib's
@@ -24,11 +25,15 @@ uses the common underlying additive carriers, so no additional scalar structure 
 ## Main results
 
 * `specFormsSheafUnit_isIso`: relative forms are unchanged by sheafification on a basic open.
-* `specFormsSheafUnit_top_isIso`: the corresponding global-sections comparison.
+* `specFormsSheafUnit_top_isIso`: the corresponding comparison on the whole spectrum.
+* `specFormsSheafAssociatedIso`: identification with Mathlib's associated module sheaf.
+* `formsSheafUnit_top_isIso`, `affineFormsComparison`: evaluation on every affine scheme.
+* `affineFormsComparison_d`, `affineFormsComparison_wedge`, `affineFormsComparison_pull`:
+  compatibility with the differential, multiplication and arbitrary affine scheme maps.
 
 No smoothness, finite-generation, field, nonzero-ring or rational-point assumption is used.
 
-Blueprint: the affine-spectrum case of `def:geo-forms-sheaf` and `thm:geo-forms-comparison`.
+Blueprint: `def:geo-forms-sheaf` and `thm:geo-forms-comparison`.
 -/
 
 @[expose] public section
@@ -55,12 +60,15 @@ private theorem canonicalTildeLocalization (R : CommRingCat.{u}) (M : ModuleCat 
     IsLocalizedModule.Away r (tilde.toOpen M (PrimeSpectrum.basicOpen r)).hom := by
   infer_instance
 
+section Spectrum
+
 variable {k A : Type u} [CommRing k] [CommRing A] [Algebra k A]
 local notation "XS" => (Over.mk (Spec.map (CommRingCat.ofHom (algebraMap k A))))
 
 -- The auxiliary A-linear presheaf uses the same carriers and restrictions as relative forms.
 -- Its A-action allows comparison with the associated sheaf of the global A-module of forms.
-private def specOpenMap (U : (Spec (.of A)).Opens) :
+/-- The canonical map from an algebra to functions on an open of its spectrum, over the base. -/
+def specSectionMap (U : (Spec (.of A)).Opens) :
     A →ₐ[k] sectionAlgebra k XS U where
   toRingHom := ((Scheme.ΓSpecIso (.of A)).inv ≫ (Spec (.of A)).presheaf.map U.leTop.op).hom
   commutes' r := by
@@ -83,7 +91,7 @@ private local instance specFormAlgebra (U : (Spec (.of A)).Opens) :
 
 private instance specOpenTower (U : (Spec (.of A)).Opens) :
     IsScalarTower k A (sectionAlgebra k XS U) :=
-  IsScalarTower.of_algebraMap_eq fun r => ((specOpenMap (k := k) U).commutes r).symm
+  IsScalarTower.of_algebraMap_eq fun r => ((specSectionMap (k := k) U).commutes r).symm
 
 @[implicit_reducible] private def specPowerModule (n : ℕ) (U : (Spec (.of A)).Opens) :
     ModuleCat A :=
@@ -110,14 +118,15 @@ private instance specPowerMap_localized (n : ℕ) (r : A) :
     (k := k) (T := sectionAlgebra k XS (PrimeSpectrum.basicOpen r))
     (Submonoid.powers r) n
 
-private theorem specOpenMap_restrict {U V : (Spec (.of A)).Opens} (i : U ⟶ V) :
-    (sectionRestriction k XS i).comp (specOpenMap (k := k) V) = specOpenMap U := by
+/-- The canonical map to spectrum sections commutes with restriction of opens. -/
+theorem specSectionMap_restrict {U V : (Spec (.of A)).Opens} (i : U ⟶ V) :
+    (sectionRestriction k XS i).comp (specSectionMap (k := k) V) = specSectionMap U := by
   ext a
   exact (ConcreteCategory.congr_hom ((Spec (.of A)).presheaf.map_comp V.leTop.op i.op)
     ((Scheme.ΓSpecIso (.of A)).inv a)).symm
 
 private theorem specPowerMap_apply (n : ℕ) (U : (Spec (.of A)).Opens) (x : ⋀[A]^n Ω[A⁄k]) :
-    specPowerMap (k := k) n U x = Forms.mapPower (specOpenMap U) n x :=
+    specPowerMap (k := k) n U x = Forms.mapPower (specSectionMap U) n x :=
   (Forms.mapPower_toAlgHom (sectionAlgebra k XS U) n x).symm
 
 private def specPowerRestriction (n : ℕ) {U V : (Spec (.of A)).Opens} (i : U ⟶ V) :
@@ -136,7 +145,7 @@ private def specPowerRestriction (n : ℕ) {U V : (Spec (.of A)).Opens} (i : U �
           _ = algebraMap A (sectionAlgebra k XS U) a •
               Forms.mapPower (sectionRestriction k XS i) n x := by
             exact congrArg (fun t => t • Forms.mapPower (sectionRestriction k XS i) n x)
-              (AlgHom.congr_fun (specOpenMap_restrict i) a)
+              (AlgHom.congr_fun (specSectionMap_restrict i) a)
           _ = _ := algebraMap_smul (sectionAlgebra k XS U) a _ }
 
 private def specFormsPresheaf (n : ℕ) : (Spec (CommRingCat.of A)).Opensᵒᵖ ⥤ ModuleCat A where
@@ -162,7 +171,7 @@ private theorem specPowerMap_res (n : ℕ) {U V : (Spec (.of A)).Opens} (i : U �
   intro x
   change Forms.mapPower (sectionRestriction k XS i) n (specPowerMap n V x) = specPowerMap n U x
   rw [specPowerMap_apply, specPowerMap_apply, ← LinearMap.comp_apply,
-    ← Forms.mapPower_comp, specOpenMap_restrict]
+    ← Forms.mapPower_comp, specSectionMap_restrict]
 
 -- Both maps below exhibit a localization of the same exterior power over A.
 private def basisFormIso (n : ℕ) (r : A) :
@@ -390,5 +399,131 @@ theorem specFormsSheafUnit_top_isIso (n : ℕ) :
     PrimeSpectrum.basicOpen_one
   rw [he] at h
   exact h
+
+
+/-- Relative form sheaves on a spectrum are the associated sheaves of the old global form modules,
+after forgetting scalar actions. This isomorphism uses the existing sheafified carriers.
+Blueprint: `def:geo-forms-sheaf`. -/
+@[no_expose] def specFormsSheafAssociatedIso (n : ℕ) :
+    (sheafCompose (_root_.Opens.grothendieckTopology (Spec (.of A)))
+      (forget₂ (ModuleCat k) AddCommGrpCat)).obj (formsSheaf k XS n) ≅
+    (sheafCompose (_root_.Opens.grothendieckTopology (Spec (.of A)))
+      (forget₂ (ModuleCat A) AddCommGrpCat)).obj
+        (modulesSpecToSheaf.obj (tilde (ModuleCat.of (CommRingCat.of A) (⋀[A]^n Ω[A⁄k])))) := by
+  let e := @asIso _ _ _ _ (specFormsSheafAddMap (k := k) (A := A) n)
+    (specFormsSheafAddMap_isIso (k := k) (A := A) n)
+  exact e
+
+/-- On a distinguished open, the associated-sheaf comparison sends algebraic forms to their
+usual localization, with no choice of coordinates or representatives. -/
+lemma specFormsSheafAssociatedIso_unit (n : ℕ) (r : A) (x : ⋀[A]^n Ω[A⁄k]) :
+    (specFormsSheafAssociatedIso (k := k) (A := A) n).hom.hom.app
+        (op (PrimeSpectrum.basicOpen r))
+      ((formsSheafUnit k XS n).app (op (PrimeSpectrum.basicOpen r))
+        (Forms.mapPower (specSectionMap (k := k) (PrimeSpectrum.basicOpen r)) n x)) =
+      tilde.toOpen (ModuleCat.of (CommRingCat.of A) (⋀[A]^n Ω[A⁄k]))
+        (PrimeSpectrum.basicOpen r) x := by
+  have h := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (specFormsUnitAdd_map (k := k) (A := A) n)
+      (op (PrimeSpectrum.basicOpen r)))
+    (Forms.mapPower (specSectionMap (k := k) (PrimeSpectrum.basicOpen r)) n x)
+  refine h.trans ?_
+  change (specFormsToAssociated (k := k) (A := A) n).app
+      (op (PrimeSpectrum.basicOpen r))
+      (Forms.mapPower (specSectionMap (k := k) (PrimeSpectrum.basicOpen r)) n x) = _
+  rw [specFormsToAssociated_app]
+  exact (congrArg (basisFormIso (k := k) n r)
+    (specPowerMap_apply n (PrimeSpectrum.basicOpen r) x).symm).trans (basisFormIso_map n r x)
+
+end Spectrum
+
+variable {k : Type u} [CommRing k]
+
+private def affineOverIso (X : Over (Spec (CommRingCat.of k))) [IsAffine X.left] :
+    X ≅ Over.mk (Spec.map (CommRingCat.ofHom (algebraMap k (sectionAlgebra k X ⊤)))) := by
+  refine Over.isoMk X.left.isoSpec ?_
+  change X.left.toSpecΓ ≫ Spec.map (CommRingCat.ofHom (algebraMap k (sectionAlgebra k X ⊤))) = X.hom
+  have h : CommRingCat.ofHom (algebraMap k (sectionAlgebra k X ⊤)) =
+      (Scheme.ΓSpecIso (CommRingCat.of k)).inv ≫ X.hom.appTop := by
+    change (Scheme.ΓSpecIso (CommRingCat.of k)).inv ≫ X.hom.appTop ≫
+      X.left.presheaf.map (⊤ : X.left.Opens).leTop.op = _
+    have hi : (⊤ : X.left.Opens).leTop.op = 𝟙 (op ⊤) := rfl
+    rw [hi, X.left.presheaf.map_id, Category.comp_id]
+  rw [h, Spec.map_comp, ← Scheme.toSpecΓ_naturality_assoc,
+    toSpecΓ_SpecMap_ΓSpecIso_inv, Category.comp_id]
+
+/-- Sheafification leaves global relative forms unchanged on every affine scheme.
+Blueprint: `thm:geo-forms-comparison`. -/
+instance formsSheafUnit_top_isIso (X : Over (Spec (CommRingCat.of k))) [IsAffine X.left]
+    (n : ℕ) : IsIso ((formsSheafUnit k X n).app (op ⊤)) := by
+  have hspec := specFormsSheafUnit_top_isIso (k := k) (A := sectionAlgebra k X ⊤) n
+  let Z := Over.mk (Spec.map (CommRingCat.ofHom (algebraMap k (sectionAlgebra k X ⊤))))
+  let e : X ≅ Z := affineOverIso X
+  have := formsSheafPullback_isIso e.hom n
+  have := formsPresheafPullback_isIso e.hom n
+  have : IsIso (formsSheafPullback e.hom n).hom :=
+    (sheafToPresheaf (_root_.Opens.grothendieckTopology Z.left) (ModuleCat k)).map_isIso
+      (formsSheafPullback e.hom n)
+  have : IsIso ((formsSheafUnit k Z n).app (op ⊤)) := hspec
+  have hu := NatTrans.congr_app (formsSheafPullback_unit e.hom n) (op ⊤)
+  simp only [NatTrans.comp_app, Functor.whiskerLeft_app] at hu
+  have hcomp : IsIso ((formsPresheafPullback e.hom n).app (op ⊤) ≫
+      (formsSheafUnit k X n).app (op (e.hom.left ⁻¹ᵁ ⊤))) := by
+    have h : IsIso ((formsSheafUnit k Z n).app (op ⊤) ≫
+        (formsSheafPullback e.hom n).hom.app (op ⊤)) := inferInstance
+    exact hu ▸ h
+  have hx := IsIso.of_isIso_comp_left ((formsPresheafPullback e.hom n).app (op ⊤))
+    ((formsSheafUnit k X n).app (op (e.hom.left ⁻¹ᵁ ⊤)))
+  change IsIso ((formsSheafUnit k X n).app (op ⊤)) at hx
+  exact hx
+
+variable (X : Over (Spec (CommRingCat.of k))) [IsAffine X.left]
+
+/-- The canonical degreewise comparison from algebraic forms on global sections to sheaf forms.
+It is the original sheafification map, with its inverse supplied by affine evaluation.
+Blueprint: `thm:geo-forms-comparison`. -/
+def affineFormsComparison (n : ℕ) :
+    (⋀[sectionAlgebra k X ⊤]^n Ω[sectionAlgebra k X ⊤⁄k]) ≃ₗ[k]
+      (formsSheaf k X n).obj.obj (op ⊤) :=
+  (asIso ((formsSheafUnit k X n).app (op ⊤))).toLinearEquiv
+
+/-- The affine comparison acts by the canonical sheafification map. -/
+lemma affineFormsComparison_apply (n : ℕ)
+    (x : ⋀[sectionAlgebra k X ⊤]^n Ω[sectionAlgebra k X ⊤⁄k]) :
+    affineFormsComparison X n x = (formsSheafUnit k X n).app (op ⊤) x := rfl
+
+/-- The affine comparison commutes with the differential. -/
+@[simp] lemma affineFormsComparison_d (n : ℕ)
+    (x : ⋀[sectionAlgebra k X ⊤]^n Ω[sectionAlgebra k X ⊤⁄k]) :
+    (formsSheafD k X n).hom.app (op ⊤) (affineFormsComparison X n x) =
+      affineFormsComparison X (n + 1) (powerD k (sectionAlgebra k X ⊤) n x) :=
+  formsSheafD_unit k X n (op ⊤) x
+
+/-- The affine comparison preserves exterior products. -/
+@[simp] lemma affineFormsComparison_wedge (p q : ℕ)
+    (a : ⋀[sectionAlgebra k X ⊤]^p Ω[sectionAlgebra k X ⊤⁄k])
+    (b : ⋀[sectionAlgebra k X ⊤]^q Ω[sectionAlgebra k X ⊤⁄k]) :
+    formsSheafWedge k X p q (op ⊤) (affineFormsComparison X p a)
+      (affineFormsComparison X q b) =
+      affineFormsComparison X (p + q) ⟨a.val * b.val, SetLike.mul_mem_graded a.2 b.2⟩ :=
+  formsSheafWedge_unit k X p q (op ⊤) a b
+
+/-- The affine comparison preserves the degree-zero unit. -/
+@[simp] lemma affineFormsComparison_one :
+    affineFormsComparison X 0 ⟨1, SetLike.one_mem_graded _⟩ =
+      formsSheafOneSection k X (op ⊤) := by
+  change (formsSheafUnit k X 0).app (op ⊤) _ =
+    (formsSheafUnit k X 0).app (op ⊤) ((formsPresheafOne k X).app (op ⊤) (1 : k))
+  rw [formsPresheafOne_one]
+
+variable {X} {Y : Over (Spec (CommRingCat.of k))}
+variable [IsAffine Y.left]
+
+/-- On affine schemes, geometric pullback is the existing algebraic pullback of global forms. -/
+lemma affineFormsComparison_pull (g : X ⟶ Y) (n : ℕ)
+    (x : ⋀[sectionAlgebra k Y ⊤]^n Ω[sectionAlgebra k Y ⊤⁄k]) :
+    (formsSheafPullback g n).hom.app (op ⊤) (affineFormsComparison Y n x) =
+      affineFormsComparison X n (Forms.mapPower (sectionPullback g ⊤) n x) :=
+  formsSheafPullback_unit_apply g n (op ⊤) x
 
 end OrlikSolomon.Geometric.DeRham

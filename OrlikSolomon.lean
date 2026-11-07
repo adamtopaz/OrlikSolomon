@@ -65,6 +65,7 @@ public import OrlikSolomon.DeRham.Pole.Quotient
 public import OrlikSolomon.DeRham.Pole.Reduction
 public import OrlikSolomon.DeRham.PrincipalQuotient
 public import OrlikSolomon.DeRham.Schemes.Forms
+public import OrlikSolomon.DeRham.Schemes.Forms.Affine
 public import OrlikSolomon.DeRham.Schemes.Forms.Presheaf
 public import OrlikSolomon.DeRham.Schemes.Forms.Pullback
 public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
