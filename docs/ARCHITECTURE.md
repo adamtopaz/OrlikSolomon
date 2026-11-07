@@ -1039,8 +1039,8 @@ into other files updates this table.
 | `DeRham/Schemes/Log` | `thm:geo-log-sheaves` | #117 |
 | `Examples/Geometric` | `prop:geo-finite-field`, `prop:geo-degenerate`, `prop:geo-exclusions`, `prop:geo-nonflat`, `prop:geo-nonaffine`, `prop:geo-affine-regressions`, and the blueprint's acceptance consumers | #118 |
 
-The modules of #115, `Geometry/Schemes/ModuleGluing` and `DeRham/Schemes/Forms` with its four
-submodules, use the namespace `OrlikSolomon.Geometric.DeRham`.
+`Geometry/Schemes/ModuleGluing` is generic and uses the namespace `OrlikSolomon.Geometric`. Only
+`DeRham/Schemes/Forms` and its four submodules use `OrlikSolomon.Geometric.DeRham`.
 
 `Presentation/Geometric` is a facade: the blueprint's acceptance test is a consumer that imports
 only it and states both theorems for a theory on all smooth schemes. The blueprint's stages fix the
