@@ -21,7 +21,8 @@ This chapter follows the project's [second blueprint](https://github.com/adamtop
 The exterior calculus and the de Rham dg algebra of an arbitrary algebra, including its differential and cohomology algebra, are formalized, together with forms on localizations and principal quotients.
 The polynomial decomposition of forms and the integration homotopy are formalized as well, including the cohomology equivalence whose inverse is induced by evaluation at zero.
 Projectivity in every form degree, injectivity of regular scalar multiplication and of restriction into localization, conormal splitting, global and localized normal derivations, and wedge exactness modulo the divisor are also formalized, as are logarithmic forms and the residue sequence of a smooth divisor.
-The comparison arguments and the final instance remain planned.
+Cartan calculus, the pole filtration, contraction of its positive quotients, and finite reduction to logarithmic cohomology are formalized.
+The cohomological residue and Gysin maps, and the final instance, remain planned.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
@@ -53,17 +54,17 @@ It would give no theorem about singular, $`\ell`-adic or rigid cohomology, and t
 tag := "de-rham-strategy"
 %%%
 
-The plan has four main pieces: a construction of the de Rham differential with no basis of differentials, polynomial homotopy invariance for the affine-line axiom, the residue sequence of a smooth divisor, and a global contracting homotopy on each positive pole-order quotient.
-The last two give the localization axiom for a divisor pair, in which $`f` is a non-zero-divisor of a smooth algebra $`A`, the quotient $`S=A/(f)` is smooth, and $`A_f=A[1/f]`.
+The construction has four main pieces: the de Rham differential with no basis of differentials, polynomial homotopy invariance for the affine-line axiom, the residue sequence of a smooth divisor, and a global contracting homotopy on each positive pole-order quotient.
+The last two supply the ingredients for the remaining localization axiom for a divisor pair, in which $`f` is a non-zero-divisor of a smooth algebra $`A`, the quotient $`S=A/(f)` is smooth, and $`A_f=A[1/f]`.
 
-The plan splits this axiom in two.
+The construction splits this axiom in two.
 Put $`\theta=df/f`, and let $`L^n=\Omega_A^n+\theta\wedge\Omega_A^{n-1}` be the logarithmic forms inside $`\Omega_{A_f}^n`.
 Taking the residue $`\rho(\omega+\theta\wedge\eta)=\eta|_S` gives a short exact sequence of complexes
 $$`0\longrightarrow\Omega_A^\bullet\longrightarrow L^\bullet\xrightarrow{\ \rho\ }\Omega_S^\bullet[-1]\longrightarrow0,`
 whose long exact sequence has the cohomology of $`L^\bullet` where the axiom wants that of $`A_f`.
-So what remains is that the inclusion $`L^\bullet\hookrightarrow\Omega_{A_f}^\bullet` is a quasi-isomorphism.
+The pole-order comparison identifies the cohomology of $`L^\bullet` with that of $`\Omega_{A_f}^\bullet` through this inclusion.
 
-The blueprint proves this with no chart in which $`f` is a coordinate, no cover of $`\operatorname{Spec}A`, no gluing of cohomology, no basis of $`\Omega_A^1` and no chosen dimension.
+The pole-order proof uses no chart in which $`f` is a coordinate, no cover of $`\operatorname{Spec}A`, no gluing of cohomology, no basis of $`\Omega_A^1` and no chosen dimension.
 It never treats de Rham cohomology as an $`A`-module, which it generally is not.
 The whole argument runs on a single global derivation, in the following steps.
 
@@ -73,7 +74,8 @@ The whole argument runs on a single global derivation, in the following steps.
  * *One calculation.* When $`m\ge1` is invertible in $`k`, the operator $`h_m=-J/m` contracts the quotient, because $`D_mh_m+h_mD_m=-\tfrac1m\bigl(\bar dJ+J\bar d-m(WJ+JW)\bigr)=1`. See {bp "thm:dr-pole-contraction"}[].
  * *Finite reduction.* Every localized form has a finite pole order, and a contractible quotient lowers the pole order of a cocycle, or of a primitive, by one step. Both directions are finite inductions on a natural number, so no spectral sequence and no limit is needed. See {bp "thm:dr-comparison"}[].
 
-The derivation $`v` is used only to prove bijectivity, so it leaves no trace: the comparison map and its inverse are canonical, and so are the residue and Gysin maps built from them.
+The derivation $`v` is used only to prove bijectivity: the comparison map and its inverse are canonical.
+This gives the canonical comparison needed for the planned cohomological residue and Gysin maps.
 
 # Why characteristic zero is needed
 
@@ -294,16 +296,16 @@ This fixes the convention needed later for the boundary projection formula of th
 tag := "de-rham-pole"
 %%%
 
-This is the heart of the plan, outlined in {ref "de-rham-strategy"}[the strategy].
+This is the pole-order argument outlined in {ref "de-rham-strategy"}[the strategy].
 The assumptions on the smooth pair continue to hold, and from the contraction step onwards every positive integer is assumed invertible in $`k`.
 
-:::node "lem:dr-cartan"
+:::node "lem:dr-cartan" (decl := OrlikSolomon.DeRham.formContraction) (decl := OrlikSolomon.DeRham.formContraction_diff) (decl := OrlikSolomon.DeRham.formContraction_mul_of_mem_exteriorPower) (decl := OrlikSolomon.DeRham.formContraction_mem_exteriorPower) (decl := OrlikSolomon.DeRham.formContraction_eq_zero) (decl := OrlikSolomon.DeRham.cartanFormula) (decl := OrlikSolomon.DeRham.lieDerivative_mul) (decl := OrlikSolomon.DeRham.lieDerivative_mem_exteriorPower) (decl := OrlikSolomon.DeRham.lieDerivative_algebraMap) (decl := OrlikSolomon.DeRham.lieDerivative_diff) (decl := OrlikSolomon.DeRham.localizedDerivation) (decl := OrlikSolomon.DeRham.map_formContraction_localizedDerivation) (decl := OrlikSolomon.DeRham.map_lieDerivative_localizedDerivation) (decl := OrlikSolomon.DeRham.formContraction_smul)
 For a $`k`-derivation $`v:A\to A`, contraction $`\iota_v` is defined by the functional $`da\mapsto v(a)` on $`\Omega_A^1`, and it is an $`A`-linear signed derivation of degree $`-1`.
 The operator $`\mathcal{L}_v=d\iota_v+\iota_vd` is a $`k`-linear derivation of degree zero, with $`\mathcal{L}_v(a)=v(a)` and $`\mathcal{L}_v(da)=d(v(a))`.
 These constructions extend to localizations, and $`\iota_{av}=a\iota_v`.
 :::
 
-:::node "lem:dr-euler"
+:::node "lem:dr-euler" (decl := OrlikSolomon.DeRham.logEulerDerivation) (decl := OrlikSolomon.DeRham.logEulerContraction) (decl := OrlikSolomon.DeRham.logEulerContraction_logMk) (decl := OrlikSolomon.DeRham.logEulerContraction_mem_logIdeal) (decl := OrlikSolomon.DeRham.logQuotientEulerContraction) (decl := OrlikSolomon.DeRham.logQuotientThetaWedge) (decl := OrlikSolomon.DeRham.logQuotientPowerEulerContraction) (decl := OrlikSolomon.DeRham.logQuotientEulerContraction_eq_zero) (decl := OrlikSolomon.DeRham.formContraction_logEulerDerivation_mem_regularPower) (decl := OrlikSolomon.DeRham.logQuotientEulerContraction_anticommute) (decl := OrlikSolomon.DeRham.logQuotientThetaWedge_euler_identity)
 Choose $`v` and $`h` as in {bp "lem:dr-normal-derivation"}[], and set $`E=fv`.
 On $`L^\bullet`, the operator $`\iota_E` takes values in regular forms, preserves $`fL^\bullet`, and descends to a map $`J` of degree $`-1` on $`V^\bullet=L^\bullet/fL^\bullet`.
 If $`\bar d` is the differential of $`V^\bullet` and $`W` is left wedge multiplication by the class of $`\theta`, then
@@ -311,28 +313,29 @@ $$`\bar dJ+J\bar d=0,\qquad WJ+JW=1.`
 The proof uses only the congruence of $`v(f)` to $`1` modulo $`f`, and does not assert that $`v(f)=1` in $`A`.
 :::
 
-:::node "def:dr-pole-filtration"
+:::node "def:dr-pole-filtration" (decl := OrlikSolomon.DeRham.poleForms) (decl := OrlikSolomon.DeRham.poleFiltration) (decl := OrlikSolomon.DeRham.poleForms_zero) (decl := OrlikSolomon.DeRham.poleFiltration_zero) (decl := OrlikSolomon.DeRham.poleFiltration_monotone) (decl := OrlikSolomon.DeRham.iSup_poleFiltration) (decl := OrlikSolomon.DeRham.mem_poleFiltration_iff) (decl := OrlikSolomon.DeRham.d_invSelf_pow_smul_eq_theta) (decl := OrlikSolomon.DeRham.d_mem_poleFiltration) (decl := OrlikSolomon.DeRham.poleComplex) (decl := OrlikSolomon.DeRham.poleInclusion) (decl := OrlikSolomon.DeRham.poleToLocalization)
 For $`m\in\mathbb{N}`, put $`F_m^n=f^{-m}L^n\subseteq\Omega_{A_f}^n`.
 Then $`F_0=L`, the filtration is increasing and exhaustive, and every $`F_m` is a subcomplex.
 The logarithmic forms are essential here, because the modules $`f^{-m}\Omega_A^\bullet` need not be subcomplexes.
 :::
 
-:::node "lem:dr-pole-quotient"
+:::node "lem:dr-pole-quotient" (decl := OrlikSolomon.DeRham.poleQuotientEquiv) (decl := OrlikSolomon.DeRham.poleQuotientEquiv_mk) (decl := OrlikSolomon.DeRham.poleQuotientPowerEquiv) (decl := OrlikSolomon.DeRham.poleQuotientDifferential) (decl := OrlikSolomon.DeRham.poleQuotientD_poleQuotientEquiv)
 For $`m\ge1`, the map $`\bar\xi\mapsto\overline{f^{-m}\xi}` is a graded $`k`-linear isomorphism from $`V^\bullet` to $`F_m^\bullet/F_{m-1}^\bullet`.
 Under it, the differential on the right becomes $`D_m=\bar d-mW`.
+Lean indexes the positive pole order as $`m+1`; the quotient identification is in fact linear over $`A`, while its differential is linear over $`k`.
 :::
 
-:::node "thm:dr-pole-contraction"
+:::node "thm:dr-pole-contraction" (decl := OrlikSolomon.DeRham.positivePoleHomotopy) (decl := OrlikSolomon.DeRham.positivePoleQuotientContractible) (decl := OrlikSolomon.DeRham.poleQuotientHomotopy) (decl := OrlikSolomon.DeRham.poleQuotientD_homotopy_add) (decl := OrlikSolomon.DeRham.positivePoleHomotopy_mem_logQuotientPower) (decl := OrlikSolomon.DeRham.positivePoleHomotopy_eq_zero) (decl := OrlikSolomon.DeRham.poleQuotientHomotopy_mem_poleQuotientPower) (decl := OrlikSolomon.DeRham.poleQuotientHomotopy_eq_zero)
 If $`m\ge1` is invertible in $`k`, then $`h_m=-\tfrac1mJ` is a contracting homotopy for $`(V^\bullet,D_m)`, and hence for $`F_m/F_{m-1}`, that is, $`D_mh_m+h_mD_m=1`.
 This is the second use of rational scalars, and it is an equation of operators in each degree, not only a statement that cohomology vanishes.
 :::
 
-:::node "lem:dr-filtration-reduction"
+:::node "lem:dr-filtration-reduction" (decl := OrlikSolomon.exists_cocycle_reduction) (decl := OrlikSolomon.exists_primitive_reduction)
 Suppose $`F_{m-1}\subseteq F_m` is an inclusion of complexes with contractible quotient.
 Every cocycle in $`F_m^n` is cohomologous in $`F_m` to one in $`F_{m-1}^n`, and a cocycle in $`F_{m-1}^n` that is a boundary in $`F_m` is already a boundary in $`F_{m-1}`.
 :::
 
-:::node "thm:dr-comparison"
+:::node "thm:dr-comparison" (decl := OrlikSolomon.DeRham.exists_closed_logForm_sub_d_eq) (decl := OrlikSolomon.DeRham.exists_logPrimitive_of_exists) (decl := OrlikSolomon.DeRham.logToLocalizationQuasiIso) (decl := OrlikSolomon.DeRham.logToLocalizationEquiv) (decl := OrlikSolomon.DeRham.logToLocalizationEquiv_apply) (decl := OrlikSolomon.DeRham.logToLocalizationDegreeEquiv) (decl := OrlikSolomon.DeRham.coe_logToLocalizationDegreeEquiv) (decl := OrlikSolomon.DeRham.coe_logToLocalizationDegreeEquiv_symm) (decl := OrlikSolomon.DeRham.logToLocalizationGradingEquiv) (decl := OrlikSolomon.DeRham.logToLocalizationEquiv_isHomogeneous) (decl := OrlikSolomon.DeRham.logToLocalizationEquiv_symm_isHomogeneous) (decl := OrlikSolomon.DeRham.logToLocalizationEquiv_eq)
 If $`k` contains $`\mathbb{Q}` and $`(A,f)` is a smooth principal pair, the inclusion $`L^\bullet\hookrightarrow\Omega_{A_f}^\bullet` induces an isomorphism in every cohomological degree, and an algebra equivalence on total cohomology.
 
 Applying {bp "lem:dr-filtration-reduction"}[] successively gives surjectivity and injectivity by finite inductions on the pole bound.
@@ -447,13 +450,13 @@ For $`A=k[x]` and $`f=x`, we have $`H^0_{\mathrm{dR}}(A_f)=k`, $`H^1_{\mathrm{dR
 Moreover $`r([dx/x])=1`, and the twisted normalized class is $`[dx/x]\,t`.
 :::
 
-:::node "prop:dr-unit-example" (decl := IsLocalization.atUnit) (decl := OrlikSolomon.Sanity.unit_quotient_subsingleton) (decl := OrlikSolomon.Sanity.zeroDerivation_unit_normal) (decl := OrlikSolomon.Sanity.unit_exists_normalDerivation_modulo) (decl := OrlikSolomon.DeRham.Examples.isSmoothPrincipalPair_of_isUnit) (decl := OrlikSolomon.DeRham.Examples.ofRegular_bijective) (remaining := "The cohomological residue and Gysin maps, and the exactness fields.")
+:::node "prop:dr-unit-example" (decl := IsLocalization.atUnit) (decl := OrlikSolomon.Sanity.unit_quotient_subsingleton) (decl := OrlikSolomon.Sanity.zeroDerivation_unit_normal) (decl := OrlikSolomon.Sanity.unit_exists_normalDerivation_modulo) (decl := OrlikSolomon.DeRham.Examples.isSmoothPrincipalPair_of_isUnit) (decl := OrlikSolomon.DeRham.Examples.ofRegular_bijective) (decl := OrlikSolomon.DeRham.Examples.unitPolynomial_logComparison) (remaining := "The cohomological residue and Gysin maps, and the exactness fields.")
 If $`f` is a unit in a smooth $`A`, then $`S=0`, $`A_f\simeq A` and $`L^\bullet=\Omega_A^\bullet`.
 Residue and Gysin are both zero, and all the exactness fields reduce to the identity isomorphism on $`C(A)`.
 In the contraction one may take $`v=0` and $`h=-f^{-1}`, which confirms that no step assumed a nonempty divisor.
 :::
 
-:::node "prop:dr-product-example" (decl := OrlikSolomon.Sanity.productPolynomialEquation_regular) (decl := OrlikSolomon.Sanity.productPolynomialQuotientEquiv) (decl := OrlikSolomon.Sanity.productPolynomialNormal) (decl := OrlikSolomon.Sanity.productPolynomialNormal_equation) (decl := OrlikSolomon.Sanity.productPolynomial_conormalFunctional_df) (decl := OrlikSolomon.Sanity.productPolynomial_splitConormalSequence_df) (decl := OrlikSolomon.Sanity.productPolynomial_exists_normalDerivation_modulo) (decl := OrlikSolomon.Sanity.productPolynomial_no_global_normal) (decl := OrlikSolomon.DeRham.Examples.productPolynomial_isSmoothPrincipalPair) (decl := OrlikSolomon.DeRham.Examples.productPolynomial_logResidue_theta) (remaining := "The identification of the localization and the de Rham cohomology of the product.")
+:::node "prop:dr-product-example" (decl := OrlikSolomon.Sanity.productPolynomialEquation_regular) (decl := OrlikSolomon.Sanity.productPolynomialQuotientEquiv) (decl := OrlikSolomon.Sanity.productPolynomialNormal) (decl := OrlikSolomon.Sanity.productPolynomialNormal_equation) (decl := OrlikSolomon.Sanity.productPolynomial_conormalFunctional_df) (decl := OrlikSolomon.Sanity.productPolynomial_splitConormalSequence_df) (decl := OrlikSolomon.Sanity.productPolynomial_exists_normalDerivation_modulo) (decl := OrlikSolomon.Sanity.productPolynomial_no_global_normal) (decl := OrlikSolomon.DeRham.Examples.productPolynomial_isSmoothPrincipalPair) (decl := OrlikSolomon.DeRham.Examples.productPolynomial_logResidue_theta) (decl := OrlikSolomon.DeRham.Examples.productPolynomial_logComparison_and_no_global_normal) (decl := OrlikSolomon.DeRham.Examples.productPolynomial_euler_normal_modulo) (remaining := "The identification of the localization and the de Rham cohomology of the product.")
 For $`A=k\times k[z]` and $`f=(1,z)`, we have $`S\simeq k`, $`A_f\simeq k\times k[z,z^{-1}]`, $`H^0_{\mathrm{dR}}(A_f)=k\times k` and $`H^1_{\mathrm{dR}}(A_f)=k[(0,dz/z)]`.
 All higher groups vanish, and the residue takes $`(0,dz/z)` to $`1` on $`S`.
 
@@ -461,7 +464,7 @@ This divisor lies on one connected component, and it is why the derivation is on
 Taking $`v=(0,\partial_z)` gives $`v(f)=(0,1)=1+f(-1,0)`, while $`df=(0,dz)` is not unimodular on all of $`A`.
 :::
 
-:::node "prop:dr-zero-example" (decl := OrlikSolomon.smooth_punit) (decl := OrlikSolomon.SmoothAlg.zero) (decl := OrlikSolomon.Sanity.zero_exists_normalDerivation_modulo) (decl := OrlikSolomon.DeRham.Examples.isSmoothPrincipalPair_of_subsingleton) (remaining := "Vanishing of forms and de Rham cohomology, the twisted theory and its pair axioms.")
+:::node "prop:dr-zero-example" (decl := OrlikSolomon.smooth_punit) (decl := OrlikSolomon.SmoothAlg.zero) (decl := OrlikSolomon.Sanity.zero_exists_normalDerivation_modulo) (decl := OrlikSolomon.DeRham.Examples.isSmoothPrincipalPair_of_subsingleton) (decl := OrlikSolomon.DeRham.Examples.zero_logComparison) (remaining := "Vanishing of forms and de Rham cohomology, the twisted theory and its pair axioms.")
 For $`A=0`, every form and cohomology module is zero, $`C(A)` is the zero $`B`-algebra, and the fields for divisor pairs hold for its unique equation.
 The zero algebra is formally smooth and finitely presented, so it really is an object of the category, and no nontriviality can be imposed on general objects.
 :::

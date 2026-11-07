@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Init
+public import OrlikSolomon.Algebra.ComplexReduction
 public import OrlikSolomon.Algebra.Exact
 public import OrlikSolomon.Algebra.ExteriorBoundary
 public import OrlikSolomon.Algebra.ExteriorWords
@@ -44,6 +45,16 @@ public import OrlikSolomon.DeRham.Log
 public import OrlikSolomon.DeRham.Log.Basic
 public import OrlikSolomon.DeRham.Log.Cohomology
 public import OrlikSolomon.DeRham.Log.Residue
+public import OrlikSolomon.DeRham.Pole
+public import OrlikSolomon.DeRham.Pole.Cartan
+public import OrlikSolomon.DeRham.Pole.Comparison
+public import OrlikSolomon.DeRham.Pole.Complex
+public import OrlikSolomon.DeRham.Pole.Contraction
+public import OrlikSolomon.DeRham.Pole.Degree
+public import OrlikSolomon.DeRham.Pole.Euler
+public import OrlikSolomon.DeRham.Pole.Filtration
+public import OrlikSolomon.DeRham.Pole.Quotient
+public import OrlikSolomon.DeRham.Pole.Reduction
 public import OrlikSolomon.DeRham.PrincipalQuotient
 public import OrlikSolomon.DeRham.SmoothPair
 public import OrlikSolomon.DeRham.SmoothPair.Koszul
@@ -57,6 +68,7 @@ public import OrlikSolomon.Examples.DeRhamComplex
 public import OrlikSolomon.Examples.DeRhamHomotopy
 public import OrlikSolomon.Examples.DeRhamLocalization
 public import OrlikSolomon.Examples.DeRhamLog
+public import OrlikSolomon.Examples.DeRhamPole
 public import OrlikSolomon.Examples.DeRhamSmoothPair
 public import OrlikSolomon.Examples.Degenerate
 public import OrlikSolomon.Examples.Exterior
