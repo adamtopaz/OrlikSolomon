@@ -10,6 +10,7 @@ public import Mathlib.Algebra.Category.ModuleCat.FilteredColimits
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
+public import Mathlib.CategoryTheory.Limits.Preserves.FunctorCategory
 public import Mathlib.Topology.Sheaves.Abelian
 public import OrlikSolomon.DeRham.Log
 public import OrlikSolomon.DeRham.Pole.Degree
@@ -33,12 +34,15 @@ the degreewise primitive criteria, including degree zero.
   quasi-isomorphism exactly when all of its stalk maps are quasi-isomorphisms.
 * `algebraicLogToLocalization_quasiIso`: the algebraic logarithmic inclusion is a
   quasi-isomorphism for a smooth principal pair when positive integers are units.
+* `presheafComplex_stalk_quasiIso_of_basis` and `sheafComplex_quasiIso_of_basis`:
+  quasi-isomorphisms on the section complexes of a basis induce quasi-isomorphisms on
+  stalks and, for sheaves, on the sheaf complexes.
 -/
 
 @[expose] public section
 noncomputable section
 
-open CategoryTheory CategoryTheory.Limits
+open CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace
 
 universe u v
 
@@ -214,5 +218,104 @@ theorem sheafComplex_quasiIso_iff_stalk (k : Type u) [Ring k] (X : TopCat.{u})
       infer_instance
     change IsIso (F.map (HomologicalComplex.homologyMap f n))
     exact IsIso.of_isIso_comp_left ((K.sc n).mapHomologyIso F).hom _
+
+section BasisComparison
+
+variable (k : Type u) [Ring k] (X : TopCat.{u})
+
+private theorem presheafStalk_preservesHomology (x : X) :
+    (TopCat.Presheaf.stalkFunctor (ModuleCat.{u} k) x).PreservesHomology := by
+  have : PreservesFiniteLimits ((Functor.whiskeringLeft (OpenNhds x)ᵒᵖ (Opens X)ᵒᵖ
+      (ModuleCat.{u} k)).obj (OpenNhds.inclusion x).op) := by infer_instance
+  have : PreservesFiniteColimits ((Functor.whiskeringLeft (OpenNhds x)ᵒᵖ (Opens X)ᵒᵖ
+      (ModuleCat.{u} k)).obj (OpenNhds.inclusion x).op) := by infer_instance
+  have : PreservesFiniteLimits (colim (J := (OpenNhds x)ᵒᵖ) (C := ModuleCat.{u} k)) :=
+    inferInstance
+  have : PreservesFiniteColimits (colim (J := (OpenNhds x)ᵒᵖ) (C := ModuleCat.{u} k)) :=
+    inferInstance
+  have : PreservesFiniteLimits (TopCat.Presheaf.stalkFunctor (ModuleCat.{u} k) x) :=
+    comp_preservesFiniteLimits _ _
+  have : PreservesFiniteColimits (TopCat.Presheaf.stalkFunctor (ModuleCat.{u} k) x) :=
+    comp_preservesFiniteColimits _ _
+  exact Functor.preservesHomology_of_preservesMonos_and_cokernels _
+
+private theorem presheaf_stalkMap_isIso_of_basis {F G : X.Presheaf (ModuleCat.{u} k)}
+    {B : Set (Opens X)} (hB : Opens.IsBasis B) (f : F ⟶ G)
+    (hf : ∀ U ∈ B, IsIso (f.app (op U))) (x : X) :
+    IsIso ((TopCat.Presheaf.stalkFunctor (ModuleCat.{u} k) x).map f) := by
+  rw [ConcreteCategory.isIso_iff_bijective]
+  constructor
+  · apply TopCat.Presheaf.stalkFunctor_map_injective_of_isBasis hB
+    intro U hU
+    have := hf U hU
+    exact (ConcreteCategory.bijective_of_isIso _).1
+  · intro t
+    obtain ⟨U, hxU, hU, s, rfl⟩ := TopCat.Presheaf.exists_mem_germ_eq_of_isBasis hB G x t
+    have := hf U hU
+    obtain ⟨a, ha⟩ := (ConcreteCategory.bijective_of_isIso (f.app (op U))).2 s
+    refine ⟨F.germ U x hxU a, ?_⟩
+    rw [TopCat.Presheaf.stalkFunctor_map_germ_apply, ha]
+
+/-- A map of complexes of module presheaves induces a quasi-isomorphism at every stalk if
+its maps on section complexes are quasi-isomorphisms on a basis. Filtered colimits of modules
+preserve homology; no sheaf condition or assertion about global sections is needed. -/
+theorem presheafComplex_stalk_quasiIso_of_basis
+    {ι : Type*} {c : ComplexShape ι}
+    {K L : HomologicalComplex (X.Presheaf (ModuleCat.{u} k)) c} (f : K ⟶ L)
+    {B : Set (Opens X)} (hB : Opens.IsBasis B)
+    (hf : ∀ U ∈ B, QuasiIso
+      ((((evaluation (Opens X)ᵒᵖ (ModuleCat.{u} k)).obj (op U)).mapHomologicalComplex c).map f))
+    (x : X) :
+    QuasiIso
+      (((TopCat.Presheaf.stalkFunctor (ModuleCat.{u} k) x).mapHomologicalComplex c).map f) := by
+  have := presheafStalk_preservesHomology k X x
+  rw [quasiIso_iff]
+  intro n
+  rw [quasiIsoAt_iff]
+  let S := K.sc n
+  let T := L.sc n
+  let g := (HomologicalComplex.shortComplexFunctor _ _ n).map f
+  have hmap : ∀ U ∈ B, IsIso ((ShortComplex.homologyMap g).app (op U)) := by
+    intro U hU
+    let E := (evaluation (Opens X)ᵒᵖ (ModuleCat.{u} k)).obj (op U)
+    have : E.Additive := by infer_instance
+    have : E.PreservesHomology := by infer_instance
+    have hg : ShortComplex.QuasiIso (E.mapShortComplex.map g) := by
+      exact (quasiIsoAt_iff _ n).1 ((quasiIso_iff _).1 (hf U hU) n)
+    have hnat := ShortComplex.mapHomologyIso_hom_naturality g E
+    have : IsIso ((S.mapHomologyIso E).hom ≫ E.map (ShortComplex.homologyMap g)) := by
+      rw [← hnat]
+      have := (ShortComplex.quasiIso_iff _).1 hg
+      infer_instance
+    change IsIso (E.map (ShortComplex.homologyMap g))
+    exact IsIso.of_isIso_comp_left (S.mapHomologyIso E).hom _
+  let F := TopCat.Presheaf.stalkFunctor (ModuleCat.{u} k) x
+  have : IsIso (F.map (ShortComplex.homologyMap g)) :=
+    presheaf_stalkMap_isIso_of_basis k X hB _ hmap x
+  have hnat := ShortComplex.mapHomologyIso_hom_naturality g F
+  have : IsIso ((S.mapHomologyIso F).hom ≫ F.map (ShortComplex.homologyMap g)) :=
+    inferInstance
+  rw [← hnat] at this
+  have : IsIso (ShortComplex.homologyMap (F.mapShortComplex.map g)) :=
+    IsIso.of_isIso_comp_right _ (T.mapHomologyIso F).hom
+  exact (ShortComplex.quasiIso_iff _).2 this
+
+/-- A map of complexes of module sheaves is a quasi-isomorphism if its maps on section
+complexes are quasi-isomorphisms on a basis. In particular, affine-open section comparisons
+suffice for a scheme; this does not assert that global sections preserve sheaf homology. -/
+theorem sheafComplex_quasiIso_of_basis
+    {ι : Type*} {c : ComplexShape ι}
+    {K L : HomologicalComplex (TopCat.Sheaf (ModuleCat.{u} k) X) c} (f : K ⟶ L)
+    {B : Set (Opens X)} (hB : Opens.IsBasis B)
+    (hf : ∀ U ∈ B, QuasiIso
+      ((((evaluation (Opens X)ᵒᵖ (ModuleCat.{u} k)).obj (op U)).mapHomologicalComplex c).map
+        (((TopCat.Sheaf.forget (ModuleCat.{u} k) X).mapHomologicalComplex c).map f))) :
+    QuasiIso f := by
+  apply (sheafComplex_quasiIso_iff_stalk k X f).2
+  intro x
+  exact presheafComplex_stalk_quasiIso_of_basis k X
+    (((TopCat.Sheaf.forget (ModuleCat.{u} k) X).mapHomologicalComplex c).map f) hB hf x
+
+end BasisComparison
 
 end OrlikSolomon.Geometric.DeRham
