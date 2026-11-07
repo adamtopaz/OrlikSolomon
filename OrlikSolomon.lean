@@ -47,6 +47,7 @@ public import OrlikSolomon.DeRham.Log
 public import OrlikSolomon.DeRham.Log.Basic
 public import OrlikSolomon.DeRham.Log.Cohomology
 public import OrlikSolomon.DeRham.Log.Residue
+public import OrlikSolomon.DeRham.Maps
 public import OrlikSolomon.DeRham.Maps.Gysin
 public import OrlikSolomon.DeRham.Maps.Naturality
 public import OrlikSolomon.DeRham.Pole

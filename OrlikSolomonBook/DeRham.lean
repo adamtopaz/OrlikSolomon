@@ -22,9 +22,9 @@ The exterior calculus and the de Rham dg algebra of an arbitrary algebra, includ
 The polynomial decomposition of forms and the integration homotopy are formalized as well, including the cohomology equivalence whose inverse is induced by evaluation at zero.
 Projectivity in every form degree, injectivity of regular scalar multiplication and of restriction into localization, conormal splitting, global and localized normal derivations, and wedge exactness modulo the divisor are also formalized, as are logarithmic forms and the residue sequence of a smooth divisor.
 Cartan calculus, the pole filtration, contraction of its positive quotients, and finite reduction to logarithmic cohomology are formalized.
-The Gysin map, the long exact sequence for logarithmic cohomology, and naturality of these for morphisms that need not be flat are formalized.
+The residue and Gysin maps before the twist, their long exact sequence and projection formula, and their naturality for morphisms that need not be flat are formalized.
 The Laurent-twisted functor and the fields of the structure of axioms that precede the Gysin and residue maps are formalized too.
-The residue on the cohomology of the localization, the remaining fields and the final instance remain planned.
+The remaining fields and the final instance remain planned.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
@@ -348,13 +348,13 @@ Applying {bp "lem:dr-filtration-reduction"}[] successively gives surjectivity an
 These are the maps that the structure asks for, before the twist by $`t`.
 The sign of the connecting map is fixed here by a formula on representatives, and a connecting map taken from a library has to be reconciled with this formula.
 
-:::node "def:dr-gysin" (decl := OrlikSolomon.DeRham.gysin) (decl := OrlikSolomon.DeRham.gysin_mk_of_logResidue_eq) (decl := OrlikSolomon.DeRham.LogCohomology.residue) (decl := OrlikSolomon.DeRham.LogCohomology.residue_mk) (remaining := "The residue on the cohomology of the localization, which needs the comparison. The map induced by the residue on the cohomology of logarithmic forms, and the Gysin map, are formalized.")
+:::node "def:dr-gysin" (decl := OrlikSolomon.DeRham.gysin) (decl := OrlikSolomon.DeRham.gysin_mk_of_logResidue_eq) (decl := OrlikSolomon.DeRham.residue) (decl := OrlikSolomon.DeRham.residue_toCohomology) (decl := OrlikSolomon.DeRham.LogCohomology.residue) (decl := OrlikSolomon.DeRham.LogCohomology.residue_mk)
 The residue $`r^n:H^n_{\mathrm{dR}}(A_f)\to H^{n-1}_{\mathrm{dR}}(S)` is the map induced by $`\rho`, after the inverse of {bp "thm:dr-comparison"}[the logarithmic comparison].
 The Gysin map $`G^q:H^q_{\mathrm{dR}}(S)\to H^{q+2}_{\mathrm{dR}}(A)` is the connecting map, with the convention that $`G^q([\gamma])=[d\lambda]` for closed $`\gamma` and $`\lambda\in L^{q+1}` with $`\rho\lambda=\gamma`.
 Here $`d\lambda` is regular by exactness.
 :::
 
-:::node "lem:dr-exactness" (decl := OrlikSolomon.DeRham.LogCohomology.residue_mk_logMk) (decl := OrlikSolomon.DeRham.gysin_mk_of_map_eq) (decl := OrlikSolomon.DeRham.exists_map_eq_neg_theta_mul) (decl := OrlikSolomon.DeRham.exists_mem_exteriorPower_map_eq_neg_theta_mul) (decl := OrlikSolomon.DeRham.gysin_mk_of_d_eq) (decl := OrlikSolomon.DeRham.exact_gysin_ofCohomology) (decl := OrlikSolomon.DeRham.LogCohomology.exact_ofCohomology_residue) (decl := OrlikSolomon.DeRham.LogCohomology.exact_residue_gysin) (decl := OrlikSolomon.DeRham.gysin_mem_degree) (decl := OrlikSolomon.DeRham.isHomogeneousOfShift_gysin) (decl := OrlikSolomon.DeRham.LogCohomology.residue_mem_degree) (decl := OrlikSolomon.DeRham.LogCohomology.residue_eq_zero_of_mem_degree_zero) (decl := OrlikSolomon.DeRham.LogCohomology.isHomogeneousOfShift_residue) (remaining := "Exactness and the residue formula for the cohomology of the localization, which need the comparison. The sequence with the cohomology of logarithmic forms in its place, and the Gysin formula, are formalized.")
+:::node "lem:dr-exactness" (decl := OrlikSolomon.DeRham.exact_gysin_map) (decl := OrlikSolomon.DeRham.exact_map_residue) (decl := OrlikSolomon.DeRham.exact_residue_gysin) (decl := OrlikSolomon.DeRham.isHomogeneousOfShift_gysin) (decl := OrlikSolomon.DeRham.isHomogeneousOfShift_residue) (decl := OrlikSolomon.DeRham.map_eq_zero_iff_of_mem_grading) (decl := OrlikSolomon.DeRham.residue_eq_zero_iff_of_mem_grading) (decl := OrlikSolomon.DeRham.gysin_eq_zero_iff_of_mem_grading) (decl := OrlikSolomon.DeRham.residue_mk_add_theta_mul) (decl := OrlikSolomon.DeRham.gysin_mk_of_map_eq) (decl := OrlikSolomon.DeRham.exists_mem_exteriorPower_map_eq_neg_theta_mul)
 The sequence
 $$`\cdots\to H^{n-2}_{\mathrm{dR}}(S)\xrightarrow{G}H^n_{\mathrm{dR}}(A)\xrightarrow{j_*}H^n_{\mathrm{dR}}(A_f)\xrightarrow{r}H^{n-1}_{\mathrm{dR}}(S)\xrightarrow{G}H^{n+1}_{\mathrm{dR}}(A)\to\cdots`
 is exact.
@@ -363,7 +363,7 @@ For a closed $`\gamma\in\Omega_S^q` and any regular lift $`\eta\in\Omega_A^q`, w
 These formulas introduce no further factor of $`(-1)^q`.
 :::
 
-:::node "thm:dr-projection" (decl := OrlikSolomon.DeRham.LogCohomology.residue_mul_ofCohomology) (remaining := "The formula for the cohomology of the localization, which needs the comparison. The formula for the cohomology of logarithmic forms is formalized.")
+:::node "thm:dr-projection" (decl := OrlikSolomon.DeRham.residue_mul_map) (decl := OrlikSolomon.DeRham.LogCohomology.residue_mul_ofCohomology)
 For $`a\in H^n_{\mathrm{dR}}(A_f)` and $`b\in H^q_{\mathrm{dR}}(A)`, we have $`r(a\,j_*b)=r(a)\,i_*b`.
 In particular this has the exact sign that the structure requires when $`n=1`.
 :::
@@ -380,7 +380,7 @@ Then $`\chi_*` takes logarithmic forms to logarithmic forms, commutes with their
 The point is that $`\chi_*\theta=\theta'+du/u`, whose second term is regular on $`A'`.
 :::
 
-:::node "thm:dr-naturality" (decl := OrlikSolomon.DeRham.gysin_map) (decl := OrlikSolomon.DeRham.LogCohomology.map) (decl := OrlikSolomon.DeRham.LogCohomology.toCohomology_map) (decl := OrlikSolomon.DeRham.LogCohomology.residue_map) (decl := OrlikSolomon.DeRham.IsPairHom.of_associated_id) (decl := OrlikSolomon.DeRham.IsSmoothPrincipalPair.of_associated) (decl := OrlikSolomon.DeRham.logForms_eq_of_associated) (decl := OrlikSolomon.DeRham.gysin_eq_of_associated) (decl := OrlikSolomon.DeRham.LogCohomology.residue_map_of_associated) (decl := OrlikSolomon.DeRham.gysin_eq_of_localization) (remaining := "Naturality of the residue on the cohomology of the localization, which needs the comparison. Naturality of the Gysin map, and of the residue on the cohomology of logarithmic forms, are formalized.")
+:::node "thm:dr-naturality" (decl := OrlikSolomon.DeRham.residue_map) (decl := OrlikSolomon.DeRham.gysin_map) (decl := OrlikSolomon.DeRham.residue_eq_of_associated) (decl := OrlikSolomon.DeRham.gysin_eq_of_associated) (decl := OrlikSolomon.DeRham.logForms_eq_of_associated)
 Under the same hypotheses, $`r'\chi_*=\psi_*r` and $`G'\psi_*=\phi_*G`.
 The constructions are unchanged on replacing $`f` by an associated equation in the same ambient algebra, and the normal derivations chosen to prove the comparison play no role in these maps.
 :::
