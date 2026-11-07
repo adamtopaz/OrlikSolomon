@@ -203,6 +203,12 @@ theorem pull_twistedClass (f : X ⟶ Y) (w : ℤ) (c : Cohomology Y) :
     (ordinaryTheory k).pull f (twistedClass w c) = twistedClass w (Cohomology.pull f c) :=
   rfl
 
+/-- Removing the powers of `t` commutes with pullback. -/
+theorem evalOne_pull (f : X ⟶ Y) (y : (ordinaryTheory k).obj Y) :
+    TwistedCohomology.evalOne k (globalSections X.obj) ((ordinaryTheory k).pull f y) =
+      Cohomology.pull f (TwistedCohomology.evalOne k (globalSections Y.obj) y) :=
+  TwistedCohomology.evalOne_map _ y
+
 /-- Weights add and de Rham classes multiply. -/
 @[simp]
 theorem twistedClass_mul_twistedClass (w v : ℤ) (c c' : Cohomology X) :

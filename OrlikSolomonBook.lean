@@ -431,10 +431,11 @@ The third blueprint restates both theorems for cohomology theories defined on sm
 It reuses every proved algebraic result through the equivalence between smooth algebras and smooth affine schemes, and transports the de Rham instance to smooth affine schemes.
 Its formalized foundations include: admissible domains of smooth schemes, the equivalence between smooth algebras and smooth affine schemes, zero schemes and basic opens, products with the affine line and the multiplicative group, units as maps to the multiplicative group, principal smooth divisor pairs with their affine duality, affine space with arrangement complements, deletion pairs and relation targets as open subschemes, and projective space with projective arrangement complements as its open subschemes.
 The geometric cohomology structure and both affine transports are also formalized, with canonical graded comparisons commuting with Gysin and residue.
-So are the logarithmic classes of global units and the decomposition of the cohomology of a product with the multiplicative group, on every object of a domain, affine or not.
+The supports-and-purity bridge constructs the geometric theory from degreewise cohomology with products, localization and purity on any admissible domain, including non-affine objects, and commutes with restriction and affine transport.
+The logarithmic classes of global units and the decomposition of the cohomology of a product with the multiplicative group are formalized on every object of a domain, affine or not.
 The sheaves of relative forms now have their differential, wedge product and scheme pullbacks, with the canonical comparison to algebraic forms on affine schemes.
 So are both structure theorems on the actual arrangement opens, for a theory on any admissible domain, obtained from the theorems of this page by transport and not by a second proof.
-Applying the affine transport to the existing de Rham theory gives a nonzero theory on smooth affine schemes; its interpretation through sheaf forms remains planned.
+Applying the affine transport to the existing de Rham theory gives a nonzero theory on smooth affine schemes, whose cohomology is the cohomology of global sheaf forms, so the Orlik–Solomon theorems hold unconditionally for the de Rham cohomology of the actual open subschemes.
 {ref "geometric"}[Its chapter] presents it, and its nodes are counted separately above.
 Nothing on this page depends on it: the dependence runs the other way.
 

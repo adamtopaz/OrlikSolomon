@@ -58,7 +58,7 @@ variable {k : Type u} [CommRing k]
 
 section GlobalSections
 
-variable (X : Over (Spec (CommRingCat.of k))) {Y Z : Over (Spec (CommRingCat.of k))}
+variable (X : Over (Spec (CommRingCat.of k))) {Y : Over (Spec (CommRingCat.of k))}
 
 /-- The identity of `Γ(X, 𝒪_X)`, as an isomorphism of `k`-algebras from the global sections
 `globalSections X` of the scheme layer to the functions `sectionAlgebra k X ⊤` on the top open

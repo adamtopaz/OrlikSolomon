@@ -10,10 +10,13 @@ public import OrlikSolomon.Algebra.SymmetricGrading
 public import OrlikSolomon.Cohomology.Axioms
 public import OrlikSolomon.Cohomology.Bridge
 public import OrlikSolomon.Cohomology.BridgeData.Basic
+public import OrlikSolomon.Cohomology.BridgeData.Category
+public import OrlikSolomon.Cohomology.BridgeData.CategorySupports
 public import OrlikSolomon.Cohomology.BridgeData.Supports
 public import OrlikSolomon.Cohomology.Deletion
 public import OrlikSolomon.Cohomology.DeletionPair
 public import OrlikSolomon.Cohomology.Geometric.Axioms
+public import OrlikSolomon.Cohomology.Geometric.Bridge
 public import OrlikSolomon.Cohomology.Geometric.Logarithms
 public import OrlikSolomon.Cohomology.Geometric.Transport
 public import OrlikSolomon.Cohomology.Logarithms
@@ -68,6 +71,7 @@ public import OrlikSolomon.DeRham.Pole.Quotient
 public import OrlikSolomon.DeRham.Pole.Reduction
 public import OrlikSolomon.DeRham.PrincipalQuotient
 public import OrlikSolomon.DeRham.Schemes.Affine
+public import OrlikSolomon.DeRham.Schemes.Corollaries
 public import OrlikSolomon.DeRham.Schemes.Forms
 public import OrlikSolomon.DeRham.Schemes.Forms.Affine
 public import OrlikSolomon.DeRham.Schemes.Forms.Associated
