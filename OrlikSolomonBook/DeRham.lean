@@ -77,7 +77,7 @@ The whole argument runs on a single global derivation, in the following steps.
  * *Finite reduction.* Every localized form has a finite pole order, and a contractible quotient lowers the pole order of a cocycle, or of a primitive, by one step. Both directions are finite inductions on a natural number, so no spectral sequence and no limit is needed. See {bp "thm:dr-comparison"}[].
 
 The derivation $`v` is used only to prove bijectivity: the comparison map and its inverse are canonical.
-This gives the canonical comparison needed for the planned cohomological residue and Gysin maps.
+This gives the canonical comparison needed for the planned residue on localization cohomology and the remaining localization fields.
 
 # Why characteristic zero is needed
 
