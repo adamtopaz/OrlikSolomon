@@ -28,6 +28,9 @@ uses the common underlying additive carriers, so no additional scalar structure 
 * `specFormsSheafUnit_top_isIso`: the corresponding comparison on the whole spectrum.
 * `specFormsSheafAssociatedIso`: identification with Mathlib's associated module sheaf.
 * `formsSheafUnit_top_isIso`, `affineFormsComparison`: evaluation on every affine scheme.
+* `formsSheafRestrictionIso`: restriction of forms to an open subscheme.
+* `formsSheafUnit_isIso_of_isAffineOpen`, `affineOpenFormsComparison`: evaluation on every affine
+  open of an arbitrary scheme.
 * `affineFormsComparison_d`, `affineFormsComparison_wedge`, `affineFormsComparison_pull`:
   compatibility with the differential, multiplication and arbitrary affine scheme maps.
 
@@ -475,6 +478,200 @@ instance formsSheafUnit_top_isIso (X : Over (Spec (CommRingCat.of k))) [IsAffine
     ((formsSheafUnit k X n).app (op (e.hom.left ⁻¹ᵁ ⊤)))
   change IsIso ((formsSheafUnit k X n).app (op ⊤)) at hx
   exact hx
+
+section Restriction
+
+variable (X : Over (Spec (CommRingCat.of k))) (U : X.left.Opens)
+
+-- The two section algebras have the same ring carrier. Their displayed base actions agree by
+-- functoriality of restriction; the local transparency setting identifies those presentations.
+set_option backward.isDefEq.respectTransparency false in
+/-- The functions on an open of an open subscheme are the functions on its image in the ambient
+scheme, with the same base-ring action. -/
+def sectionAlgebraRestrictEquiv (V : U.toScheme.Opens) :
+    sectionAlgebra k X (U.ι ''ᵁ V) ≃ₐ[k] sectionAlgebra k (Over.mk (U.ι ≫ X.hom)) V where
+  toFun x := x
+  invFun x := x
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_mul' _ _ := rfl
+  map_add' _ _ := rfl
+  commutes' r := by
+    change ((Scheme.ΓSpecIso (CommRingCat.of k)).inv ≫ X.hom.appTop ≫
+      X.left.presheaf.map (U.ι ''ᵁ V).leTop.op) r =
+        ((Scheme.ΓSpecIso (CommRingCat.of k)).inv ≫ (U.ι ≫ X.hom).appTop ≫
+          U.toScheme.presheaf.map V.leTop.op) r
+    rw [Scheme.Hom.comp_appTop, Scheme.Opens.ι_appTop, Scheme.Opens.toScheme_presheaf_map]
+    congr 2
+    simp only [Category.assoc]
+    rw [← X.left.presheaf.map_comp]
+    rfl
+
+/-- The comparison of section algebras keeps the underlying function. -/
+lemma sectionAlgebraRestrictEquiv_apply (V : U.toScheme.Opens)
+    (a : sectionAlgebra k X (U.ι ''ᵁ V)) : sectionAlgebraRestrictEquiv X U V a = a := rfl
+
+private def formsPresheafRestrictionIso (n : ℕ) :
+    U.ι.opensFunctor.op ⋙ formsPresheaf k X n ≅
+      formsPresheaf k (Over.mk (U.ι ≫ X.hom)) n := by
+  refine NatIso.ofComponents (fun V ↦ LinearEquiv.toModuleIso
+    { __ := Forms.mapPower (sectionAlgebraRestrictEquiv X U V.unop).toAlgHom n
+      invFun := Forms.mapPower (sectionAlgebraRestrictEquiv X U V.unop).symm.toAlgHom n
+      left_inv a := Subtype.ext
+        ((Forms.mapEquiv (sectionAlgebraRestrictEquiv X U V.unop)).left_inv a.val)
+      right_inv a := Subtype.ext
+        ((Forms.mapEquiv (sectionAlgebraRestrictEquiv X U V.unop)).right_inv a.val) }) ?_
+  intro V W i
+  apply ModuleCat.hom_ext
+  change Forms.mapPower (sectionAlgebraRestrictEquiv X U W.unop).toAlgHom n ∘ₗ
+      Forms.mapPower (sectionRestriction k X (U.ι.opensFunctor.map i.unop)) n =
+    Forms.mapPower (sectionRestriction k (Over.mk (U.ι ≫ X.hom)) i.unop) n ∘ₗ
+      Forms.mapPower (sectionAlgebraRestrictEquiv X U V.unop).toAlgHom n
+  rw [← Forms.mapPower_comp, ← Forms.mapPower_comp]
+  congr 1
+
+private def formsRestrictedSheaf (n : ℕ) : TopCat.Sheaf (ModuleCat k) U.toScheme :=
+  ⟨U.ι.opensFunctor.op ⋙ (formsSheaf k X n).obj,
+    TopCat.Presheaf.isSheaf_of_isOpenEmbedding U.ι.isOpenEmbedding (formsSheaf k X n).property⟩
+
+-- Restricting the sheafification unit preserves local bijectivity. The image-open functor is
+-- cocontinuous because its right adjoint, inverse image of opens, preserves covers.
+private theorem formsRestrictedUnit_W (n : ℕ) :
+    (_root_.Opens.grothendieckTopology U.toScheme).W
+      (Functor.whiskerLeft U.ι.opensFunctor.op (formsSheafUnit k X n)) := by
+  have : U.ι.opensFunctor.IsCocontinuous
+      (_root_.Opens.grothendieckTopology U.toScheme) (_root_.Opens.grothendieckTopology X.left) :=
+    (U.ι.isOpenEmbedding.isOpenMap.adjunction.isCocontinuous_iff_coverPreserving _ _).2
+      (coverPreserving_opens_map _)
+  have : Presheaf.IsLocallyInjective (_root_.Opens.grothendieckTopology X.left)
+      (formsSheafUnit k X n) := by
+    change Presheaf.IsLocallyInjective _ (toSheafify _ (formsPresheaf k X n))
+    infer_instance
+  have : Presheaf.IsLocallySurjective (_root_.Opens.grothendieckTopology X.left)
+      (formsSheafUnit k X n) := by
+    change Presheaf.IsLocallySurjective _ (toSheafify _ (formsPresheaf k X n))
+    infer_instance
+  have := Presheaf.isLocallyInjective_whisker (_root_.Opens.grothendieckTopology U.toScheme)
+    (_root_.Opens.grothendieckTopology X.left) U.ι.opensFunctor (formsSheafUnit k X n)
+  have := Presheaf.isLocallySurjective_whisker (_root_.Opens.grothendieckTopology U.toScheme)
+    (_root_.Opens.grothendieckTopology X.left) U.ι.opensFunctor (formsSheafUnit k X n)
+  exact (_root_.Opens.grothendieckTopology U.toScheme).W_of_isLocallyBijective _
+
+private def formsSheafRestrictionMap (n : ℕ) :
+    formsRestrictedSheaf X U n ⟶ formsSheaf k (Over.mk (U.ι ≫ X.hom)) n :=
+  ⟨((formsRestrictedUnit_W X U n) _ (formsSheaf k (Over.mk (U.ι ≫ X.hom)) n).property).2
+    ((formsPresheafRestrictionIso X U n).hom ≫
+      formsSheafUnit k (Over.mk (U.ι ≫ X.hom)) n) |>.choose⟩
+
+private theorem formsSheafRestrictionMap_unit (n : ℕ) :
+    Functor.whiskerLeft U.ι.opensFunctor.op (formsSheafUnit k X n) ≫
+      (formsSheafRestrictionMap X U n).hom =
+        (formsPresheafRestrictionIso X U n).hom ≫
+          formsSheafUnit k (Over.mk (U.ι ≫ X.hom)) n :=
+  (((formsRestrictedUnit_W X U n) _ (formsSheaf k (Over.mk (U.ι ≫ X.hom)) n).property).2
+    ((formsPresheafRestrictionIso X U n).hom ≫
+      formsSheafUnit k (Over.mk (U.ι ≫ X.hom)) n)).choose_spec
+
+private theorem formsSheafRestrictionMap_isIso (n : ℕ) :
+    IsIso (formsSheafRestrictionMap X U n) := by
+  let J := _root_.Opens.grothendieckTopology U.toScheme
+  apply (J.W_sheafToPresheaf_map_iff_isIso _).1
+  apply J.W.of_precomp (W' := J.W)
+    (Functor.whiskerLeft U.ι.opensFunctor.op (formsSheafUnit k X n))
+    (formsSheafRestrictionMap X U n).hom
+  · exact formsRestrictedUnit_W X U n
+  · rw [formsSheafRestrictionMap_unit]
+    exact J.W.comp_mem _ _ (ObjectProperty.isLocal_of_isIso _ _)
+      (J.W_toSheafify (formsPresheaf k (Over.mk (U.ι ≫ X.hom)) n))
+
+/-- Relative forms restricted to an open subscheme are its relative forms. The comparison is
+induced by the canonical identifications of regular functions on the corresponding opens.
+
+Blueprint: `def:geo-forms-sheaf`, `thm:geo-forms-comparison`. -/
+@[no_expose] def formsSheafRestrictionIso (n : ℕ) :
+    (U.sheafRestrict (C := ModuleCat k)).obj (formsSheaf k X n) ≅
+      formsSheaf k (Over.mk (U.ι ≫ X.hom)) n :=
+  @asIso _ _ _ _ (formsSheafRestrictionMap X U n) (formsSheafRestrictionMap_isIso X U n)
+
+/-- The restriction comparison sends a represented form to the same form on the open subscheme. -/
+theorem formsSheafRestrictionIso_unit (n : ℕ) (V : U.toScheme.Opens)
+    (a : (formsPresheaf k X n).obj (op (U.ι ''ᵁ V))) :
+    (formsSheafRestrictionIso X U n).hom.hom.app (op V)
+        ((formsSheafUnit k X n).app (op (U.ι ''ᵁ V)) a) =
+      (formsSheafUnit k (Over.mk (U.ι ≫ X.hom)) n).app (op V)
+        (Forms.mapPower (sectionAlgebraRestrictEquiv X U V).toAlgHom n a) :=
+  ConcreteCategory.congr_hom
+    (NatTrans.congr_app (formsSheafRestrictionMap_unit X U n) (op V)) a
+
+/-- Sheafification leaves relative forms unchanged on every affine open of an arbitrary scheme.
+There is no affineness or smoothness hypothesis on the ambient scheme.
+
+Blueprint: `def:geo-forms-sheaf`, `thm:geo-forms-comparison`. -/
+theorem formsSheafUnit_isIso_of_isAffineOpen (hU : IsAffineOpen U) (n : ℕ) :
+    IsIso ((formsSheafUnit k X n).app (op U)) := by
+  have : IsAffine (Over.mk (U.ι ≫ X.hom)).left := hU
+  have := formsSheafRestrictionMap_isIso X U n
+  have : IsIso (formsSheafRestrictionMap X U n).hom :=
+    (sheafToPresheaf (_root_.Opens.grothendieckTopology U.toScheme) (ModuleCat k)).map_isIso
+      (formsSheafRestrictionMap X U n)
+  have hi : IsIso ((formsSheafRestrictionMap X U n).hom.app (op ⊤)) :=
+    NatIso.isIso_app_of_isIso (formsSheafRestrictionMap X U n).hom (op ⊤)
+  have hcomp : IsIso ((Functor.whiskerLeft U.ι.opensFunctor.op (formsSheafUnit k X n) ≫
+      (formsSheafRestrictionMap X U n).hom).app (op ⊤)) := by
+    rw [formsSheafRestrictionMap_unit]
+    change IsIso ((formsPresheafRestrictionIso X U n).hom.app (op ⊤) ≫
+      (formsSheafUnit k (Over.mk (U.ι ≫ X.hom)) n).app (op ⊤))
+    infer_instance
+  change IsIso ((formsSheafUnit k X n).app (op (U.ι ''ᵁ ⊤)) ≫
+    (formsSheafRestrictionMap X U n).hom.app (op ⊤)) at hcomp
+  have h := @IsIso.of_isIso_comp_right _ _ _ _ _
+    ((formsSheafUnit k X n).app (op (U.ι ''ᵁ ⊤)))
+    ((formsSheafRestrictionMap X U n).hom.app (op ⊤)) hi hcomp
+  rw [Scheme.Opens.ι_image_top] at h
+  exact h
+
+variable (hU : IsAffineOpen U)
+
+/-- The canonical degreewise comparison between algebraic forms on an affine open and sections
+of the sheaf of relative forms on that open.
+
+Blueprint: `thm:geo-forms-comparison`. -/
+def affineOpenFormsComparison (n : ℕ) :
+    (⋀[sectionAlgebra k X U]^n Ω[sectionAlgebra k X U⁄k]) ≃ₗ[k]
+      (formsSheaf k X n).obj.obj (op U) := by
+  have := formsSheafUnit_isIso_of_isAffineOpen X U hU n
+  exact (asIso ((formsSheafUnit k X n).app (op U))).toLinearEquiv
+
+/-- The affine-open comparison is the original sheafification map. -/
+lemma affineOpenFormsComparison_apply (n : ℕ)
+    (a : ⋀[sectionAlgebra k X U]^n Ω[sectionAlgebra k X U⁄k]) :
+    affineOpenFormsComparison X U hU n a = (formsSheafUnit k X n).app (op U) a := rfl
+
+/-- The affine-open comparison commutes with the differential. -/
+@[simp] lemma affineOpenFormsComparison_d (n : ℕ)
+    (a : ⋀[sectionAlgebra k X U]^n Ω[sectionAlgebra k X U⁄k]) :
+    (formsSheafD k X n).hom.app (op U) (affineOpenFormsComparison X U hU n a) =
+      affineOpenFormsComparison X U hU (n + 1) (powerD k (sectionAlgebra k X U) n a) :=
+  formsSheafD_unit k X n (op U) a
+
+/-- The affine-open comparison preserves exterior products. -/
+@[simp] lemma affineOpenFormsComparison_wedge (p q : ℕ)
+    (a : ⋀[sectionAlgebra k X U]^p Ω[sectionAlgebra k X U⁄k])
+    (b : ⋀[sectionAlgebra k X U]^q Ω[sectionAlgebra k X U⁄k]) :
+    formsSheafWedge k X p q (op U) (affineOpenFormsComparison X U hU p a)
+      (affineOpenFormsComparison X U hU q b) =
+      affineOpenFormsComparison X U hU (p + q) ⟨a.val * b.val, SetLike.mul_mem_graded a.2 b.2⟩ :=
+  formsSheafWedge_unit k X p q (op U) a b
+
+/-- The affine-open comparison preserves the degree-zero unit. -/
+@[simp] lemma affineOpenFormsComparison_one :
+    affineOpenFormsComparison X U hU 0 ⟨1, SetLike.one_mem_graded _⟩ =
+      formsSheafOneSection k X (op U) := by
+  change (formsSheafUnit k X 0).app (op U) _ =
+    (formsSheafUnit k X 0).app (op U) ((formsPresheafOne k X).app (op U) (1 : k))
+  rw [formsPresheafOne_one]
+
+end Restriction
 
 variable (X : Over (Spec (CommRingCat.of k))) [IsAffine X.left]
 
