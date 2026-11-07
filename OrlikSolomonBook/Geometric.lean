@@ -16,12 +16,13 @@ file := "geometric"
 htmlSplit := .never
 %%%
 
-*None of this chapter is formalized yet.*
+*Only the foundations of this chapter and the projective complements are formalized.*
 It presents the plan in the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
-No Lean declaration is attached to any of its 42 nodes, so every box below is marked as planned.
-The blueprint itself says that every new declaration in it is a proposal and that none has been elaborated in Lean.
-It proposes names under `OrlikSolomon.Geometric`, but none of them exists yet, so this chapter does not list them.
-The statements and arguments here are the blueprint's, and no machine has checked them.
+Of its 42 nodes, nine are formalized and two partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], and the two nodes on {bp "def:geo-projective"}[projective space and its complements].
+The two partial nodes are {bp "thm:geo-cartesian"}[], whose Tor-sheaf and conormal statements remain, and {bp "thm:geo-projective-geometry"}[], whose affine sides still use spectra of the existing rings rather than the planned open subschemes.
+None of them mentions cohomology, and no structure theorem on schemes is formalized.
+Every other box below is marked as planned, and for those the blueprint's proposed names under `OrlikSolomon.Geometric` do not exist yet, so this chapter does not list them.
+The statements and arguments in the planned boxes are the blueprint's, and no machine has checked them.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem and of the de Rham instance.
 Neither of those depends on anything here: the plan is built on them, and the dependence runs the other way.
 
@@ -74,7 +75,7 @@ The arrangement theorems keep their hypotheses that $`k` is a field and that the
 The coefficient rings $`R` and $`B` are independent of $`k`, and may be zero.
 The projective theorem keeps the nonempty arrangement: the complement of the empty projective arrangement is projective space itself, which is usually not affine and has different cohomology.
 
-:::node "def:geo-domain"
+:::node "def:geo-domain" (decl := OrlikSolomon.Geometric.SmoothDomain) (decl := OrlikSolomon.Geometric.SmoothDomain.all) (decl := OrlikSolomon.Geometric.SmoothDomain.aff) (decl := OrlikSolomon.Geometric.SmoothDomain.sft) (decl := OrlikSolomon.Geometric.SmoothDomain.ofAffine) (decl := OrlikSolomon.Geometric.SmoothDomain.spec) (decl := OrlikSolomon.Geometric.SmoothDomain.prodAffineLine) (decl := OrlikSolomon.Geometric.SmoothDomain.prodGm) (decl := OrlikSolomon.Geometric.SmoothDomain.aff_le) (decl := OrlikSolomon.Geometric.SmoothDomain.le_all)
 Let $`S=\operatorname{Spec}k`, let $`\mathsf{Sm}_k` be the full subcategory of schemes over $`S` whose structure morphism is smooth, and let $`\mathsf{Sm}_k^{\mathrm{aff}}` be its full subcategory of affine schemes.
 An _admissible domain_ $`\mathcal{D}` is a full subcategory of $`\mathsf{Sm}_k`, closed under isomorphism, that contains every smooth affine $`k`-scheme and is closed under $`X\mapsto X\times_S\mathbb{A}^1_S` and $`X\mapsto X\times_S\mathbb{G}_m`.
 Its morphisms are all morphisms over $`S` between its objects, which need not be smooth, flat, dominant or of constant relative dimension.
@@ -84,6 +85,9 @@ The empty scheme is smooth and affine, so it lies in every domain, and no domain
 :::
 
 # Affine duality
+%%%
+tag := "geo-affine"
+%%%
 
 Everything rests on the classical anti-equivalence between smooth $`k`-algebras and smooth affine $`k`-schemes.
 The blueprint states it with every compatibility that the transport of the proof needs: over the base, for closed subschemes and basic opens, and for products with $`\mathbb{A}^1` and $`\mathbb{G}_m`.
@@ -92,11 +96,12 @@ These are uses of Mathlib's existing theory of $`\operatorname{Spec}`, global se
 Arrows reverse.
 An algebra map $`A\to A'` is a morphism of schemes $`\operatorname{Spec}A'\to\operatorname{Spec}A`, so pullback along a morphism of schemes is the value of the theory on a morphism of the opposite category.
 In Lean the value at $`X` is planned as `T.C.obj (op X)`, not `T.C.obj X`.
+The objects of a domain already form the category `D.Obj`, and `D.specFunctor` sends a smooth algebra `A` to `op (Spec A)` in its opposite, so a theory on $`\mathcal{D}` will be evaluated on algebras through it.
 
 One result here is not about affine schemes: units of global sections are the same as morphisms to $`\mathbb{G}_m`, for every scheme.
 This is what will let logarithmic classes be defined on objects of a domain that are not affine.
 
-:::node "thm:geo-affine-duality"
+:::node "thm:geo-affine-duality" (decl := OrlikSolomon.Geometric.smoothAffineEquivalence) (decl := OrlikSolomon.Geometric.globalSections) (decl := OrlikSolomon.Geometric.specHomEquiv) (decl := OrlikSolomon.Geometric.affineHomEquiv) (decl := OrlikSolomon.Geometric.globalSectionsSpecIso) (decl := OrlikSolomon.Geometric.specGlobalSectionsIso) (decl := OrlikSolomon.Geometric.globalSectionsSpecIso_naturality) (decl := OrlikSolomon.Geometric.specGlobalSectionsIso_naturality) (decl := OrlikSolomon.Geometric.specGlobalSectionsIso_hom_spec) (decl := OrlikSolomon.Geometric.globalSectionsMap_specGlobalSectionsIso_hom) (decl := OrlikSolomon.Geometric.smooth_hom_iff)
 Spectrum and global sections are inverse equivalences
 $$`\mathsf{SmoothAlg}_k\simeq(\mathsf{Sm}_k^{\mathrm{aff}})^{\mathrm{op}},\qquad A\longmapsto\operatorname{Spec}A,\qquad X\longmapsto\Gamma(X,\mathcal{O}_X).`
 For affine $`X` and $`Y` over $`S`, morphisms correspond as
@@ -105,7 +110,7 @@ The isomorphisms $`\eta_A:A\to\Gamma(\operatorname{Spec}A,\mathcal{O})` and $`\e
 This includes the zero ring, whose spectrum is the empty scheme.
 :::
 
-:::node "lem:geo-affine-pairs"
+:::node "lem:geo-affine-pairs" (decl := OrlikSolomon.Geometric.zeroScheme) (decl := OrlikSolomon.Geometric.zeroSchemeι) (decl := OrlikSolomon.Geometric.ker_zeroSchemeι) (decl := OrlikSolomon.Geometric.zeroSchemeIsoSpec) (decl := OrlikSolomon.Geometric.zeroSchemeIsoSpec_hom_comp) (decl := OrlikSolomon.Geometric.basicOpenIsoSpec) (decl := OrlikSolomon.Geometric.basicOpenIsoSpec_hom_comp) (decl := OrlikSolomon.Geometric.IsRegularSection) (decl := OrlikSolomon.Geometric.isRegularSection_iff) (decl := OrlikSolomon.Geometric.smooth_basicOpen) (decl := OrlikSolomon.Geometric.smooth_zeroScheme_iff)
 Let $`X` be affine over $`S`, let $`A=\Gamma(X,\mathcal{O}_X)`, and let $`f\in A`.
 Under $`\epsilon_X`, the closed subscheme $`Z_X(f)` cut out by $`f` is $`\operatorname{Spec}(A/(f))`, and the open subscheme $`X_f` on which $`f` is invertible is $`\operatorname{Spec}A_f`, compatibly with the immersions into $`X`.
 Multiplication by $`f` is injective on $`\mathcal{O}_X` if and only if it is injective on $`A`.
@@ -114,7 +119,7 @@ If $`X` is smooth, then $`X_f` is smooth, and $`Z_X(f)` is smooth exactly when $
 The comparisons need no condition on $`f`, so they cover units and the zero ring.
 :::
 
-:::node "lem:geo-products"
+:::node "lem:geo-products" (decl := OrlikSolomon.Geometric.affineLine) (decl := OrlikSolomon.Geometric.gm) (decl := OrlikSolomon.Geometric.specPolynomialIso) (decl := OrlikSolomon.Geometric.specLaurentIso) (decl := OrlikSolomon.Geometric.specPolynomialIso_hom_fst) (decl := OrlikSolomon.Geometric.specLaurentIso_hom_fst) (decl := OrlikSolomon.Geometric.specMap_polynomialAlgLift_zero_comp_specPolynomialIso_hom) (decl := OrlikSolomon.Geometric.specMap_laurentAlgLift_one_comp_specLaurentIso_hom) (decl := OrlikSolomon.Geometric.specMap_polynomialAlgToLaurent_comp_specPolynomialIso_hom) (decl := OrlikSolomon.Geometric.specMap_polynomialAlgMap_comp_specPolynomialIso_hom) (decl := OrlikSolomon.Geometric.specMap_laurentAlgMap_comp_specLaurentIso_hom) (decl := OrlikSolomon.Geometric.specPolynomialIso_hom_appTop_prodCoord) (decl := OrlikSolomon.Geometric.SmoothDomain.specPolynomialIso) (decl := OrlikSolomon.Geometric.SmoothDomain.specLaurentIso)
 Put $`\mathbb{A}^1_S=\operatorname{Spec}k[z]` and $`\mathbb{G}_m=\operatorname{Spec}k[z,z^{-1}]`.
 For $`X=\operatorname{Spec}A` there are natural isomorphisms over $`S`
 $$`\operatorname{Spec}A[z]\simeq X\times_S\mathbb{A}^1_S,\qquad\operatorname{Spec}A[z,z^{-1}]\simeq X\times_S\mathbb{G}_m,`
@@ -123,7 +128,7 @@ So the standard pair of the existing proof becomes
 $$`X\xrightarrow{\ z=0\ }X\times_S\mathbb{A}^1_S\xleftarrow{\ j\ }X\times_S\mathbb{G}_m.`
 :::
 
-:::node "thm:geo-units"
+:::node "thm:geo-units" (decl := OrlikSolomon.Geometric.unitsEquivHomGm) (decl := OrlikSolomon.Geometric.unitsEquivHomGm_comp) (decl := OrlikSolomon.Geometric.lift_unitsEquivHomGm_comp_mul) (decl := OrlikSolomon.Geometric.unitsEquivHomGm_comp_inv) (decl := OrlikSolomon.Geometric.toUnit_comp_one)
 For every scheme $`X` over $`S`, affine or not, there is a natural bijection
 $$`\Gamma(X,\mathcal{O}_X)^\times\simeq\operatorname{Hom}_S(X,\mathbb{G}_m),\qquad u\longmapsto\widehat{u},`
 under which multiplication, inverses and the unit $`1` correspond to the group structure of $`\mathbb{G}_m`.
@@ -132,6 +137,9 @@ Neither affineness, nor smoothness, nor a rational point is needed.
 :::
 
 # Principal smooth divisor pairs
+%%%
+tag := "geo-pairs"
+%%%
 
 The localization axioms need a divisor together with an equation.
 The plan keeps the existing choice: a pair has a global regular function $`f` on its ambient scheme, which cuts out a smooth closed subscheme $`D` with open complement $`U`.
@@ -154,7 +162,7 @@ The condition on morphisms, that the pulled-back equation is a unit multiple of 
 That is the transversality needed for oriented divisor purity, and it does not require the ambient map to be flat.
 {bp "prop:geo-nonflat"}[] tests this with a morphism that is not flat.
 
-:::node "def:geo-divisor-pair"
+:::node "def:geo-divisor-pair" (decl := OrlikSolomon.Geometric.DivisorPair) (decl := OrlikSolomon.Geometric.DivisorPair.eqnUnit) (decl := OrlikSolomon.Geometric.DivisorPair.closedLift) (decl := OrlikSolomon.Geometric.DivisorPair.complLift) (decl := OrlikSolomon.Geometric.DivisorPair.isEmpty_closed_of_isUnit) (decl := OrlikSolomon.Geometric.DivisorPair.isIso_j_of_isUnit) (decl := OrlikSolomon.Geometric.DivisorPair.standardPair) (decl := OrlikSolomon.Geometric.isRegularSection_prodCoord) (decl := OrlikSolomon.Geometric.ker_zeroSection_left) (decl := OrlikSolomon.Geometric.opensRange_whiskerLeft_gmToAffineLine_left)
 A _principal smooth divisor pair_ in $`\mathcal{D}` consists of objects $`X`, $`D` and $`U` of $`\mathcal{D}`, morphisms $`i:D\to X` and $`j:U\to X`, and $`f\in\Gamma(X,\mathcal{O}_X)`, such that
  * multiplication by $`f` on $`\mathcal{O}_X` is a monomorphism,
  * $`i` identifies $`D` with the closed subscheme $`Z_X(f)`, and
@@ -164,14 +172,14 @@ Smoothness of the three schemes is their membership in $`\mathcal{D}`.
 A unit $`f` and an empty ambient scheme are allowed.
 :::
 
-:::node "def:geo-pair-hom"
+:::node "def:geo-pair-hom" (decl := OrlikSolomon.Geometric.DivisorPair.Hom) (decl := OrlikSolomon.Geometric.DivisorPair.instCategory) (decl := OrlikSolomon.Geometric.DivisorPair.Hom.exists_unit_mul) (decl := OrlikSolomon.Geometric.DivisorPair.hom_ext) (decl := OrlikSolomon.Geometric.DivisorPair.homOfAmbient) (decl := OrlikSolomon.Geometric.DivisorPair.standardPairMap) (decl := OrlikSolomon.Geometric.DivisorPair.toStandard)
 A morphism $`g:P\to Q` of pairs consists of morphisms $`g_X:X_P\to X_Q`, $`g_D:D_P\to D_Q` and $`g_U:U_P\to U_Q` such that
 $$`g_X\,i_P=i_Q\,g_D,\qquad g_X\,j_P=j_Q\,g_U,\qquad g_X^*f_Q=u\,f_P\quad\text{for some }u\in\Gamma(X_P,\mathcal{O})^\times.`
 Only the existence of the multiplier $`u` is required, and it is not part of the data.
 Identities and composition are those of schemes, and $`g_D` and $`g_U` are determined by $`g_X`.
 :::
 
-:::node "thm:geo-cartesian"
+:::node "thm:geo-cartesian" (decl := OrlikSolomon.Geometric.DivisorPair.associated_iff_ker_pullback_fst) (decl := OrlikSolomon.Geometric.DivisorPair.associated_iff_isPullback) (decl := OrlikSolomon.Geometric.associated_iff_principalIdealSheaf_eq) (decl := OrlikSolomon.Geometric.ker_pullback_fst_of_ker_eq) (decl := OrlikSolomon.Geometric.DivisorPair.Hom.isPullback_closed) (decl := OrlikSolomon.Geometric.DivisorPair.Hom.isPullback_compl) (decl := OrlikSolomon.Geometric.DivisorPair.Hom.isRegularSection_appTop) (remaining := "Tor-independence is formalized only as the regularity of the pulled-back equation, which keeps the pulled-back resolution of the divisor exact, and not as a statement about Tor sheaves. The conormal isomorphism of line bundles is not formalized: Mathlib has no conormal sheaf of a closed immersion, and its content is the unit multiplier of Hom.exists_unit_mul.")
 Let $`P` and $`Q` be pairs and $`g_X:X_P\to X_Q`.
 The condition $`g_X^*f_Q=u\,f_P` for some unit $`u` holds if and only if
 $$`D_P\simeq X_P\times_{X_Q}D_Q`
@@ -182,7 +190,7 @@ Flatness of the ambient map is not required.
 This compares subschemes: equality of the underlying closed sets would not suffice, as the doubled point of {bp "prop:geo-exclusions"}[] shows.
 :::
 
-:::node "thm:geo-pair-duality"
+:::node "thm:geo-pair-duality" (decl := OrlikSolomon.Geometric.affinePairEquivalence) (decl := OrlikSolomon.Geometric.DivisorPair.spec) (decl := OrlikSolomon.Geometric.DivisorPair.specFunctor) (decl := OrlikSolomon.Geometric.DivisorPair.globalSections) (decl := OrlikSolomon.Geometric.DivisorPair.globalSectionsFunctor) (decl := OrlikSolomon.Geometric.DivisorPair.coe_spec_eqnUnit) (decl := OrlikSolomon.Geometric.DivisorPair.coe_globalSections_eqnUnit) (decl := OrlikSolomon.Geometric.DivisorPair.specStandardPairIso) (decl := OrlikSolomon.Geometric.DivisorPair.withEqnIso) (decl := OrlikSolomon.Geometric.DivisorPair.toAff) (decl := OrlikSolomon.Geometric.DivisorPair.isAffine_closed) (decl := OrlikSolomon.Geometric.DivisorPair.isAffine_compl)
 Geometric pairs whose ambient scheme is affine are anti-equivalent to the existing algebraic pairs {name OrlikSolomon.DivisorPair}`DivisorPair` `k`.
 The equivalence preserves the two immersions, the equation and its unit on the open part, the standard pairs and changes of equation, and it reverses the direction of morphisms.
 :::
@@ -286,7 +294,7 @@ Deletion becomes a statement about schemes: the complement of the restriction is
 For a finite set $`\mathcal{P}` of hyperplanes, $`U_{\mathcal{P}}` is the open subscheme of $`\operatorname{Proj}\operatorname{Sym}(W^*)` on which no equation of $`\mathcal{P}` vanishes.
 It makes sense for empty $`\mathcal{P}`, where it is all of projective space.
 That it is affine, and its comparison with the spectrum of the existing ring, are asserted only for nonempty $`\mathcal{P}`.
-That comparison is the existing {name OrlikSolomon.ProjectiveArrangement.complementOpenIso}`complementOpenIso`, which {ref "projective"}[the projective chapter] describes, and the plan upgrades it with a certificate that it is a morphism over $`k`, instead of proving it again.
+That comparison is the existing {name OrlikSolomon.ProjectiveArrangement.complementOpenIso}`complementOpenIso`, which {ref "projective"}[the projective chapter] describes, and {name OrlikSolomon.Geometric.projectiveComplementIsoSpec}`projectiveComplementIsoSpec` upgrades it with the certificate {name OrlikSolomon.Geometric.complementOpenIso_hom_specMap}`complementOpenIso_hom_specMap` that it is a morphism over $`k`, instead of proving it again.
 
 :::node "def:geo-affine-space"
 For a finite-dimensional vector space $`V` over a field $`k`, put $`\mathbb{A}_V=\operatorname{Spec}\operatorname{Sym}_k(V^*)`.
@@ -327,14 +335,14 @@ For a dependent nonempty intersection of $`s+1` hyperplanes, the normalized slic
 These are identities of global functions, and none of them involves a rational point.
 :::
 
-:::node "def:geo-projective"
+:::node "def:geo-projective" (decl := OrlikSolomon.Geometric.projectiveSpace) (decl := OrlikSolomon.Geometric.projectiveComplement) (decl := OrlikSolomon.Geometric.projectiveComplementι) (decl := OrlikSolomon.ProjectiveArrangement.complementOpen_eq_iInf) (decl := OrlikSolomon.ProjectiveArrangement.complementOpen_eq_iInf_basicOpen) (decl := OrlikSolomon.ProjectiveArrangement.basicOpen_coord_eq_of_ker_eq) (decl := OrlikSolomon.ProjectiveArrangement.complementOpen_eq_top) (decl := OrlikSolomon.Geometric.isIso_projectiveComplementι) (decl := OrlikSolomon.Geometric.isEmpty_projectiveSpace_left) (decl := OrlikSolomon.Geometric.smooth_projectiveSpace_hom) (decl := OrlikSolomon.projIsoMvPolynomial)
 For a finite-dimensional vector space $`W`, put $`\mathbb{P}(W)=\operatorname{Proj}\operatorname{Sym}(W^*)`, with the existing grading by degree.
 For a finite set $`\mathcal{P}` of linear hyperplanes of $`W`, the complement $`U_{\mathcal{P}}` is the intersection of the open subschemes $`D_+(\ell_H)`, for equations $`\ell_H` of all the hyperplanes of $`\mathcal{P}`.
 This makes sense for empty $`\mathcal{P}`, where it is all of $`\mathbb{P}(W)`.
 If $`\dim W=0`, then $`\mathbb{P}(W)` is empty.
 :::
 
-:::node "thm:geo-projective-geometry"
+:::node "thm:geo-projective-geometry" (decl := OrlikSolomon.Geometric.projectiveComplementIsoSpec) (decl := OrlikSolomon.Geometric.complementOpenIso_hom_specMap) (decl := OrlikSolomon.Geometric.projectiveComplementIsoSpec_inv_left_comp_ι) (decl := OrlikSolomon.Geometric.isAffine_projectiveComplement_left) (decl := OrlikSolomon.Geometric.smooth_projectiveComplement_hom) (decl := OrlikSolomon.Geometric.SmoothDomain.projectiveComplement) (decl := OrlikSolomon.Geometric.SmoothDomain.projectiveComplementIsoSpec) (decl := OrlikSolomon.Geometric.projectiveDeconeIso) (decl := OrlikSolomon.Geometric.projectiveDeconeIso_hom_appTop) (decl := OrlikSolomon.Geometric.coneProjection) (decl := OrlikSolomon.Geometric.coneProjection_comp_projectiveComplementIsoSpec_hom) (decl := OrlikSolomon.Geometric.coneIsoProdGm) (decl := OrlikSolomon.Geometric.coneIsoProdGm_hom_fst) (decl := OrlikSolomon.Geometric.coneIsoProdGm_hom_snd) (decl := OrlikSolomon.Geometric.specUnit_coneUnit) (decl := OrlikSolomon.Geometric.projectiveRatio) (decl := OrlikSolomon.Geometric.coe_projectiveRatio) (decl := OrlikSolomon.Geometric.SmoothDomain.coneToProjectiveComplement_comp_projectiveComplementIsoSpec_hom) (remaining := "the decone and cone isomorphisms with the open subschemes of affine space; their affine sides are formalized as the spectra of the existing coordinate rings of the decone and the cone, and need the comparison of thm:geo-complement-spec")
 Suppose that $`\mathcal{P}` is nonempty.
 Then $`U_{\mathcal{P}}` is smooth and affine, and the existing comparison gives a canonical isomorphism $`s_{\mathcal{P}}` from $`U_{\mathcal{P}}` to the spectrum of the existing ring $`\mathcal{O}(U_{\mathcal{P}})`.
 For every equation $`\ell_0` of a member of $`\mathcal{P}` there are isomorphisms

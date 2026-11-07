@@ -27,6 +27,6 @@ Every result of the first blueprint that mentions cohomology is proved for an ar
 The de Rham instance is one nonzero value, for fields of characteristic zero, and no value has been constructed in Lean for singular or $`\ell`-adic cohomology.
 Instantiated at the de Rham instance, the affine and projective theorems become the unconditional statements {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[] about algebraic de Rham cohomology over such fields.
 
-No node of the third blueprint, the geometric refactor, is formalized yet: {ref "geometric"}[its chapter] presents all of them as planned.
+Of the third blueprint, the geometric refactor, nine nodes are formalized and two partly formalized: affine duality, principal divisor pairs and projective complements. None of its statements about cohomology is formalized; {ref "geometric"}[its chapter] presents the remaining work.
 
 {statusOverview}
