@@ -155,7 +155,8 @@ For a named theory, say Betti cohomology, you would construct a {name OrlikSolom
 This requires the theory itself in Lean, with coherent twists and strict indexed products.
 The bridge removes the need to reason about total cohomology, but it supplies none of these.
 It does not construct singular, de Rham or étale cohomology.
-A version of the structure and of the bridge for theories defined on smooth schemes, which such a theory could use without passing through algebras, is planned in {ref "geometric"}[the chapter on schemes], and none of it is formalized.
+The {ref "geometric"}[chapter on schemes] formalizes the geometric structure and both affine transports, so a theory on smooth schemes already supplies this algebraic interface automatically.
+The geometric degreewise bridge remains planned.
 
 :::node "lem:standard-bridge" (decl := OrlikSolomon.DegreewiseTheory) (decl := OrlikSolomon.SupportsAndPurity) (decl := OrlikSolomon.ofSupportsAndPurity) (decl := OrlikSolomon.ofSupportsAndPurity_exact_gysin_map) (decl := OrlikSolomon.ofSupportsAndPurity_exact_map_residue) (decl := OrlikSolomon.ofSupportsAndPurity_exact_residue_gysin)
 A cohomology presented in the familiar degreewise way, with products, twists, the point dimension axiom, affine-line invariance, localization with supports, oriented divisor purity, transverse naturality and the boundary projection formula, gives an instance of the structure.

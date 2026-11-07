@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 import OrlikSolomonBook.Node
 import OrlikSolomon
@@ -16,11 +16,12 @@ file := "geometric"
 htmlSplit := .never
 %%%
 
-*Only the foundations of this chapter and the complements as open subschemes are formalized.*
+*The foundations, complements as open subschemes, geometric axioms and affine transports are formalized.*
 It presents the plan in the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
-Of its 42 nodes, fifteen are formalized and one partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], and the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes].
+Of its 42 nodes, twenty are formalized and one partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], and the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports].
 The partial node is {bp "thm:geo-cartesian"}[], whose Tor-sheaf and conormal statements remain.
-None of them mentions cohomology, and no structure theorem on schemes is formalized.
+The geometric theory has exactly the old 22 fields, and its affine transports preserve the grading, coefficient maps, pullbacks, Gysin and residue, with both triangle identities.
+The structure theorems on actual arrangement opens and the de Rham realization through sheaf forms remain planned.
 Every other box below is marked as planned, and for those the blueprint's proposed names under `OrlikSolomon.Geometric` do not exist yet, so this chapter does not list them.
 The statements and arguments in the planned boxes are the blueprint's, and no machine has checked them.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem and of the de Rham instance.
@@ -48,7 +49,8 @@ A geometric theory restricts to a value of it, the existing theorems are applied
 *Still conditional.*
 Like the existing theorems, the planned geometric theorems would be conditional.
 They would hold for every value of a geometric structure of axioms, and say nothing about a particular cohomology theory until someone constructs such a value for it.
-The blueprint constructs one, algebraic de Rham cohomology of smooth affine schemes over a field of characteristic zero, from the de Rham instance that is already formalized.
+Transport of the existing characteristic-zero de Rham instance already constructs a geometric theory on smooth affine schemes.
+Its interpretation through sheaf forms is still planned.
 For singular and $`\ell`-adic cohomology it records checks by hand, with the same standing as the checks of the existing axioms, and no formal instance.
 
 # Admissible domains and hypotheses
@@ -95,8 +97,8 @@ These are uses of Mathlib's existing theory of $`\operatorname{Spec}`, global se
 
 Arrows reverse.
 An algebra map $`A\to A'` is a morphism of schemes $`\operatorname{Spec}A'\to\operatorname{Spec}A`, so pullback along a morphism of schemes is the value of the theory on a morphism of the opposite category.
-In Lean the value at $`X` is planned as `T.C.obj (op X)`, not `T.C.obj X`.
-The objects of a domain already form the category `D.Obj`, and `D.specFunctor` sends a smooth algebra `A` to `op (Spec A)` in its opposite, so a theory on $`\mathcal{D}` will be evaluated on algebras through it.
+In Lean the value at $`X` is `T.C.obj (op X)`, also written `T.obj X`.
+The objects of a domain already form the category `D.Obj`, and `D.specFunctor` sends a smooth algebra `A` to `op (Spec A)` in its opposite, so a theory on $`\mathcal{D}` is evaluated on algebras through it.
 
 One result here is not about affine schemes: units of global sections are the same as morphisms to $`\mathbb{G}_m`, for every scheme.
 This is what will let logarithmic classes be defined on objects of a domain that are not affine.
@@ -197,7 +199,7 @@ The equivalence preserves the two immersions, the equation and its unit on the o
 
 # The geometric structure of axioms
 
-The planned structure has exactly the fields of {bp "def:cohomology"}[], with the arrows in geometric directions.
+The structure {name OrlikSolomon.Geometric.OrdinaryTheory}`Geometric.OrdinaryTheory` has exactly the fields of {bp "def:cohomology"}[], with the arrows in geometric directions.
 Pullbacks are contravariant, affine-line invariance says that the projection $`X\times\mathbb{A}^1\to X` induces an isomorphism, and Gysin and residue maps exist for every geometric pair in the domain.
 No field is added: there is no axiom about the empty scheme and no Künneth axiom, and none of the conclusions of the proof is assumed.
 
@@ -209,14 +211,15 @@ For a theory on a larger domain only its affine restriction is recovered, and no
 This is how the existing proofs are reused: the geometric structure theorem applies the existing one to $`T_{\mathrm{alg}}`, and composes with the comparison between an open complement and the spectrum of its coordinate ring.
 
 *The bridge, and the checks by hand.*
-The degreewise bridge carries over with the geometric objects substituted, and its algebraic lemmas are reused: see {bp "def:geo-supports"}[] and {bp "thm:geo-bridge"}[].
+The planned degreewise bridge carries over with the geometric objects substituted, reusing its algebraic lemmas: see {bp "def:geo-supports"}[] and {bp "thm:geo-bridge"}[].
 The blueprint records how the fields would be checked against the standard realizations.
 For Betti cohomology of the complex points, after choosing an embedding of $`k` in $`\mathbb{C}` and on smooth separated schemes of finite type, the inputs are relative cohomology and the Thom isomorphism of the complex normal line.
 For geometric $`\ell`-adic cohomology, with $`\ell` invertible in $`k` and on the same domain, they are localization with supports and oriented purity.
-For de Rham cohomology on the affine domain, the fields follow unconditionally from the instance at the end of this chapter.
+For the affine domain, {name OrlikSolomon.Geometric.OrdinaryTheory.ofAlgebraic}`ofAlgebraic` already transports the existing nonzero de Rham theory to a geometric theory.
+Its identification with cohomology of global sheaf forms is the planned {bp "thm:geo-dr-instance"}[scheme de Rham instance].
 The first two are interpretations, which assume the foundational purity theorems of those theories: they are not formal instances, and they are not claimed as results of the refactor.
 
-:::node "def:geo-theory"
+:::node "def:geo-theory" (decl := OrlikSolomon.Geometric.OrdinaryTheory) (decl := OrlikSolomon.Geometric.OrdinaryTheory.obj) (decl := OrlikSolomon.Geometric.OrdinaryTheory.pull) (decl := OrlikSolomon.Geometric.OrdinaryTheory.mapOverR) (decl := OrlikSolomon.Geometric.OrdinaryTheory.gysinOverR) (decl := OrlikSolomon.Geometric.OrdinaryTheory.residueOverR)
 Fix the coefficient data $`R`, $`B` and $`\mathcal{B}` of {bp "def:cohomology"}[] and an admissible domain $`\mathcal{D}`.
 A _geometric ordinary theory_ is a functor
 $$`C:\mathcal{D}^{\mathrm{op}}\longrightarrow\mathsf{AlgCat}_B,\qquad g^*=C(g^{\mathrm{op}})\quad\text{for }g:X\to Y,`
@@ -232,20 +235,20 @@ There is no axiom about the empty scheme, about any particular arrangement, or a
 The values stay possibly noncommutative $`B`-algebras graded by $`R`-submodules, since the cohomology ring is only graded commutative and multiplication by $`B_w` changes the weight.
 :::
 
-:::node "lem:geo-restriction"
+:::node "lem:geo-restriction" (decl := OrlikSolomon.Geometric.OrdinaryTheory.restrict) (decl := OrlikSolomon.Geometric.OrdinaryTheory.restrict_pull) (decl := OrlikSolomon.Geometric.OrdinaryTheory.restrict_gysin) (decl := OrlikSolomon.Geometric.OrdinaryTheory.restrict_residue)
 An inclusion $`\mathcal{D}_1\subseteq\mathcal{D}_2` of admissible domains restricts a theory on $`\mathcal{D}_2` to a theory on $`\mathcal{D}_1`, and every field restricts.
 In particular a theory on all smooth schemes gives a theory on the affine domain with no further input.
 Restriction is compatible with the canonical isomorphisms of products and points when the two domains use different chosen models of them.
 :::
 
-:::node "thm:geo-to-algebraic"
+:::node "thm:geo-to-algebraic" (decl := OrlikSolomon.Geometric.OrdinaryTheory.toAlgebraic) (decl := OrlikSolomon.Geometric.OrdinaryTheory.toAlgebraic_map) (decl := OrlikSolomon.Geometric.OrdinaryTheory.toAlgebraic_gysin) (decl := OrlikSolomon.Geometric.OrdinaryTheory.toAlgebraic_residue) (decl := OrlikSolomon.Geometric.OrdinaryTheory.toAlgebraic_standardResidue) (decl := OrlikSolomon.Geometric.OrdinaryTheory.toAlgebraic_standardGysin)
 Every geometric theory $`T` on an admissible domain gives a value $`T_{\mathrm{alg}}` of the existing structure, with
 $$`T_{\mathrm{alg}}(A)=C(\operatorname{Spec}A),\qquad T_{\mathrm{alg}}(\phi)=(\operatorname{Spec}\phi)^*,`
 whose Gysin and residue maps are the geometric maps of the spectrum of each pair.
 All 22 fields hold, with exactly their existing degrees and signs.
 :::
 
-:::node "thm:geo-from-algebraic"
+:::node "thm:geo-from-algebraic" (decl := OrlikSolomon.Geometric.OrdinaryTheory.ofAlgebraic) (decl := OrlikSolomon.Geometric.OrdinaryTheory.algebraicRoundTripEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.algebraicRoundTripEquiv_mem_grading_iff) (decl := OrlikSolomon.Geometric.OrdinaryTheory.algebraicRoundTripEquiv_map) (decl := OrlikSolomon.Geometric.OrdinaryTheory.algebraicRoundTripEquiv_gysin) (decl := OrlikSolomon.Geometric.OrdinaryTheory.algebraicRoundTripEquiv_residue) (decl := OrlikSolomon.Geometric.OrdinaryTheory.algebraicRoundTripEquiv_algebraMap) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineRoundTripEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineRoundTripEquiv_mem_grading_iff) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineRoundTripEquiv_pull) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineRoundTripEquiv_gysin) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineRoundTripEquiv_residue) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineRoundTripEquiv_algebraMap) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineRoundTripEquiv_triangle) (decl := OrlikSolomon.Geometric.OrdinaryTheory.algebraicRoundTripEquiv_triangle)
 Every value $`E` of the existing structure gives a geometric theory $`E_{\mathrm{aff}}` on the affine domain, with
 $$`E_{\mathrm{aff}}(X)=E\bigl(\Gamma(X,\mathcal{O}_X)\bigr),\qquad g^*=E\bigl(\Gamma(g)\bigr),`
 whose Gysin and residue maps are those of the pair of global sections.
@@ -253,11 +256,11 @@ The two transports are inverse up to canonical isomorphisms of graded $`B`-algeb
 For a theory on a larger domain only its restriction to affine schemes is recovered: no extension from affine schemes to others is asserted.
 :::
 
-:::node "lem:geo-empty"
+:::node "lem:geo-empty" (decl := OrlikSolomon.Geometric.OrdinaryTheory.emptySubsingleton) (decl := OrlikSolomon.Geometric.OrdinaryTheory.gysin_eq_zero_of_isUnit) (decl := OrlikSolomon.Geometric.OrdinaryTheory.residue_eq_zero_of_isUnit) (decl := OrlikSolomon.Geometric.DivisorPair.isEmpty_closed_of_isUnit) (decl := OrlikSolomon.Geometric.DivisorPair.isIso_j_of_isUnit)
 Every geometric theory has $`C(\varnothing)=0`.
 A pair with a unit equation has $`D=\varnothing` and $`U\simeq X`, and its Gysin and residue maps are zero.
 
-The proof applies exactness to the pair $`(X,\varnothing,X,1)`, so no axiom about the empty scheme is needed, and it holds for zero coefficients too.
+The proof transports the algebraic consequence of exactness for an empty-divisor pair, so no axiom about the empty scheme is needed, and it holds for zero coefficients too.
 :::
 
 :::node "def:geo-supports"
