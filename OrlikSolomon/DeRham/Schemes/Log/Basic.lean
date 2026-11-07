@@ -9,6 +9,7 @@ public import OrlikSolomon.DeRham.Schemes.Forms
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair
 public import OrlikSolomon.DeRham.Log.Basic
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
+public import Mathlib.Algebra.Homology.HomologicalComplexBiprod
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Images
 
 /-!
@@ -22,6 +23,11 @@ the complement. The differential is base-linear, and the closed shift has differ
 
 * `thetaSection`: the global logarithmic form on the complement.
 * `thetaWedgeSheaf`: left exterior multiplication by the logarithmic form of a global unit.
+* `logComplexNat`, `logSheaf`: logarithmic forms as the image of the normal-form chain map.
+* `logMkSheaf`: the epimorphism giving local regular-plus-left-theta normal forms.
+* `logSheafImageIso`: comparison with the degreewise categorical image of that formula.
+* `regularToLogSheaf`, `logToOpenSheaf`: the canonical regular and open inclusions.
+* `shiftedClosedComplexNat`: the explicit divisor shift with differential `-d`.
 
 The constructions use a commutative base ring. No characteristic-zero hypothesis, global
 localization assertion for a non-affine scheme, or rational point is needed.
@@ -33,12 +39,16 @@ Blueprint: `thm:geo-log-sheaves`.
 
 noncomputable section
 
-open CategoryTheory CategoryTheory.Limits Opposite AlgebraicGeometry
+open CategoryTheory CategoryTheory.Limits CategoryTheory.Preadditive
+open Opposite AlgebraicGeometry
+open scoped ZeroObject
 open OrlikSolomon.DeRham
 
 universe u
 
 namespace OrlikSolomon.Geometric.DeRham
+
+attribute [local instance] strongEpi_of_epi
 
 variable {k : Type u} [CommRing k]
 
@@ -113,6 +123,42 @@ theorem thetaWedgeSheaf_unit (n : ℕ) (U : X.left.Opensᵒᵖ)
 
 end Unit
 
+section Shift
+
+variable {C : Type*} [Category* C] [Preadditive C] [HasZeroObject C]
+  (K : CochainComplex C ℕ)
+
+/-- The terms of a nonnegative complex shifted up one degree, with zero in degree zero. -/
+def signedShiftedX : ℕ → C
+  | 0 => 0
+  | n + 1 => K.X n
+
+/-- The signed differential of a nonnegative complex shifted up one degree. -/
+def signedShiftedD : (n : ℕ) → signedShiftedX K n ⟶ signedShiftedX K (n + 1)
+  | 0 => 0
+  | n + 1 => -K.d n (n + 1)
+
+/-- A nonnegative complex shifted up one degree, with differential `-d`. This explicit
+nonnegative model is the convention used by the logarithmic residue sequence. -/
+def signedShiftedComplexNat : CochainComplex C ℕ :=
+  CochainComplex.of (signedShiftedX K) (signedShiftedD K) (by
+    rintro (_ | n)
+    · exact zero_comp
+    · change (-K.d n (n + 1)) ≫ (-K.d (n + 1) (n + 1 + 1)) = 0
+      rw [neg_comp, comp_neg, neg_neg, K.d_comp_d])
+
+/-- The differential on the positive degrees of the explicit shift is the negative differential. -/
+theorem signedShiftedComplexNat_d (n : ℕ) :
+    (signedShiftedComplexNat K).d (n + 1) (n + 1 + 1) = -K.d n (n + 1) :=
+  CochainComplex.of_d _ _ _
+
+end Shift
+
+/-- Ordinary direct image of module sheaves is additive. -/
+instance sheafPushforward_additive {X Y : TopCat.{u}} (f : X ⟶ Y) :
+    (TopCat.Sheaf.pushforward (ModuleCat.{u} k) f).Additive where
+  map_add := by intros; rfl
+
 variable {D : SmoothDomain k} (P : Geometric.DivisorPair D)
 
 /-- The global one-form `θ = df / f` on the open complement of a principal smooth divisor pair.
@@ -130,5 +176,240 @@ theorem thetaSection_d :
   have ha : (formsPresheafD k P.compl.obj 1).app (op ⊤) a = 0 :=
     Subtype.ext (d_dlog k (show (sectionAlgebra k P.compl.obj ⊤)ˣ from P.eqnUnit))
   exact (formsSheafD_unit k P.compl.obj 1 (op ⊤) a).trans (by rw [ha, map_zero])
+
+/-- Relative forms on the complement, regarded as sheaves on the ambient scheme by ordinary
+direct image. No derived direct image is asserted here. -/
+@[implicit_reducible] def openFormsSheaf (n : ℕ) :
+    TopCat.Sheaf (ModuleCat.{u} k) P.ambient.obj.left :=
+  (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).obj
+    (formsSheaf k P.compl.obj n)
+
+/-- Relative forms on the divisor, regarded as sheaves on the ambient scheme. -/
+@[implicit_reducible] def closedFormsSheaf (n : ℕ) :
+    TopCat.Sheaf (ModuleCat.{u} k) P.ambient.obj.left :=
+  (TopCat.Sheaf.pushforward (ModuleCat k) P.i.hom.left.base).obj
+    (formsSheaf k P.closed.obj n)
+
+/-- The ordinary direct image of the de Rham complex on the open complement. -/
+@[implicit_reducible] def openFormsComplexNat :
+    CochainComplex (TopCat.Sheaf (ModuleCat.{u} k) P.ambient.obj.left) ℕ :=
+  ((TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).mapHomologicalComplex
+    (.up ℕ)).obj (formsComplexNat k P.compl.obj)
+
+/-- The explicit closed shift: zero in degree zero, divisor forms in degree `n + 1`, and
+differential `-d`. -/
+@[implicit_reducible] def shiftedClosedComplexNat :
+    CochainComplex (TopCat.Sheaf (ModuleCat.{u} k) P.ambient.obj.left) ℕ :=
+  signedShiftedComplexNat
+    (((TopCat.Sheaf.pushforward (ModuleCat k) P.i.hom.left.base).mapHomologicalComplex
+      (.up ℕ)).obj (formsComplexNat k P.closed.obj))
+
+/-- Degree zero of the shifted divisor complex is zero. -/
+@[simp] theorem shiftedClosedComplexNat_X_zero : (shiftedClosedComplexNat P).X 0 = 0 := rfl
+
+/-- Degree `n + 1` of the shifted divisor complex is the direct image of divisor `n`-forms. -/
+@[simp] theorem shiftedClosedComplexNat_X_succ (n : ℕ) :
+    (shiftedClosedComplexNat P).X (n + 1) = closedFormsSheaf P n := rfl
+
+/-- The differential on the shifted divisor complex is the negative of its original
+differential. -/
+theorem shiftedClosedComplexNat_d (n : ℕ) :
+    (shiftedClosedComplexNat P).d (n + 1) (n + 1 + 1) =
+      -(TopCat.Sheaf.pushforward (ModuleCat k) P.i.hom.left.base).map
+        (formsSheafD k P.closed.obj n) := by
+  exact (signedShiftedComplexNat_d _ n).trans (by
+    rw [Functor.mapHomologicalComplex_obj_d, formsComplexNat_d]
+    rfl)
+
+private def shiftedAmbientComplexNat :
+    CochainComplex (TopCat.Sheaf (ModuleCat.{u} k) P.ambient.obj.left) ℕ :=
+  signedShiftedComplexNat (formsComplexNat k P.ambient.obj)
+
+private def thetaToOpen (n : ℕ) :
+    (shiftedAmbientComplexNat P).X n ⟶ (openFormsComplexNat P).X n :=
+  match n with
+  | 0 => 0
+  | n + 1 => formsSheafPullback P.j.hom n ≫
+      (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).map
+        (thetaWedgeSheaf P.compl.obj P.eqnUnit n)
+
+private theorem thetaToOpen_comm (n : ℕ) :
+    thetaToOpen P n ≫ (openFormsComplexNat P).d n (n + 1) =
+      (shiftedAmbientComplexNat P).d n (n + 1) ≫ thetaToOpen P (n + 1) := by
+  cases n with
+  | zero =>
+    apply (isZero_zero _).eq_of_src
+  | succ n =>
+    simp only [thetaToOpen, openFormsComplexNat, Functor.mapHomologicalComplex_obj_d,
+      formsComplexNat_d, shiftedAmbientComplexNat, signedShiftedComplexNat_d,
+      formsComplexNat_X]
+    change (formsSheafPullback P.j.hom n ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).map
+          (thetaWedgeSheaf P.compl.obj P.eqnUnit n)) ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).map
+          (formsSheafD k P.compl.obj (n + 1)) = _
+    rw [Category.assoc, ← Functor.map_comp, thetaWedgeSheaf_d, Functor.map_neg,
+      Functor.map_comp, comp_neg, ← Category.assoc, formsSheafPullback_d]
+    change -(formsSheafD k P.ambient.obj n ≫ formsSheafPullback P.j.hom (n + 1)) ≫ _ =
+      (-formsSheafD k P.ambient.obj n) ≫ (formsSheafPullback P.j.hom (n + 1) ≫ _)
+    simp only [neg_comp, Category.assoc]
+
+private def thetaToOpenComplexNat : shiftedAmbientComplexNat P ⟶ openFormsComplexNat P :=
+  CochainComplex.ofHom (thetaToOpen P) (thetaToOpen_comm P)
+
+private def logGeneratorComplexNat :
+    formsComplexNat k P.ambient.obj ⊞ shiftedAmbientComplexNat P ⟶ openFormsComplexNat P :=
+  biprod.desc (formsComplexNatPullback P.j.hom) (thetaToOpenComplexNat P)
+
+/-- The logarithmic complex is the image of regular forms and their left products with `df/f`
+inside the ordinary direct-image complex of forms on the complement.
+
+Blueprint: `thm:geo-log-sheaves`. -/
+@[no_expose, implicit_reducible] def logComplexNat :
+    CochainComplex (TopCat.Sheaf (ModuleCat.{u} k) P.ambient.obj.left) ℕ :=
+  image (logGeneratorComplexNat P)
+
+/-- The sheaf of logarithmic `n`-forms, with its canonical embedding in forms on the complement.
+Its image construction does not assert a global normal form for sections on arbitrary opens.
+
+Blueprint: `thm:geo-log-sheaves`. -/
+@[implicit_reducible] def logSheaf (n : ℕ) : TopCat.Sheaf (ModuleCat.{u} k) P.ambient.obj.left :=
+  (logComplexNat P).X n
+
+/-- Inclusion of logarithmic forms in ordinary forms on the complement, as a map of complexes. -/
+@[no_expose] def logToOpenComplexNat : logComplexNat P ⟶ openFormsComplexNat P :=
+  image.ι (logGeneratorComplexNat P)
+
+/-- The regular-form inclusion into the logarithmic complex. Its injectivity is proved locally
+from smoothness of the pair. -/
+@[no_expose] def regularToLogComplexNat :
+    formsComplexNat k P.ambient.obj ⟶ logComplexNat P :=
+  biprod.inl ≫ factorThruImage (logGeneratorComplexNat P)
+
+/-- The degreewise inclusion in forms on the complement. -/
+def logToOpenSheaf (n : ℕ) : logSheaf P n ⟶ openFormsSheaf P n :=
+  (logToOpenComplexNat P).f n
+
+/-- The degreewise regular inclusion in logarithmic forms. -/
+def regularToLogSheaf (n : ℕ) : formsSheaf k P.ambient.obj n ⟶ logSheaf P n :=
+  (regularToLogComplexNat P).f n
+
+/-- The logarithmic differential is the restriction of the ordinary de Rham differential. -/
+def logSheafD (n : ℕ) : logSheaf P n ⟶ logSheaf P (n + 1) :=
+  (logComplexNat P).d n (n + 1)
+
+/-- The logarithmic differential squares to zero. -/
+@[reassoc (attr := simp)] theorem logSheafD_comp (n : ℕ) :
+    logSheafD P n ≫ logSheafD P (n + 1) = 0 :=
+  (logComplexNat P).d_comp_d n (n + 1) (n + 1 + 1)
+
+/-- Regular inclusion commutes with the differential. -/
+@[reassoc] theorem regularToLogSheaf_d (n : ℕ) :
+    regularToLogSheaf P n ≫ logSheafD P n =
+      formsSheafD k P.ambient.obj n ≫ regularToLogSheaf P (n + 1) := by
+  simpa only [regularToLogSheaf, logSheafD, formsComplexNat_d, formsComplexNat_X,
+    logSheaf] using
+    (regularToLogComplexNat P).comm n (n + 1)
+
+/-- The logarithmic differential commutes with inclusion in ordinary forms. -/
+@[reassoc] theorem logSheafD_comp_logToOpenSheaf (n : ℕ) :
+    logSheafD P n ≫ logToOpenSheaf P (n + 1) =
+      logToOpenSheaf P n ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).map
+          (formsSheafD k P.compl.obj n) :=
+  by
+    simpa only [logSheafD, logToOpenSheaf, openFormsComplexNat,
+      Functor.mapHomologicalComplex_obj_d, Functor.mapHomologicalComplex_obj_X,
+      formsComplexNat_d, formsComplexNat_X, openFormsSheaf, logSheaf] using
+      ((logToOpenComplexNat P).comm n (n + 1)).symm
+
+/-- Regular forms followed by logarithmic inclusion are their original pullback to the open. -/
+@[reassoc (attr := simp)] theorem regularToLogSheaf_comp_logToOpenSheaf (n : ℕ) :
+    regularToLogSheaf P n ≫ logToOpenSheaf P n = formsSheafPullback P.j.hom n := by
+  have h : regularToLogComplexNat P ≫ logToOpenComplexNat P =
+      formsComplexNatPullback P.j.hom := by
+    dsimp only [regularToLogComplexNat, logToOpenComplexNat]
+    rw [Category.assoc, image.fac]
+    exact biprod.inl_desc _ _
+  exact congrArg (fun f ↦ f.f n) h
+
+/-- The logarithmic inclusion is a monomorphism in every degree. -/
+instance logToOpenSheaf_mono (n : ℕ) : Mono (logToOpenSheaf P n) := by
+  change Mono ((HomologicalComplex.eval _ _ n).map (image.ι (logGeneratorComplexNat P)))
+  infer_instance
+
+/-- The regular-plus-left-theta map in positive degrees. Its image is precisely the logarithmic
+sheaf, whereas sections of that sheaf need only have such normal forms locally. -/
+def logNormalFormSheaf (n : ℕ) :
+    formsSheaf k P.ambient.obj (n + 1) ⊞ formsSheaf k P.ambient.obj n ⟶
+      openFormsSheaf P (n + 1) :=
+  biprod.desc (formsSheafPullback P.j.hom (n + 1))
+    (formsSheafPullback P.j.hom n ≫
+      (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).map
+        (thetaWedgeSheaf P.compl.obj P.eqnUnit n))
+
+/-- A normal form with no logarithmic term is the pullback of its regular part. -/
+@[reassoc (attr := simp)] theorem inl_logNormalFormSheaf (n : ℕ) :
+    biprod.inl ≫ logNormalFormSheaf P n = formsSheafPullback P.j.hom (n + 1) :=
+  biprod.inl_desc _ _
+
+/-- A normal form with no regular part is left multiplication by the logarithmic form. -/
+@[reassoc (attr := simp)] theorem inr_logNormalFormSheaf (n : ℕ) :
+    biprod.inr ≫ logNormalFormSheaf P n = formsSheafPullback P.j.hom n ≫
+      (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).map
+        (thetaWedgeSheaf P.compl.obj P.eqnUnit n) :=
+  biprod.inr_desc _ _
+
+/-- The local normal-form map onto logarithmic forms. Epimorphy is a sheaf assertion, rather than
+surjectivity on sections of every open. -/
+@[no_expose] def logMkSheaf (n : ℕ) :
+    formsSheaf k P.ambient.obj (n + 1) ⊞ formsSheaf k P.ambient.obj n ⟶
+      logSheaf P (n + 1) :=
+  (HomologicalComplex.biprodXIso (formsComplexNat k P.ambient.obj)
+      (shiftedAmbientComplexNat P) (n + 1)).inv ≫
+    (factorThruImage (logGeneratorComplexNat P)).f (n + 1)
+
+/-- Normal forms cover the logarithmic sheaf locally. -/
+instance logMkSheaf_epi (n : ℕ) : Epi (logMkSheaf P n) := by
+  change Epi ((HomologicalComplex.biprodXIso _ _ (n + 1)).inv ≫
+    (HomologicalComplex.eval _ _ (n + 1)).map (factorThruImage (logGeneratorComplexNat P)))
+  apply (epi_comp_iff_of_epi _ _).2
+  exact (HomologicalComplex.eval _ _ (n + 1)).map_epi _
+
+/-- Inclusion of a logarithmic normal form is its defining regular-plus-left-theta formula. -/
+@[reassoc (attr := simp)] theorem logMkSheaf_comp_logToOpenSheaf (n : ℕ) :
+    logMkSheaf P n ≫ logToOpenSheaf P (n + 1) = logNormalFormSheaf P n := by
+  change ((HomologicalComplex.biprodXIso _ _ (n + 1)).inv ≫
+    (factorThruImage (logGeneratorComplexNat P)).f (n + 1)) ≫
+      (image.ι (logGeneratorComplexNat P)).f (n + 1) = _
+  rw [Category.assoc, ← HomologicalComplex.comp_f, image.fac]
+  apply biprod.hom_ext'
+  · rw [← Category.assoc, HomologicalComplex.inl_biprodXIso_inv]
+    exact (HomologicalComplex.biprod_inl_desc_f (formsComplexNatPullback P.j.hom)
+      (thetaToOpenComplexNat P) (n + 1)).trans (biprod.inl_desc _ _).symm
+  · rw [← Category.assoc, HomologicalComplex.inr_biprodXIso_inv]
+    exact (HomologicalComplex.biprod_inr_desc_f (formsComplexNatPullback P.j.hom)
+      (thetaToOpenComplexNat P) (n + 1)).trans (biprod.inr_desc _ _).symm
+
+/-- The regular part of a normal form is the original regular inclusion. -/
+@[reassoc (attr := simp)] theorem inl_logMkSheaf (n : ℕ) :
+    biprod.inl ≫ logMkSheaf P n = regularToLogSheaf P (n + 1) := by
+  apply (cancel_mono (logToOpenSheaf P (n + 1))).1
+  rw [Category.assoc, logMkSheaf_comp_logToOpenSheaf, inl_logNormalFormSheaf,
+    regularToLogSheaf_comp_logToOpenSheaf]
+
+/-- The categorical image of the ordinary normal-form map is the logarithmic sheaf. This
+comparison is used when exact associated-module functors identify its affine values. -/
+def logSheafImageIso (n : ℕ) : image (logNormalFormSheaf P n) ≅ logSheaf P (n + 1) :=
+  (image.isoStrongEpiMono (logMkSheaf P n) (logToOpenSheaf P (n + 1))
+    (logMkSheaf_comp_logToOpenSheaf P n)).symm
+
+/-- The image comparison preserves the actual embedding into forms on the complement. -/
+@[reassoc (attr := simp)] theorem logSheafImageIso_hom_logToOpenSheaf (n : ℕ) :
+    (logSheafImageIso P n).hom ≫ logToOpenSheaf P (n + 1) =
+      image.ι (logNormalFormSheaf P n) :=
+  by
+    exact image.isoStrongEpiMono_inv_comp_mono (logMkSheaf P n)
+      (logToOpenSheaf P (n + 1)) (logMkSheaf_comp_logToOpenSheaf P n)
 
 end OrlikSolomon.Geometric.DeRham
