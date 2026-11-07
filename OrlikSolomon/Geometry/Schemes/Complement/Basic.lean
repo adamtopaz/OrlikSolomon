@@ -7,6 +7,7 @@ module
 
 public import OrlikSolomon.Geometry.Complement
 public import OrlikSolomon.Geometry.Schemes.Complement.AffineSpace
+public import OrlikSolomon.Geometry.Schemes.Units
 
 /-!
 # Arrangement complements as open subschemes
@@ -45,7 +46,9 @@ and this comparison is compatible with every map of complements of the existing 
   since `j_𝒜` is a monomorphism.
 * `isLocalizationAway_complementι_appTop`: `Γ(U_𝒜) = Sym(V*)[1/F]` for every such `F`.
 * `complementIsoSpec_hom_appTop_coord`: under `s_𝒜`, the image of an affine function in
-  `O(U_𝒜)` is the restriction of its function, so each equation unit is the restricted function.
+  `O(U_𝒜)` is the restriction of its function, so each equation unit is the restricted function;
+  in a domain, `SmoothDomain.complementIsoSpec_hom_appTop_complementUnit` and, as units,
+  `SmoothDomain.map_complementIsoSpec_hom_complementUnit`.
 * `complementMap_comp_complementIsoSpec_hom`, `complementInclusion_comp_complementIsoSpec_hom`, and
   their forms in a domain: `s_𝒜` is natural for the existing `complementMap` and
   `complementInclusion`.
@@ -55,10 +58,11 @@ and this comparison is compatible with every map of complements of the existing 
 The maps of complements are `complementHom` of the existing ring maps, so one set of naturality
 lemmas for `s` serves all of them, and they are characterized by their composite with `j_𝒜`
 (`complementMap_comp_complementι`), which determines them. Lemmas on functions in a domain are
-stated as equations of global sections, not of units, because `Γ((D.spec A).obj.left, ⊤)` and
-`Γ((spec A.obj).left, ⊤)` agree only at implicit transparency; recover unit equations with
-`Units.ext`. Named objects are `@[implicit_reducible] def`s, and equations between objects are not
-`simp` lemmas. No `k`-point of any scheme is used.
+stated as equations of global sections, and their unit forms, such as
+`SmoothDomain.map_complementIsoSpec_hom_complementUnit`, follow by `Units.ext`. Named objects are
+`@[implicit_reducible] def`s, except `SmoothDomain.complement`, which is `@[instance_reducible]`
+like the other objects of a domain built from a scheme (see `Geometry/Schemes/Basic`), and
+equations between objects are not `simp` lemmas. No `k`-point of any scheme is used.
 -/
 
 @[expose] public section
@@ -591,7 +595,7 @@ admissible domain `D`. It is smooth and affine, so its membership is found by in
 hypothesis on `𝒜`.
 
 Blueprint: `def:geo-complement`, `thm:geo-complement-spec`. -/
-@[implicit_reducible]
+@[instance_reducible]
 def complement : D.Obj := D.ofAffine (Geometric.complement 𝒜)
 
 lemma complement_obj : (D.complement 𝒜).obj = Geometric.complement 𝒜 := rfl
@@ -623,6 +627,18 @@ lemma complementIsoSpec_hom_appTop_complementUnit (hf : 𝒜.Covers (zeroLocus f
           (SmoothAlg.complementUnit 𝒜 f hf : SmoothAlg.complement 𝒜)) =
       (Geometric.complementUnit 𝒜 f hf : Γ((Geometric.complement 𝒜).left, ⊤)) :=
   complementIsoSpec_hom_appTop_coord f
+
+variable {𝒜} in
+/-- `complementIsoSpec_hom_appTop_complementUnit` as an equation of units: `s_𝒜` pulls the unit
+`specUnit` of the existing `SmoothAlg.complementUnit 𝒜 f hf` back to `f̃|_{U_𝒜}`. Rewrite with it
+after `OrdinaryTheory.pull_toAlgebraic_logClass_eq`.
+
+Blueprint: `thm:geo-complement-spec`. -/
+lemma map_complementIsoSpec_hom_complementUnit (hf : 𝒜.Covers (zeroLocus f)) :
+    Units.map (D.complementIsoSpec 𝒜).hom.hom.left.appTop.hom
+        (specUnit (A := (SmoothAlg.complement 𝒜).obj) (SmoothAlg.complementUnit 𝒜 f hf)) =
+      Geometric.complementUnit 𝒜 f hf :=
+  Units.ext (D.complementIsoSpec_hom_appTop_complementUnit hf)
 
 variable {𝒜} {ℬ : Arrangement k W}
 
@@ -692,6 +708,12 @@ lemma complementIso_hom_comp_complementIsoSpec_hom {ℬ : Arrangement k W} (e : 
       (D.complementIsoSpec ℬ).hom ≫
         (D.specFunctor.map (SmoothAlg.complementIso 𝒜 ℬ e h).hom).unop :=
   D.complementMap_comp_complementIsoSpec_hom _ _
+
+/-- A unit of `U_𝒜` and a unit of `D.complement 𝒜` multiply, since `D.complement 𝒜` unfolds to
+`U_𝒜` at instance transparency (see `Geometry/Schemes/Basic`). -/
+example (hf : 𝒜.Covers (zeroLocus f)) (u : Γ((D.complement 𝒜).obj.left, ⊤)ˣ) :
+    Γ((D.complement 𝒜).obj.left, ⊤)ˣ :=
+  Geometric.complementUnit 𝒜 f hf * u
 
 end SmoothDomain
 

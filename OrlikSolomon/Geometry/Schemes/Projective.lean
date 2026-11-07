@@ -49,7 +49,8 @@ finite-dimensional `W`. It belongs to every admissible domain.
   restriction of `ℓ` to the slice `ℓ₀ = 1`.
 * `SmoothDomain.coneToProjectiveComplement_comp_projectiveComplementIsoSpec_hom`,
   `SmoothDomain.coe_projectiveRatio`: under `s_P`, the projection `q` is `Spec` of the existing
-  `projectiveToCone`, and the ratios are the existing `projectiveRatioUnit`.
+  `projectiveToCone`, and the ratios are the existing `projectiveRatioUnit`, also as units
+  (`SmoothDomain.map_projectiveComplementIsoSpec_hom_projectiveRatioUnit`).
 
 ## Implementation notes
 
@@ -61,12 +62,14 @@ The constructions are made over `S` with the rings `CommAlgCat.of k P.Complement
 `W`. In a domain they are wrapped with `ObjectProperty.isoMk` and stated with the objects of
 `SmoothAlg`, so that `D.projectiveComplementIsoSpec P` has target exactly
 `D.spec (SmoothAlg.projectiveComplement P)`, which is where an algebraic theory is evaluated. The
-domain lemmas about functions are stated as equations of global sections, not of units, because the
-types `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)` agree only at implicit
-transparency.
+domain lemmas about functions are stated as equations of global sections, and their unit forms,
+such as `SmoothDomain.map_projectiveComplementIsoSpec_hom_projectiveRatioUnit`, follow by
+`Units.ext`.
 
-Named objects are `@[implicit_reducible] def`s and equations between objects are not `simp` lemmas,
-as explained in `Geometry/Schemes/Basic`. No `k`-point of any scheme is used.
+Named objects are `@[implicit_reducible] def`s, except `SmoothDomain.projectiveComplement`, which
+is `@[instance_reducible]` like the other objects of a domain built from a scheme, and equations
+between objects are not `simp` lemmas, as explained in `Geometry/Schemes/Basic`. No `k`-point of
+any scheme is used.
 -/
 
 @[expose] public section
@@ -530,7 +533,7 @@ variable {ℓ ℓ' ℓ₀ : Dual k W}
 domain `D`. It is smooth and affine, so its membership is found by instances.
 
 Blueprint: `thm:geo-projective-geometry`. -/
-@[implicit_reducible]
+@[instance_reducible]
 def projectiveComplement : D.Obj := D.ofAffine (Geometric.projectiveComplement P)
 
 lemma projectiveComplement_obj :
@@ -565,6 +568,19 @@ lemma coe_projectiveRatio (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ke
         ((Scheme.ΓSpecIso (.of (SmoothAlg.projectiveComplement P))).inv
           (SmoothAlg.projectiveRatioUnit hℓ hℓ' : SmoothAlg.projectiveComplement P)) :=
   rfl
+
+/-- `SmoothDomain.coe_projectiveRatio` as an equation of units: `s_P` pulls the unit `specUnit` of
+the existing `SmoothAlg.projectiveRatioUnit hℓ hℓ'` back to `ℓ / ℓ'`. Rewrite with it after
+`OrdinaryTheory.pull_toAlgebraic_logClass_eq`.
+
+Blueprint: `thm:geo-projective-geometry`. -/
+lemma map_projectiveComplementIsoSpec_hom_projectiveRatioUnit (hℓ : LinearMap.ker ℓ ∈ P)
+    (hℓ' : LinearMap.ker ℓ' ∈ P) :
+    Units.map (D.projectiveComplementIsoSpec P).hom.hom.left.appTop.hom
+        (specUnit (A := (SmoothAlg.projectiveComplement P).obj)
+          (SmoothAlg.projectiveRatioUnit hℓ hℓ')) =
+      projectiveRatio hℓ hℓ' :=
+  Units.ext (D.coe_projectiveRatio hℓ hℓ').symm
 
 /-- The canonical projection `q : V_P → U_P`, in a domain `D`, from the spectrum of the coordinate
 ring of the complement of the cone.
