@@ -77,8 +77,9 @@ first page shows the statements, elaborated, with the output of `#print axioms`.
   [`blueprint/`](blueprint/de_rham_instance_blueprint.tex)
 - Milestone M6, the theorems on smooth schemes, in progress, with affine duality, divisor pairs,
   affine and projective complements, geometric axioms, affine transports, logarithmic classes and
-  sheaves of forms with affine evaluation, and the affine and projective structure theorems on
-  schemes formalized to the extent indicated in their book boxes:
+  sheaves of forms with affine evaluation, the affine and projective structure theorems on
+  schemes, and the de Rham instance on smooth affine schemes with the unconditional de Rham
+  theorems for the actual open subschemes formalized to the extent indicated in their book boxes:
   [`blueprint/`](blueprint/geometric_refactor_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)

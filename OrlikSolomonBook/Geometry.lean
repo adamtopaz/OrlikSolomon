@@ -66,7 +66,7 @@ And an invertible regular function on $`\operatorname{Spec}A` is simply a unit o
 The category is not chosen for generality: it needs regular maps that are not affine-linear, because {bp "lem:small-targets"}[the normalized maps] $`f_i/f_1` of the realization step are fractions.
 A category of affine-linear maps would not be enough.
 Full scheme theory, on the other hand, is not needed for the proof.
-{ref "geometric"}[The chapter on schemes] restates the theorems for open subschemes and for cohomology theories on schemes, without changing this proof; its foundations, affine duality and its compatibilities, divisor pairs, affine and projective complements as open subschemes, geometric cohomology axioms, both affine transports, logarithmic classes, sheaves of forms with affine evaluation, and both structure theorems on schemes are formalized, with the remaining parts indicated in their boxes.
+{ref "geometric"}[The chapter on schemes] restates the theorems for open subschemes and for cohomology theories on schemes, without changing this proof; its foundations, affine duality and its compatibilities, divisor pairs, affine and projective complements as open subschemes, geometric cohomology axioms, both affine transports, logarithmic classes, sheaves of forms with affine evaluation, both structure theorems on schemes, and the de Rham instance on smooth affine schemes with its corollaries are formalized, with the remaining parts indicated in their boxes.
 
 # Coordinate rings
 
