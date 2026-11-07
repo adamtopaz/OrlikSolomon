@@ -6,6 +6,7 @@ Authors: Adam Topaz, Codex
 module
 public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
 public import Mathlib.Topology.Sheaves.Functors
+public import Mathlib.CategoryTheory.Sites.PreservesLocallyBijective
 /-!
 # Pullback of relative differential forms
 
@@ -29,6 +30,7 @@ Blueprint: the pullback construction in `thm:geo-forms-comparison`.
 @[expose] public section
 noncomputable section
 open CategoryTheory Opposite AlgebraicGeometry
+open MonoidalCategory
 open OrlikSolomon.DeRham
 universe u
 namespace OrlikSolomon.Geometric.DeRham
@@ -163,6 +165,65 @@ theorem formsSheafPullback_comp {Z : Over (Spec (CommRingCat.of k))}
   exact congrArg ((formsSheafUnit k X n).app (op ((f ≫ g).left ⁻¹ᵁ U.unop)))
     (ConcreteCategory.congr_hom
       (NatTrans.congr_app (formsPresheafPullback_comp f g n) U) x)
+
+/-- Pullback preserves wedge products, without a flatness hypothesis. -/
+theorem formsSheafPullback_mul (g : X ⟶ Y) (p q : ℕ) :
+    formsSheafMul k Y p q ≫ (formsSheafPullback g (p + q)).hom =
+      ((formsSheafPullback g p).hom ⊗ₘ (formsSheafPullback g q).hom) ≫
+        Functor.whiskerLeft (TopologicalSpace.Opens.map g.left.base).op
+          (formsSheafMul k X p q) := by
+  apply formsSheaf_tensor_hom_ext k Y p q
+    ((TopCat.Sheaf.pushforward (ModuleCat k) g.left.base).obj (formsSheaf k X (p + q)))
+  intro U a b
+  change (formsSheafPullback g (p + q)).hom.app U
+      (formsSheafWedge k Y p q U ((formsSheafUnit k Y p).app U a)
+        ((formsSheafUnit k Y q).app U b)) =
+    formsSheafWedge k X p q (op (g.left ⁻¹ᵁ U.unop))
+      ((formsSheafPullback g p).hom.app U ((formsSheafUnit k Y p).app U a))
+      ((formsSheafPullback g q).hom.app U ((formsSheafUnit k Y q).app U b))
+  rw [formsSheafWedge_unit, formsSheafPullback_unit_apply,
+    formsSheafPullback_unit_apply, formsSheafPullback_unit_apply, formsSheafWedge_unit]
+  congr 1
+  apply Subtype.ext
+  let a' : ⋀[sectionAlgebra k Y U.unop]^p Ω[sectionAlgebra k Y U.unop⁄k] := a
+  let b' : ⋀[sectionAlgebra k Y U.unop]^q Ω[sectionAlgebra k Y U.unop⁄k] := b
+  exact (Forms.map (sectionPullback g U.unop)).map_mul a'.val b'.val
+
+/-- The section-level wedge formula for pullback. -/
+theorem formsSheafPullback_wedge (g : X ⟶ Y) (p q : ℕ) (U : Y.left.Opensᵒᵖ)
+    (a : (formsSheaf k Y p).obj.obj U) (b : (formsSheaf k Y q).obj.obj U) :
+    (formsSheafPullback g (p + q)).hom.app U (formsSheafWedge k Y p q U a b) =
+      formsSheafWedge k X p q (op (g.left ⁻¹ᵁ U.unop))
+        ((formsSheafPullback g p).hom.app U a) ((formsSheafPullback g q).hom.app U b) :=
+  ConcreteCategory.congr_hom (NatTrans.congr_app (formsSheafPullback_mul g p q) U) (a ⊗ₜ[k] b)
+
+/-- On degree zero, pullback is the usual pullback of regular functions. -/
+@[simp] theorem formsSheafPullback_zero (g : X ⟶ Y) (U : Y.left.Opensᵒᵖ)
+    (r : sectionAlgebra k Y U.unop) :
+    (formsSheafPullback g 0).hom.app U ((formsSheafZeroIso k Y).hom.hom.app U r) =
+      (formsSheafZeroIso k X).hom.hom.app (op (g.left ⁻¹ᵁ U.unop))
+        (sectionPullback g U.unop r) := by
+  change (formsSheafPullback g 0).hom.app U
+      ((formsSheafUnit k Y 0).app U ((formsPresheafZero k Y).app U r)) =
+    (formsSheafUnit k X 0).app (op (g.left ⁻¹ᵁ U.unop))
+      ((formsPresheafZero k X).app (op (g.left ⁻¹ᵁ U.unop)) (sectionPullback g U.unop r))
+  rw [formsSheafPullback_unit_apply]
+  congr 1
+  apply Subtype.ext
+  exact Forms.map_algebraMap (sectionPullback g U.unop) r
+
+/-- Pullback is semilinear for the natural structure-sheaf actions on the same carriers. -/
+theorem formsSheafPullback_smul (g : X ⟶ Y) (n : ℕ) (U : Y.left.Opens)
+    (r : sectionAlgebra k Y U) (a : (formsSheaf k Y n).obj.obj (op U)) :
+    (formsSheafPullback g n).hom.app (op U) (formsSheafSMul k Y n U r a) =
+      formsSheafSMul k X n (g.left ⁻¹ᵁ U) (sectionPullback g U r)
+        ((formsSheafPullback g n).hom.app (op U) a) := by
+  rw [← formsSheafWedge_zero_eq_smul]
+  refine (formsSheafPullback_wedge g n 0 (op U) a
+    ((formsSheafZeroIso k Y).hom.hom.app (op U) r)).trans ?_
+  rw [formsSheafPullback_zero]
+  exact formsSheafWedge_zero_eq_smul k X n (g.left ⁻¹ᵁ U) (sectionPullback g U r)
+    ((formsSheafPullback g n).hom.app (op U) a)
 
 /-- Sheaf pullback commutes with the relative de Rham differential. -/
 theorem formsSheafPullback_d (g : X ⟶ Y) (n : ℕ) :
