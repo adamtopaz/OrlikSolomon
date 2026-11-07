@@ -31,8 +31,9 @@ an exact form has exact components, so the grading of forms descends.
   of degree `n`.
 * `OrlikSolomon.DeRham.Cohomology.decompose_mk`: homogeneous components are computed on
   representatives.
-* `OrlikSolomon.DeRham.Cohomology.mk_eq_zero_iff_of_mem_exteriorPower`: a closed form of degree `n`
-  that is exact has a primitive of degree `n - 1`, and it is zero if `n = 0`.
+* `OrlikSolomon.DeRham.Cohomology.mk_eq_zero_iff_of_mem_exteriorPower_succ`: an exact closed form
+  of positive degree has a primitive in the preceding degree. The degree-zero case is
+  `OrlikSolomon.DeRham.Cohomology.mk_eq_zero_iff_of_mem_exteriorPower_zero`.
 * `OrlikSolomon.DeRham.Cohomology.isGradedCommutative_degree` and
   `OrlikSolomon.DeRham.Cohomology.isGradedCommutative_grading`: graded commutativity with sign
   `(-1)^(pq)`.
