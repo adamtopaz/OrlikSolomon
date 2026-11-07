@@ -557,7 +557,9 @@ private theorem formsSheafPullback_congr {X Y : Over (Spec (CommRingCat.of k))} 
   simp only [eqToHom_refl, Category.comp_id]
 
 variable {P Q : Geometric.DivisorPair D}
-private def pairOpenPushforwardIso (F : P ⟶ Q) :
+/-- The complement square of a morphism of pairs identifies the two composite direct-image
+functors on sheaves of base-linear modules. -/
+def pairOpenPushforwardIso (F : P ⟶ Q) :
     TopCat.Sheaf.pushforward (ModuleCat k) F.compl.hom.left.base ⋙
         TopCat.Sheaf.pushforward (ModuleCat k) Q.j.hom.left.base ≅
       TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base ⋙
