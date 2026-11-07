@@ -16,7 +16,7 @@ file := "de-rham"
 htmlSplit := .never
 %%%
 
-*The de Rham instance is constructed in Lean.*
+*The de Rham instance and its corollaries are formalized.*
 This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
 For every field $`k` of characteristic zero, {name OrlikSolomon.DeRham.ordinaryTheory}`DeRham.ordinaryTheory` `k` is a value of the structure of axioms: algebraic de Rham cohomology, with coefficients $`k[t,t^{-1}]`.
 Its coefficient ring and its cohomology of the point are nonzero, and every field of the structure is proved for it, none weakened and none replaced by a hypothesis.
@@ -28,7 +28,8 @@ Projectivity in every form degree, injectivity of regular scalar multiplication 
 Cartan calculus, the pole filtration, contraction of its positive quotients, and finite reduction to logarithmic cohomology are formalized.
 The residue and Gysin maps before the twist, their long exact sequence and projection formula, and their naturality for morphisms that need not be flat are formalized too.
 So are the Laurent-twisted functor, the twisted Gysin and residue maps, and every field of the structure of axioms.
-What remains planned is {bp "lem:dr-tau"}[], which identifies the logarithmic classes of the instance with the classes of the forms $`da/a`, the corollaries {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[], which instantiate the main theorems at it, and some of the worked regressions.
+So is {bp "lem:dr-tau"}[], which identifies the logarithmic classes of the instance with the classes of the forms $`da/a`, and so are the corollaries {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[], which instantiate the main theorems at the instance and are theorems about algebraic de Rham cohomology with no hypothetical cohomology theory in them.
+Some of the worked regressions remain planned.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
 
@@ -65,12 +66,24 @@ It depends only on the standard axioms of Lean's logic, and the build fails if t
 'OrlikSolomon.DeRham.ordinaryTheory' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
-*Giving an unconditional corollary.*
-{bp "cor:dr-affine"}[], which is still planned, will instantiate {bp "thm:affine"}[] to give, for every split affine arrangement $`\mathcal{A}` over such a field,
+*Giving unconditional corollaries.*
+{bp "cor:dr-affine"}[] instantiates {bp "thm:affine"}[] to give, for every split affine arrangement $`\mathcal{A}` over such a field,
 $$`\operatorname{OS}_k(\mathcal{A})\simeq_k\bigoplus_{q\ge0}H^q_{\mathrm{dR}}(U_{\mathcal{A}}/k),\qquad e_H\longmapsto[df_H/f_H],`
 a statement with no hypothetical cohomology theory in it.
-{bp "cor:dr-projective"}[] will do the same for nonempty split projective arrangements.
+{bp "cor:dr-projective"}[] does the same for nonempty split projective arrangements.
 The proof about arrangements is not repeated, and the construction of the instance does not mention arrangements at all: they enter only when the existing theorems are instantiated.
+In Lean the isomorphisms are {name OrlikSolomon.DeRham.affineEquiv}`DeRham.affineEquiv` and {name OrlikSolomon.DeRham.projectiveEquiv}`DeRham.projectiveEquiv`, whose targets are the de Rham cohomology algebras {name OrlikSolomon.DeRham.Cohomology}`DeRham.Cohomology` of the complements, and whose only hypotheses on the base are that it is a field of characteristic zero:
+
+```lean
+example (k : Type u) [Field k] [CharZero k] {V : Type u}
+    [AddCommGroup V] [Module k V] [FiniteDimensional k V]
+    (𝒜 : Arrangement k V) :
+    OSAlgebra k 𝒜 ≃ₐ[k]
+      DeRham.Cohomology k (SmoothAlg.complement 𝒜) :=
+  DeRham.affineEquiv 𝒜
+```
+
+The first page of this book states both corollaries in Lean, with their formulas on generators, and shows that they depend only on the standard axioms of Lean's logic.
 
 This is one theory.
 It gives no theorem about singular, $`\ell`-adic or rigid cohomology.
@@ -453,23 +466,32 @@ All fields hold for every smooth algebra and every divisor pair, without assumin
 The theorem does not say that $`C(A)` is nonzero for every $`A`: the zero algebra is a valid object, and its cohomology is zero.
 :::
 
-:::node "lem:dr-tau"
+:::node "lem:dr-tau" (decl := OrlikSolomon.DeRham.dlogClass) (decl := OrlikSolomon.DeRham.residue_dlogClass) (decl := OrlikSolomon.DeRham.ordinaryTheory_tau) (decl := OrlikSolomon.DeRham.ordinaryTheory_logClass)
 For the standard pair $`(k[x],x)`, the normalized class $`\tau` of {bp "lem:gm"}[] is $`[dx/x]\,t` in $`C(k[x,x^{-1}])_{1,1}`.
 For a unit $`a` on any smooth algebra, the logarithmic class of {bp "def:log"}[] is $`[da/a]\,t`.
+
+In Lean the class $`[da/a]` is defined for a unit of any algebra over any commutative ring, and the residue of $`[df/f]` is $`1` for every smooth principal pair.
 :::
 
-:::node "cor:dr-affine"
+:::node "cor:dr-affine" (decl := OrlikSolomon.DeRham.affineEquiv) (decl := OrlikSolomon.DeRham.affineEquiv_generator_of_isEquation) (decl := OrlikSolomon.DeRham.affineEquiv_mem_degree_iff) (decl := OrlikSolomon.DeRham.affineDirectSumEquiv) (decl := OrlikSolomon.DeRham.affineDirectSumEquiv_of_mem_degree) (decl := OrlikSolomon.DeRham.affineDegreeEquiv)
 For every split affine hyperplane arrangement $`\mathcal{A}` over a field $`k` of characteristic zero,
 $$`\operatorname{OS}_k(\mathcal{A})\simeq_k\bigoplus_{q\ge0}H^q_{\mathrm{dR}}(U_{\mathcal{A}}/k),\qquad e_H\longmapsto[df_H/f_H].`
 It comes from instantiating {bp "thm:affine"}[] and removing the powers of $`t` from the diagonal, and no part of the proof about arrangements is repeated.
+
+In Lean the primary form is an isomorphism of graded $`k`-algebras onto the total de Rham cohomology $`H^\bullet_{\mathrm{dR}}(U_{\mathcal{A}}/k)`, which sends $`\operatorname{OS}^q_k(\mathcal{A})` onto $`H^q_{\mathrm{dR}}(U_{\mathcal{A}}/k)`.
+The displayed direct sum is the same map followed by the decomposition into degrees.
+The formula on generators holds for every equation $`f_H` of $`H`.
 :::
 
-:::node "cor:dr-projective"
+:::node "cor:dr-projective" (decl := OrlikSolomon.DeRham.projectiveEquiv) (decl := OrlikSolomon.DeRham.projectiveEquiv_difference_of_ker_eq) (decl := OrlikSolomon.DeRham.projectiveEquiv_mem_degree_iff) (decl := OrlikSolomon.DeRham.map_projectiveToCone_projectiveEquiv) (decl := OrlikSolomon.DeRham.projectiveDirectSumEquiv) (decl := OrlikSolomon.DeRham.projectiveDegreeEquiv)
 For a nonempty split projective arrangement $`\mathcal{P}` in $`\mathbb{P}^n_k`, with $`k` as above,
 $$`\overline{\operatorname{OS}}_k(\mathcal{P})\simeq_k\bigoplus_{q\ge0}H^q_{\mathrm{dR}}(U_{\mathcal{P}}/k),\qquad e_i-e_j\longmapsto\Bigl[\frac{d(\ell_i/\ell_j)}{\ell_i/\ell_j}\Bigr],`
 independently of the equations and of the hyperplane chosen at infinity.
 It comes from instantiating {bp "thm:projective"}[].
 The empty projective arrangement needs a separate calculation and is not included.
+
+In Lean, as in the affine case, the primary form is a graded isomorphism onto the total de Rham cohomology, and the direct sum is derived from it.
+No hyperplane at infinity enters the definition, and after pullback to the complement of the cone the map is the affine isomorphism of the cone.
 :::
 
 # Worked regressions and excluded cases
