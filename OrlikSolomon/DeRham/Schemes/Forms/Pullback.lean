@@ -563,4 +563,24 @@ theorem formsSheafPullbackTop_d (g : X ⟶ Y) (n : ℕ)
   ConcreteCategory.congr_hom
     (NatTrans.congr_app (congrArg (fun h => h.hom) (formsSheafPullback_d g n)) (op ⊤)) a
 
+/-- Pullback preserves the degree-zero unit section on every open. -/
+@[simp] theorem formsSheafPullback_one (g : X ⟶ Y) (U : Y.left.Opensᵒᵖ) :
+    dsimp% (formsSheafPullback g 0).hom.app U (formsSheafOneSection k Y U) =
+      formsSheafOneSection k X (op (g.left ⁻¹ᵁ U.unop)) := by
+  change (formsSheafPullback g 0).hom.app U
+      ((formsSheafUnit k Y 0).app U ((formsPresheafOne k Y).app U (1 : k))) = _
+  rw [formsSheafPullback_unit_apply]
+  change (formsSheafUnit k X 0).app (op (g.left ⁻¹ᵁ U.unop)) _ =
+    (formsSheafUnit k X 0).app (op (g.left ⁻¹ᵁ U.unop)) _
+  congr 1
+  apply Subtype.ext
+  change Forms.map (sectionPullback g U.unop) ((1 : k) • 1) = (1 : k) • 1
+  simp only [one_smul, map_one]
+
+/-- Pullback preserves the global unit on the displayed top-open carriers. -/
+@[simp] theorem formsSheafPullbackTop_one (g : X ⟶ Y) :
+    formsSheafPullbackTop g 0 (formsSheafOneSection k Y (op ⊤)) =
+      formsSheafOneSection k X (op ⊤) :=
+  formsSheafPullback_one g (op ⊤)
+
 end OrlikSolomon.Geometric.DeRham
