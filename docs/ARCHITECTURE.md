@@ -91,6 +91,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Homotopy`             | the explicit integration homotopy and canonical cohomology equivalence of `thm:dr-homotopy`; the module to import |
 | `DeRham/Instance/Twisted`      | `def:dr-twisted-functor` on the algebra `TwistedCohomology k A = k[T;T⁻¹] ⊗[k] H^•`, for any `k`-algebra: the `(p, w)` grading, the point, affine-line invariance, and the removal of powers of `T` for `cor:dr-affine` |
 | `DeRham/Instance/Basic`        | the functor of `def:dr-twisted-functor` on `SmoothAlg k`, and every field of `lem:dr-ordinary-basic` |
+| `DeRham/Instance/Maps`         | `def:dr-twisted-maps` and `thm:dr-ordinary-localization` for a smooth principal pair: `twistMap`, the twisted Gysin map and residue, their shifts, exactness, naturality and projection formula |
+| `DeRham/Instance`              | `thm:dr-instance`: the value `ordinaryTheory k`, its nonvanishing, and `twistedClass`, the typed form in which to compute in it; the module to import |
 | `DeRham/Localization`          | `lem:dr-localization`, for any `IsLocalization`; `dlog`, and the extension of derivations |
 | `DeRham/Log/Basic`             | `def:dr-log`, `lem:dr-log-dga`: `theta`, `logForms`, `logPower`, `logMk`, the differential and the ideal `f L^•`; no smoothness |
 | `DeRham/Log/Cohomology`        | `LogCohomology`, its grading, and the algebra maps `H^•(A) → H^•(L) → H^•(T)`, for `thm:dr-comparison` and `lem:dr-exactness`; no smoothness |
@@ -120,7 +122,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/DeRhamCohomology`    | exact forms are not an ideal of all forms, `X²` in characteristic two, the point over `ℤ` and `ZMod 2`, the zero algebra |
 | `Examples/DeRhamComplex`     | `d` is not linear over the algebra, characteristic two and the zero algebra |
 | `Examples/DeRhamHomotopy`     | rational dual numbers, zero coefficients, homotopy normalization and failure of the integration hypothesis in characteristic two |
-| `Examples/DeRhamInstance`     | the fields of `lem:dr-ordinary-basic` fit the structure; consumers of the theory; signs by cohomological degree, the zero algebra and characteristic two |
+| `Examples/DeRhamInstance`     | the instance is not a zero theory: its point, its residue and `τ` are nonzero; consumers of the instance; signs by cohomological degree, the zero algebra and characteristic two |
 | `Examples/DeRhamLocalization` | nilpotent, zero and unit equations; a conormal map that is not injective over `ZMod 2` |
 | `Examples/DeRhamLog`         | signs of the projection formulas; unit, zero-algebra, disconnected and divisor-pair consumers of `DeRham/Log` |
 | `Examples/DeRhamMaps`        | signs of the residue and Gysin maps; the empty divisor, divisor-pair consumers, and the morphism that is not flat, with its proof |
@@ -549,8 +551,8 @@ The `Book` workflow runs all of this on pull requests and deploys `main` to
 In scope: the ordinary affine and projective theorems, their combinatorial corollaries,
 the bridge from a standard degreewise theory, the de Rham instance, and the exposition.
 
-The de Rham instance is planned in its own blueprint, `blueprint/de_rham_instance_blueprint.tex`,
-and tracked by the GitHub milestone "M5 De Rham instance". See the next section.
+The de Rham instance has its own blueprint, `blueprint/de_rham_instance_blueprint.tex`, and is
+tracked by the GitHub milestone "M5 De Rham instance". See the next section.
 
 The stable extension is **deferred** unless Adam asks for it. It is §11 of
 `blueprint/arrangement_cohomology_lean_blueprint.tex`, the second half of that blueprint's
@@ -572,8 +574,8 @@ localizations and principal quotients, projectivity and regular scalar action in
 injectivity into localization, conormal splitting, global and localized normal derivations, wedge
 exactness modulo the divisor, logarithmic forms with their residue sequence, global logarithmic
 comparison, the residue and Gysin maps with their long exact sequence, projection formula and
-naturality, and the Laurent-twisted functor with the fields preceding Gysin and residue exist; the
-remaining fields and the final instance remain planned.
+naturality, the Laurent-twisted functor, and the instance `ordinaryTheory k` with all 22 fields
+exist. `lem:dr-tau`, the two corollaries and some of the worked regressions remain planned.
 The table groups modules by issues #72–#83. The conormal and normal-derivation results need only
 Mathlib's Kähler differentials and formal-smoothness lifts. Normalizing a derivation on
 `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge exactness uses exterior
@@ -593,7 +595,7 @@ contraction; neither requires the de Rham differential.
 | `DeRham/Pole`                | `lem:dr-cartan`, `lem:dr-euler`, `def:dr-pole-filtration`, `lem:dr-pole-quotient`, `thm:dr-pole-contraction`, `lem:dr-filtration-reduction`, `thm:dr-comparison` |
 | `DeRham/Maps`                | `def:dr-gysin`, `lem:dr-exactness`, `thm:dr-projection`, `thm:dr-log-naturality`, `thm:dr-naturality` |
 | `DeRham/Instance/Twisted`, `DeRham/Instance/Basic` | `def:dr-twisted-functor`, `lem:dr-ordinary-basic` |
-| `DeRham/Instance`            | `def:dr-twisted-maps`, `thm:dr-ordinary-localization`, `thm:dr-instance` |
+| `DeRham/Instance/Maps`, `DeRham/Instance` | `def:dr-twisted-maps`, `thm:dr-ordinary-localization`, `thm:dr-instance` |
 | `DeRham/Corollaries`         | `lem:dr-tau`, `cor:dr-affine`, `cor:dr-projective` |
 | `Examples/DeRham`, `Examples/DeRhamSmoothPair` | `prop:dr-gm-example`, `prop:dr-unit-example`, `prop:dr-product-example`, `prop:dr-zero-example`, `prop:dr-crossing-example`, `prop:dr-morphism-examples`, `prop:dr-torus-example`, `prop:dr-characteristic-p` |
 
@@ -876,20 +878,33 @@ smoothness of the coefficient algebra.
   `TwistedCohomology` there, and they leave a goal with identical sides of different types. State and
   prove computations on `TwistedCohomology k A`, and pass between the two once, with `exact` or
   `change`. The maps `T.C.map f (b ⊗ₜ c)` and membership in `T.grading A i` are `rfl`-compatible with
-  `TwistedCohomology.map` and `TwistedCohomology.grading`. `Examples/DeRhamInstance` has
-  `RemainingFields.theory`, which fills the structure with these fields and the remaining ones as
-  arguments, and builds the equivalence of `cor:dr-affine` on it. A value of the structure can also
-  add typed wrappers, as the deletion pair does, if this becomes frequent.
+  `TwistedCohomology.map` and `TwistedCohomology.grading`.
+- **The twisted maps.** `TwistedCohomology.twistMap w f` is `T^w` times `f.baseChange k[T;T⁻¹]`, for
+  any `k`-linear map of `k`-modules. `TwistedCohomology.gysin L h` and
+  `TwistedCohomology.residue L hUnits h` are the twists by `T` and `T⁻¹` of the maps of `DeRham/Maps`,
+  for any commutative ring `k` in which positive integers are units, with no `SmoothAlg` and no
+  `DivisorPair`. Exactness is `exact_twistMap`: `k[T;T⁻¹]` is free over `k`, hence flat, and `T^w` is
+  a unit, so no bidegree-by-bidegree argument and no field are needed. `residue_mul_map` holds for
+  every `α`, with no degree hypothesis, since `T` is central.
+- **The instance.** `ordinaryTheory k`, in `DeRham/Instance`, has exactly the hypotheses
+  `[Field k] [CharZero k]`, and they enter only through `isUnit_natCast_add_one`. Its fields at a
+  divisor pair `P` are the twisted maps at `P.compl`, with `P.isSmoothPrincipalPair` and, for a
+  morphism `F`, `F.isPairHom`: nothing is transported. It is a `def`, for the reason above. To compute
+  in it, use `twistedClass w c : (ordinaryTheory k).C.obj A`, the class `T w ⊗ₜ c` typed in the
+  theory, which is `rfl` to it by `twistedClass_apply`: `mem_grading_ordinaryTheory_iff`,
+  `map_twistedClass`, `twistedClass_mul_twistedClass`, `gysin_twistedClass`, `residue_twistedClass`,
+  `stdResidue_twistedClass` and `evalOne_twistedClass` let `simp` compute with no change of type.
+  `ordinaryTheory_gysin` and the lemmas after it identify the fields with the twisted maps by `rfl`.
+  `Examples/DeRhamInstance` checks this, and builds the equivalence of `cor:dr-affine` on the
+  instance.
 
 The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Its opening
-names the exterior calculus, dg algebra, cohomology algebra, polynomial homotopy, forms on
-localizations and quotients, projectivity and regularity of forms, injectivity into localization,
-conormal splitting, normal derivations, modulo-divisor wedge exactness, logarithmic forms with
-their residue sequence, global logarithmic comparison, the residue and Gysin maps with their
-naturality, and the Laurent-twisted functor with the first fields of the structure as formalized, and
-lists what remains. The first page, `Organization` and the chapter on the axioms say the instance is
-in progress. No nonzero value of `OrdinaryTheory` has been constructed. The build does not check that
-prose, so keep it current as nodes land. The PR
-that proves `thm:dr-instance` must update the sentences saying that no nonzero value
-of the structure has been constructed: on the first page, in the chapter on the axioms, on the
-status page and in `README.md`.
+says that the instance is constructed, names what it rests on, and lists what remains: `lem:dr-tau`,
+the two corollaries and some of the worked regressions. The first page, `Organization`, the chapter
+on the axioms, the status page and `README.md` describe the resulting state: one nonzero value of
+`OrdinaryTheory` is constructed, the de Rham instance for fields of characteristic zero; the
+theorems remain conditional for every other theory; and the checks against singular and `ℓ`-adic
+cohomology are by hand. The docstrings of `OrdinaryTheory`, `BridgeData/Basic` and `Examples/Sanity`
+also name the instance. The build does not check that prose, so keep it current as nodes land. The
+PR that proves `cor:dr-affine` and `cor:dr-projective` must update the sentences that call them
+planned, on the first page, in `Organization`, in the de Rham chapter and in `README.md`.
