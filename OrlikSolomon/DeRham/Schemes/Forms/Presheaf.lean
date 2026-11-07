@@ -5,8 +5,10 @@ Authors: Adam Topaz, Codex
 -/
 module
 
+public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Closed
 public import Mathlib.AlgebraicGeometry.GammaSpecAdjunction
 public import Mathlib.AlgebraicGeometry.Over
+public import Mathlib.CategoryTheory.Monoidal.FunctorCategory
 public import OrlikSolomon.DeRham.Localization
 /-!
 # Presheaves of relative differential forms
@@ -20,6 +22,8 @@ Applying the existing algebraic forms functor in each exterior degree gives a pr
 * `sectionAlgebraPresheaf`: the presheaf of functions as commutative `k`-algebras.
 * `formsPresheaf`: relative forms in a specified nonnegative exterior degree.
 * `formsPresheafD` and `formsPresheafD_comp`: the differential and its square-zero identity.
+* `formsPresheafMul`, `formsPresheafOne`: natural wedge multiplication and its degree-zero unit.
+* `formsPresheafZeroIso`: functions are precisely the forms of degree zero.
 
 The base ring is arbitrary, and the scheme need not be affine, smooth, separated or nonempty.
 The differential is `k`-linear; it is not asserted to be linear over the structure sheaf.
@@ -29,14 +33,14 @@ Blueprint: the presheaf construction in `def:geo-forms-sheaf`.
 
 @[expose] public section
 noncomputable section
-open CategoryTheory Opposite AlgebraicGeometry
+open CategoryTheory Opposite AlgebraicGeometry MonoidalCategory
 universe u
 namespace OrlikSolomon.Geometric.DeRham
 variable (k : Type u) [CommRing k]
 variable (X : Over (Spec (CommRingCat.of k)))
 
 /-- Functions on an open, with the scalar structure induced by the map to `Spec k`. -/
-def sectionAlgebra (U : X.left.Opens) : CommAlgCat k := by
+@[implicit_reducible] def sectionAlgebra (U : X.left.Opens) : CommAlgCat k := by
   letI : Algebra k Γ(X.left, U) :=
     (((Scheme.ΓSpecIso (CommRingCat.of k)).inv ≫
       X.hom.appTop ≫ X.left.presheaf.map U.leTop.op).hom).toAlgebra
@@ -105,4 +109,111 @@ def formsPresheafD (n : ℕ) : formsPresheaf k X n ⟶ formsPresheaf k X (n + 1)
 theorem formsPresheafD_comp (n : ℕ) : formsPresheafD k X n ≫ formsPresheafD k X (n + 1) = 0 := by
   ext U x
   exact powerD_powerD k n x
+
+/-- The structure presheaf viewed as modules over the base ring. -/
+@[implicit_reducible] def functionsPresheaf : X.left.Opensᵒᵖ ⥤ ModuleCat k where
+  obj U := ModuleCat.of k (sectionAlgebra k X U.unop)
+  map i := ModuleCat.ofHom (sectionRestriction k X i.unop).toLinearMap
+  map_id U := by ext a; exact congrArg (fun f ↦ f a) (sectionRestriction_id k X U.unop)
+  map_comp i j := by
+    ext a
+    exact congrArg (fun f ↦ f a) (sectionRestriction_comp k X j.unop i.unop)
+
+/-- Functions are precisely exterior forms of degree zero. -/
+def formsPresheafZero : functionsPresheaf k X ⟶ formsPresheaf k X 0 where
+  app U := ModuleCat.ofHom (show sectionAlgebra k X U.unop →ₗ[k]
+      ⋀[sectionAlgebra k X U.unop]^0 Ω[sectionAlgebra k X U.unop⁄k] from
+    { toFun a := ⟨algebraMap (sectionAlgebra k X U.unop) _ a,
+        algebraMap_mem_exteriorPower_zero k a⟩
+      map_add' a b := Subtype.ext (map_add _ a b)
+      map_smul' r a := Subtype.ext
+        ((IsScalarTower.toAlgHom k (sectionAlgebra k X U.unop)
+          (Forms k (sectionAlgebra k X U.unop))).toLinearMap.map_smul r a) })
+  naturality U V i := by
+    ext a
+    apply Subtype.ext
+    exact (Forms.map_algebraMap (sectionRestriction k X i.unop) a).symm
+
+/-- The degree-zero presheaf of forms is the structure presheaf, with its base-ring action. -/
+def formsPresheafZeroIso : functionsPresheaf k X ≅ formsPresheaf k X 0 := by
+  refine NatIso.ofComponents (fun U ↦ LinearEquiv.toModuleIso
+    (LinearEquiv.ofBijective ((formsPresheafZero k X).app U).hom (by
+      constructor
+      · intro a b h
+        exact (ExteriorAlgebra.algebraMap_leftInverse
+          (R := sectionAlgebra k X U.unop) Ω[sectionAlgebra k X U.unop⁄k]).injective
+            (congrArg Subtype.val h)
+      · intro x
+        obtain ⟨a, ha⟩ := (mem_exteriorPower_zero_iff k).1 x.2
+        exact ⟨a, Subtype.ext ha⟩))) ?_
+  intro U V f
+  exact (formsPresheafZero k X).naturality f
+
+@[simp] theorem formsPresheafZeroIso_hom :
+    (formsPresheafZeroIso k X).hom = formsPresheafZero k X := rfl
+
+/-- Wedge multiplication, as a natural bilinear map on the presheaves of forms. -/
+def formsPresheafMul (p q : ℕ) :
+    formsPresheaf k X p ⊗ formsPresheaf k X q ⟶ formsPresheaf k X (p + q) where
+  app U := ModuleCat.MonoidalCategory.tensorLift
+    (fun (a : ⋀[sectionAlgebra k X U.unop]^p Ω[sectionAlgebra k X U.unop⁄k])
+        (b : ⋀[sectionAlgebra k X U.unop]^q Ω[sectionAlgebra k X U.unop⁄k]) ↦
+      ⟨(a : Forms k (sectionAlgebra k X U.unop)) * b,
+      SetLike.mul_mem_graded a.2 b.2⟩)
+    (fun _ _ _ ↦ Subtype.ext (add_mul _ _ _))
+    (fun _ _ _ ↦ Subtype.ext (smul_mul_assoc _ _ _))
+    (fun _ _ _ ↦ Subtype.ext (mul_add _ _ _))
+    (fun _ _ _ ↦ Subtype.ext (mul_smul_comm _ _ _))
+  naturality U V i := by
+    apply ModuleCat.MonoidalCategory.tensor_ext
+    intro a b
+    apply Subtype.ext
+    let a' : ⋀[sectionAlgebra k X U.unop]^p Ω[sectionAlgebra k X U.unop⁄k] := a
+    let b' : ⋀[sectionAlgebra k X U.unop]^q Ω[sectionAlgebra k X U.unop⁄k] := b
+    exact ((Forms.map (sectionRestriction k X i.unop)).map_mul a'.val b'.val).symm
+
+/-- On elementary tensors the natural product is the existing exterior product. -/
+@[simp] theorem formsPresheafMul_tmul (p q : ℕ) (U : X.left.Opensᵒᵖ)
+    (a : ⋀[sectionAlgebra k X U.unop]^p Ω[sectionAlgebra k X U.unop⁄k])
+    (b : ⋀[sectionAlgebra k X U.unop]^q Ω[sectionAlgebra k X U.unop⁄k]) :
+    (formsPresheafMul k X p q).app U (a ⊗ₜ[k] b) =
+      ⟨(a : Forms k (sectionAlgebra k X U.unop)) * b, SetLike.mul_mem_graded a.2 b.2⟩ := rfl
+
+/-- The degree-zero unit of the presheaf exterior algebra. -/
+def formsPresheafOne : 𝟙_ (X.left.Opensᵒᵖ ⥤ ModuleCat k) ⟶ formsPresheaf k X 0 where
+  app U := ModuleCat.ofHom (show k →ₗ[k]
+      ⋀[sectionAlgebra k X U.unop]^0 Ω[sectionAlgebra k X U.unop⁄k] from
+    (LinearMap.id : k →ₗ[k] k).smulRight ⟨1, SetLike.one_mem_graded _⟩)
+  naturality U V i := by
+    apply ModuleCat.hom_ext
+    apply LinearMap.ext
+    intro r
+    let c : k := r
+    apply Subtype.ext
+    change c • (1 : Forms k (sectionAlgebra k X V.unop)) =
+      Forms.map (sectionRestriction k X i.unop) (c • 1)
+    simp
+
+/-- The presheaf unit sends the scalar one to the exterior unit. -/
+@[simp] theorem formsPresheafOne_one (U : X.left.Opensᵒᵖ) :
+    (formsPresheafOne k X).app U (1 : k) =
+      (⟨1, SetLike.one_mem_graded _⟩ : ⋀[sectionAlgebra k X U.unop]^0
+        Ω[sectionAlgebra k X U.unop⁄k]) := by
+  change (1 : k) • (⟨1, SetLike.one_mem_graded _⟩ :
+    ⋀[sectionAlgebra k X U.unop]^0 Ω[sectionAlgebra k X U.unop⁄k]) = _
+  exact one_smul _ _
+
+/-- Change the displayed exterior degree along an equality of indices. -/
+def formsPresheafCast {p q : ℕ} (h : p = q) :
+    formsPresheaf k X p ⟶ formsPresheaf k X q :=
+  eqToHom (congrArg (formsPresheaf k X) h)
+
+/-- Changing the displayed degree does not change the underlying total form. -/
+@[simp] theorem formsPresheafCast_val {p q : ℕ} (h : p = q) (U : X.left.Opensᵒᵖ)
+    (a : ⋀[sectionAlgebra k X U.unop]^p Ω[sectionAlgebra k X U.unop⁄k]) :
+    ((formsPresheafCast k X h).app U a :
+      ⋀[sectionAlgebra k X U.unop]^q Ω[sectionAlgebra k X U.unop⁄k]).val = a.val := by
+  subst q
+  rfl
+
 end OrlikSolomon.Geometric.DeRham
