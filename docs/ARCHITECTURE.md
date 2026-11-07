@@ -108,6 +108,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Pole/Comparison`       | `thm:dr-comparison`: bijectivity of the canonical map and its algebra equivalence |
 | `DeRham/Pole/Degree`           | natural and integer degree equivalences, preservation, reflection and certificate independence |
 | `DeRham/Pole`                 | global logarithmic comparison; the module to import |
+| `DeRham/Maps`                  | `residue` on `H^•(T)`, through `thm:dr-comparison`: exactness in each degree, `thm:dr-projection` and `residue_map`; the module to import |
 | `DeRham/PrincipalQuotient`     | `lem:dr-quotient`, for any surjection of algebras with principal kernel |
 | `DeRham/SmoothPair/Koszul`    | `lem:dr-modf-koszul`: wedge exactness modulo a smooth principal divisor in every degree |
 | `DeRham/SmoothPair/Projective` | `lem:dr-projective`: projectivity in every form degree, regular scalar action and injectivity into localization |
@@ -570,9 +571,9 @@ its cohomology algebra, polynomial-form decomposition and homotopy invariance, f
 localizations and principal quotients, projectivity and regular scalar action in every form degree,
 injectivity into localization, conormal splitting, global and localized normal derivations, wedge
 exactness modulo the divisor, logarithmic forms with their residue sequence, global logarithmic
-comparison, the Gysin map, the long exact sequence for `H^•(L)`, naturality of all of these, and
-the Laurent-twisted functor with the fields preceding Gysin and residue exist; the residue on
-`H^•(T)`, the remaining fields and the final instance remain planned.
+comparison, the residue and Gysin maps with their long exact sequence, projection formula and
+naturality, and the Laurent-twisted functor with the fields preceding Gysin and residue exist; the
+remaining fields and the final instance remain planned.
 The table groups modules by issues #72–#83. The conormal and normal-derivation results need only
 Mathlib's Kähler differentials and formal-smoothness lifts. Normalizing a derivation on
 `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge exactness uses exterior
@@ -736,7 +737,10 @@ included, without finite presentation or smoothness of a quotient.
 - **Layers.** Everything in `DeRham/Maps/Gysin` and `DeRham/Maps/Naturality` is about `H^•(L)` and
   needs no comparison and no hypothesis on `k`: `LogCohomology.residue T h` is `H(ρ)`, and exactness
   has `LogCohomology.ofCohomology` in the place of `j_*`. `gysin` also needs no comparison, since its
-  target is `H^•(A)`.
+  target is `H^•(A)`. `DeRham/Maps` is the one file that uses `thm:dr-comparison`: `residue T hUnits h`
+  is `H(ρ)` after the inverse of `logToLocalizationEquiv`, and its public face is
+  `residue_toCohomology` and `residue_mk_of_mem_logForms`. Its proofs transport the statements about
+  `H^•(L)` along that equivalence, so no argument on forms is repeated there.
 - **Degrees.** The maps are on total cohomology, with the shifts `isHomogeneousOfShift_gysin` and
   `LogCohomology.isHomogeneousOfShift_residue` for `Cohomology.grading`, so that negative degrees need
   no case analysis. Exactness in a degree follows from total exactness by
@@ -881,11 +885,11 @@ The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each no
 names the exterior calculus, dg algebra, cohomology algebra, polynomial homotopy, forms on
 localizations and quotients, projectivity and regularity of forms, injectivity into localization,
 conormal splitting, normal derivations, modulo-divisor wedge exactness, logarithmic forms with
-their residue sequence, global logarithmic comparison, the Gysin map and naturality, and the
-Laurent-twisted functor with the first fields of the structure as formalized, and lists what remains.
-The first page, `Organization` and the chapter on the axioms say the instance is in progress.
-No nonzero value of `OrdinaryTheory` has been constructed. The build does not check that prose,
-so keep it current as nodes land. The PR
+their residue sequence, global logarithmic comparison, the residue and Gysin maps with their
+naturality, and the Laurent-twisted functor with the first fields of the structure as formalized, and
+lists what remains. The first page, `Organization` and the chapter on the axioms say the instance is
+in progress. No nonzero value of `OrdinaryTheory` has been constructed. The build does not check that
+prose, so keep it current as nodes land. The PR
 that proves `thm:dr-instance` must update the sentences saying that no nonzero value
 of the structure has been constructed: on the first page, in the chapter on the axioms, on the
 status page and in `README.md`.
