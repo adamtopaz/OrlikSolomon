@@ -88,8 +88,8 @@ given support-forgetting map. -/
 @[simp]
 lemma ofSupportsAndPurity_gysin_incl (P : DivisorPair k) (i : ℤ × ℤ) (x : D.H P.closed i) :
     (ofSupportsAndPurity D S).gysin P (D.incl P.closed i x) =
-      D.incl P.ambient (i + (2, 1)) (S.forget P (i + (2, 1)) (S.purity P i x)) := by
-  rw [ofSupportsAndPurity_gysin_apply, S.purityTotal_incl, S.forgetTotal_incl]
+      D.incl P.ambient (i + (2, 1)) (S.forget P (i + (2, 1)) (S.purity P i x)) :=
+  S.toCore.gysin_incl P i x
 
 /-- Residue in the constructed theory is the connecting homomorphism followed by inverse purity. -/
 lemma ofSupportsAndPurity_residue_apply (P : DivisorPair k) (x : D.Total P.compl) :
@@ -119,45 +119,29 @@ def residueDegreewiseOfSupportsAndPurity (P : DivisorPair k) (i j : ℤ × ℤ) 
 lemma gysinDegreewiseOfSupportsAndPurity_incl (P : DivisorPair k) {i j : ℤ × ℤ}
     (hij : i + (2, 1) = j) (x : D.H P.closed i) :
     (ofSupportsAndPurity D S).gysin P (D.incl P.closed i x) =
-      D.incl P.ambient j (gysinDegreewiseOfSupportsAndPurity D S P i j x) := by
-  change S.gysinR P (D.incl P.closed i x) =
-    D.incl P.ambient j (DirectSum.component R _ (D.H P.ambient) j
-      (S.gysinR P (D.incl P.closed i x)))
-  exact (lof_component_of_mem_directSumGrading _ _ _
-    ((S.isHomogeneousOfShift_gysinR P).map_mem hij (lof_mem_directSumGrading _ _ _))).symm
+      D.incl P.ambient j (gysinDegreewiseOfSupportsAndPurity D S P i j x) :=
+  S.toCore.gysinDegreewise_incl P hij x
 
 /-- The degreewise residue is exactly the constructed map on a homogeneous summand. -/
 lemma residueDegreewiseOfSupportsAndPurity_incl (P : DivisorPair k) {i j : ℤ × ℤ}
     (hij : i + (-1, -1) = j) (x : D.H P.compl i) :
     (ofSupportsAndPurity D S).residue P (D.incl P.compl i x) =
-      D.incl P.closed j (residueDegreewiseOfSupportsAndPurity D S P i j x) := by
-  change S.residueR P (D.incl P.compl i x) =
-    D.incl P.closed j (DirectSum.component R _ (D.H P.closed) j
-      (S.residueR P (D.incl P.compl i x)))
-  exact (lof_component_of_mem_directSumGrading _ _ _
-    ((S.isHomogeneousOfShift_residueR P).map_mem hij (lof_mem_directSumGrading _ _ _))).symm
+      D.incl P.closed j (residueDegreewiseOfSupportsAndPurity D S P i j x) :=
+  S.toCore.residueDegreewise_incl P hij x
 
 /-- The constructed degreewise localization sequence is exact at ambient cohomology:
 `H^{p-2,w-1}(D) → H^{p,w}(X) → H^{p,w}(U)`. Blueprint: `lem:standard-bridge`. -/
 theorem ofSupportsAndPurity_exact_gysin_map (P : DivisorPair k) {i j : ℤ × ℤ}
     (hij : i + (2, 1) = j) :
-    Function.Exact (gysinDegreewiseOfSupportsAndPurity D S P i j) (D.map P.j j) := by
-  have h := exact_directSum_components (D.H P.closed) (D.H P.ambient) (D.H P.compl)
-    (S.gysinR P) (D.mapTotalR P.j).toLinearMap
-    (S.isHomogeneousOfShift_gysinR P) (D.isHomogeneousOfShift_mapTotalR P.j)
-    (S.exact_gysinR_map P) hij (add_zero j)
-  simpa only [gysinDegreewiseOfSupportsAndPurity, D.component_mapTotalR_incl] using h
+    Function.Exact (gysinDegreewiseOfSupportsAndPurity D S P i j) (D.map P.j j) :=
+  S.toCore.exact_gysinDegreewise_map P hij
 
 /-- The constructed degreewise localization sequence is exact at open cohomology:
 `H^{p,w}(X) → H^{p,w}(U) → H^{p-1,w-1}(D)`. Blueprint: `lem:standard-bridge`. -/
 theorem ofSupportsAndPurity_exact_map_residue (P : DivisorPair k) {i j : ℤ × ℤ}
     (hij : i + (-1, -1) = j) :
-    Function.Exact (D.map P.j i) (residueDegreewiseOfSupportsAndPurity D S P i j) := by
-  have h := exact_directSum_components (D.H P.ambient) (D.H P.compl) (D.H P.closed)
-    (D.mapTotalR P.j).toLinearMap (S.residueR P)
-    (D.isHomogeneousOfShift_mapTotalR P.j) (S.isHomogeneousOfShift_residueR P)
-    (S.exact_map_residueR P) (add_zero i) hij
-  simpa only [residueDegreewiseOfSupportsAndPurity, D.component_mapTotalR_incl] using h
+    Function.Exact (D.map P.j i) (residueDegreewiseOfSupportsAndPurity D S P i j) :=
+  S.toCore.exact_map_residueDegreewise P hij
 
 /-- The constructed degreewise localization sequence is exact at divisor cohomology:
 `H^{p,w}(U) → H^{p-1,w-1}(D) → H^{p+1,w}(X)`. Blueprint: `lem:standard-bridge`. -/
@@ -165,9 +149,10 @@ theorem ofSupportsAndPurity_exact_residue_gysin (P : DivisorPair k) {i j l : ℤ
     (hij : i + (-1, -1) = j) (hjl : j + (2, 1) = l) :
     Function.Exact (residueDegreewiseOfSupportsAndPurity D S P i j)
       (gysinDegreewiseOfSupportsAndPurity D S P j l) :=
-  exact_directSum_components (D.H P.compl) (D.H P.closed) (D.H P.ambient)
-    (S.residueR P) (S.gysinR P)
-    (S.isHomogeneousOfShift_residueR P) (S.isHomogeneousOfShift_gysinR P)
-    (S.exact_residueR_gysinR P) hij hjl
+  S.toCore.exact_residueDegreewise_gysinDegreewise P hij hjl
+
+-- Preserve the original public equation lemmas, independently of which proofs unfold these maps.
+attribute [backward_defeq] gysinDegreewiseOfSupportsAndPurity.eq_1
+  residueDegreewiseOfSupportsAndPurity.eq_1
 
 end OrlikSolomon

@@ -9,19 +9,23 @@ import OrlikSolomon
 open Verso.Genre Manual InlineLean
 open OrlikSolomonBook
 
-#doc (Manual) "Arrangements on schemes (planned)" =>
+#doc (Manual) "Arrangements on schemes (in progress)" =>
 %%%
 tag := "geometric"
 file := "geometric"
 htmlSplit := .never
 %%%
 
-*The foundations, complements as open subschemes, geometric axioms and affine transports are formalized.*
+*The foundations, complements as open subschemes, geometric axioms, affine transports, the supports-and-purity bridge, logarithmic classes, sheaves of relative forms, both structure theorems on schemes and the de Rham instance on smooth affine schemes with its corollaries are formalized.*
 It presents the plan in the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
-Of its 42 nodes, twenty are formalized and one partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], and the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports].
-The partial node is {bp "thm:geo-cartesian"}[], whose Tor-sheaf and conormal statements remain.
+Of its 42 nodes, thirty-two are formalized, three partly formalized and seven remain planned, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports], the two nodes on {bp "def:geo-supports"}[degreewise supports and purity], the three nodes on {bp "def:geo-log"}[logarithmic classes and the product with $`\mathbb{G}_m`], the two {ref "geo-structure"}[structure theorems on schemes], the three nodes on {bp "def:geo-forms-sheaf"}[sheaves of relative forms and affine evaluation], and the three nodes on {bp "def:geo-dr-cohomology"}[de Rham cohomology of smooth affine schemes and its instance].
+The partial nodes are {bp "thm:geo-cartesian"}[], whose Tor-sheaf and conormal statements remain, {bp "thm:geo-transport-all"}[], a rule about every old statement, which is formalized by its comparison and the laws it obeys rather than by one Lean statement, and {bp "thm:geo-dr-instance"}[], whose Gysin and residue maps are compared with the global logarithmic sequence of the algebra of global functions but not yet with the global sections of the sheaf logarithmic sequence of {bp "thm:geo-log-sheaves"}[] (#117).
 The geometric theory has exactly the old 22 fields, and its affine transports preserve the grading, coefficient maps, pullbacks, Gysin and residue, with both triangle identities.
-The structure theorems on actual arrangement opens and the de Rham realization through sheaf forms remain planned.
+The supports-and-purity bridge assembles these fields from degreewise cohomology with localization and purity on every object of the domain and commutes with restriction and affine transport.
+The logarithmic class of a global unit and the decomposition of the cohomology of $`X\times_S\mathbb{G}_m` hold on every object of the domain, affine or not.
+The affine and projective structure theorems hold on the actual open subschemes, for a theory on any admissible domain, such as all smooth schemes.
+The sheaves of forms have their differential, wedge products and arbitrary scheme pullbacks; affine evaluation agrees with the existing algebraic forms.
+For a smooth affine scheme, de Rham cohomology is the cohomology of the complex of global sheaf forms, the transported de Rham theory is a nonzero geometric theory with value $`k[t,t^{-1}]\otimes_kH^\bullet_{\mathrm{dR}}(X/k)`, and the Orlik–Solomon theorems hold unconditionally for the de Rham cohomology of the actual open subschemes.
 Every other box below is marked as planned, and for those the blueprint's proposed names under `OrlikSolomon.Geometric` do not exist yet, so this chapter does not list them.
 The statements and arguments in the planned boxes are the blueprint's, and no machine has checked them.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem and of the de Rham instance.
@@ -47,10 +51,9 @@ The existing structure {name OrlikSolomon.OrdinaryTheory}`OrdinaryTheory` stays 
 A geometric theory restricts to a value of it, the existing theorems are applied to that value, and their conclusions are transported to the actual open subschemes.
 
 *Still conditional.*
-Like the existing theorems, the planned geometric theorems would be conditional.
-They would hold for every value of a geometric structure of axioms, and say nothing about a particular cohomology theory until someone constructs such a value for it.
-Transport of the existing characteristic-zero de Rham instance already constructs a geometric theory on smooth affine schemes.
-Its interpretation through sheaf forms is still planned.
+Like the existing theorems, the geometric theorems are conditional.
+They hold for every value of a geometric structure of axioms, and say nothing about a particular cohomology theory until someone constructs such a value for it.
+Transport of the existing characteristic-zero de Rham instance constructs a nonzero geometric theory on smooth affine schemes, whose cohomology is that of global sheaf forms, so the geometric theorems hold unconditionally for its de Rham cohomology.
 For singular and $`\ell`-adic cohomology it records checks by hand, with the same standing as the checks of the existing axioms, and no formal instance.
 
 # Admissible domains and hypotheses
@@ -216,7 +219,7 @@ The blueprint records how the fields would be checked against the standard reali
 For Betti cohomology of the complex points, after choosing an embedding of $`k` in $`\mathbb{C}` and on smooth separated schemes of finite type, the inputs are relative cohomology and the Thom isomorphism of the complex normal line.
 For geometric $`\ell`-adic cohomology, with $`\ell` invertible in $`k` and on the same domain, they are localization with supports and oriented purity.
 For the affine domain, {name OrlikSolomon.Geometric.OrdinaryTheory.ofAlgebraic}`ofAlgebraic` already transports the existing nonzero de Rham theory to a geometric theory.
-Its identification with cohomology of global sheaf forms is the planned {bp "thm:geo-dr-instance"}[scheme de Rham instance].
+This is the {bp "thm:geo-dr-instance"}[scheme de Rham instance], and {bp "def:geo-dr-cohomology"}[] identifies its cohomology with the cohomology of global sheaf forms.
 The first two are interpretations, which assume the foundational purity theorems of those theories: they are not formal instances, and they are not claimed as results of the refactor.
 
 :::node "def:geo-theory" (decl := OrlikSolomon.Geometric.OrdinaryTheory) (decl := OrlikSolomon.Geometric.OrdinaryTheory.obj) (decl := OrlikSolomon.Geometric.OrdinaryTheory.pull) (decl := OrlikSolomon.Geometric.OrdinaryTheory.mapOverR) (decl := OrlikSolomon.Geometric.OrdinaryTheory.gysinOverR) (decl := OrlikSolomon.Geometric.OrdinaryTheory.residueOverR)
@@ -263,7 +266,7 @@ A pair with a unit equation has $`D=\varnothing` and $`U\simeq X`, and its Gysin
 The proof transports the algebraic consequence of exactness for an empty-divisor pair, so no axiom about the empty scheme is needed, and it holds for zero coefficients too.
 :::
 
-:::node "def:geo-supports"
+:::node "def:geo-supports" (decl := OrlikSolomon.Geometric.DegreewiseTheory) (decl := OrlikSolomon.Geometric.SupportsAndPurity) (decl := OrlikSolomon.Geometric.DegreewiseTheory.toCore) (decl := OrlikSolomon.Geometric.SupportsAndPurity.toCore) (decl := OrlikSolomon.Geometric.DegreewiseTheory.restrict) (decl := OrlikSolomon.Geometric.SupportsAndPurity.restrict) (decl := OrlikSolomon.Geometric.DegreewiseTheory.toAlgebraic) (decl := OrlikSolomon.Geometric.SupportsAndPurity.toAlgebraic) (decl := OrlikSolomon.Geometric.SupportsAndPurity.forgetTotal_incl) (decl := OrlikSolomon.Geometric.SupportsAndPurity.boundaryTotal_incl) (decl := OrlikSolomon.Geometric.SupportsAndPurity.purityTotal_incl)
 A geometric degreewise theory has $`R`-modules $`H^{p,w}(X)`, indexed products, graded commutativity by $`p`, contravariant pullbacks that preserve degrees, and the degreewise coefficient, point and affine-line conditions of the existing bridge, with morphisms of schemes in place of algebra maps and the projection from $`X\times_S\mathbb{A}^1` in place of the polynomial inclusion.
 For a pair, a package of supports and purity consists of $`R`-modules $`H_D^{p,w}(X)` and maps
 $$`a:H_D^{p,w}(X)\to H^{p,w}(X),\qquad\delta:H^{p,w}(U)\to H_D^{p+1,w}(X),\qquad\vartheta:H^{p,w}(D)\xrightarrow{\ \sim\ }H_D^{p+2,w+1}(X),`
@@ -272,11 +275,12 @@ $$`a(x\cdot y)=a(x)\,y,\qquad\vartheta(x\,i^*y)=\vartheta(x)\cdot y,\qquad\delta
 The last formula has no sign.
 :::
 
-:::node "thm:geo-bridge"
+:::node "thm:geo-bridge" (decl := OrlikSolomon.Geometric.ofSupportsAndPurity) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_restrict) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_toAlgebraic) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_pull_incl) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_gysin_apply) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_residue_apply) (decl := OrlikSolomon.Geometric.gysinDegreewiseOfSupportsAndPurity_incl) (decl := OrlikSolomon.Geometric.residueDegreewiseOfSupportsAndPurity_incl) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_exact_gysin_pull) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_exact_pull_residue) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_exact_residue_gysin)
 These data give a geometric ordinary theory with
 $$`C(X)=\bigoplus_{p,w}H^{p,w}(X),\qquad G=a\vartheta,\qquad r=\vartheta^{-1}\delta,`
 and the construction commutes with restriction of domains and with affine duality.
 The proofs are those of {bp "lem:standard-bridge"}[], whose algebraic lemmas are reused.
+All integer bidegrees are included in the sum. Total exactness follows from degreewise exactness and finite support; it is not an input, and the bridge applies to non-affine objects too.
 :::
 
 # Complements as open subschemes
@@ -360,33 +364,91 @@ On $`V_{\mathcal{P}}` one has $`\ell_i=\ell_0\,q^*(\ell_i/\ell_0)`, and the rati
 :::
 
 # Logarithms and the geometric structure theorems
+%%%
+tag := "geo-structure"
+%%%
 
-The logarithmic class of a unit would be defined on every object of the domain, affine or not.
+The logarithmic class of a unit is defined on every object of the domain, affine or not.
 The class $`\tau` on $`\mathbb{G}_m` is transported from the existing one, and for a unit $`u` of the global functions on $`X`, the class $`[u]` is the pullback of $`\tau` along the morphism $`\widehat{u}:X\to\mathbb{G}_m` that $`u` defines.
-Its identities follow by pulling back the existing identities on the affine schemes $`\mathbb{G}_m` and $`\mathbb{G}_m^2`.
+Its identities $`[u]^2=0` and $`[uv]=[u]+[v]` are pulled back from the existing identities on the affine schemes $`\mathbb{G}_m` and $`\mathbb{G}_m^2`.
 In particular $`[u]^2=0` comes from $`\tau^2=0`, and not from graded commutativity, which would require dividing by $`2`.
+The class of a constant vanishes because its morphism to $`\mathbb{G}_m` factors through the base, and the residue formulas come from the morphism of a pair to the standard pair of the base given by its equation.
+The decomposition of the cohomology of $`X\times_S\mathbb{G}_m` is proved directly from the axioms for the standard pair of $`X`, so it holds for objects that are not affine.
+None of this uses a rational point.
 
-The structure theorems are then the existing ones composed with the comparisons:
+The structure theorems are the existing ones composed with the comparisons:
 $$`\Phi^{\mathrm{geo}}_{\mathcal{A}}=s_{\mathcal{A}}^*\circ\Phi^{T_{\mathrm{alg}}}_{\mathcal{A}},`
 and the same with $`s_{\mathcal{P}}` in the projective case.
 They hold for a theory on every admissible domain, because the complements are smooth and affine and therefore belong to every domain.
 The arguments about arrangements are not rerun: the existing inductions and calculations of relations are used as theorems, and no conclusion becomes an axiom.
+In Lean the comparison of the old theory at $`A` with the geometric theory at an object $`X\simeq\operatorname{Spec}A` is {name OrlikSolomon.Geometric.transportAffineDevelopment}`transportAffineDevelopment`, and every geometric statement below is an existing one composed with it.
+For a theory obtained from an algebraic one by the affine transport, {name OrlikSolomon.Geometric.OrdinaryTheory.ofAlgebraic_affineEquiv}`ofAlgebraic_affineEquiv` and {name OrlikSolomon.Geometric.OrdinaryTheory.ofAlgebraic_projectiveEquiv}`ofAlgebraic_projectiveEquiv` show that the geometric theorems are the existing ones, so there are not two competing maps.
 
-:::node "def:geo-log"
+```lean -show
+noncomputable section
+open OrlikSolomon OrlikSolomon.Geometric OrlikSolomon.OSAlgebra
+universe u v w z
+variable
+  {k : Type u} [Field k]
+  {R : Type v} [CommRing R]
+  {B : Type w} [CommRing B] [Algebra R B]
+  {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ]
+  (T : Geometric.OrdinaryTheory.{u, v, w, z} (SmoothDomain.all k) ℬ)
+  {V : Type u} [AddCommGroup V] [Module k V]
+  [FiniteDimensional k V] (𝒜 : Arrangement k V)
+  {W : Type u} [AddCommGroup W] [Module k W]
+  [FiniteDimensional k W]
+  (P : ProjectiveArrangement k W) [Nonempty P]
+```
+
+:::statement "The structure theorems on schemes in Lean"
+Let `T` be a geometric ordinary theory on all smooth $`k`-schemes, with $`k`, $`R` and $`B` as on the first page, let $`\mathcal{A}` be an arrangement in a finite-dimensional space `V`, and let `P` be a nonempty projective arrangement in a finite-dimensional space `W`.
+The two equivalences, on the actual open subschemes, and their formulas on generators are as follows.
+The user supplies no comparison with spectra and no hypothesis on the arrangements.
+
+```lean
+example :
+    OSAlgebra B 𝒜 ≃ₐ[B]
+      T.obj ((SmoothDomain.all k).complement 𝒜) :=
+  T.affineEquiv 𝒜
+
+example {f : V →ᵃ[k] k} (H : 𝒜) (hf : IsEquation f H) :
+    T.affineEquiv 𝒜 (generator B 𝒜 H) =
+      T.logClass (complementUnit 𝒜 f (hf.covers H.2)) :=
+  T.affineEquiv_generator_of_isEquation H hf
+
+example :
+    projectiveAlgebra B P.cone_isCentral ≃ₐ[B]
+      T.obj ((SmoothDomain.all k).projectiveComplement P) :=
+  T.projectiveEquiv P
+
+example {ℓ ℓ' : Module.Dual k W}
+    (hℓ : LinearMap.ker ℓ ∈ P)
+    (hℓ' : LinearMap.ker ℓ' ∈ P) :
+    T.projectiveEquiv P
+      (projectiveDifference B P.cone_isCentral
+        (P.coneHyperplaneEquiv ⟨_, hℓ⟩)
+        (P.coneHyperplaneEquiv ⟨_, hℓ'⟩)) =
+      T.logClass (projectiveRatio hℓ hℓ') :=
+  T.projectiveEquiv_difference P hℓ hℓ'
+```
+:::
+
+:::node "def:geo-log" (decl := OrlikSolomon.Geometric.OrdinaryTheory.tau) (decl := OrlikSolomon.Geometric.OrdinaryTheory.tau_mem_grading) (decl := OrlikSolomon.Geometric.OrdinaryTheory.standardResidue_pull_prodGmSnd_tau) (decl := OrlikSolomon.Geometric.OrdinaryTheory.existsUnique_tau) (decl := OrlikSolomon.Geometric.SmoothDomain.gmHom) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_mem_grading)
 For a geometric theory $`T`, let $`\tau\in C(\mathbb{G}_m)_{1,1}` be the transport of the class of {bp "lem:gm"}[], the unique class with residue $`1` in the standard pair.
 For a unit $`u\in\Gamma(X,\mathcal{O}_X)^\times`, put
 $$`[u]_T=\widehat{u}^*\tau\in C(X)_{1,1}.`
 This applies to every object of the domain, including schemes that are not affine, and it involves no choice.
 :::
 
-:::node "thm:geo-log-laws"
+:::node "thm:geo-log-laws" (decl := OrlikSolomon.Geometric.OrdinaryTheory.pull_logClass) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_eq_zero_of_coe_eq_algebraMap) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_mul_self) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_mul) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_inv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.residue_logClass_eqnUnit) (decl := OrlikSolomon.Geometric.OrdinaryTheory.residue_logClass_eqnUnit_mul) (decl := OrlikSolomon.Geometric.OrdinaryTheory.pull_toAlgebraic_logClass) (decl := OrlikSolomon.Geometric.OrdinaryTheory.ofAlgebraic_logClass)
 For a morphism $`g:X'\to X`, units $`u` and $`v` on $`X`, and $`c\in k^\times`,
 $$`g^*[u]=[g^*u],\qquad[c]=0,\qquad[u]^2=0,\qquad[uv]=[u]+[v],\qquad[u^{-1}]=-[u].`
 For every pair with equation $`f`, one has $`r_P([f|_U])=1` and $`r_P([f|_U]\,j^*\beta)=i^*\beta`.
 On affine schemes these classes and identities agree with the existing ones under affine duality.
 :::
 
-:::node "thm:geo-gm-product"
+:::node "thm:geo-gm-product" (decl := OrlikSolomon.Geometric.OrdinaryTheory.gmProductEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.gmProductEquiv_apply) (decl := OrlikSolomon.Geometric.OrdinaryTheory.gmProductEquiv_symm_apply) (decl := OrlikSolomon.Geometric.OrdinaryTheory.gmProductEquiv_mem_grading_iff) (decl := OrlikSolomon.Geometric.OrdinaryTheory.pull_prodGmMap_gmProductEquiv)
 For every $`X` in the domain, the standard pair gives an isomorphism of graded $`B`-modules, natural in $`X`,
 $$`C(X)\oplus C(X)[(1,1)]\xrightarrow{\ \sim\ }C(X\times_S\mathbb{G}_m),\qquad(a,b)\longmapsto\pi^*a+[z]\,\pi^*b,`
 where the second summand is shifted by $`(1,1)`.
@@ -395,7 +457,7 @@ This is the geometric form of {bp "lem:gm-product"}[], and it holds for objects 
 It is not a statement about an ungraded tensor product of algebras.
 :::
 
-:::node "thm:geo-affine"
+:::node "thm:geo-affine" (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineEquiv_apply) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineEquiv_generator_of_isEquation) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_complementUnit_eq_of_isEquation) (decl := OrlikSolomon.Geometric.OrdinaryTheory.toAlgHom_affineEquiv_unique) (decl := OrlikSolomon.Geometric.OrdinaryTheory.isHomogeneousOfShift_affineEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.isHomogeneousOfShift_affineEquiv_symm) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineEquiv_map) (decl := OrlikSolomon.Geometric.OrdinaryTheory.affineEquiv_comapEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.residueComparison_cokernelMk) (decl := OrlikSolomon.Geometric.OrdinaryTheory.bijective_residueComparison) (decl := OrlikSolomon.Geometric.OrdinaryTheory.ordinaryComponentEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.grading_complement_eq_bot) (decl := OrlikSolomon.Geometric.OrdinaryTheory.diagonalEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.exists_basis_logMonomial) (decl := OrlikSolomon.Geometric.OrdinaryTheory.nonempty_basis_grading_bettiNumber) (decl := OrlikSolomon.Geometric.OrdinaryTheory.exists_basis_grading_moebius)
 For every arrangement $`\mathcal{A}` in a finite-dimensional $`k`-vector space, and every geometric ordinary theory on any admissible domain, there is a canonical isomorphism of $`B`-algebras preserving the bigrading
 $$`\Phi_{\mathcal{A}}:\operatorname{OS}_B(\mathcal{A})\xrightarrow{\ \sim\ }C(U_{\mathcal{A}}),\qquad e_H\longmapsto[f_H|_{U_{\mathcal{A}}}].`
 Its diagonal and component forms, its independence of the equations, uniqueness on generators, naturality for inclusions of arrangements and for affine equivalences, and compatibility with the residue of a deletion are the geometric transports of {bp "thm:affine"}[] and {bp "cor:ordinary"}[].
@@ -404,7 +466,7 @@ $$`H^{p,w}(U_{\mathcal{A}})\simeq_R\operatorname{OS}_R^p(\mathcal{A})\otimes_RB_
 The same vanishing bounds, recursive monomial bases and integer Betti and Möbius formulas hold, and no restriction on the characteristic of $`k` or of $`R` is added.
 :::
 
-:::node "thm:geo-projective"
+:::node "thm:geo-projective" (decl := OrlikSolomon.Geometric.OrdinaryTheory.projectiveEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.projectiveEquiv_difference_of_ker_eq) (decl := OrlikSolomon.Geometric.OrdinaryTheory.toAlgHom_projectiveEquiv_unique) (decl := OrlikSolomon.Geometric.OrdinaryTheory.pull_coneComplementProjection_projectiveEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.eq_projectiveEquiv_of_pull_coneComplementProjection) (decl := OrlikSolomon.Geometric.OrdinaryTheory.projectiveEquiv_eq_pull_oneSection) (decl := OrlikSolomon.Geometric.OrdinaryTheory.isHomogeneousOfShift_projectiveEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.projectiveComponentEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.projectiveDiagonalEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.projectiveDiagonalEquiv_difference) (decl := OrlikSolomon.Geometric.OrdinaryTheory.nonempty_projective_grading_linearEquiv_bettiNumber) (decl := OrlikSolomon.Geometric.OrdinaryTheory.nonempty_basis_projective_grading_bettiNumber) (decl := OrlikSolomon.Geometric.OrdinaryTheory.exists_basis_logMonomial_decone)
 For nonempty $`\mathcal{P}` there are canonical graded isomorphisms
 $$`\overline{\operatorname{OS}}_B(\mathcal{P})\xrightarrow{\ \sim\ }C(U_{\mathcal{P}}),\qquad\overline{\operatorname{OS}}_R(\mathcal{P})\xrightarrow{\ \sim\ }\bigoplus_{q\ge0}H^{q,q}(U_{\mathcal{P}}),\qquad e_i-e_j\longmapsto[\ell_i/\ell_j],`
 where $`\overline{\operatorname{OS}}` is the existing kernel of the boundary on the cone, not a new presentation.
@@ -413,7 +475,7 @@ They do not depend on the equations or on a hyperplane at infinity, they commute
 
 # De Rham cohomology of smooth affine schemes
 
-The planned instance is algebraic de Rham cohomology on the affine domain.
+The instance is algebraic de Rham cohomology on the affine domain.
 For a smooth affine scheme $`X`, its de Rham cohomology is the cohomology of the complex of global differential forms, which is the existing de Rham cohomology {name OrlikSolomon.DeRham.Cohomology}`DeRham.Cohomology` of the algebra $`\Gamma(X,\mathcal{O}_X)`.
 The instance is the {ref "de-rham"}[existing one], transported by {bp "thm:geo-from-algebraic"}[], so none of its fields is proved again.
 The existing unconditional corollaries then become statements about the actual open subschemes.
@@ -436,9 +498,9 @@ So extending the instance to all smooth schemes needs hypercohomology of the de 
  * naturality and the projection formula at the level of hypercohomology, and agreement with the affine instance.
 
 These are substantive prerequisites, which is why non-affine de Rham cohomology is a separate project and not part of this plan.
-The planned geometric theorem would accept such an instance with no change, on the domain of all smooth schemes or of smooth separated schemes of finite type, and nothing in the plan depends on it.
+The geometric theorems would accept such an instance with no change, on the domain of all smooth schemes or of smooth separated schemes of finite type, and nothing in the plan depends on it.
 
-:::node "lem:geo-module-gluing"
+:::node "lem:geo-module-gluing" (decl := AlgebraicGeometry.tilde.functor) (decl := AlgebraicGeometry.tilde.isoTop) (decl := OrlikSolomon.Geometric.tilde_map_basicOpen_eq_localized) (decl := OrlikSolomon.Geometric.tilde_map_exact)
 For a commutative ring $`A` and an $`A`-module $`M`, the rule $`D(a)\mapsto M_a` on basic opens, with the localization maps as restrictions, defines the associated sheaf $`\widetilde{M}` on $`\operatorname{Spec}A`, with $`\Gamma(\operatorname{Spec}A,\widetilde{M})\simeq M` naturally in $`A` and $`M`.
 Associated sheaves preserve exact sequences.
 This includes the zero ring and modules that are not finitely generated.
@@ -446,20 +508,24 @@ This includes the zero ring and modules that are not finitely generated.
 It says nothing about vanishing of higher sheaf cohomology, and Mathlib already provides associated sheaves and their global sections.
 :::
 
-:::node "def:geo-forms-sheaf"
+:::node "def:geo-forms-sheaf" (decl := OrlikSolomon.Geometric.DeRham.formsSheaf) (decl := OrlikSolomon.Geometric.DeRham.formsModuleSheaf) (decl := OrlikSolomon.Geometric.DeRham.formsComplex_isZero_of_neg) (decl := OrlikSolomon.Geometric.DeRham.formsSheafZeroIso) (decl := OrlikSolomon.Geometric.DeRham.formsSheafD_comp) (decl := OrlikSolomon.Geometric.DeRham.formsSheafMul_assoc) (decl := OrlikSolomon.Geometric.DeRham.formsSheafMul_comm) (decl := OrlikSolomon.Geometric.DeRham.formsSheafMul_leibniz) (decl := OrlikSolomon.Geometric.DeRham.formsSheafMul_one_left) (decl := OrlikSolomon.Geometric.DeRham.formsSheafMul_one_right) (decl := OrlikSolomon.Geometric.DeRham.specFormsSheafAssociatedIso)
 For a scheme $`X` over $`S`, let $`\Omega^n_{X/k}` be the sheafification of the presheaf
 $$`V\longmapsto\Omega^n_{\Gamma(V,\mathcal{O}_X)/k}`
 on the open subsets of $`X`, in $`k`-modules and keeping the structure of $`\mathcal{O}_X`-module, and put $`\Omega^n_{X/k}=0` for $`n<0`.
 Sheafifying the existing differential and wedge product makes $`\Omega^\bullet_{X/k}` a sheaf of dg algebras.
 Its differential is a map of sheaves of $`k`-modules, and in general not of $`\mathcal{O}_X`-modules.
+The retained module action agrees with multiplication by a degree-zero function, by {name OrlikSolomon.Geometric.DeRham.formsSheafWedge_zero_eq_smul}`formsSheafWedge_zero_eq_smul`.
 
-On an affine open $`\operatorname{Spec}A`, sheafification does not change the value: by {bp "lem:dr-localization"}[] and {bp "lem:geo-module-gluing"}[], the sheaf there is the one associated with $`\Omega^n_{A/k}`.
+On a spectrum $`X=\operatorname{Spec}A`, the sheafification map is an isomorphism on distinguished opens, and the underlying additive sheaf agrees with the one associated with $`\Omega^n_{A/k}`.
+Global evaluation is an isomorphism for every affine $`X`.
+Evaluation on an affine open in an arbitrary ambient scheme remains for {bp "thm:geo-log-sheaves"}[] (#117).
 :::
 
-:::node "thm:geo-forms-comparison"
+:::node "thm:geo-forms-comparison" (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_d) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_wedge) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_one) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_pull) (decl := OrlikSolomon.Geometric.DeRham.formsSheafPullback_id) (decl := OrlikSolomon.Geometric.DeRham.formsSheafPullback_comp) (decl := OrlikSolomon.Geometric.DeRham.formsSheafPullback_mul) (decl := OrlikSolomon.Geometric.DeRham.formsComplexNatInverseImage) (decl := OrlikSolomon.Geometric.DeRham.formsModuleSheafInverseImage) (decl := OrlikSolomon.Geometric.DeRham.formsModuleSheafInverseImage_adjunction_app)
 For affine $`X` with $`A=\Gamma(X,\mathcal{O}_X)` there is a canonical isomorphism of dg algebras
 $$`\Omega^\bullet_{A/k}\xrightarrow{\ \sim\ }\Gamma(X,\Omega^\bullet_{X/k}).`
 Every morphism $`g:X\to Y` over $`S` induces a functorial map $`g^{-1}\Omega^\bullet_{Y/k}\to\Omega^\bullet_{X/k}` of complexes of sheaves of $`k`-modules that preserves products, and in degree $`n` it is the usual pullback of forms.
+In each degree this also gives the usual $`\mathcal{O}_X`-linear map $`g^*\Omega^n_{Y/k}\to\Omega^n_{X/k}`; the differential remains only $`k`-linear.
 For affine $`X` and $`Y`, the induced map on global forms is the existing map of forms along $`\Gamma(g)`.
 No flatness of $`g` is used.
 :::
@@ -477,7 +543,7 @@ This is a statement about sheaves.
 It does not identify $`j_*` with $`Rj_*`, and it does not say that the global sections of the residue sequence are exact on a scheme that is not affine.
 :::
 
-:::node "def:geo-dr-cohomology"
+:::node "def:geo-dr-cohomology" (decl := OrlikSolomon.Geometric.DeRham.Cohomology) (decl := OrlikSolomon.Geometric.DeRham.Cohomology.degree) (decl := OrlikSolomon.Geometric.DeRham.globalFormsComplex) (decl := OrlikSolomon.Geometric.DeRham.globalFormsHomologyIso) (decl := OrlikSolomon.Geometric.DeRham.globalFormsHomologyIso_hom_homologyπ) (decl := OrlikSolomon.Geometric.DeRham.Cohomology.degreeEquiv) (decl := OrlikSolomon.Geometric.DeRham.Cohomology.directSumEquiv) (decl := OrlikSolomon.Geometric.DeRham.globalClass) (decl := OrlikSolomon.Geometric.DeRham.globalClass_wedge) (decl := OrlikSolomon.Geometric.DeRham.Cohomology.pull) (decl := OrlikSolomon.Geometric.DeRham.Cohomology.pull_globalClass) (decl := OrlikSolomon.Geometric.DeRham.Cohomology.pull_comp) (decl := OrlikSolomon.Geometric.DeRham.globalClass_eq_zero_iff) (decl := OrlikSolomon.Geometric.DeRham.globalClass_surjective) (decl := OrlikSolomon.Geometric.DeRham.globalSectionsAlgEquiv)
 For a smooth affine scheme $`X`, put
 $$`H^n_{\mathrm{dR}}(X/k)=H^n\bigl(\Gamma(X,\Omega^\bullet_{X/k})\bigr),\qquad H^\bullet_{\mathrm{dR}}(X/k)=\bigoplus_{n\ge0}H^n_{\mathrm{dR}}(X/k),`
 with the product induced by the wedge product and pullbacks induced by {bp "thm:geo-forms-comparison"}[].
@@ -485,7 +551,7 @@ The plan implements the total algebra as the existing de Rham cohomology of the 
 The formula is not used to define de Rham cohomology of a scheme that is not affine.
 :::
 
-:::node "thm:geo-dr-instance"
+:::node "thm:geo-dr-instance" (decl := OrlikSolomon.Geometric.DeRham.ordinaryTheory) (decl := OrlikSolomon.Geometric.DeRham.ordinaryTheory_eq) (decl := OrlikSolomon.Geometric.DeRham.objEquiv) (decl := OrlikSolomon.Geometric.DeRham.mem_grading_iff) (decl := OrlikSolomon.Geometric.DeRham.gradingEquiv) (decl := OrlikSolomon.Geometric.DeRham.gysin) (decl := OrlikSolomon.Geometric.DeRham.residue) (decl := OrlikSolomon.Geometric.DeRham.gysin_twistedClass) (decl := OrlikSolomon.Geometric.DeRham.residue_twistedClass) (decl := OrlikSolomon.Geometric.DeRham.residue_mk_add_theta_mul) (decl := OrlikSolomon.Geometric.DeRham.gysin_mk_of_logResidue_eq) (decl := OrlikSolomon.Geometric.DeRham.nontrivial_coefficients) (decl := OrlikSolomon.Geometric.DeRham.nontrivialObjPoint) (decl := OrlikSolomon.Geometric.DeRham.logClass_eq) (remaining := "the comparison of the Gysin and residue maps with those built from the global sections of the sheaf logarithmic sequence of thm:geo-log-sheaves, which needs that theorem (#117); the maps are compared here with the algebraic global logarithmic sequence of the algebra of global functions, on which the blueprint's proof reduces that comparison")
 Let $`k` be a field of characteristic zero, $`B=k[t,t^{-1}]` and $`\mathcal{B}_w=k\,t^w`.
 There is a geometric ordinary theory on the affine domain with
 $$`C(X)=B\otimes_kH^\bullet_{\mathrm{dR}}(X/k),\qquad C(X)_{p,w}=t^w\otimes H^p_{\mathrm{dR}}(X/k),`
@@ -493,14 +559,21 @@ obtained by applying {bp "thm:geo-from-algebraic"}[] to the existing instance {n
 On each affine pair its Gysin and residue maps are those of the global logarithmic sequence, twisted:
 $$`G(t^w\otimes y)=t^{w+1}\otimes G_{\mathrm{dR}}(y),\qquad r(t^w\otimes x)=t^{w-1}\otimes r_{\mathrm{dR}}(x).`
 Its coefficients and its value at $`S` are nonzero, and $`[u]_T=t\otimes[du/u]`.
+
+In Lean, $`G_{\mathrm{dR}}` and $`r_{\mathrm{dR}}` are the Gysin map and residue of the existing global logarithmic sequence of the algebra $`\Gamma(X,\mathcal{O}_X)`, with $`r_{\mathrm{dR}}[\omega+\theta\wedge\eta]=[\eta|_D]` and $`G_{\mathrm{dR}}[\gamma]=[d\lambda]`.
+Their comparison with the global sections of the sheaf logarithmic sequence waits for {bp "thm:geo-log-sheaves"}[].
+The field and the characteristic enter only through the existing instance, and no hypothesis of smoothness, connectedness, flatness or nonemptiness is added.
 :::
 
-:::node "cor:geo-dr-arrangements"
+:::node "cor:geo-dr-arrangements" (decl := OrlikSolomon.Geometric.DeRham.affineEquiv) (decl := OrlikSolomon.Geometric.DeRham.affineEquiv_generator_of_isEquation) (decl := OrlikSolomon.Geometric.DeRham.affineEquiv_mem_degree_iff) (decl := OrlikSolomon.Geometric.DeRham.affineDegreeEquiv) (decl := OrlikSolomon.Geometric.DeRham.affineDirectSumEquiv) (decl := OrlikSolomon.Geometric.DeRham.finrank_degree_complement) (decl := OrlikSolomon.Geometric.DeRham.affineEquiv_eq_map) (decl := OrlikSolomon.Geometric.DeRham.projectiveEquiv) (decl := OrlikSolomon.Geometric.DeRham.projectiveEquiv_difference_of_ker_eq) (decl := OrlikSolomon.Geometric.DeRham.projectiveEquiv_mem_degree_iff) (decl := OrlikSolomon.Geometric.DeRham.pull_coneComplementProjection_projectiveEquiv) (decl := OrlikSolomon.Geometric.DeRham.projectiveDegreeEquiv) (decl := OrlikSolomon.Geometric.DeRham.projectiveDirectSumEquiv) (decl := OrlikSolomon.Geometric.DeRham.finrank_degree_projectiveComplement) (decl := OrlikSolomon.Geometric.DeRham.projectiveEquiv_eq_map)
 For a field $`k` of characteristic zero, with complements the open subschemes defined above, there are isomorphisms of graded $`k`-algebras
 $$`\operatorname{OS}_k(\mathcal{A})\xrightarrow{\ \sim\ }H^\bullet_{\mathrm{dR}}(U_{\mathcal{A}}/k),\qquad e_H\longmapsto\Bigl[\frac{df_H}{f_H}\Bigr],`
 and, for nonempty $`\mathcal{P}`,
 $$`\overline{\operatorname{OS}}_k(\mathcal{P})\xrightarrow{\ \sim\ }H^\bullet_{\mathrm{dR}}(U_{\mathcal{P}}/k),\qquad e_i-e_j\longmapsto\Bigl[\frac{d(\ell_i/\ell_j)}{\ell_i/\ell_j}\Bigr],`
 with the same canonicity, component isomorphisms, direct sums and dimension statements as {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[].
+
+Both are the diagonal theorems on schemes for the instance above, with the powers of $`t` removed.
+They are also the existing corollaries for the coordinate rings, transported along the comparison of each complement with the spectrum of its coordinate ring, so the two routes of the blueprint's proof give the same isomorphisms.
 :::
 
 # Worked regressions
@@ -578,7 +651,11 @@ Every statement that mentions cohomology or a complement is restated for schemes
 The six deferred nodes of {ref "generalized"}[the stable extension] stay unchanged and deferred.
 All existing declarations remain, as compatibility interfaces, with their general hypotheses.
 
-:::node "thm:geo-transport-all"
+In Lean the rule is the comparison {name OrlikSolomon.Geometric.transportAffineDevelopment}`transportAffineDevelopment` of the old theory at $`A` with the geometric theory at an object $`X\simeq\operatorname{Spec}A`, together with the laws that make the induction on expressions work: it is an isomorphism of $`B`-algebras, preserves and reflects bidegrees, takes old logarithmic classes to the classes of the corresponding global units, and commutes with every pullback whose square with the comparisons commutes, and with residue and Gysin along isomorphisms of pairs.
+Every public result of {bp "thm:affine"}[], {bp "cor:ordinary"}[], {bp "thm:betti"}[], {bp "lem:comparison-residue"}[], {bp "thm:projective"}[] and {bp "cor:projective-betti"}[] is restated this way in {bp "thm:geo-affine"}[] and {bp "thm:geo-projective"}[].
+A rule about every statement is not itself a Lean statement, so this box stays partly formalized.
+
+:::node "thm:geo-transport-all" (decl := OrlikSolomon.Geometric.transportAffineDevelopment) (decl := OrlikSolomon.Geometric.transportAffineDevelopment_mem_grading_iff) (decl := OrlikSolomon.Geometric.transportAffineDevelopment_logClass) (decl := OrlikSolomon.Geometric.transportAffineDevelopment_map) (decl := OrlikSolomon.Geometric.OrdinaryTheory.transportAffineDevelopment_deletionResidue) (decl := OrlikSolomon.Geometric.OrdinaryTheory.transportAffineDevelopment_deletionGysin) (decl := OrlikSolomon.Geometric.OrdinaryTheory.ofAlgebraic_affineEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.ofAlgebraic_projectiveEquiv) (remaining := "one Lean statement covering every old statement, which is not expressible as a single theorem; and separate geometric restatements of the other publicly restated nodes of the inventory, such as lem:ses, thm:generation, lem:restriction-surj and the relation lemmas")
 Write $`\mathsf{G}` for the following substitution in a statement about a value of the existing structure and its named smooth objects.
  * Replace a smooth algebra $`A` by $`\Gamma(X,\mathcal{O}_X)` for a smooth affine scheme $`X`, an algebra map by the pullback along a morphism of schemes in the opposite direction, and a certified pair by its dual geometric pair, reversing morphisms of pairs.
  * Replace each named affine space, arrangement complement or nonempty projective complement by the scheme defined in this chapter, together with its comparison with a spectrum, and replace polynomial and Laurent extensions by products with $`\mathbb{A}^1` and $`\mathbb{G}_m`. Labels, words, incidence data and Orlik–Solomon algebras are unchanged.

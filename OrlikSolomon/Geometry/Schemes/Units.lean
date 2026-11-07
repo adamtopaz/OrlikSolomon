@@ -237,4 +237,10 @@ lemma map_specMap_specUnit {A B : CommAlgCat.{u} k} (φ : A ⟶ B) (u : Aˣ) :
     Units.map (specMap φ).left.appTop.hom (specUnit u) = specUnit (Units.map (φ.hom : A →* B) u) :=
   Units.ext (specMap_left_appTop_ΓSpecIso_inv φ u)
 
+/-- The pullback of `specUnit u` along a map `X ⟶ D.spec A` of a domain elaborates as a unit, since
+`D.spec A` unfolds to `spec A.obj` at instance transparency (see `Geometry/Schemes/Basic`). -/
+example (D : SmoothDomain k) {X : D.Obj} {A : SmoothAlg.{u} k} (g : X ⟶ D.spec A) (u : A.objˣ) :
+    Γ(X.obj.left, ⊤)ˣ :=
+  Units.map g.hom.left.appTop.hom (specUnit u)
+
 end OrlikSolomon.Geometric

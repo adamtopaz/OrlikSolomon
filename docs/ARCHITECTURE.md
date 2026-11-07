@@ -41,6 +41,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Geometry/ProjectiveScheme`    | `O(U_P)` as the complement in Mathlib's `Proj`, its independence of equations, and the intersection of charts in `def:geo-projective` |
 | `Cohomology/Axioms`            | `def:cohomology` |
 | `Cohomology/BridgeData/Basic`   | degreewise products, coefficients and pullbacks for `lem:standard-bridge` |
+| `Cohomology/BridgeData/Category` | category-independent degreewise products, coefficients, pullbacks, total algebra and point/line comparisons for `lem:standard-bridge` and `thm:geo-bridge` |
+| `Cohomology/BridgeData/CategorySupports` | generic pair diagrams, supports and purity; shared total exactness, shifts, coefficient linearity, naturality and projection for `lem:standard-bridge` and `thm:geo-bridge` |
 | `Cohomology/BridgeData/Supports` | degreewise localization with supports and oriented purity for `lem:standard-bridge` |
 | `Cohomology/DeletionPair`      | `lem:log-residue` for deletion pairs, and the residue and Gysin maps of a deletion, typed |
 | `Cohomology/Bridge`            | `lem:standard-bridge` |
@@ -970,13 +972,26 @@ Stage G0 (#107, #108) is formalized to the extent indicated below: `def:geo-doma
 `lem:geo-affine-pairs`, `lem:geo-products` and `thm:geo-units`, described in "Schemes, domains and
 affine duality" below, and `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-cartesian` and
 `thm:geo-pair-duality`, described in "Principal pairs" below. The Cartesian node remains partly
-formalized: its Tor-sheaf and conormal comparisons are not stated. Stage G1 (#109) is formalized:
+formalized: its Tor-sheaf and conormal comparisons are not stated. Stage G1 is formalized:
 `def:geo-theory`, `lem:geo-restriction`, `lem:geo-empty`, `thm:geo-to-algebraic` and
-`thm:geo-from-algebraic`, described in "Geometric cohomology and affine transport" below. Stage G2 is
+`thm:geo-from-algebraic` (#109), described in "Geometric cohomology and affine transport" below,
+and `def:geo-supports` and `thm:geo-bridge` (#110), described in "Geometric supports and purity"
+below. Stage G2 is
 formalized: `def:geo-affine-space`, `def:geo-complement`, `thm:geo-complement-spec`, `thm:geo-deletion`
 and `thm:geo-small-targets` (#111), described in "Arrangement complements on schemes", and
 `def:geo-projective` and `thm:geo-projective-geometry` (#112, with its affine sides from #111),
-described in "Projective complements on schemes". The other declaration names remain proposals.
+described in "Projective complements on schemes". Stage G3 is formalized: the logarithms
+`def:geo-log`, `thm:geo-log-laws` and `thm:geo-gm-product` (#113), described in "Geometric
+logarithms" below, and the structure theorems `thm:geo-affine` and `thm:geo-projective` (#114),
+described in "The geometric structure theorems" below. The transport rule `thm:geo-transport-all`
+is partly formalized, by the comparison `transportAffineDevelopment` and its laws, since a rule
+about every old statement is not one Lean statement. Stage G4 (#115), `lem:geo-module-gluing`,
+`def:geo-forms-sheaf` and `thm:geo-forms-comparison`, is formalized as described in "Relative
+forms as sheaves". Stage G5 (#116) is formalized as described in "The de Rham instance on affine
+schemes": `def:geo-dr-cohomology` and `cor:geo-dr-arrangements`, and `thm:geo-dr-instance` partly,
+since the comparison of its Gysin and residue maps with the global sections of the sheaf
+logarithmic sequence needs `thm:geo-log-sheaves` (#117). The other declaration names remain
+proposals.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1046,16 +1061,29 @@ These are the conventions of `Geometry/Schemes/`, on which every later stage bui
   that the target "is not type-correct under the `implicit` transparency level"; an `abbrev` is
   unfolded in the second, which is the old failure of `simp` indexing recorded under "Objects and
   pairs are `def`s". `@[implicit_reducible]` is unfolded in the first and not in the second, so it
-  is the right annotation for objects and object-valued functors: `spec`, `globalSections`,
-  `affineLine`, `gm`, `SmoothDomain.ofAffine`, `SmoothDomain.spec`, `SmoothDomain.point`,
-  `SmoothDomain.prodAffineLine`, `SmoothDomain.prodGm`, `specFunctor`, `globalSectionsFunctor`,
+  is the right annotation for objects and object-valued functors: `spec`, `affineLine`, `gm`,
+  `affineSpace`, `complement`, `projectiveComplement`, `specFunctor`, `globalSectionsFunctor`,
   `SmoothDomain.specFunctor` and `affineGlobalSectionsFunctor`. Mathlib marks `Over.mk`,
   `ObjectProperty.homMk` and `ObjectProperty.lift` the same way. Mathlib's `algSpec` is marked too,
   but its object passes through functors that are not, which is why `spec` restates it. Morphisms
   are ordinary `def`s.
-- **Global sections are bundled.** `globalSections X : CommAlgCat k` is `Γ(X, 𝒪_X)` with the structure
-  map `k ≅ Γ(S) → Γ(X)`; its carrier is `Γ(X.left, ⊤)` at implicit transparency, so an element of one
-  is an element of the other. It is not an instance on `Γ(X.left, ⊤)`: Mathlib has an instance for
+- **Objects of a domain and `globalSections` are `@[instance_reducible] def`s** (#128). These are
+  the `D.Obj` wrappers of an `S`-scheme, `SmoothDomain.ofAffine`, `spec`, `point`, `affineLine`,
+  `gm`, `prodAffineLine`, `prodGm`, `affineSpace`, `complement` and `projectiveComplement`. That
+  level also unfolds at instance transparency, where type class search and `rw` work, and still not
+  at the reducible transparency at which `simp` indexes lemmas. So `Γ((D.spec A).obj.left, ⊤)`,
+  `Γ((spec A.obj).left, ⊤)` and `globalSections (D.spec A).obj` are one type for `Units.map`,
+  products and `algebraMap`, while every `simp` key is unchanged: the keys of all `simp` lemmas
+  and instances of the library were identical before and after the change. `@[reducible]` is wrong
+  here, because it changes the keys: a reducible `globalSections` loses its `k`-algebra instance,
+  and reducible domain objects make `simp only [SmoothDomain.gmHom_appTop_gmCoord]` silently stop
+  firing. A new object of a domain built from a scheme gets `@[instance_reducible]`; the
+  regression `example`s at the ends of `Geometry/Schemes/Basic`, `Units` and `Complement/Basic`
+  check the rule.
+- **Global sections are bundled.** `globalSections X : CommAlgCat k` is `Γ(X, 𝒪_X)` with the
+  structure map `k ≅ Γ(S) → Γ(X)`; its carrier is `Γ(X.left, ⊤)` at instance transparency, so an
+  element of one is an element of the other, and `algebraMap k (globalSections X) c * f` elaborates
+  for `f : Γ(X.left, ⊤)`. It is not an instance on `Γ(X.left, ⊤)`: Mathlib has an instance for
   affine `X`, built through `X.isoSpec`, that agrees with it only propositionally. Pullback is
   `globalSectionsMap g`, with `globalSectionsMap_apply`.
 - **Domains.** `SmoothDomain k` holds an `ObjectProperty` of `Over S` and the closure proofs of
@@ -1175,7 +1203,8 @@ structure theorem builds.
   affine structure theorem on `U_𝒜` is the existing one composed with pullback along it. Its
   generators correspond by `D.complementIsoSpec_hom_appTop_complementUnit`: the existing
   `SmoothAlg.complementUnit 𝒜 f hf` is the restriction `Geometric.complementUnit 𝒜 f hf` of `f̃`, as
-  an equation of global sections.
+  an equation of global sections, and as an equation of units by
+  `D.map_complementIsoSpec_hom_complementUnit`.
 - **Maps of complements.** Each is `complementHom F` for a map `F` of the existing rings, that is,
   `s_𝒜 ≫ Spec F ≫ s_ℬ⁻¹`, so one set of naturality lemmas serves them all
   (`complementHom_comp_complementIsoSpec_hom`, `complementHom_comp_complementι`,
@@ -1235,11 +1264,12 @@ These are the conventions of `Geometry/Schemes/Projective` (#112).
   `coneIsoProdGm hℓ₀` has first coordinate `coneProjection P` and second coordinate `ℓ₀`.
 - **Functions.** `projectiveRatio hℓ hℓ'` is the unit `ℓ / ℓ'` of `Γ(U_P)`, the pullback along `s_P`
   of `ratioUnit`, and `specUnit u`, in `Geometry/Schemes/Units`, is the unit of `Spec A` given by
-  `u : Aˣ`. Lemmas about functions
-  in a domain are equations of global sections, such as `SmoothDomain.coe_projectiveRatio`, and not
-  of units: `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)` agree only at implicit
-  transparency, so `Units.map` and products across them do not elaborate. Get a unit equation with
-  `Units.ext`.
+  `u : Aˣ`. Lemmas about functions in a domain are stated as equations of global sections, such as
+  `SmoothDomain.coe_projectiveRatio`, with unit forms such as
+  `SmoothDomain.map_projectiveComplementIsoSpec_hom_projectiveRatioUnit`, proved by `Units.ext`.
+  Since the objects of a domain unfold at instance transparency (above),
+  `Units.map g.hom.left.appTop.hom (specUnit u)` for `g : X ⟶ D.spec A`, and products across
+  `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)`, elaborate.
 
 ### Geometric cohomology and affine transport
 
@@ -1266,8 +1296,203 @@ compatible inverses. `toAlgebraic_standardResidue` and `toAlgebraic_standardGysi
 standard maps via the polynomial and Laurent isomorphisms. `emptySubsingleton` derives vanishing
 for every empty scheme from the algebraic empty-divisor consequence of exactness; a unit equation
 therefore has zero Gysin and residue. No empty-scheme axiom is added. Transport of the existing
-nonzero de Rham theory is already a geometric theory on affines; identifying it with the cohomology
-of global sheaf forms remains #116.
+nonzero de Rham theory is a geometric theory on affines, identified with the cohomology of global
+sheaf forms in "The de Rham instance on affine schemes".
+
+### Geometric supports and purity
+
+The supports-and-purity bridge shares a category-independent covariant core in
+`BridgeData/Category` and `BridgeData/CategorySupports`. The original `DegreewiseTheory` and
+`SupportsAndPurity` record declarations remain intact. Their `toCore` adapters and thin wrappers
+retain the existing constructors, projections, method names, statements and simp API. Direct-sum
+algebra, exactness, shifts, coefficient linearity, naturality and projection are proved once in
+the common core. `CovariantPairDiagram` supplies the three object functors and the closed/open
+natural transformations. The geometric inputs use this core on `D.Objᵒᵖ` and
+`(DivisorPair D)ᵒᵖ`, so the constructed theory works on every admissible domain, including
+non-affines. Public component formulas identify pullback, Gysin and residue with the original
+degreewise maps and prove compatibility with domain restriction and affine transport. No total
+exactness or arrangement conclusion is assumed.
+
+### Geometric logarithms
+
+`Cohomology/Geometric/Logarithms` (#113) constructs logarithmic classes for a geometric theory on
+every object of its domain, affine or not, and reuses the algebraic `Cohomology/Logarithms` through
+`toAlgebraic` rather than reproving it.
+
+- **The class `τ`.** `T.tau` lives on `D.gm`, which is the same scheme as
+  `D.spec (SmoothAlg.gm k)`, where `T.toAlgebraic` has its class; `SmoothDomain.specGmIso` is the
+  identity between them, and `T.tau` is the pullback of `T.toAlgebraic.tau` along it. The standard
+  pair of the base has open part `S ×_S 𝔾ₘ`, so the normalization reads
+  `T.standardResidue D.point (T.pull (D.prodGmSnd D.point) T.tau) = 1`, proved by
+  `toAlgebraic_standardResidue` and the naturality of the residue for
+  `standardPairMap D.specPointIso.hom`; `eq_tau_of_mem_grading` is uniqueness.
+- **The class `[u]`.** `T.logClass u = T.pull (D.gmHom u) T.tau`, where `D.gmHom u : X ⟶ D.gm`
+  is `unitsEquivHomGm` in the domain. Pullback is `pull_logClass`, with
+  `Units.map g.hom.left.appTop.hom`. `[uv] = [u] + [v]` is pulled back from the old identity on
+  `𝔾ₘ² = Spec k[s, s⁻¹][t, t⁻¹]` along the map of `(u, v)` built with `specHomEquiv`;
+  `[u]² = 0` is pulled back from `τ² = 0`; the class of a constant `c ∈ kˣ` vanishes because its
+  map factors through `D.point` (`logClass_eq_zero_of_coe_eq_algebraMap`, stated with the function
+  of the unit, and `logClass_units_map_algebraMap`), so units that differ by a constant have the
+  same class (`logClass_eq_of_coe_eq_algebraMap_mul`, `logClass_units_map_algebraMap_mul`). The
+  residue formulas hold for every pair, by `residue_pull` along `DivisorPair.toStandard`.
+  Restriction to a smaller domain does not change classes (`restrict_logClass`, by `rfl`).
+- **Comparisons.** `pull_toAlgebraic_logClass_eq g u` computes `g^*` of the old class `[u]` of
+  `T.toAlgebraic`, for any `g : X ⟶ D.spec A`, as the class of the unit
+  `Units.map g.hom.left.appTop.hom (specUnit u)`, and `pull_toAlgebraic_logClass g u hv` as the
+  class of any unit `v` with `(v : Γ(X)) = g^*(u)`. They are the lemmas to compose with `s_𝒜` and
+  `s_P` for the generator formulas of the structure theorems, followed by
+  `D.map_complementIsoSpec_hom_complementUnit` or
+  `D.map_projectiveComplementIsoSpec_hom_projectiveRatioUnit`. On `D.spec A` itself,
+  `toAlgebraic_logClass_eq` states it with `specUnit u`. `ofAlgebraic_logClass` identifies the
+  classes of `ofAlgebraic E` on an affine `X` with the old classes of `E` on `Γ(X)`, through
+  `algebraicRoundTripEquiv_logClass`.
+- **The product with `𝔾ₘ`.** The coordinate of `X ×_S 𝔾ₘ` is the unit `D.prodGmCoord X`, equal
+  to the equation of `standardPair D X` (`standardPair_eqnUnit`), and `[z]` is
+  `T.logClass (D.prodGmCoord X)`. `gmProductEquiv X : (C(X) × C(X)) ≃ₗ[B] C(X ×_S 𝔾ₘ)` is
+  `@[no_expose]`, like the algebraic one, and is described by `gmProductEquiv_apply`,
+  `gmProductEquiv_symm_apply` (the section `z = 1` and the standard residue),
+  `gmProductEquiv_mem_grading_iff` and the naturality `pull_prodGmMap_gmProductEquiv`. Its proof
+  uses only the axioms for the standard pair of `X`.
+
+### The geometric structure theorems
+
+`Presentation/Geometric` (#114) is the public facade of the structure theorems on schemes. It
+reuses the existing theorems and proves nothing about arrangements again.
+
+- **The transport.** `transportAffineDevelopment T e : T.toAlgebraic.C.obj A ≃ₐ[B] T.obj X`, for
+  `e : X ≅ D.spec A`, is pullback along `e`, and its laws are the base cases of the blueprint's
+  induction on expressions: bidegrees (`transportAffineDevelopment_mem_grading_iff`,
+  `transportAffineDevelopmentComponentEquiv`), logarithmic classes
+  (`transportAffineDevelopment_logClass` and `transportAffineDevelopment_logClass_eq`, from
+  `pull_toAlgebraic_logClass`) and compatible pullbacks (`transportAffineDevelopment_map`, whose
+  hypothesis is a square with `D.specFunctor.map`, the form of the naturality lemmas of `s_𝒜` and
+  `s_P`). Residue and Gysin are compared by `residue_pull` along a pair isomorphism with
+  `DivisorPair.spec`, as `transportAffineDevelopment_deletionResidue` does along
+  `deletionPairIsoSpec`. This is the Lean form of `thm:geo-transport-all`, which stays partly
+  formalized.
+- **The theorems.** `affineEquiv 𝒜 = (T.toAlgebraic.affineEquiv 𝒜).trans
+  (transportAffineDevelopment T (D.complementIsoSpec 𝒜))`, so `affineEquiv_apply` is
+  `Φ^geo = s_𝒜^* ∘ Φ`, and `projectiveEquiv P` is the same with `D.projectiveComplementIsoSpec P`,
+  for `[Nonempty P]`. Every other declaration is the existing one composed with the transport:
+  generators, independence of the equations and uniqueness, the bigrading, naturality for
+  `D.complementInclusion` and `D.complementIso`, the cone projection `D.coneComplementProjection`,
+  the deletion residue, the components, the diagonals over `R` (through `diagonalAlgEquiv` and the
+  transported `BijOn`), vanishing, bases and Betti numbers. The names are those of the existing
+  declarations, in `namespace OrlikSolomon.Geometric.OrdinaryTheory`; `logMonomial`, the typed
+  `deletionResidue` and `deletionGysin`, and `residueComparison` are the geometric ones.
+- **No second structure map.** `ofAlgebraic_affineEquiv` and `ofAlgebraic_projectiveEquiv` say
+  that for an algebraic theory `E` the geometric theorems of `ofAlgebraic E` are the existing ones
+  for `E`, followed by `E` of the ring isomorphism `O(U) ≅ Γ(U)`. The de Rham corollaries on
+  schemes are compared with the existing ones through them (`affineEquiv_eq_map`).
+- **Elaboration.** In `T.logClass u` the object is implicit, and Lean cannot solve it from a unit
+  `u : Γ((complement 𝒜).left, ⊤)ˣ`, since that would mean inverting the projection `X.obj`. No
+  transparency setting changes this. When the expected type does not fix it, write
+  `T.logClass (X := D.complement 𝒜) u`, as in `logClass_complementUnit_eq_of_isEquation` and
+  `isFamily_logClass_complementUnit`, or ascribe the unit the type
+  `Γ((D.complement 𝒜).obj.left, ⊤)ˣ`.
+
+### Relative forms as sheaves
+
+`Geometry/Schemes/ModuleGluing`, in `OrlikSolomon.Geometric`, reuses Mathlib's `tilde.functor`,
+`tilde.isoTop` and distinguished-open localization maps. Its additional results identify the
+maps on distinguished opens with localized linear maps, prove preservation of monomorphisms and
+homology, and give `tilde_map_exact` for arbitrary module sequences. There is no finite-
+generation or nonzero-ring assumption, and no higher-cohomology vanishing assertion.
+
+The `DeRham/Schemes/Forms` umbrella and its `Presheaf`, `Sheaf`, `Affine` and `Pullback` files
+use `OrlikSolomon.Geometric.DeRham` and import no G0 module. They work over any commutative base
+ring and on any object of `Over (Spec k)`. `sectionAlgebra k X U` bundles regular functions with
+the base-ring action; `formsPresheaf` applies the existing exterior-power forms and their
+functorial maps to it. `formsSheaf` sheafifies in `k`-modules. Mathlib's presheaf-of-modules
+sheafification equips the same underlying additive carriers with their structure-sheaf actions
+as `formsModuleSheaf`; public carrier and base-linear isomorphisms compare the two views.
+
+`formsSheafMul`, `formsSheafWedge` and `formsSheafOne` extend the existing algebraic operations
+by the sheafification universal property. Their public formulas prove associativity, units,
+graded commutativity and signed Leibniz on these carriers. `formsSheafZeroIso` identifies degree
+zero with the structure sheaf, and multiplication by a degree-zero function agrees with the
+retained module action. `formsSheafD` is only base-ring linear. `formsComplexNat` packages the
+nonnegative complex; `formsComplex` extends it by zero to integers, with negative terms proved
+zero.
+
+`formsSheafPullback` is the adjoint pushforward form of pullback along every base-scheme
+morphism. It preserves products, commutes with the differential, and has identity and
+composition lemmas. `formsComplexNatPullback` and `formsComplexNatInverseImage` package the maps
+of nonnegative complexes. Degreewise, `formsModuleSheafPullback` and
+`formsModuleSheafInverseImage` give the equivalent structure-sheaf-linear formulation, compared
+publicly with the same base-linear maps. No flatness is assumed, and the differential is not
+asserted to be a map of structure-sheaf modules.
+
+`Forms/Affine` compares the distinguished-open restrictions with Mathlib's associated module
+sheaf using the existing localization theorem for algebraic forms. `specFormsSheafAssociatedIso`
+exposes the associated-sheaf identification after forgetting scalar actions, with its
+localization formula. The literal `formsSheafUnit` is invertible on each distinguished open of a
+spectrum and on global sections of every affine scheme. `affineFormsComparison` is that
+canonical degreewise comparison, with differential, wedge, unit and pullback formulas. The
+private affine transport uses Mathlib's `Scheme.isoSpec`, retaining independence from the
+geometric-domain layer. Its global function algebra is the bundled `sectionAlgebra k X ⊤`; any
+other bundled presentation is compared by its algebra isomorphism. These results do not identify
+underived global sections with hypercohomology and do not construct an instance on non-affine
+schemes.
+
+### The de Rham instance on affine schemes
+
+`DeRham/Schemes/GlobalSections`, `DeRham/Schemes/Affine`, `DeRham/Schemes/Instance` and
+`DeRham/Schemes/Corollaries` (#116) use `OrlikSolomon.Geometric.DeRham`. Inside it, `Cohomology`,
+`ordinaryTheory`, `twistedClass`, `gysin`, `residue`, `affineEquiv` and `projectiveEquiv` are the
+geometric declarations; write the existing ones with `OrlikSolomon.DeRham.`. A file that opens both
+`OrlikSolomon` and `OrlikSolomon.Geometric` must qualify `DeRham.` names, which are ambiguous there.
+
+- **Two presentations of `Γ(X, 𝒪_X)`.** `globalSections X` of G0 and `sectionAlgebra k X ⊤` of the
+  sheaves of forms have the same carrier, but their structure maps differ by
+  `presheaf.map (𝟙 _)`. `globalSectionsAlgEquiv X` is the identity between them; it intertwines
+  `globalSectionsMap` and `sectionPullbackTop` by `rfl`. Everything public is stated over
+  `globalSections X`, through `globalFormsEquiv X n`, which is `affineFormsComparison` after
+  `Forms.mapPower` of that equivalence. These live in the leaf `DeRham/Schemes/GlobalSections`,
+  which imports only `DeRham/Schemes/Forms` and `Geometry/Schemes/Basic`, so that the sheaf
+  logarithmic comparison (#117) can reuse them.
+- **`Γ(X, Ω^•_{X/k})` and the comparison.** `globalFormsComplex k X` is the functor
+  `sheafToPresheaf ⋙ evaluation (op ⊤)` applied to `formsComplexNat k X`, for every scheme
+  (`sheafSections` has no additivity instance). For affine `X`, `complexIsoGlobalFormsComplex X`
+  identifies it with `OrlikSolomon.DeRham.complex k (globalSections X)` degree by degree, and
+  `globalFormsHomologyIso X n` is Mathlib's homology in degree `n` of `Γ(X, Ω^•_{X/k})`, isomorphic
+  to `Cohomology.degree k (globalSections X) n`. The direct sum is formed afterwards
+  (`Cohomology.directSumEquiv`), so global sections never meet an infinite direct sum of sheaves.
+- **Classes.** `globalClass X n ω hω` is the class of a closed global sheaf form, and is the public
+  specification of products (`globalClass_wedge`), pullbacks (`globalClass_pull`,
+  `Cohomology.pull_globalClass`), exactness (`globalClass_eq_zero_iff`) and surjectivity
+  (`globalClass_surjective`). Closedness of a wedge or a pullback is supplied by named lemmas
+  (`formsSheafD_wedge_eq_zero`, `formsSheafD_pullbackTop_eq_zero`) that appear in the statements.
+- **`Cohomology X`** is a reducible abbreviation for `OrlikSolomon.DeRham.Cohomology k
+  (globalSections X.obj)`, for `X : (SmoothDomain.aff k).Obj` only, so that the existing API and
+  instances apply; `Cohomology.degree X n` likewise. `Cohomology.pull f` is the map induced by
+  `globalSectionsMap f.hom`. Nothing defines de Rham cohomology of a scheme that is not affine.
+- **The instance.** `ordinaryTheory k` is the `@[implicit_reducible] def`
+  `ofAlgebraic (OrlikSolomon.DeRham.ordinaryTheory k)`, with hypotheses `[Field k] [CharZero k]`
+  used only by the existing instance. As for that instance, compute with `twistedClass w c`, the
+  class `t^w ⊗ c` typed in `(ordinaryTheory k).obj X`: `objEquiv` is `C(X) = B ⊗[k] Cohomology X`,
+  `mem_grading_iff` and `gradingEquiv` give the bigrading, and `pull_twistedClass`,
+  `gysin_twistedClass`, `residue_twistedClass` and `twistedClass_mul_twistedClass` are `simp`. The
+  maps `gysin P` and `residue P` are the existing de Rham Gysin map and residue of the algebraic
+  pair `DivisorPair.globalSections P`, the maps of its global logarithmic sequence
+  (`residue_mk_add_theta_mul`, `gysin_mk_of_logResidue_eq`). Their statements name the algebraic
+  pair's components, not `globalSections P.ambient.obj`, since the algebra instance
+  `P.ambient → P.compl` of an algebraic pair is only found on those: instance search retrieves it
+  by its key `DivisorPair.ambient`, which no transparency setting changes (#128). `logClass_eq` is
+  `[u]_T = t ⊗ [du/u]`, from `ofAlgebraic_logClass` and `ordinaryTheory_logClass`; like the existing
+  lemma it is not `simp`.
+- **The corollaries.** `affineEquiv 𝒜 : OSAlgebra k 𝒜 ≃ₐ[k] Cohomology ((aff k).complement 𝒜)` and
+  `projectiveEquiv P` are the geometric diagonal theorems for `ordinaryTheory k` followed by the
+  inverse of `TwistedCohomology.diagonalEquiv`, as in `DeRham/Corollaries`, with the same API.
+  `affineEquiv_eq_map` and `projectiveEquiv_eq_map` identify them with the existing corollaries
+  for the coordinate rings, through `ofAlgebraic_affineEquiv` and `ofAlgebraic_projectiveEquiv`.
+  To remove the powers of `t` from a class of the instance, use `untwist X`, which is
+  `TwistedCohomology.evalOne k (globalSections X.obj)` typed on `(ordinaryTheory k).obj X`, with
+  `untwist_twistedClass`, `untwist_logClass` and `untwist_pull`; or state `evalOne` with the
+  explicit algebra `globalSections X.obj`, as `affineEquiv_apply` does. With `_`, the algebra
+  elaborates to `(affineGlobalSectionsFunctor k).obj (op X)`, and `rw` with `evalOne_logClass` no
+  longer matches, because `(ordinaryTheory k).obj X` is `TwistedCohomology k _` only at default
+  transparency.
 
 ### Modules
 
@@ -1296,15 +1521,21 @@ into other files updates this table.
 | `Geometry/Schemes/Projective` | `def:geo-projective`, `thm:geo-projective-geometry` | #112 |
 | `Geometry/Schemes/Decone` | the affine sides of `thm:geo-projective-geometry`: the cone and the decone as actual complements | #111 |
 | `Cohomology/Geometric/Logarithms` | `def:geo-log`, `thm:geo-log-laws`, `thm:geo-gm-product` | #113 |
-| `Presentation/Geometric` | `thm:geo-affine`, `thm:geo-projective`, `thm:geo-transport-all` | #114 |
+| `Presentation/Geometric`, the module to import, over `Presentation/Geometric/Transport` | `thm:geo-transport-all`: `transportAffineDevelopment` and its laws | #114 |
+| `Presentation/Geometric/Affine`, `Presentation/Geometric/Ordinary` | `thm:geo-affine`: `affineEquiv` and its API, and the forms over `R` | #114 |
+| `Presentation/Geometric/Projective` | `thm:geo-projective`: `projectiveEquiv`, its diagonal and multiplicities | #114 |
 | `Geometry/Schemes/ModuleGluing` | `lem:geo-module-gluing`: exactness of associated module sheaves, for any modules, with no forms | #115 |
 | `DeRham/Schemes/Forms`, the module to import, over `DeRham/Schemes/Forms/Presheaf`, `DeRham/Schemes/Forms/Sheaf`, `DeRham/Schemes/Forms/Affine` and `DeRham/Schemes/Forms/Pullback` | `def:geo-forms-sheaf`, `thm:geo-forms-comparison` | #115 |
-| `DeRham/Schemes/Affine`, `DeRham/Schemes/Instance`, `DeRham/Schemes/Corollaries` | `def:geo-dr-cohomology`, `thm:geo-dr-instance`, `cor:geo-dr-arrangements` | #116 |
+| `DeRham/Schemes/GlobalSections` | the two presentations of `Γ(X, 𝒪_X)`, the complex `Γ(X, Ω^•_{X/k})` and its affine comparison with algebraic forms, for `def:geo-dr-cohomology` and `thm:geo-log-sheaves` | #116 |
+| `DeRham/Schemes/Affine` | `def:geo-dr-cohomology`: `Cohomology`, `globalFormsHomologyIso`, `globalClass` and the direct sum | #116 |
+| `DeRham/Schemes/Instance` | `thm:geo-dr-instance`: `ordinaryTheory`, `twistedClass`, the twisted Gysin and residue, `logClass_eq` | #116 |
+| `DeRham/Schemes/Corollaries` | `cor:geo-dr-arrangements`: `affineEquiv`, `projectiveEquiv` and their API | #116 |
 | `DeRham/Schemes/Log` | `thm:geo-log-sheaves` | #117 |
 | `Examples/Geometric` | `prop:geo-finite-field`, `prop:geo-degenerate`, `prop:geo-exclusions`, `prop:geo-nonflat`, `prop:geo-nonaffine`, `prop:geo-affine-regressions`, and the blueprint's acceptance consumers | #118 |
 
 `Geometry/Schemes/ModuleGluing` is generic and uses the namespace `OrlikSolomon.Geometric`. Only
-`DeRham/Schemes/Forms` and its four submodules use `OrlikSolomon.Geometric.DeRham`.
+`DeRham/Schemes/Forms` with its four submodules and the four `DeRham/Schemes` modules of #116 use
+`OrlikSolomon.Geometric.DeRham`.
 
 `Presentation/Geometric` is a facade: the blueprint's acceptance test is a consumer that imports
 only it and states both theorems for a theory on all smooth schemes. The blueprint's stages fix the
