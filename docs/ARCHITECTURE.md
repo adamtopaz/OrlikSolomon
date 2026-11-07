@@ -972,7 +972,9 @@ affine duality" below, and `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-
 `thm:geo-pair-duality`, described in "Principal pairs" below. The Cartesian node remains partial:
 its Tor-sheaf and conormal comparisons are not stated. So are `def:geo-projective` and, except for
 its affine sides, `thm:geo-projective-geometry` (#112), described in "Projective complements on
-schemes". The other declaration names are proposals, as with the other blueprints.
+schemes". Stage G1 (#109) is formalized: `def:geo-theory`, `lem:geo-restriction`,
+`lem:geo-empty`, `thm:geo-to-algebraic` and `thm:geo-from-algebraic`, described in "Geometric
+cohomology and affine transport" below. The other declaration names remain proposals.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1181,6 +1183,34 @@ These are the conventions of `Geometry/Schemes/Projective` (#112).
   of units: `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)` agree only at implicit
   transparency, so `Units.map` and products across them do not elaborate. Get a unit equation with
   `Units.ext`.
+
+### Geometric cohomology and affine transport
+
+`Cohomology/Geometric/Axioms` defines `Geometric.OrdinaryTheory D ℬ` with exactly the old 22 fields.
+Its `C` is `D.Objᵒᵖ ⥤ AlgCat B`; `obj X` is `C.obj (op X)` and `pull f` is `C.map f.op` as an algebra
+map. The `R`-algebra structure remains a field with scalar-tower coherence, and the grading uses
+`R`-submodules with the sign `Prod.fst`. `mapOverR`, `gysinOverR` and `residueOverR` retain the
+specified scalar structure when `R = B`. `standardResidue` and `standardGysin` are typed by
+`D.prodGm X`, `X` and `D.prodAffineLine X`, with typed shift, exactness and projection lemmas.
+`restrict h` copies all fields along `ObjectProperty.ιOfLE h`; the point and product schemes agree
+by construction.
+
+`Cohomology/Geometric/Transport` defines `toAlgebraic` by `D.specFunctor ⋙ T.C` and `ofAlgebraic E`
+by `affineGlobalSectionsFunctor k ⋙ E.C`. The point and affine-line conditions use the canonical
+comparison isomorphisms, including an explicit `Γ(X)[z] ≅ Γ(X × 𝔸¹)` respecting constants. The pair
+fields are precisely those of `DivisorPair.spec` or `DivisorPair.globalSections`, so both
+naturalities reverse correctly with no flatness assumption and no change of sign.
+
+`algebraicRoundTripEquiv E A` is cohomology of `A ≅ Γ(Spec A)`; `affineRoundTripEquiv T X` is
+pullback along `Spec Γ(X) ≅ X` and recovers only `T.restrict (aff_le D)`. Their membership lemmas
+preserve and reflect every bidegree. The public `map`/`pull`, `gysin`, `residue` and `algebraMap`
+lemmas give all commuting squares, and the two `triangle` lemmas identify the comparisons as
+compatible inverses. `toAlgebraic_standardResidue` and `toAlgebraic_standardGysin` compare the
+standard maps via the polynomial and Laurent isomorphisms. `emptySubsingleton` derives vanishing
+for every empty scheme from the algebraic empty-divisor consequence of exactness; a unit equation
+therefore has zero Gysin and residue. No empty-scheme axiom is added. Transport of the existing
+nonzero de Rham theory is already a geometric theory on affines; identifying it with the cohomology
+of global sheaf forms remains #116.
 
 ### Modules
 
