@@ -856,8 +856,7 @@ conormal splitting, normal derivations, modulo-divisor wedge exactness, logarith
 their residue sequence, global logarithmic comparison, and the Laurent-twisted functor with the
 first fields of the structure as formalized, and lists what remains. The first page, `Organization`
 and the chapter on the axioms say the instance is in progress. No nonzero value of `OrdinaryTheory`
-has been
-constructed. The build does not check that prose, so keep it current as nodes land. The PR
+has been constructed. The build does not check that prose, so keep it current as nodes land. The PR
 that proves `thm:dr-instance` must update the sentences saying that no nonzero value
 of the structure has been constructed: on the first page, in the chapter on the axioms, on the
 status page and in `README.md`.

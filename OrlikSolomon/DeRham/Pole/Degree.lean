@@ -22,8 +22,9 @@ of normal derivation enters them.
 * `logToLocalizationEquiv_mem_degree_iff`: comparison preserves and reflects natural degree.
 * `logToLocalizationDegreeEquiv` and `logToLocalizationGradingEquiv`: the canonical linear
   equivalences in every natural or integer degree, with coercion formulas in both directions.
-* `logToLocalizationEquiv_eq` and `logToLocalizationDegreeEquiv_eq`: the maps are independent of
-  the certificates for invertibility and for the closed algebra of the smooth principal pair.
+* `logToLocalizationEquiv_eq`, `logToLocalizationDegreeEquiv_eq` and
+  `logToLocalizationGradingEquiv_eq`: the maps are independent of the certificates for
+  invertibility and for the closed algebra of the smooth principal pair.
 
 Blueprint: the assertion in every degree of `thm:dr-comparison`.
 -/
@@ -164,5 +165,12 @@ theorem logToLocalizationDegreeEquiv_eq (n : ℕ) :
       logToLocalizationDegreeEquiv k f T hUnits' hpair' n := by
   ext x
   simp only [coe_logToLocalizationDegreeEquiv]
+
+/-- The integer-degree restrictions are independent of the smooth-pair certificates. -/
+theorem logToLocalizationGradingEquiv_eq (p : ℤ) :
+    logToLocalizationGradingEquiv k f T hUnits hpair p =
+      logToLocalizationGradingEquiv k f T hUnits' hpair' p := by
+  ext x
+  simp only [coe_logToLocalizationGradingEquiv]
 
 end OrlikSolomon.DeRham

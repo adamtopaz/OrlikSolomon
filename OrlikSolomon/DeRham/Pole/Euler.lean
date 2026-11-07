@@ -32,7 +32,7 @@ Blueprint: `lem:dr-euler`.
 
 @[expose] public section
 noncomputable section
-open OrlikSolomon.DeRham IsLocalization.Away
+open IsLocalization.Away
 namespace OrlikSolomon.DeRham
 variable (k : Type*) [CommRing k] {A : Type*} [CommRing A] [Algebra k A]
   (f : A) (T : Type*) [CommRing T] [Algebra k T] [Algebra A T] [IsScalarTower k A T]

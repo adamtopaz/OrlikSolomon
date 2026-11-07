@@ -300,7 +300,7 @@ tag := "de-rham-pole"
 This is the pole-order argument outlined in {ref "de-rham-strategy"}[the strategy].
 The assumptions on the smooth pair continue to hold, and from the contraction step onwards every positive integer is assumed invertible in $`k`.
 
-:::node "lem:dr-cartan" (decl := OrlikSolomon.DeRham.formContraction) (decl := OrlikSolomon.DeRham.formContraction_diff) (decl := OrlikSolomon.DeRham.formContraction_mul_of_mem_exteriorPower) (decl := OrlikSolomon.DeRham.formContraction_mem_exteriorPower) (decl := OrlikSolomon.DeRham.formContraction_eq_zero) (decl := OrlikSolomon.DeRham.cartanFormula) (decl := OrlikSolomon.DeRham.lieDerivative_mul) (decl := OrlikSolomon.DeRham.lieDerivative_mem_exteriorPower) (decl := OrlikSolomon.DeRham.lieDerivative_algebraMap) (decl := OrlikSolomon.DeRham.lieDerivative_diff) (decl := OrlikSolomon.DeRham.localizedDerivation) (decl := OrlikSolomon.DeRham.map_formContraction_localizedDerivation) (decl := OrlikSolomon.DeRham.map_lieDerivative_localizedDerivation) (decl := OrlikSolomon.DeRham.formContraction_smul)
+:::node "lem:dr-cartan" (decl := OrlikSolomon.DeRham.formContraction) (decl := OrlikSolomon.DeRham.formContraction_diff) (decl := OrlikSolomon.DeRham.formContraction_mul_of_mem_exteriorPower) (decl := OrlikSolomon.DeRham.formContraction_mem_exteriorPower) (decl := OrlikSolomon.DeRham.formContraction_eq_zero) (decl := OrlikSolomon.DeRham.lieDerivative) (decl := OrlikSolomon.DeRham.cartanFormula) (decl := OrlikSolomon.DeRham.lieDerivative_mul) (decl := OrlikSolomon.DeRham.lieDerivative_mem_exteriorPower) (decl := OrlikSolomon.DeRham.lieDerivative_algebraMap) (decl := OrlikSolomon.DeRham.lieDerivative_diff) (decl := OrlikSolomon.DeRham.localizedDerivation) (decl := OrlikSolomon.DeRham.map_formContraction_localizedDerivation) (decl := OrlikSolomon.DeRham.map_lieDerivative_localizedDerivation) (decl := OrlikSolomon.DeRham.formContraction_smul)
 For a $`k`-derivation $`v:A\to A`, contraction $`\iota_v` is defined by the functional $`da\mapsto v(a)` on $`\Omega_A^1`, and it is an $`A`-linear signed derivation of degree $`-1`.
 The operator $`\mathcal{L}_v=d\iota_v+\iota_vd` is a $`k`-linear derivation of degree zero, with $`\mathcal{L}_v(a)=v(a)` and $`\mathcal{L}_v(da)=d(v(a))`.
 These constructions extend to localizations, and $`\iota_{av}=a\iota_v`.
@@ -331,7 +331,7 @@ If $`m\ge1` is invertible in $`k`, then $`h_m=-\tfrac1mJ` is a contracting homot
 This is the second use of rational scalars, and it is an equation of operators in each degree, not only a statement that cohomology vanishes.
 :::
 
-:::node "lem:dr-filtration-reduction" (decl := OrlikSolomon.exists_cocycle_reduction) (decl := OrlikSolomon.exists_primitive_reduction)
+:::node "lem:dr-filtration-reduction" (decl := OrlikSolomon.exists_cocycle_reduction) (decl := OrlikSolomon.exists_primitive_reduction) (decl := OrlikSolomon.exists_cocycle_reduction_of_contractible_quotient) (decl := OrlikSolomon.exists_primitive_reduction_of_contractible_quotient) (decl := OrlikSolomon.DeRham.exists_pole_cocycle_reduction) (decl := OrlikSolomon.DeRham.exists_pole_primitive_reduction)
 Suppose $`F_{m-1}\subseteq F_m` is an inclusion of complexes with contractible quotient.
 Every cocycle in $`F_m^n` is cohomologous in $`F_m` to one in $`F_{m-1}^n`, and a cocycle in $`F_{m-1}^n` that is a boundary in $`F_m` is already a boundary in $`F_{m-1}`.
 :::

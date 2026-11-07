@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Codex
+Authors: Adam Topaz, Codex, Claude
 -/
 module
 
@@ -14,8 +14,9 @@ public import OrlikSolomon.Examples.DeRhamLog
 
 The inclusion-induced comparison is bijective for the disconnected pair `(k × k[X], (1, X))`
 over `ℚ`, although no derivation takes this equation to one. The same comparison and its degreewise
-inverse apply to a unit equation and to actual zero coefficients. The positive-integer unit
-hypothesis is retained: the earlier characteristic-two regression shows that it fails there.
+inverse apply to a unit equation and to actual zero coefficients. On the punctured rational affine
+line, explicit formulas check the inverse pole-order coefficient and the primitive it produces.
+The global positive-integer unit hypothesis fails in characteristic two.
 
 ## Main results
 
@@ -24,11 +25,13 @@ hypothesis is retained: the earlier characteristic-two regression shows that it 
 * `productPolynomial_logComparison_degree_inverse`: the actual comparison map is inverse to
   the degreewise inverse on that pair.
 * `unitPolynomial_logComparison`: comparison for the unit equation on `ℚ[X]`, with empty divisor.
+* `polynomial_positivePoleHomotopy_theta` and `polynomial_primitive_invSelf_pow_theta`: the
+  coefficient `-(m + 1)⁻¹` on the rational affine line and its actual primitive.
 * `zero_logComparison` and `zero_logComparison_degree_inverse`: comparison and its degreewise
   inverse over the actual zero coefficient ring.
 
-Blueprint: `thm:dr-comparison`, `prop:dr-unit-example`, `prop:dr-zero-example`, and
-`prop:dr-product-example`.
+Blueprint: `thm:dr-pole-contraction`, `thm:dr-comparison`, `prop:dr-unit-example`,
+`prop:dr-zero-example`, and `prop:dr-product-example`.
 -/
 
 @[expose] public section
@@ -110,7 +113,54 @@ example (x : Cohomology.grading PUnit (Localization.Away (0 : PUnit)) (-1)) :
           (isSmoothPrincipalPair_of_subsingleton (k := PUnit) (0 : PUnit)) (-1)).symm x) = x :=
   toCohomology_logToLocalizationGradingEquiv_symm _ _ _ _ _ _ _
 
-/-- Pole comparison does not silently discard its coefficient hypothesis in characteristic two. -/
+section Polynomial
+
+variable (T : Type*) [CommRing T] [Algebra ℚ T] [Algebra ℚ[X] T] [IsScalarTower ℚ ℚ[X] T]
+  [IsLocalization.Away (X : ℚ[X]) T]
+
+/-- On the rational affine line, Euler contraction sends the logarithmic class `[dX/X]` to `[1]`.
+Blueprint: `lem:dr-euler`. -/
+theorem polynomial_logQuotientEulerContraction_theta :
+    logQuotientEulerContraction ℚ (X : ℚ[X]) T (derivative' (R := ℚ))
+        (Submodule.Quotient.mk (logTheta ℚ (X : ℚ[X]) T)) =
+      Submodule.Quotient.mk (1 : logForms ℚ (X : ℚ[X]) T) := by
+  rw [logQuotientEulerContraction_mk]
+  congr 1
+  apply Subtype.ext
+  rw [coe_logEulerContraction, coe_logTheta, formContraction_logEulerDerivation_theta]
+  simp
+
+/-- In positive pole order `m + 1`, the contracting homotopy sends `[dX/X]` to
+`-(m + 1)⁻¹ [1]`. This checks the coefficient and successor indexing on the rational affine line.
+Blueprint: `thm:dr-pole-contraction`. -/
+theorem polynomial_positivePoleHomotopy_theta (m : ℕ) :
+    positivePoleHomotopy ℚ (X : ℚ[X]) T m (derivative' (R := ℚ))
+        (isUnit_natCast_add_one_rat m) (Submodule.Quotient.mk (logTheta ℚ (X : ℚ[X]) T)) =
+      (-(m + 1 : ℚ)⁻¹) •
+        (Submodule.Quotient.mk (1 : logForms ℚ (X : ℚ[X]) T) :
+          logForms ℚ (X : ℚ[X]) T ⧸ logIdeal ℚ (X : ℚ[X]) T) := by
+  rw [positivePoleHomotopy_apply, polynomial_logQuotientEulerContraction_theta,
+    Units.val_inv_eq_inv_val, IsUnit.unit_spec]
+
+/-- The homotopy coefficient gives the actual primitive of `X^{-(m+2)} dX`. At `m = 0` this
+is `d(-1/X) = X⁻² dX`, and at `m = 1` it is `d(-1/(2X²)) = X⁻³ dX`.
+Blueprint: `thm:dr-pole-contraction`. -/
+theorem polynomial_primitive_invSelf_pow_theta (m : ℕ) :
+    d ℚ ((-(m + 1 : ℚ)⁻¹) •
+        ((IsLocalization.Away.invSelf (X : ℚ[X]) : T) ^ (m + 1) • (1 : Forms ℚ T))) =
+      (IsLocalization.Away.invSelf (X : ℚ[X]) : T) ^ (m + 1) • theta ℚ (X : ℚ[X]) T := by
+  have hne : (m + 1 : ℚ) ≠ 0 := Nat.cast_add_one_ne_zero m
+  have hd : d ℚ (1 : Forms ℚ T) = 0 := by simp
+  have hs : ((m + 1 : ℕ) : ℚ[X]) • (theta ℚ (X : ℚ[X]) T * 1) =
+      (m + 1 : ℚ) • theta ℚ (X : ℚ[X]) T := by
+    rw [mul_one, Nat.cast_smul_eq_nsmul, ← Nat.cast_add_one, Nat.cast_smul_eq_nsmul]
+  rw [map_smul, d_invSelf_pow_smul_eq_theta, hd, hs, zero_sub, smul_neg,
+    smul_comm ((IsLocalization.Away.invSelf (X : ℚ[X]) : T) ^ (m + 1)), smul_neg, smul_smul,
+    neg_mul, inv_mul_cancel₀ hne, neg_smul, neg_neg, one_smul]
+
+end Polynomial
+
+/-- The global positive-integer unit hypothesis fails in characteristic two. -/
 example : ¬ ∀ n : ℕ, IsUnit (n + 1 : ZMod 2) :=
   not_forall_isUnit_natCast_add_one_charTwo
 
