@@ -14,6 +14,14 @@ A form of degree `n + 1` decomposes into polynomials in coefficient forms of deg
 `n + 1` and `n`. A form of degree zero has no `dX` component. These are the degreewise
 restrictions of the total decomposition, with no smoothness assumption.
 
+## Main definitions and results
+
+* `polynomialPowerDecomposition` and `polynomialPowerDecomposition_coe`: the degreewise splitting
+  and its agreement with the total decomposition.
+* `polynomialFormDecomposition_fst_mem` and `polynomialFormDecomposition_snd_mem`: the coefficient
+  degrees of the two components.
+* `polynomialFormDecomposition_snd_eq_zero`: a degree-zero form has no variable component.
+
 Blueprint: `lem:dr-polynomial-splitting`.
 -/
 
@@ -47,7 +55,7 @@ theorem polynomialCoefficientPowerEquiv_coe (n : ℕ)
   | single m x =>
     simp only [PolynomialModule.map_single, polynomialCoefficientFormsEquiv_symm_apply,
       polynomialCoefficientPowerEquiv, LinearEquiv.symm_trans_apply,
-      PolynomialModule.polynomialTensorProductLEquivPolynomialModule_symm_single,
+      polynomialTensorProductLEquivPolynomialModule_symm_single,
       LinearEquiv.symm_symm, coe_powerBaseChangeEquiv,
       LinearMap.baseChange_tmul]
 
@@ -88,7 +96,7 @@ theorem polynomialPowerDecomposition_symm_coe (n : ℕ)
           polynomialFormInclusion k A (PolynomialModule.map A (⋀[A]^n Ω[A⁄k]).subtype p.2) := by
   apply (polynomialFormDecomposition k A).injective
   rw [polynomialPowerDecomposition_coe, LinearEquiv.apply_symm_apply,
-    polynomialFormDecomposition_add]
+    polynomialFormDecomposition_inclusion_add_diff_X_mul]
 
 /-- A degree-zero form has no component along `dX`. -/
 theorem polynomialFormDecomposition_snd_eq_zero {x : Forms k A[X]}

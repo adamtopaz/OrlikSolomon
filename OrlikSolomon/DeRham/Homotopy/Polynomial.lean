@@ -19,6 +19,14 @@ The differentials of `A[X]` over `k` split into the differentials coming from `A
 and the free line on `dX`. Both algebras are arbitrary commutative algebras; no
 smoothness or nonzero-ring hypothesis is used.
 
+## Main definitions and results
+
+* `polynomialCotangentSplitting`: coefficient differentials and `dX` split the cotangent module.
+* `polynomialFormInclusion` and `polynomialFormInclusion_single`: include coefficient forms, with
+  the formula on monomials.
+* `polynomialFormDecomposition` and `polynomialFormDecomposition_symm_apply`: the unique splitting
+  as `α + dX ∧ β` and its inverse.
+
 Blueprint: `lem:dr-polynomial-splitting`.
 -/
 
@@ -27,19 +35,21 @@ noncomputable section
 open Polynomial KaehlerDifferential
 open scoped TensorProduct
 
-namespace PolynomialModule
+namespace OrlikSolomon.DeRham
 
 variable (R : Type*) [CommRing R] {M : Type*} [AddCommGroup M] [Module R M]
 
 /-- The tensor corresponding to a monomial with a module coefficient. -/
 @[simp]
 theorem polynomialTensorProductLEquivPolynomialModule_symm_single (n : ℕ) (x : M) :
-    (polynomialTensorProductLEquivPolynomialModule R M).symm (single R n x) =
+    (PolynomialModule.polynomialTensorProductLEquivPolynomialModule R M).symm
+      (PolynomialModule.single R n x) =
       ((X : R[X]) ^ n) ⊗ₜ[R] x := by
-  change eval X (map R[X] (TensorProduct.mk R R[X] M 1) (single R n x)) = _
-  simp [eval_single, TensorProduct.smul_tmul']
+  change PolynomialModule.eval X (PolynomialModule.map R[X] (TensorProduct.mk R R[X] M 1)
+    (PolynomialModule.single R n x)) = _
+  simp [PolynomialModule.eval_single, TensorProduct.smul_tmul']
 
-end PolynomialModule
+end OrlikSolomon.DeRham
 
 namespace OrlikSolomon.DeRham
 
@@ -175,7 +185,7 @@ theorem polynomialFormDecomposition_symm_apply
 
 /-- Splitting a form assembled from its two components recovers those components. -/
 @[simp]
-theorem polynomialFormDecomposition_add
+theorem polynomialFormDecomposition_inclusion_add_diff_X_mul
     (a b : PolynomialModule A (Forms k A)) :
     polynomialFormDecomposition k A
       (polynomialFormInclusion k A a + diff k (X : A[X]) * polynomialFormInclusion k A b) =
@@ -203,7 +213,7 @@ theorem polynomialFormInclusion_single (n : ℕ) (x : Forms k A) :
     (ExteriorAlgebra.baseChangeEquiv A Ω[A⁄k] A[X]
       ((PolynomialModule.polynomialTensorProductLEquivPolynomialModule A (Forms k A)).symm
         (PolynomialModule.single A n x))) = _
-  rw [PolynomialModule.polynomialTensorProductLEquivPolynomialModule_symm_single]
+  rw [polynomialTensorProductLEquivPolynomialModule_symm_single]
   have h : ((X : A[X]) ^ n) ⊗ₜ[A] x =
       (X : A[X]) ^ n • ((1 : A[X]) ⊗ₜ[A] x) := by
     simp only [TensorProduct.smul_tmul', smul_eq_mul, mul_one]

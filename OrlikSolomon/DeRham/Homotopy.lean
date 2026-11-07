@@ -16,6 +16,17 @@ For a commutative `k`-algebra `A`, integration of the `dX` component gives the
 homotopy `dK + Kd = 1 - inc ∘ ev₀`, provided positive integers are units in `k`.
 There is no smoothness or nonzero-ring hypothesis.
 
+## Main definitions and results
+
+* `polynomialEvaluationAtZero`: the canonical evaluation map of `k`-algebras.
+* `polynomialHomotopy` and `polynomialHomotopy_identity`: the explicit integration operator and
+  the equation `dK + Kd = id - inc ∘ ev₀`.
+* `polynomialHomotopy_mem_exteriorPower` and `polynomialHomotopy_eq_zero`: the homotopy lowers
+  degree by one and vanishes in degree zero.
+* `polynomialCohomologyEquiv` and `bijective_cohomologyMap_C`: inclusion of constants and
+  evaluation at zero are inverse on cohomology.
+* `polynomialCohomologyEquiv_mem_degree_iff`: the equivalence preserves and reflects degree.
+
 Blueprint: `thm:dr-homotopy` and `lem:dr-polynomial-splitting`.
 -/
 
@@ -61,13 +72,13 @@ Blueprint: the explicit homotopy in `thm:dr-homotopy`. -/
 def polynomialHomotopy (h : ∀ n : ℕ, IsUnit (n + 1 : k)) :
     Forms k A[X] →ₗ[k] Forms k A[X] :=
   (polynomialFormInclusion k A).restrictScalars k ∘ₗ
-    (PolynomialModule.integral k A h) ∘ₗ
+    (coefficientIntegral k A h) ∘ₗ
       (LinearMap.snd k _ _).comp ((polynomialFormDecomposition k A).toLinearMap.restrictScalars k)
 
 /-- The homotopy is the integral of the `dX` component. -/
 theorem polynomialHomotopy_apply (h : ∀ n : ℕ, IsUnit (n + 1 : k)) (x : Forms k A[X]) :
     polynomialHomotopy k A h x = polynomialFormInclusion k A
-      (PolynomialModule.integral k A h (polynomialFormDecomposition k A x).2) := by rfl
+      (coefficientIntegral k A h (polynomialFormDecomposition k A x).2) := by rfl
 
 /-- On `α + dX ∧ β`, the homotopy is `Iβ`. -/
 @[simp]
@@ -75,8 +86,8 @@ theorem polynomialHomotopy_components (h : ∀ n : ℕ, IsUnit (n + 1 : k))
     (a b : PolynomialModule A (Forms k A)) :
     polynomialHomotopy k A h
       (polynomialFormInclusion k A a + diff k (X : A[X]) * polynomialFormInclusion k A b) =
-      polynomialFormInclusion k A (PolynomialModule.integral k A h b) := by
-  rw [polynomialHomotopy_apply, polynomialFormDecomposition_add]
+      polynomialFormInclusion k A (coefficientIntegral k A h b) := by
+  rw [polynomialHomotopy_apply, polynomialFormDecomposition_inclusion_add_diff_X_mul]
 
 /-- A form coming entirely from coefficient differentials has zero homotopy. -/
 @[simp]
@@ -90,7 +101,7 @@ theorem polynomialHomotopy_inclusion (h : ∀ n : ℕ, IsUnit (n + 1 : k))
 theorem polynomialHomotopy_diff_X_mul_inclusion (h : ∀ n : ℕ, IsUnit (n + 1 : k))
     (p : PolynomialModule A (Forms k A)) :
     polynomialHomotopy k A h (diff k (X : A[X]) * polynomialFormInclusion k A p) =
-      polynomialFormInclusion k A (PolynomialModule.integral k A h p) := by
+      polynomialFormInclusion k A (coefficientIntegral k A h p) := by
   simpa using polynomialHomotopy_components k A h 0 p
 
 /-- The primitive of the polynomial-variable differential is the variable itself. -/
@@ -115,13 +126,14 @@ theorem polynomialHomotopy_mem_exteriorPower (h : ∀ n : ℕ, IsUnit (n + 1 : k
     polynomialHomotopy k A h x ∈ ⋀[A[X]]^n Ω[A[X]⁄k] := by
   rw [polynomialHomotopy_apply, polynomialPowerDecomposition_coe k A n ⟨x, hx⟩]
   let p := (polynomialPowerDecomposition k A n ⟨x, hx⟩).2
-  have hmap : PolynomialModule.integral k A h
+  have hmap : coefficientIntegral k A h
       (PolynomialModule.map A (⋀[A]^n Ω[A⁄k]).subtype p) =
-      PolynomialModule.map A (⋀[A]^n Ω[A⁄k]).subtype (PolynomialModule.integral k A h p) :=
-    (PolynomialModule.mapCoefficients_integral k A h
-      ((⋀[A]^n Ω[A⁄k]).subtype.restrictScalars k) p).symm
+      PolynomialModule.map A (⋀[A]^n Ω[A⁄k]).subtype (coefficientIntegral k A h p) := by
+    simpa only [mapCoefficients_restrictScalars] using
+      (mapCoefficients_coefficientIntegral k A h
+        ((⋀[A]^n Ω[A⁄k]).subtype.restrictScalars k) p).symm
   change polynomialFormInclusion k A
-    (PolynomialModule.integral k A h (PolynomialModule.map A (⋀[A]^n Ω[A⁄k]).subtype p)) ∈ _
+    (coefficientIntegral k A h (PolynomialModule.map A (⋀[A]^n Ω[A⁄k]).subtype p)) ∈ _
   rw [hmap]
   exact polynomialFormInclusion_map_mem k A n _
 
@@ -144,11 +156,9 @@ theorem polynomialHomotopy_identity (h : ∀ n : ℕ, IsUnit (n + 1 : k)) (x : F
     ← Forms.map_map]
   simp only [map_add, map_mul, map_polynomialEvaluationAtZero_inclusion,
     map_polynomialEvaluationAtZero_diff_X, zero_mul, add_zero,
-    PolynomialModule.derivative_integral, map_sub]
-  rw [show polynomialCoefficientD k A (PolynomialModule.integral k A h b) =
-      PolynomialModule.integral k A h (polynomialCoefficientD k A b) from
-        PolynomialModule.mapCoefficients_integral k A h (d k) b,
-    PolynomialModule.integral_derivative, map_sub, polynomialFormInclusion_single]
+    coefficientDerivative_coefficientIntegral, map_sub]
+  rw [polynomialCoefficientD_coefficientIntegral, coefficientIntegral_coefficientDerivative,
+    map_sub, polynomialFormInclusion_single]
   simp only [pow_zero, one_smul]
   abel
 
