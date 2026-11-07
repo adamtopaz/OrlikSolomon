@@ -7,6 +7,7 @@ module
 
 public import OrlikSolomon.Cohomology.Geometric.Bridge
 public import OrlikSolomon.Examples.Bridge
+public import OrlikSolomon.Presentation.Geometric
 
 /-!
 # Regressions for geometric cohomology
@@ -22,16 +23,18 @@ theory, without nonzero-coefficient assumptions.
 
 A zero-coefficient supports-and-purity model also exercises the geometric bridge and its
 component maps. This checks that the degreewise inputs can be instantiated without strengthening
-the coefficient hypotheses.
+the coefficient hypotheses. The actual open complement of the two points over `F₂` has a scheme
+point and no rational points; its logarithmic basis retains the integer word count.
 
-Blueprint: acceptance consumers for `def:geo-theory`, `thm:geo-to-algebraic` and `thm:geo-bridge`.
+Blueprint: acceptance consumers for `def:geo-theory`, `thm:geo-to-algebraic`, `thm:geo-bridge`,
+and `prop:geo-finite-field`.
 -/
 
 @[expose] public section
 
 noncomputable section
 
-open CategoryTheory Opposite
+open CategoryTheory Opposite AlgebraicGeometry
 
 universe u v w z t
 
@@ -164,5 +167,59 @@ example {k : Type u} [CommRing k] (D : SmoothDomain k) {X Y : D.Obj} (f : X ⟶ 
       (frozenResidueComponent T P i x : T.obj P.closed) = T.residue P x) := by
   intro T
   exact ⟨fun _ ↦ rfl, fun _ ↦ rfl, fun _ ↦ rfl⟩
+
+/-! ### A nonempty scheme without rational points -/
+
+/-- The actual open complement of the two rational points of the affine line over `F₂`.
+Blueprint: `prop:geo-finite-field`. -/
+@[implicit_reducible]
+def twoPointsOverF2 : Over (Spec (.of (ZMod 2))) := complement twoPoints
+
+/-- This complement has a scheme point, even though it has no rational point. -/
+instance nonempty_twoPointsOverF2 : Nonempty twoPointsOverF2.left := by
+  have : Nontrivial twoPoints.ComplementRing := nontrivial_complementRing_twoPoints
+  let x : PrimeSpectrum twoPoints.ComplementRing := Classical.choice inferInstance
+  exact ⟨(complementIsoSpec twoPoints).inv.left.base x⟩
+
+/-- The complement has no `F₂`-point, expressed by the scheme hom-set over `F₂`. -/
+theorem isEmpty_hom_twoPointsOverF2 :
+    IsEmpty (spec (CommAlgCat.of (ZMod 2) (ZMod 2)) ⟶ twoPointsOverF2) := by
+  refine ⟨fun g ↦ ?_⟩
+  let φ := specHomEquiv (spec (CommAlgCat.of (ZMod 2) (ZMod 2)))
+    (SmoothAlg.complement twoPoints).obj (g ≫ (complementIsoSpec twoPoints).hom)
+  let ψ : twoPoints.ComplementRing →ₐ[ZMod 2] ZMod 2 :=
+    (globalSectionsSpecIso (CommAlgCat.of (ZMod 2) (ZMod 2))).hom.hom.comp φ.hom
+  exact isEmpty_algHom_twoPoints.false ψ
+
+/-- The integer combinatorial polynomial of the two-point arrangement is `1 + 2 X`. -/
+theorem twoPointsOverF2_poincarePolynomial :
+    twoPoints.poincarePolynomial = 1 + 2 * Polynomial.X := by
+  classical
+  have hne : zeroLocus (AffineMap.id (ZMod 2) (ZMod 2)) ≠
+      zeroLocus (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1) := fun h ↦
+    (Arrangement.mem_deletion.1 zeroLocus_id_sub_one_mem_deletion).1 h.symm
+  have h𝒜 : twoPoints.hyperplanes = {zeroLocus (AffineMap.id (ZMod 2) (ZMod 2)),
+      zeroLocus (AffineMap.id (ZMod 2) (ZMod 2) - AffineMap.const _ _ 1)} := by
+    ext K
+    simp only [Arrangement.mem_hyperplanes, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨fun hK ↦ ?_, ?_⟩
+    · simpa using (Arrangement.mem_ofFinset.1 hK).1
+    · rintro (rfl | rfl)
+      exacts [zeroLocus_id_mem_twoPoints, zeroLocus_id_sub_one_mem_twoPoints]
+  exact Arrangement.poincarePolynomial_pair_disjoint twoPoints hne h𝒜 inf_zeroLocus_id_twoPoints
+
+/-- Every supplied geometric theory has a logarithmic basis with two words of length one.
+The count is retained from the recursion; it is not inferred from rank over the zero ring. -/
+theorem exists_basis_twoPointsOverF2 (D : SmoothDomain (ZMod 2))
+    (T : OrdinaryTheory.{0, v, w, z} D ℬ) :
+    ∃ (ι : Type) (_ : Fintype ι) (I : ι → List twoPoints)
+      (b : Module.Basis ι B (T.obj (D.complement twoPoints))),
+      (∀ i, b i = T.logMonomial twoPoints (I i)) ∧
+      (∀ i, (I i).length ≤ 1) ∧ Fintype.card {i // (I i).length = 1} = 2 := by
+  obtain ⟨ι, inst, I, b, hb, hlen, hcount⟩ := T.exists_basis_logMonomial twoPoints
+  let := inst
+  refine ⟨ι, inst, I, b, hb, ?_, (hcount 1).trans bettiNumber_one_twoPoints⟩
+  simpa only [Module.finrank_self] using hlen
+
 
 end OrlikSolomon.Geometric.Examples
