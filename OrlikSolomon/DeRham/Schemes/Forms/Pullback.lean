@@ -20,7 +20,10 @@ commute with the differential without any flatness hypothesis.
 * `formsPresheafPullback` and `formsSheafPullback`: pullback before and after sheafification.
 * `formsSheafPullback_unit`: agreement on forms represented by presheaf sections.
 * `formsSheafPullback_d`: compatibility with the relative de Rham differential.
-* `formsSheafInverseImage`: the equivalent map from the inverse-image sheaf.
+* `formsSheafInverseImage`: the equivalent map from the inverse-image sheaf of base modules.
+* `formsModuleSheafPullback` and `formsModuleSheafInverseImage`: the structure-sheaf-linear
+  pushforward and inverse-image formulations on the same additive carriers.
+* `formsSheafPullback_isIso`: pullback along an isomorphism is invertible.
 
 The base ring is arbitrary, and neither scheme is required to be smooth or affine.
 
@@ -63,6 +66,26 @@ theorem sectionPullback_comp {Z : Over (Spec (CommRingCat.of k))}
   ext r
   rfl
 
+/-- Pullback along an isomorphism identifies the algebras of functions on corresponding opens. -/
+def sectionPullbackEquiv (g : X ⟶ Y) [IsIso g] (U : Y.left.Opens) :
+    sectionAlgebra k Y U ≃ₐ[k] sectionAlgebra k X (g.left ⁻¹ᵁ U) := by
+  have : IsIso g.left := (Over.forget _).map_isIso g
+  exact AlgEquiv.ofBijective (sectionPullback g U)
+    (ConcreteCategory.bijective_of_isIso (g.left.app U))
+
+/-- The equivalence of functions acts by the original pullback of sections. -/
+@[simp] theorem sectionPullbackEquiv_apply (g : X ⟶ Y) [IsIso g] (U : Y.left.Opens)
+    (a : sectionAlgebra k Y U) :
+    sectionPullbackEquiv g U a = sectionPullback g U a := rfl
+
+private def formsPowerEquiv {A A' : Type u} [CommRing A] [CommRing A']
+    [Algebra k A] [Algebra k A'] (e : A ≃ₐ[k] A') (n : ℕ) :
+    (⋀[A]^n Ω[A⁄k]) ≃ₗ[k] (⋀[A']^n Ω[A'⁄k]) where
+  __ := Forms.mapPower e.toAlgHom n
+  invFun := Forms.mapPower e.symm.toAlgHom n
+  left_inv a := Subtype.ext ((Forms.mapEquiv e).left_inv a.val)
+  right_inv a := Subtype.ext ((Forms.mapEquiv e).right_inv a.val)
+
 /-- Pullback of functions commutes with restriction of opens. -/
 theorem sectionPullback_restrict (g : X ⟶ Y) {U V : Y.left.Opens} (i : U ⟶ V) :
     (sectionPullback g U).comp (sectionRestriction k Y i) =
@@ -103,6 +126,14 @@ theorem formsPresheafPullback_comp {Z : Over (Spec (CommRingCat.of k))}
       (Forms.mapPower (sectionPullback g U.unop) n x)
   rw [sectionPullback_comp]
   exact LinearMap.congr_fun (Forms.mapPower_comp _ _ n) x
+
+/-- Pullback along an isomorphism is an isomorphism on presheaves of forms. -/
+instance formsPresheafPullback_isIso (g : X ⟶ Y) [IsIso g] (n : ℕ) :
+    IsIso (formsPresheafPullback g n) := by
+  apply (NatTrans.isIso_iff_isIso_app _).2
+  intro U
+  apply (ConcreteCategory.isIso_iff_bijective _).2
+  exact (formsPowerEquiv (sectionPullbackEquiv g U.unop) n).bijective
 
 /-- Presheaf pullback commutes with the differential. -/
 theorem formsPresheafPullback_d (g : X ⟶ Y) (n : ℕ) :
@@ -166,6 +197,40 @@ theorem formsSheafPullback_comp {Z : Over (Spec (CommRingCat.of k))}
     (ConcreteCategory.congr_hom
       (NatTrans.congr_app (formsPresheafPullback_comp f g n) U) x)
 
+private theorem opensMap_isCocontinuous (g : X ⟶ Y) [IsIso g] :
+    (TopologicalSpace.Opens.map g.left.base).IsCocontinuous
+      (_root_.Opens.grothendieckTopology Y.left) (_root_.Opens.grothendieckTopology X.left) := by
+  let e := asIso g
+  let E := TopologicalSpace.Opens.mapMapIso
+    ((Over.forget _ ⋙ Scheme.forgetToTop).mapIso e)
+  exact (E.toAdjunction.isCocontinuous_iff_coverPreserving _ _).2
+    (coverPreserving_opens_map e.inv.left.base)
+
+/-- Pullback along an isomorphism is an isomorphism on sheaves of forms. -/
+instance formsSheafPullback_isIso (g : X ⟶ Y) [IsIso g] (n : ℕ) :
+    IsIso (formsSheafPullback g n) := by
+  let JX := _root_.Opens.grothendieckTopology X.left
+  let JY := _root_.Opens.grothendieckTopology Y.left
+  have := opensMap_isCocontinuous g
+  have : Presheaf.IsLocallyInjective JX (formsSheafUnit k X n) := by
+    change Presheaf.IsLocallyInjective JX (toSheafify JX (formsPresheaf k X n))
+    infer_instance
+  have : Presheaf.IsLocallySurjective JX (formsSheafUnit k X n) := by
+    change Presheaf.IsLocallySurjective JX (toSheafify JX (formsPresheaf k X n))
+    infer_instance
+  have := Presheaf.isLocallyInjective_whisker JY JX
+    (TopologicalSpace.Opens.map g.left.base) (formsSheafUnit k X n)
+  have := Presheaf.isLocallySurjective_whisker JY JX
+    (TopologicalSpace.Opens.map g.left.base) (formsSheafUnit k X n)
+  have hw : JY.W (formsPresheafPullback g n ≫
+      Functor.whiskerLeft (TopologicalSpace.Opens.map g.left.base).op
+        (formsSheafUnit k X n)) :=
+    JY.W.comp_mem _ _ (ObjectProperty.isLocal_of_isIso _ _)
+      (JY.W_of_isLocallyBijective _)
+  rw [← formsSheafPullback_unit] at hw
+  exact (JY.W_sheafToPresheaf_map_iff_isIso _).1
+    ((JY.W.precomp_iff _ _ (JY.W_toSheafify (formsPresheaf k Y n))).1 hw)
+
 /-- Pullback preserves wedge products, without a flatness hypothesis. -/
 theorem formsSheafPullback_mul (g : X ⟶ Y) (p q : ℕ) :
     formsSheafMul k Y p q ≫ (formsSheafPullback g (p + q)).hom =
@@ -224,6 +289,106 @@ theorem formsSheafPullback_smul (g : X ⟶ Y) (n : ℕ) (U : Y.left.Opens)
   rw [formsSheafPullback_zero]
   exact formsSheafWedge_zero_eq_smul k X n (g.left ⁻¹ᵁ U) (sectionPullback g U r)
     ((formsSheafPullback g n).hom.app (op U) a)
+
+/-- The additive pullback conjugated by the public comparisons with module-valued forms. -/
+def formsModuleSheafPullbackPresheaf (g : X ⟶ Y) (n : ℕ) :
+    (formsModuleSheaf k Y n).presheaf ⟶
+      ((Scheme.Modules.pushforward g.left).obj (formsModuleSheaf k X n)).presheaf :=
+  eqToHom (formsModuleSheaf_presheaf k Y n) ≫
+    Functor.whiskerRight (formsSheafPullback g n).hom
+      (forget₂ (ModuleCat k) AddCommGrpCat) ≫
+    Functor.whiskerLeft (TopologicalSpace.Opens.map g.left.base).op
+      (eqToHom (formsModuleSheaf_presheaf k X n).symm)
+
+/-- The additive module pullback is the original base-linear pullback between carriers. -/
+@[simp] theorem formsModuleSheafPullbackPresheaf_app (g : X ⟶ Y) (n : ℕ) (U : Y.left.Opens)
+    (a : Γ(formsModuleSheaf k Y n, U)) :
+    (formsModuleSheafPullbackPresheaf g n).app (op U) a =
+      (formsModuleSheafBaseIso k X n (g.left ⁻¹ᵁ U)).inv
+        ((formsSheafPullback g n).hom.app (op U)
+          ((formsModuleSheafBaseIso k Y n U).hom a)) := by
+  change (eqToHom (formsModuleSheaf_presheaf k X n).symm).app
+      (op (g.left ⁻¹ᵁ U))
+      ((formsSheafPullback g n).hom.app (op U)
+        ((eqToHom (formsModuleSheaf_presheaf k Y n)).app (op U) a)) = _
+  rw [formsModuleSheaf_presheaf_hom_app]
+  exact formsModuleSheaf_presheaf_inv_app k X n (g.left ⁻¹ᵁ U) _
+
+/-- Under the carrier comparison, additive pullback agrees with base-linear pullback. -/
+theorem formsModuleSheafPullbackPresheaf_compare (g : X ⟶ Y) (n : ℕ) (U : Y.left.Opens)
+    (a : Γ(formsModuleSheaf k Y n, U)) :
+    (formsModuleSheafBaseIso k X n (g.left ⁻¹ᵁ U)).hom
+      ((formsModuleSheafPullbackPresheaf g n).app (op U) a) =
+      (formsSheafPullback g n).hom.app (op U)
+        ((formsModuleSheafBaseIso k Y n U).hom a) := by
+  rw [formsModuleSheafPullbackPresheaf_app]
+  exact Iso.inv_hom_id_apply _ _
+
+/-- Pullback of forms as a morphism of structure-sheaf modules into the pushforward. -/
+def formsModuleSheafPullback (g : X ⟶ Y) (n : ℕ) : formsModuleSheaf k Y n ⟶
+    (Scheme.Modules.pushforward g.left).obj (formsModuleSheaf k X n) where
+  val := PresheafOfModules.homMk (formsModuleSheafPullbackPresheaf g n) (by
+    intro U r₀ a₀
+    let r : Γ(Y.left, U.unop) := r₀
+    let a : Γ(formsModuleSheaf k Y n, U.unop) := a₀
+    change (formsModuleSheafPullbackPresheaf g n).app (op U.unop) (r • a) =
+      r • (formsModuleSheafPullbackPresheaf g n).app (op U.unop) a
+    apply (ConcreteCategory.bijective_of_isIso
+      (formsModuleSheafBaseIso k X n (g.left ⁻¹ᵁ U.unop)).hom).injective
+    change (formsModuleSheafBaseIso k X n (g.left ⁻¹ᵁ U.unop)).hom
+        ((formsModuleSheafPullbackPresheaf g n).app (op U.unop) (r • a)) =
+      (formsModuleSheafBaseIso k X n (g.left ⁻¹ᵁ U.unop)).hom
+        ((show Γ(X.left, g.left ⁻¹ᵁ U.unop) from sectionPullback g U.unop r) •
+          (show Γ(formsModuleSheaf k X n, g.left ⁻¹ᵁ U.unop) from
+            (formsModuleSheafPullbackPresheaf g n).app (op U.unop) a))
+    refine (formsModuleSheafPullbackPresheaf_compare g n U.unop (r • a)).trans ?_
+    refine (congrArg ((formsSheafPullback g n).hom.app (op U.unop))
+      (formsModuleSheafBaseIso_smul k Y n U.unop r a)).trans ?_
+    refine (formsSheafPullback_smul g n U.unop r
+      ((formsModuleSheafBaseIso k Y n U.unop).hom a)).trans ?_
+    refine Eq.trans ?_ (formsModuleSheafBaseIso_smul k X n (g.left ⁻¹ᵁ U.unop)
+      (sectionPullback g U.unop r) ((formsModuleSheafPullbackPresheaf g n).app (op U.unop) a)).symm
+    exact congrArg (formsSheafSMul k X n (g.left ⁻¹ᵁ U.unop) (sectionPullback g U.unop r))
+      (formsModuleSheafPullbackPresheaf_compare g n U.unop a).symm)
+
+/-- The structure-sheaf-linear pullback has the prescribed underlying additive map. -/
+@[simp] theorem formsModuleSheafPullback_presheaf (g : X ⟶ Y) (n : ℕ) :
+    (formsModuleSheafPullback g n).mapPresheaf = formsModuleSheafPullbackPresheaf g n := by
+  rfl
+
+/-- The module-valued and base-linear pullbacks agree under the carrier comparisons. -/
+@[simp] theorem formsModuleSheafPullback_app (g : X ⟶ Y) (n : ℕ) (U : Y.left.Opens)
+    (a : Γ(formsModuleSheaf k Y n, U)) :
+    (formsModuleSheafBaseIso k X n (g.left ⁻¹ᵁ U)).hom
+      ((formsModuleSheafPullback g n).app U a) =
+      (formsSheafPullback g n).hom.app (op U)
+        ((formsModuleSheafBaseIso k Y n U).hom a) := by
+  change (formsModuleSheafBaseIso k X n (g.left ⁻¹ᵁ U)).hom
+    ((formsModuleSheafPullbackPresheaf g n).app (op U) a) = _
+  exact formsModuleSheafPullbackPresheaf_compare g n U a
+
+/-- Pullback of forms in Mathlib's structure-sheaf-linear inverse-image formulation. -/
+def formsModuleSheafInverseImage (g : X ⟶ Y) (n : ℕ) :
+    (Scheme.Modules.pullback g.left).obj (formsModuleSheaf k Y n) ⟶ formsModuleSheaf k X n :=
+  ((Scheme.Modules.pullbackPushforwardAdjunction g.left).homEquiv _ _).symm
+    (formsModuleSheafPullback g n)
+
+/-- The inverse-image module map is adjoint to the same structure-sheaf-linear pullback. -/
+@[simp] theorem formsModuleSheafInverseImage_adjunction (g : X ⟶ Y) (n : ℕ) :
+    (Scheme.Modules.pullbackPushforwardAdjunction g.left).homEquiv _ _
+      (formsModuleSheafInverseImage g n) = formsModuleSheafPullback g n :=
+  Equiv.apply_symm_apply _ _
+
+/-- On sections, the adjoint inverse-image module map is the original pullback of forms. -/
+theorem formsModuleSheafInverseImage_adjunction_app (g : X ⟶ Y) (n : ℕ)
+    (U : Y.left.Opens) (a : Γ(formsModuleSheaf k Y n, U)) :
+    (formsModuleSheafBaseIso k X n (g.left ⁻¹ᵁ U)).hom
+      (((Scheme.Modules.pullbackPushforwardAdjunction g.left).homEquiv _ _
+        (formsModuleSheafInverseImage g n)).app U a) =
+      (formsSheafPullback g n).hom.app (op U)
+        ((formsModuleSheafBaseIso k Y n U).hom a) := by
+  rw [formsModuleSheafInverseImage_adjunction]
+  exact formsModuleSheafPullback_app g n U a
 
 /-- Sheaf pullback commutes with the relative de Rham differential. -/
 theorem formsSheafPullback_d (g : X ⟶ Y) (n : ℕ) :

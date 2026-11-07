@@ -148,6 +148,20 @@ private theorem formsSheaf_algebraMap_smul (n : ℕ) (U : X.left.Opensᵒᵖ)
     { __ := AddEquiv.refl _,
       map_smul' r x := formsSheaf_algebraMap_smul k X n (op U) r x }
 
+/-- The public additive carrier comparison agrees with the base-linear comparison on sections. -/
+@[simp] theorem formsModuleSheaf_presheaf_hom_app (n : ℕ) (U : X.left.Opens)
+    (a : Γ(formsModuleSheaf k X n, U)) :
+    (eqToHom (formsModuleSheaf_presheaf k X n)).app (op U) a =
+      (formsModuleSheafBaseIso k X n U).hom a := by
+  rfl
+
+/-- The inverse additive carrier comparison agrees with the inverse base-linear comparison. -/
+@[simp] theorem formsModuleSheaf_presheaf_inv_app (n : ℕ) (U : X.left.Opens)
+    (a : (formsSheaf k X n).obj.obj (op U)) :
+    (eqToHom (formsModuleSheaf_presheaf k X n).symm).app (op U) a =
+      (formsModuleSheafBaseIso k X n U).inv a := by
+  rfl
+
 /-- The sheaf differential, obtained from the existing algebraic differential. -/
 def formsSheafD (n : ℕ) : formsSheaf k X n ⟶ formsSheaf k X (n + 1) :=
   (presheafToSheaf (_root_.Opens.grothendieckTopology X.left) (ModuleCat k)).map
@@ -553,6 +567,13 @@ def formsSheafSMul (n : ℕ) (U : X.left.Opens) (r : Γ(X.left, U))
     (a : (formsSheaf k X n).obj.obj (op U)) : (formsSheaf k X n).obj.obj (op U) :=
   (formsModuleSheafBaseIso k X n U).hom
     (r • (formsModuleSheafBaseIso k X n U).inv a)
+
+/-- The carrier comparison intertwines the actual module action with the section action. -/
+@[simp] theorem formsModuleSheafBaseIso_smul (n : ℕ) (U : X.left.Opens)
+    (r : Γ(X.left, U)) (a : Γ(formsModuleSheaf k X n, U)) :
+    (formsModuleSheafBaseIso k X n U).hom (r • a) =
+      formsSheafSMul k X n U r ((formsModuleSheafBaseIso k X n U).hom a) := by
+  simp only [formsSheafSMul, Iso.hom_inv_id_apply]
 
 /-- The structure-sheaf action on an algebraic representative is the original scalar action. -/
 theorem formsSheafSMul_unit (n : ℕ) (U : X.left.Opens) (r : sectionAlgebra k X U)
