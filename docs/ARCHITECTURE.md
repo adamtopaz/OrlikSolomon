@@ -981,8 +981,9 @@ described in "Projective complements on schemes". Stage G3 is formalized: the lo
 logarithms" below, and the structure theorems `thm:geo-affine` and `thm:geo-projective` (#114),
 described in "The geometric structure theorems" below. The transport rule `thm:geo-transport-all`
 is partly formalized, by the comparison `transportAffineDevelopment` and its laws, since a rule
-about every old statement is not one Lean statement. The other declaration names remain
-proposals.
+about every old statement is not one Lean statement. Stage G4 (#115), `lem:geo-module-gluing`,
+`def:geo-forms-sheaf` and `thm:geo-forms-comparison`, is formalized as described in "Relative
+forms as sheaves". The other declaration names remain proposals.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1348,6 +1349,50 @@ reuses the existing theorems and proves nothing about arrangements again.
   the expected type does not fix it, write `T.logClass (X := D.complement 𝒜) u`, as in
   `logClass_complementUnit_eq_of_isEquation` and `isFamily_logClass_complementUnit`. This is a
   case of #128.
+
+### Relative forms as sheaves
+
+`Geometry/Schemes/ModuleGluing`, in `OrlikSolomon.Geometric`, reuses Mathlib's `tilde.functor`,
+`tilde.isoTop` and distinguished-open localization maps. Its additional results identify the
+maps on distinguished opens with localized linear maps, prove preservation of monomorphisms and
+homology, and give `tilde_map_exact` for arbitrary module sequences. There is no finite-
+generation or nonzero-ring assumption, and no higher-cohomology vanishing assertion.
+
+The `DeRham/Schemes/Forms` umbrella and its `Presheaf`, `Sheaf`, `Affine` and `Pullback` files
+use `OrlikSolomon.Geometric.DeRham` and import no G0 module. They work over any commutative base
+ring and on any object of `Over (Spec k)`. `sectionAlgebra k X U` bundles regular functions with
+the base-ring action; `formsPresheaf` applies the existing exterior-power forms and their
+functorial maps to it. `formsSheaf` sheafifies in `k`-modules. Mathlib's presheaf-of-modules
+sheafification equips the same underlying additive carriers with their structure-sheaf actions
+as `formsModuleSheaf`; public carrier and base-linear isomorphisms compare the two views.
+
+`formsSheafMul`, `formsSheafWedge` and `formsSheafOne` extend the existing algebraic operations
+by the sheafification universal property. Their public formulas prove associativity, units,
+graded commutativity and signed Leibniz on these carriers. `formsSheafZeroIso` identifies degree
+zero with the structure sheaf, and multiplication by a degree-zero function agrees with the
+retained module action. `formsSheafD` is only base-ring linear. `formsComplexNat` packages the
+nonnegative complex; `formsComplex` extends it by zero to integers, with negative terms proved
+zero.
+
+`formsSheafPullback` is the adjoint pushforward form of pullback along every base-scheme
+morphism. It preserves products, commutes with the differential, and has identity and
+composition lemmas. `formsComplexNatPullback` and `formsComplexNatInverseImage` package the maps
+of nonnegative complexes. Degreewise, `formsModuleSheafPullback` and
+`formsModuleSheafInverseImage` give the equivalent structure-sheaf-linear formulation, compared
+publicly with the same base-linear maps. No flatness is assumed, and the differential is not
+asserted to be a map of structure-sheaf modules.
+
+`Forms/Affine` compares the distinguished-open restrictions with Mathlib's associated module
+sheaf using the existing localization theorem for algebraic forms. `specFormsSheafAssociatedIso`
+exposes the associated-sheaf identification after forgetting scalar actions, with its
+localization formula. The literal `formsSheafUnit` is invertible on each distinguished open of a
+spectrum and on global sections of every affine scheme. `affineFormsComparison` is that
+canonical degreewise comparison, with differential, wedge, unit and pullback formulas. The
+private affine transport uses Mathlib's `Scheme.isoSpec`, retaining independence from the
+geometric-domain layer. Its global function algebra is the bundled `sectionAlgebra k X ⊤`; any
+other bundled presentation is compared by its algebra isomorphism. These results do not identify
+underived global sections with hypercohomology and do not construct an instance on non-affine
+schemes.
 
 ### Modules
 

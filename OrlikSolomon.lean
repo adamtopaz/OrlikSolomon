@@ -67,6 +67,11 @@ public import OrlikSolomon.DeRham.Pole.Filtration
 public import OrlikSolomon.DeRham.Pole.Quotient
 public import OrlikSolomon.DeRham.Pole.Reduction
 public import OrlikSolomon.DeRham.PrincipalQuotient
+public import OrlikSolomon.DeRham.Schemes.Forms
+public import OrlikSolomon.DeRham.Schemes.Forms.Affine
+public import OrlikSolomon.DeRham.Schemes.Forms.Presheaf
+public import OrlikSolomon.DeRham.Schemes.Forms.Pullback
+public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
 public import OrlikSolomon.DeRham.SmoothPair
 public import OrlikSolomon.DeRham.SmoothPair.Koszul
 public import OrlikSolomon.DeRham.SmoothPair.Projective
@@ -122,6 +127,7 @@ public import OrlikSolomon.Geometry.Schemes.Complement.Basic
 public import OrlikSolomon.Geometry.Schemes.Complement.Deletion
 public import OrlikSolomon.Geometry.Schemes.Complement.Targets
 public import OrlikSolomon.Geometry.Schemes.Decone
+public import OrlikSolomon.Geometry.Schemes.ModuleGluing
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Basic
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Certificates
