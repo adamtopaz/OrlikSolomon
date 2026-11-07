@@ -15,9 +15,9 @@ for any structure satisfying the axioms. A nonzero instance of that structure is
 Lean: algebraic de Rham cohomology over a field of characteristic zero, so the axioms are not
 vacuous. The forms of the theorems stated for de Rham cohomology itself are still in progress.
 For any other cohomology theory, such as singular or ℓ-adic cohomology, the theorems remain
-conditional: the axioms have been checked against those theories by hand, not in Lean. The empty
-projective arrangement is excluded. The [book](https://adamtopaz.github.io/OrlikSolomon/) states
-the theorems and has the details.
+conditional: the axioms have been checked by hand against singular cohomology, and interpreted by
+hand for ℓ-adic cohomology, but not in Lean. The empty projective arrangement is excluded. The
+[book](https://adamtopaz.github.io/OrlikSolomon/) states the theorems and has the details.
 
 - Exposition, tied to the code: <https://adamtopaz.github.io/OrlikSolomon/>
 - Mathematical plan: [`blueprint/`](blueprint/arrangement_cohomology_lean_blueprint.tex)
