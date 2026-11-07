@@ -46,8 +46,9 @@ by the functions of **all** equations of `H`.
 The definitions use no basis and no `k`-point. A basis appears only in the comparison with Mathlib's
 `AffineSpace`, and smoothness of `𝔸_V` is the existing instance
 `CoordinateRing.smooth_coordinateRing`.
-As elsewhere in `Geometry/Schemes`, named objects are `@[implicit_reducible] def`s and equations
-between objects are not `simp` lemmas.
+As elsewhere in `Geometry/Schemes`, named objects are `@[implicit_reducible] def`s, except the
+object `SmoothDomain.affineSpace` of a domain, which is `@[instance_reducible]` (see
+`Geometry/Schemes/Basic`), and equations between objects are not `simp` lemmas.
 
 For an affine subspace `H` that is not a hyperplane, `I_H` is the zero ideal and `𝐇` is all of
 `𝔸_V`; no result is stated for such `H`.
@@ -320,7 +321,7 @@ variable (D : SmoothDomain k) (V) [FiniteDimensional k V] in
 It is smooth and affine, so its membership is found by instances.
 
 Blueprint: `def:geo-affine-space`. -/
-@[implicit_reducible]
+@[instance_reducible]
 def SmoothDomain.affineSpace : D.Obj := D.ofAffine (Geometric.affineSpace k V)
 
 lemma SmoothDomain.affineSpace_obj (D : SmoothDomain k) [FiniteDimensional k V] :

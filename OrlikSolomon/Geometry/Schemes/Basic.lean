@@ -46,14 +46,25 @@ The `k`-algebra structure of `Γ(X, 𝒪_X)` is bundled in `globalSections X` an
 `Γ(X.left, ⊤)`. Mathlib has an instance for affine `X` built differently, through `X.isoSpec`; the
 two agree only propositionally, so a second instance would be a diamond.
 
-Named objects and object-valued functors, such as `spec`, `globalSections`, `affineLine`, `gm` and
-`SmoothDomain.spec`, are `@[implicit_reducible] def`s. Lean compares the objects of a morphism,
-which are implicit arguments, at implicit transparency, so `(spec A).left` must unfold to `Spec A`
-there for `rw` and `simp` to work under a composite such as `g ≫ (spec A).hom`. They are not
-`abbrev`s, since `simp` indexes lemmas at reducible transparency, where they stay folded, as
-`Geometry/SmoothAlg` explains. Mathlib's `algSpec` does not unfold at implicit transparency, which
-is why `spec` restates it. For the same reason, equations between objects, such as `spec_left`, are
-not `simp` lemmas: `simp` would rewrite inside the types of morphisms.
+Named objects and object-valued functors, such as `spec`, `affineLine`, `gm` and `specFunctor`, are
+`@[implicit_reducible] def`s. Lean compares the objects of a morphism, which are implicit
+arguments, at implicit transparency, so `(spec A).left` must unfold to `Spec A` there for `rw` and
+`simp` to work under a composite such as `g ≫ (spec A).hom`. They are not `abbrev`s, since `simp`
+indexes lemmas at reducible transparency, where they stay folded, as `Geometry/SmoothAlg` explains.
+Mathlib's `algSpec` does not unfold at implicit transparency, which is why `spec` restates it. For
+the same reason, equations between objects, such as `spec_left`, are not `simp` lemmas: `simp`
+would rewrite inside the types of morphisms.
+
+The objects of a domain built from an `S`-scheme (`SmoothDomain.ofAffine`, `SmoothDomain.spec`,
+`SmoothDomain.point`, `SmoothDomain.affineLine`, `SmoothDomain.gm`, `SmoothDomain.prodAffineLine`,
+`SmoothDomain.prodGm`, and their analogues in later files) and `globalSections` are
+`@[instance_reducible] def`s instead. That level unfolds in type class search and in `rw`, which
+work at instance transparency, and still not when `simp` indexes lemmas. So
+`Γ((D.spec A).obj.left, ⊤)`, `Γ((spec A.obj).left, ⊤)` and `globalSections (D.spec A).obj` are one
+type for `Units.map`, products and `algebraMap`, while the keys of `simp` lemmas do not change.
+An `abbrev` would change those keys: a reducible `globalSections` loses its `k`-algebra instance,
+and reducible domain objects make lemmas such as `SmoothDomain.gmHom_appTop_gmCoord` silently stop
+firing.
 -/
 
 @[expose] public section
@@ -145,7 +156,7 @@ def structureRingHom : k →+* Γ(X.left, ⊤) :=
 is `Γ(X.left, ⊤)`, and its structure map is `structureRingHom X`.
 
 Blueprint: `thm:geo-affine-duality`. -/
-@[implicit_reducible]
+@[instance_reducible]
 def globalSections : CommAlgCat.{u} k :=
   letI : Algebra k Γ(X.left, ⊤) := (structureRingHom X).toAlgebra
   CommAlgCat.of k Γ(X.left, ⊤)
@@ -268,7 +279,7 @@ abbrev Obj : Type (u + 1) := D.property.FullSubcategory
 instance (X : D.Obj) : Smooth X.obj.hom := D.smooth_hom X.property
 
 /-- A smooth affine `S`-scheme as an object of `D`. Membership is found by instances. -/
-@[implicit_reducible]
+@[instance_reducible]
 def ofAffine (X : Over (Spec (.of k))) [IsAffine X.left] [Smooth X.hom] : D.Obj :=
   ⟨X, D.of_isAffine X⟩
 
@@ -279,7 +290,7 @@ instance (X : Over (Spec (.of k))) [IsAffine X.left] [Smooth X.hom] :
     IsAffine (D.ofAffine X).obj.left := ‹_›
 
 /-- `Spec A`, for a smooth `k`-algebra `A`, as an object of `D`. -/
-@[implicit_reducible]
+@[instance_reducible]
 def spec (A : SmoothAlg.{u} k) : D.Obj := D.ofAffine (Geometric.spec A.obj)
 
 lemma spec_obj (A : SmoothAlg.{u} k) : (D.spec A).obj = Geometric.spec A.obj := rfl
@@ -326,7 +337,7 @@ instance : Smooth (𝟙_ (Over (Spec (.of k)))).hom := inferInstanceAs (Smooth (
 
 /-- The base `S = Spec k` itself, as an object of `D`. It is terminal (`isTerminalPoint`), and its
 cohomology is the coefficient algebra. -/
-@[implicit_reducible]
+@[instance_reducible]
 def point : D.Obj := D.ofAffine (𝟙_ (Over (Spec (.of k))))
 
 lemma point_obj : D.point.obj = 𝟙_ (Over (Spec (.of k))) := rfl
@@ -347,11 +358,11 @@ def specPointIso : D.spec (SmoothAlg.point k) ≅ D.point :=
 @[simp] lemma specPointIso_inv_hom_left : (D.specPointIso).inv.hom.left = 𝟙 (Spec (.of k)) := rfl
 
 /-- The affine line `𝔸¹_S`, as an object of `D`. -/
-@[implicit_reducible]
+@[instance_reducible]
 def affineLine : D.Obj := D.ofAffine (Geometric.affineLine k)
 
 /-- The multiplicative group `𝔾ₘ`, as an object of `D`. -/
-@[implicit_reducible]
+@[instance_reducible]
 def gm : D.Obj := D.ofAffine (Geometric.gm k)
 
 lemma affineLine_obj : D.affineLine.obj = Geometric.affineLine k := rfl
@@ -360,14 +371,14 @@ lemma gm_obj : D.gm.obj = Geometric.gm k := rfl
 /-- The product `X ×_S 𝔸¹_S`, as an object of `D`.
 
 Blueprint: `def:geo-domain`, `lem:geo-products`. -/
-@[implicit_reducible]
+@[instance_reducible]
 def prodAffineLine (X : D.Obj) : D.Obj :=
   ⟨X.obj ⊗ Geometric.affineLine k, D.tensor_affineLine X.2⟩
 
 /-- The product `X ×_S 𝔾ₘ`, as an object of `D`.
 
 Blueprint: `def:geo-domain`, `lem:geo-products`. -/
-@[implicit_reducible]
+@[instance_reducible]
 def prodGm (X : D.Obj) : D.Obj := ⟨X.obj ⊗ Geometric.gm k, D.tensor_gm X.2⟩
 
 lemma prodAffineLine_obj (X : D.Obj) :
@@ -460,5 +471,22 @@ lemma aff_le_sft : aff k ≤ sft k := aff_le _
 instance (X : (aff k).Obj) : IsAffine X.obj.left := X.property.1
 
 end SmoothDomain
+
+/-! ### Elaboration across the domain objects
+
+These checks fail to elaborate if the domain objects or `globalSections` stop unfolding at instance
+transparency (see the implementation notes): the two sides of each product have types that agree
+only after unfolding them. -/
+
+example (D : SmoothDomain k) (A : SmoothAlg.{u} k) (f : Γ((D.spec A).obj.left, ⊤))
+    (g : Γ((spec A.obj).left, ⊤)) : Γ((D.spec A).obj.left, ⊤) :=
+  f * g
+
+example (D : SmoothDomain k) (u : Γ((gm k).left, ⊤)ˣ) (v : Γ(D.gm.obj.left, ⊤)ˣ) :
+    Γ(D.gm.obj.left, ⊤)ˣ :=
+  u * v
+
+example (X : Over (Spec (.of k))) (c : k) (f : Γ(X.left, ⊤)) : Γ(X.left, ⊤) :=
+  algebraMap k (globalSections X) c * f
 
 end OrlikSolomon.Geometric

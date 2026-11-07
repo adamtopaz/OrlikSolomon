@@ -1061,16 +1061,29 @@ These are the conventions of `Geometry/Schemes/`, on which every later stage bui
   that the target "is not type-correct under the `implicit` transparency level"; an `abbrev` is
   unfolded in the second, which is the old failure of `simp` indexing recorded under "Objects and
   pairs are `def`s". `@[implicit_reducible]` is unfolded in the first and not in the second, so it
-  is the right annotation for objects and object-valued functors: `spec`, `globalSections`,
-  `affineLine`, `gm`, `SmoothDomain.ofAffine`, `SmoothDomain.spec`, `SmoothDomain.point`,
-  `SmoothDomain.prodAffineLine`, `SmoothDomain.prodGm`, `specFunctor`, `globalSectionsFunctor`,
+  is the right annotation for objects and object-valued functors: `spec`, `affineLine`, `gm`,
+  `affineSpace`, `complement`, `projectiveComplement`, `specFunctor`, `globalSectionsFunctor`,
   `SmoothDomain.specFunctor` and `affineGlobalSectionsFunctor`. Mathlib marks `Over.mk`,
   `ObjectProperty.homMk` and `ObjectProperty.lift` the same way. Mathlib's `algSpec` is marked too,
   but its object passes through functors that are not, which is why `spec` restates it. Morphisms
   are ordinary `def`s.
-- **Global sections are bundled.** `globalSections X : CommAlgCat k` is `Γ(X, 𝒪_X)` with the structure
-  map `k ≅ Γ(S) → Γ(X)`; its carrier is `Γ(X.left, ⊤)` at implicit transparency, so an element of one
-  is an element of the other. It is not an instance on `Γ(X.left, ⊤)`: Mathlib has an instance for
+- **Objects of a domain and `globalSections` are `@[instance_reducible] def`s** (#128). These are
+  the `D.Obj` wrappers of an `S`-scheme, `SmoothDomain.ofAffine`, `spec`, `point`, `affineLine`,
+  `gm`, `prodAffineLine`, `prodGm`, `affineSpace`, `complement` and `projectiveComplement`. That
+  level also unfolds at instance transparency, where type class search and `rw` work, and still not
+  at the reducible transparency at which `simp` indexes lemmas. So `Γ((D.spec A).obj.left, ⊤)`,
+  `Γ((spec A.obj).left, ⊤)` and `globalSections (D.spec A).obj` are one type for `Units.map`,
+  products and `algebraMap`, while every `simp` key is unchanged: the keys of all `simp` lemmas
+  and instances of the library were identical before and after the change. `@[reducible]` is wrong
+  here, because it changes the keys: a reducible `globalSections` loses its `k`-algebra instance,
+  and reducible domain objects make `simp only [SmoothDomain.gmHom_appTop_gmCoord]` silently stop
+  firing. A new object of a domain built from a scheme gets `@[instance_reducible]`; the
+  regression `example`s at the ends of `Geometry/Schemes/Basic`, `Units` and `Complement/Basic`
+  check the rule.
+- **Global sections are bundled.** `globalSections X : CommAlgCat k` is `Γ(X, 𝒪_X)` with the
+  structure map `k ≅ Γ(S) → Γ(X)`; its carrier is `Γ(X.left, ⊤)` at instance transparency, so an
+  element of one is an element of the other, and `algebraMap k (globalSections X) c * f` elaborates
+  for `f : Γ(X.left, ⊤)`. It is not an instance on `Γ(X.left, ⊤)`: Mathlib has an instance for
   affine `X`, built through `X.isoSpec`, that agrees with it only propositionally. Pullback is
   `globalSectionsMap g`, with `globalSectionsMap_apply`.
 - **Domains.** `SmoothDomain k` holds an `ObjectProperty` of `Over S` and the closure proofs of
@@ -1190,7 +1203,8 @@ structure theorem builds.
   affine structure theorem on `U_𝒜` is the existing one composed with pullback along it. Its
   generators correspond by `D.complementIsoSpec_hom_appTop_complementUnit`: the existing
   `SmoothAlg.complementUnit 𝒜 f hf` is the restriction `Geometric.complementUnit 𝒜 f hf` of `f̃`, as
-  an equation of global sections.
+  an equation of global sections, and as an equation of units by
+  `D.map_complementIsoSpec_hom_complementUnit`.
 - **Maps of complements.** Each is `complementHom F` for a map `F` of the existing rings, that is,
   `s_𝒜 ≫ Spec F ≫ s_ℬ⁻¹`, so one set of naturality lemmas serves them all
   (`complementHom_comp_complementIsoSpec_hom`, `complementHom_comp_complementι`,
@@ -1250,11 +1264,12 @@ These are the conventions of `Geometry/Schemes/Projective` (#112).
   `coneIsoProdGm hℓ₀` has first coordinate `coneProjection P` and second coordinate `ℓ₀`.
 - **Functions.** `projectiveRatio hℓ hℓ'` is the unit `ℓ / ℓ'` of `Γ(U_P)`, the pullback along `s_P`
   of `ratioUnit`, and `specUnit u`, in `Geometry/Schemes/Units`, is the unit of `Spec A` given by
-  `u : Aˣ`. Lemmas about functions
-  in a domain are equations of global sections, such as `SmoothDomain.coe_projectiveRatio`, and not
-  of units: `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)` agree only at implicit
-  transparency, so `Units.map` and products across them do not elaborate. Get a unit equation with
-  `Units.ext`.
+  `u : Aˣ`. Lemmas about functions in a domain are stated as equations of global sections, such as
+  `SmoothDomain.coe_projectiveRatio`, with unit forms such as
+  `SmoothDomain.map_projectiveComplementIsoSpec_hom_projectiveRatioUnit`, proved by `Units.ext`.
+  Since the objects of a domain unfold at instance transparency (above),
+  `Units.map g.hom.left.appTop.hom (specUnit u)` for `g : X ⟶ D.spec A`, and products across
+  `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)`, elaborate.
 
 ### Geometric cohomology and affine transport
 
@@ -1330,15 +1345,17 @@ every object of its domain, affine or not, and reuses the algebraic `Cohomology/
   `𝔾ₘ² = Spec k[s, s⁻¹][t, t⁻¹]` along the map of `(u, v)` built with `specHomEquiv`;
   `[u]² = 0` is pulled back from `τ² = 0`; the class of a constant `c ∈ kˣ` vanishes because its
   map factors through `D.point` (`logClass_eq_zero_of_coe_eq_algebraMap`, stated with the function
-  of the unit). The residue formulas hold for every pair, by `residue_pull` along
-  `DivisorPair.toStandard`. Restriction to a smaller domain does not change classes
-  (`restrict_logClass`, by `rfl`).
-- **Comparisons.** `pull_toAlgebraic_logClass g u hv` computes `g^*` of the old class `[u]` of
-  `T.toAlgebraic`, for any `g : X ⟶ D.spec A`, as the class of the unit `v` with
-  `(v : Γ(X)) = g^*(u)`. It is the lemma to compose with `s_𝒜` and `s_P` for the generator
-  formulas of the structure theorems. Its hypothesis is an equation of global sections, because
-  `Units.map g.hom.left.appTop.hom (specUnit u)` does not elaborate across
-  `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)`. On `D.spec A` itself,
+  of the unit, and `logClass_units_map_algebraMap`), so units that differ by a constant have the
+  same class (`logClass_eq_of_coe_eq_algebraMap_mul`, `logClass_units_map_algebraMap_mul`). The
+  residue formulas hold for every pair, by `residue_pull` along `DivisorPair.toStandard`.
+  Restriction to a smaller domain does not change classes (`restrict_logClass`, by `rfl`).
+- **Comparisons.** `pull_toAlgebraic_logClass_eq g u` computes `g^*` of the old class `[u]` of
+  `T.toAlgebraic`, for any `g : X ⟶ D.spec A`, as the class of the unit
+  `Units.map g.hom.left.appTop.hom (specUnit u)`, and `pull_toAlgebraic_logClass g u hv` as the
+  class of any unit `v` with `(v : Γ(X)) = g^*(u)`. They are the lemmas to compose with `s_𝒜` and
+  `s_P` for the generator formulas of the structure theorems, followed by
+  `D.map_complementIsoSpec_hom_complementUnit` or
+  `D.map_projectiveComplementIsoSpec_hom_projectiveRatioUnit`. On `D.spec A` itself,
   `toAlgebraic_logClass_eq` states it with `specUnit u`. `ofAlgebraic_logClass` identifies the
   classes of `ofAlgebraic E` on an affine `X` with the old classes of `E` on `Γ(X)`, through
   `algebraicRoundTripEquiv_logClass`.
@@ -1359,12 +1376,13 @@ reuses the existing theorems and proves nothing about arrangements again.
   `e : X ≅ D.spec A`, is pullback along `e`, and its laws are the base cases of the blueprint's
   induction on expressions: bidegrees (`transportAffineDevelopment_mem_grading_iff`,
   `transportAffineDevelopmentComponentEquiv`), logarithmic classes
-  (`transportAffineDevelopment_logClass`, from `pull_toAlgebraic_logClass`) and compatible
-  pullbacks (`transportAffineDevelopment_map`, whose hypothesis is a square with
-  `D.specFunctor.map`, the form of the naturality lemmas of `s_𝒜` and `s_P`). Residue and Gysin
-  are compared by `residue_pull` along a pair isomorphism with `DivisorPair.spec`, as
-  `transportAffineDevelopment_deletionResidue` does along `deletionPairIsoSpec`. This is the Lean
-  form of `thm:geo-transport-all`, which stays partly formalized.
+  (`transportAffineDevelopment_logClass` and `transportAffineDevelopment_logClass_eq`, from
+  `pull_toAlgebraic_logClass`) and compatible pullbacks (`transportAffineDevelopment_map`, whose
+  hypothesis is a square with `D.specFunctor.map`, the form of the naturality lemmas of `s_𝒜` and
+  `s_P`). Residue and Gysin are compared by `residue_pull` along a pair isomorphism with
+  `DivisorPair.spec`, as `transportAffineDevelopment_deletionResidue` does along
+  `deletionPairIsoSpec`. This is the Lean form of `thm:geo-transport-all`, which stays partly
+  formalized.
 - **The theorems.** `affineEquiv 𝒜 = (T.toAlgebraic.affineEquiv 𝒜).trans
   (transportAffineDevelopment T (D.complementIsoSpec 𝒜))`, so `affineEquiv_apply` is
   `Φ^geo = s_𝒜^* ∘ Φ`, and `projectiveEquiv P` is the same with `D.projectiveComplementIsoSpec P`,
@@ -1380,10 +1398,11 @@ reuses the existing theorems and proves nothing about arrangements again.
   for `E`, followed by `E` of the ring isomorphism `O(U) ≅ Γ(U)`. The de Rham corollaries on
   schemes are compared with the existing ones through them (`affineEquiv_eq_map`).
 - **Elaboration.** In `T.logClass u` the object is implicit, and Lean cannot solve it from a unit
-  `u : Γ((complement 𝒜).left, ⊤)ˣ`, since that would mean inverting the projection `X.obj`. When
-  the expected type does not fix it, write `T.logClass (X := D.complement 𝒜) u`, as in
-  `logClass_complementUnit_eq_of_isEquation` and `isFamily_logClass_complementUnit`. This is a
-  case of #128.
+  `u : Γ((complement 𝒜).left, ⊤)ˣ`, since that would mean inverting the projection `X.obj`. No
+  transparency setting changes this. When the expected type does not fix it, write
+  `T.logClass (X := D.complement 𝒜) u`, as in `logClass_complementUnit_eq_of_isEquation` and
+  `isFamily_logClass_complementUnit`, or ascribe the unit the type
+  `Γ((D.complement 𝒜).obj.left, ⊤)ˣ`.
 
 ### Relative forms as sheaves
 
@@ -1471,7 +1490,8 @@ geometric declarations; write the existing ones with `OrlikSolomon.DeRham.`. A f
   pair `DivisorPair.globalSections P`, the maps of its global logarithmic sequence
   (`residue_mk_add_theta_mul`, `gysin_mk_of_logResidue_eq`). Their statements name the algebraic
   pair's components, not `globalSections P.ambient.obj`, since the algebra instance
-  `P.ambient → P.compl` of an algebraic pair is only found on those. `logClass_eq` is
+  `P.ambient → P.compl` of an algebraic pair is only found on those: instance search retrieves it
+  by its key `DivisorPair.ambient`, which no transparency setting changes (#128). `logClass_eq` is
   `[u]_T = t ⊗ [du/u]`, from `ofAlgebraic_logClass` and `ordinaryTheory_logClass`; like the existing
   lemma it is not `simp`.
 - **The corollaries.** `affineEquiv 𝒜 : OSAlgebra k 𝒜 ≃ₐ[k] Cohomology ((aff k).complement 𝒜)` and
@@ -1479,9 +1499,13 @@ geometric declarations; write the existing ones with `OrlikSolomon.DeRham.`. A f
   inverse of `TwistedCohomology.diagonalEquiv`, as in `DeRham/Corollaries`, with the same API.
   `affineEquiv_eq_map` and `projectiveEquiv_eq_map` identify them with the existing corollaries
   for the coordinate rings, through `ofAlgebraic_affineEquiv` and `ofAlgebraic_projectiveEquiv`.
-  State `evalOne` with the explicit algebra `globalSections X.obj`, as `affineEquiv_apply` does:
-  with `_` it elaborates to `(affineGlobalSectionsFunctor k).obj (op X)`, and `rw` with
-  `evalOne_logClass` no longer matches.
+  To remove the powers of `t` from a class of the instance, use `untwist X`, which is
+  `TwistedCohomology.evalOne k (globalSections X.obj)` typed on `(ordinaryTheory k).obj X`, with
+  `untwist_twistedClass`, `untwist_logClass` and `untwist_pull`; or state `evalOne` with the
+  explicit algebra `globalSections X.obj`, as `affineEquiv_apply` does. With `_`, the algebra
+  elaborates to `(affineGlobalSectionsFunctor k).obj (op X)`, and `rw` with `evalOne_logClass` no
+  longer matches, because `(ordinaryTheory k).obj X` is `TwistedCohomology k _` only at default
+  transparency.
 
 ### Modules
 

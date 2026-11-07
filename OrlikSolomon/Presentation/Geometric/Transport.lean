@@ -41,7 +41,8 @@ old theorem for `T.toAlgebraic` with this comparison.
 ## Main results
 
 * `transportAffineDevelopment_mem_grading_iff`: bidegrees are preserved and reflected.
-* `transportAffineDevelopment_logClass`: old logarithmic classes go to geometric ones.
+* `transportAffineDevelopment_logClass`, `transportAffineDevelopment_logClass_eq`: old logarithmic
+  classes go to geometric ones.
 * `transportAffineDevelopment_map`: naturality for compatible morphisms.
 * `bijOn_transportAffineDevelopment`: each graded piece of `C(Spec A)` corresponds to that of
   `C(X)`, and `transportAffineDevelopmentComponentEquiv` is the resulting `R`-linear equivalence.
@@ -136,15 +137,23 @@ lemma coe_transportAffineDevelopmentComponentEquiv_symm_apply (e : X ≅ D.spec 
   rfl
 
 /-- The transport sends the old logarithmic class of a unit `u` of `A` to the logarithmic class
-of the global unit `v` of `X` that corresponds to `u` under `e`. The correspondence is an equation
-of global sections, because `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)` agree only at
-implicit transparency; the unit equation follows by `Units.ext`.
+of the global unit `v` of `X` that corresponds to `u` under `e`, given by an equation of global
+sections. `transportAffineDevelopment_logClass_eq` is the form with the unit itself.
 
 Blueprint: `thm:geo-transport-all`. -/
 lemma transportAffineDevelopment_logClass (e : X ≅ D.spec A) (u : Aˣ) {v : Γ(X.obj.left, ⊤)ˣ}
     (hv : (v : Γ(X.obj.left, ⊤)) = e.hom.hom.left.appTop ((Scheme.ΓSpecIso (.of A)).inv u)) :
     transportAffineDevelopment T e (T.toAlgebraic.logClass u) = T.logClass v :=
   T.pull_toAlgebraic_logClass e.hom u hv
+
+/-- The transport sends the old logarithmic class of a unit `u` of `A` to the logarithmic class of
+the pullback along `e` of the global unit `specUnit u` of `Spec A`.
+
+Blueprint: `thm:geo-transport-all`. -/
+lemma transportAffineDevelopment_logClass_eq (e : X ≅ D.spec A) (u : Aˣ) :
+    transportAffineDevelopment T e (T.toAlgebraic.logClass u) =
+      T.logClass (Units.map e.hom.hom.left.appTop.hom (specUnit (A := A.obj) u)) :=
+  T.pull_toAlgebraic_logClass_eq e.hom u
 
 /-- The transport commutes with pullback: if a morphism `g : X ⟶ Y` corresponds under the
 comparisons to the algebra map `φ : A' ⟶ A`, then pulling back along `g` is the old map induced by
