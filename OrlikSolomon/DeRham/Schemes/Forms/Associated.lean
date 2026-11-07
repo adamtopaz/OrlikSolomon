@@ -27,6 +27,8 @@ algebraic form module. Its formulas retain the usual representatives and localiz
   the same form module with scalars restricted along the ring map.
 * `specFormsSheafAssociatedBaseIso`: the comparison as sheaves of base-ring modules, with
   representative formulas on every open.
+* `specFormsSheafPushforwardAssociatedBaseIso`: the base-linear affine pushforward comparison,
+  with canonical formulas on global sections.
 
 The base ring and algebra are arbitrary commutative rings; no smoothness, finite generation,
 flatness or nonzero-ring hypothesis is required. There are no geometric-domain imports.
@@ -524,6 +526,280 @@ lemma specFormsSheafAssociatedBaseIso_inv_unit (n : ℕ) (U : (Spec A).Opens)
     (specFormsSheafAssociatedBaseIso (k := k) (A := A) n)).app (op U)
   apply (ConcreteCategory.bijective_of_isIso e.hom).1
   exact (e.inv_hom_id_apply _).trans (specFormsSheafAssociatedBaseIso_unit n U x).symm
+
+/-- The retained structure-sheaf scalar action on the base-linear associated form sheaf.
+The result is typed at the base-linear section carrier. -/
+def specFormsAssociatedBaseSMul (n : ℕ) (U : (Spec A).Opens) (a : Γ(Spec A, U))
+    (x : ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).obj
+        (modulesSpecToSheaf.obj (tilde (ModuleCat.of A (⋀[A]^n Ω[A⁄k]))))).obj.obj (op U)) :
+    ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).obj
+        (modulesSpecToSheaf.obj (tilde (ModuleCat.of A (⋀[A]^n Ω[A⁄k]))))).obj.obj (op U) :=
+  (Scheme.Modules.smul (M := tilde (ModuleCat.of A (⋀[A]^n Ω[A⁄k]))) a).asHom.hom x
+
+/-- The base-linear associated comparison respects the retained structure-sheaf scalar actions
+on every section, without requiring a choice of algebraic representative. -/
+lemma specFormsSheafAssociatedBaseIso_smul (n : ℕ) (U : (Spec A).Opens)
+    (a : Γ(Spec A, U)) (x : (formsSheaf k XS n).obj.obj (op U)) :
+    (specFormsSheafAssociatedBaseIso (k := k) (A := A) n).hom.hom.app (op U)
+      (formsSheafSMul k XS n U a x) =
+      specFormsAssociatedBaseSMul n U a
+        ((specFormsSheafAssociatedBaseIso (k := k) (A := A) n).hom.hom.app (op U) x) := by
+  let e := formsModuleSheafBaseIso k XS n U
+  have he : e.inv (formsSheafSMul k XS n U a x) = a • e.inv x :=
+    e.hom_inv_id_apply _
+  change (specFormsModuleSheafAssociatedIso (k := k) (A := A) n).hom.app U
+    (e.inv (formsSheafSMul k XS n U a x)) =
+      a • (specFormsModuleSheafAssociatedIso (k := k) (A := A) n).hom.app U (e.inv x)
+  exact (congrArg (fun z =>
+    (specFormsModuleSheafAssociatedIso (k := k) (A := A) n).hom.app U z) he).trans
+      (Scheme.Modules.Hom.app_smul _ a (e.inv x))
+
+/-- The inverse base-linear comparison respects the retained structure-sheaf scalar action on
+all associated-sheaf sections. -/
+lemma specFormsSheafAssociatedBaseIso_inv_smul (n : ℕ) (U : (Spec A).Opens)
+    (a : Γ(Spec A, U))
+    (x : ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).obj
+        (modulesSpecToSheaf.obj (tilde (ModuleCat.of A (⋀[A]^n Ω[A⁄k]))))).obj.obj (op U)) :
+    (specFormsSheafAssociatedBaseIso (k := k) (A := A) n).inv.hom.app (op U)
+      (specFormsAssociatedBaseSMul n U a x) =
+      formsSheafSMul k XS n U a
+        ((specFormsSheafAssociatedBaseIso (k := k) (A := A) n).inv.hom.app (op U) x) := by
+  let e := ((sheafToPresheaf _ _).mapIso
+    (specFormsSheafAssociatedBaseIso (k := k) (A := A) n)).app (op U)
+  apply (ConcreteCategory.bijective_of_isIso e.hom).1
+  exact (e.inv_hom_id_apply _).trans
+    ((congrArg (fun z => specFormsAssociatedBaseSMul n U a z) (e.inv_hom_id_apply x)).symm.trans
+      (specFormsSheafAssociatedBaseIso_smul n U a (e.inv x)).symm)
+
+/-- The typed scalar action is the usual scalar action of the associated structure-sheaf module. -/
+lemma specFormsAssociatedBaseSMul_eq (n : ℕ) (U : (Spec A).Opens) (a : Γ(Spec A, U))
+    (x : ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).obj
+        (modulesSpecToSheaf.obj (tilde (ModuleCat.of A (⋀[A]^n Ω[A⁄k]))))).obj.obj (op U)) :
+    dsimp% specFormsAssociatedBaseSMul (k := k) n U a x =
+      a • (show Γ(tilde (ModuleCat.of A (⋀[A]^n Ω[A⁄k])), U) from x) := rfl
+
+variable {B : CommRingCat.{u}} [Algebra k B]
+local notation "XB" => (Over.mk (Spec.map (CommRingCat.ofHom (algebraMap k B))))
+
+private def formsPushforwardScalarIso (φ : A →ₐ[k] B) (M : (Spec B).Modules) :
+    (TopCat.Sheaf.pushforward (ModuleCat k) (Spec.map (CommRingCat.ofHom φ.toRingHom)).base).obj
+      ((sheafCompose (_root_.Opens.grothendieckTopology (Spec B))
+        (ModuleCat.restrictScalars (algebraMap k B))).obj (modulesSpecToSheaf.obj M)) ≅
+    (sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).obj
+        ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+          (ModuleCat.restrictScalars φ.toRingHom)).obj
+            ((TopCat.Sheaf.pushforward (ModuleCat B)
+              (Spec.map (CommRingCat.ofHom φ.toRingHom)).base).obj
+                (modulesSpecToSheaf.obj M))) := by
+  refine (fullyFaithfulSheafToPresheaf _ _).preimageIso ?_
+  refine NatIso.ofComponents (fun U => ModuleCat.restrictScalarsComp'App
+    (algebraMap k A) φ.toRingHom (algebraMap k B) φ.comp_algebraMap.symm
+      ((modulesSpecToSheaf.obj M).obj.obj
+        (op ((Spec.map (CommRingCat.ofHom φ.toRingHom)) ⁻¹ᵁ U.unop)))) ?_
+  intro U V i
+  exact ModuleCat.restrictScalarsComp'App_hom_naturality _ _ _ _ _
+
+private def specFormsModuleSheafPushforwardBaseIso (φ : A →ₐ[k] B) (n : ℕ) :
+    (TopCat.Sheaf.pushforward (ModuleCat k) (Spec.map (CommRingCat.ofHom φ.toRingHom)).base).obj
+      (formsSheaf k XB n) ≅
+    (sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).obj
+        (modulesSpecToSheaf.obj
+          ((Scheme.Modules.pushforward (Spec.map (CommRingCat.ofHom φ.toRingHom))).obj
+            (formsModuleSheaf k XB n))) :=
+  (TopCat.Sheaf.pushforward (ModuleCat k) (Spec.map (CommRingCat.ofHom φ.toRingHom)).base).mapIso
+    (specFormsModuleSheafBaseIso (k := k) (A := B) n) ≪≫
+  formsPushforwardScalarIso φ (formsModuleSheaf k XB n) ≪≫
+  (sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+    (ModuleCat.restrictScalars (algebraMap k A))).mapIso
+      ((pushforwardCompModulesSpecToSheafIso (CommRingCat.ofHom φ.toRingHom)).app
+        (formsModuleSheaf k XB n)).symm
+
+/-- Base-ring-linear forms pushed forward along a morphism of spectra over the base are the
+associated sheaf of algebraic forms with scalars restricted along the algebra map. -/
+@[no_expose] def specFormsSheafPushforwardAssociatedBaseIso (φ : A →ₐ[k] B) (n : ℕ) :
+    (TopCat.Sheaf.pushforward (ModuleCat k) (Spec.map (CommRingCat.ofHom φ.toRingHom)).base).obj
+      (formsSheaf k XB n) ≅
+    (sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).obj
+        (modulesSpecToSheaf.obj
+          (tilde ((ModuleCat.restrictScalars φ.toRingHom).obj
+            (ModuleCat.of B (⋀[B]^n Ω[B⁄k]))))) :=
+  specFormsModuleSheafPushforwardBaseIso φ n ≪≫
+    (modulesSpecToSheaf ⋙ sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).mapIso
+        (specFormsModuleSheafPushforwardAssociatedIso (k := k) φ.toRingHom n)
+
+/-- A canonical algebraic form as a section of the pushed-forward base-linear form sheaf. -/
+def specFormsSheafPushforwardBaseSection (φ : A →ₐ[k] B) (n : ℕ) (U : (Spec A).Opens) :
+    (⋀[B]^n Ω[B⁄k]) →+
+      ((TopCat.Sheaf.pushforward (ModuleCat k)
+        (Spec.map (CommRingCat.ofHom φ.toRingHom)).base).obj (formsSheaf k XB n)).obj.obj (op U) :=
+  ((formsSheafUnit k XB n).app
+    (op ((Spec.map (CommRingCat.ofHom φ.toRingHom)) ⁻¹ᵁ U))).hom.toAddMonoidHom.comp
+      (Forms.mapPower (specSectionMap
+        ((Spec.map (CommRingCat.ofHom φ.toRingHom)) ⁻¹ᵁ U)) n).toAddMonoidHom
+
+/-- A canonical form as a section of the base-linear associated sheaf with restricted scalars.
+The target is the actual carrier used by the affine pushforward comparison. -/
+def specFormsPushforwardAssociatedBaseSection (φ : A →ₐ[k] B) (n : ℕ) (U : (Spec A).Opens) :
+    (⋀[B]^n Ω[B⁄k]) →+
+      ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+        (ModuleCat.restrictScalars (algebraMap k A))).obj
+          (modulesSpecToSheaf.obj
+            (tilde ((ModuleCat.restrictScalars φ.toRingHom).obj
+              (ModuleCat.of B (⋀[B]^n Ω[B⁄k])))))).obj.obj (op U) :=
+  (tilde.toOpen ((ModuleCat.restrictScalars φ.toRingHom).obj
+    (ModuleCat.of B (⋀[B]^n Ω[B⁄k]))) U).hom.toAddMonoidHom
+
+-- The carrier comparison is independent of the particular module. Keeping that evaluation
+-- generic prevents scalar-presentation normalization from expanding the form module.
+private theorem pushforwardCompModulesSpecToSheafIso_inv_apply {R S : CommRingCat.{u}}
+    (φ : R ⟶ S) (M : (Spec S).Modules) (U : (Spec R).Opens)
+    (x : Γ(M, (Spec.map φ) ⁻¹ᵁ U)) :
+    dsimp% ((pushforwardCompModulesSpecToSheafIso φ).app M).inv.hom.app (op U) x = x := rfl
+
+set_option backward.isDefEq.respectTransparency false in
+private theorem specFormsModulePushforwardAssociatedIso_inv_top_unit
+    (φ : A →ₐ[k] B) (n : ℕ) (x : ⋀[B]^n Ω[B⁄k]) :
+    (specFormsModuleSheafPushforwardAssociatedIso (k := k) φ.toRingHom n).inv.app ⊤
+      (tilde.toOpen ((ModuleCat.restrictScalars φ.toRingHom).obj
+        (ModuleCat.of B (⋀[B]^n Ω[B⁄k]))) ⊤ x) =
+      specFormsModuleSection (k := k) (A := B) n ⊤ x := by
+  let M := (ModuleCat.restrictScalars φ.toRingHom).obj
+    (ModuleCat.of B (⋀[B]^n Ω[B⁄k]))
+  let N := (Scheme.Modules.pushforward (Spec.map (CommRingCat.ofHom φ.toRingHom))).obj
+    (formsModuleSheaf k XB n)
+  let g := (specFormsModulePushforwardGlobalIso (k := k) φ.toRingHom n).hom
+  have hm : tilde.toOpen M ⊤ ≫
+      (modulesSpecToSheaf.map
+        (specFormsModuleSheafPushforwardAssociatedIso (k := k) φ.toRingHom n).inv).hom.app
+          (op ⊤) = g := by
+    change tilde.toOpen M ⊤ ≫
+      (modulesSpecToSheaf.map (tilde.map g ≫ N.fromTildeΓ)).hom.app (op ⊤) = g
+    rw [CategoryTheory.Functor.map_comp]
+    change tilde.toOpen M ⊤ ≫
+      (modulesSpecToSheaf.map (tilde.map g)).hom.app (op ⊤) ≫
+      (modulesSpecToSheaf.map N.fromTildeΓ).hom.app (op ⊤) = g
+    rw [tilde.toOpen_map_app_assoc, Scheme.Modules.toOpen_fromTildeΓ_app]
+    rw [show (homOfLE (show (⊤ : (Spec A).Opens) ≤ ⊤ from le_rfl)).op = 𝟙 (op ⊤) from
+      Subsingleton.elim _ _, CategoryTheory.Functor.map_id, Category.comp_id]
+  have hx : g (show M from x) = specFormsModuleSection (k := k) (A := B) n ⊤ x := by
+    change ((pushforwardCompModulesSpecToSheafIso
+      (CommRingCat.ofHom φ.toRingHom)).app (formsModuleSheaf k XB n)).inv.hom.app (op ⊤)
+        (specFormsModuleToOpen (k := k) (A := B) n ⊤ x) = _
+    exact pushforwardCompModulesSpecToSheafIso_inv_apply _ _ ⊤ _
+  exact (ConcreteCategory.congr_hom hm (show M from x)).trans hx
+
+/-- On global sections, the inverse base-linear affine pushforward comparison preserves the
+canonical algebraic representative. -/
+lemma specFormsSheafPushforwardAssociatedBaseIso_inv_top_section
+    (φ : A →ₐ[k] B) (n : ℕ) (x : ⋀[B]^n Ω[B⁄k]) :
+    (specFormsSheafPushforwardAssociatedBaseIso φ n).inv.hom.app (op ⊤)
+      (specFormsPushforwardAssociatedBaseSection φ n ⊤ x) =
+        specFormsSheafPushforwardBaseSection φ n ⊤ x := by
+  change (formsModuleSheafBaseIso k XB n ⊤).hom
+    ((specFormsModuleSheafPushforwardAssociatedIso (k := k) φ.toRingHom n).inv.app ⊤
+      (tilde.toOpen ((ModuleCat.restrictScalars φ.toRingHom).obj
+        (ModuleCat.of B (⋀[B]^n Ω[B⁄k]))) ⊤ x)) = _
+  rw [specFormsModulePushforwardAssociatedIso_inv_top_unit]
+  exact formsModuleSheafUnit_compare XB n ⊤ _
+
+/-- On global sections, the base-linear affine pushforward comparison preserves the canonical
+algebraic representative. -/
+lemma specFormsSheafPushforwardAssociatedBaseIso_top_section
+    (φ : A →ₐ[k] B) (n : ℕ) (x : ⋀[B]^n Ω[B⁄k]) :
+    (specFormsSheafPushforwardAssociatedBaseIso φ n).hom.hom.app (op ⊤)
+      (specFormsSheafPushforwardBaseSection φ n ⊤ x) =
+        specFormsPushforwardAssociatedBaseSection φ n ⊤ x := by
+  let e := ((sheafToPresheaf _ _).mapIso
+    (specFormsSheafPushforwardAssociatedBaseIso φ n)).app (op ⊤)
+  apply (ConcreteCategory.bijective_of_isIso e.inv).1
+  exact (e.hom_inv_id_apply _).trans
+    (specFormsSheafPushforwardAssociatedBaseIso_inv_top_section φ n x).symm
+
+/-- The typed associated section for affine pushforward is Mathlib's canonical localization map
+on the algebraic form module with restricted scalars. -/
+lemma tilde_toOpen_eq_specFormsPushforwardAssociatedBaseSection
+    (φ : A →ₐ[k] B) (n : ℕ) (U : (Spec A).Opens) (x : ⋀[B]^n Ω[B⁄k]) :
+    dsimp% tilde.toOpen ((ModuleCat.restrictScalars φ.toRingHom).obj
+      (ModuleCat.of B (⋀[B]^n Ω[B⁄k]))) U x =
+        specFormsPushforwardAssociatedBaseSection φ n U x := rfl
+
+/-- On global sections, the affine pushforward comparison takes an algebraic representative in
+the original form sheaf to the corresponding associated section with restricted scalars. -/
+lemma specFormsSheafPushforwardAssociatedBaseIso_top_unit
+    (φ : A →ₐ[k] B) (n : ℕ) (x : ⋀[B]^n Ω[B⁄k]) :
+    dsimp% (specFormsSheafPushforwardAssociatedBaseIso φ n).hom.hom.app (op ⊤)
+      ((formsSheafUnit k XB n).app (op ⊤) (Forms.mapPower (specSectionMap ⊤) n x)) =
+        specFormsPushforwardAssociatedBaseSection φ n ⊤ x :=
+  specFormsSheafPushforwardAssociatedBaseIso_top_section φ n x
+
+/-- The structure-sheaf scalar action on pushed-forward base-linear forms, induced by pullback
+of regular functions along the morphism of spectra. -/
+def specFormsSheafPushforwardSMul (φ : A →ₐ[k] B) (n : ℕ) (U : (Spec A).Opens)
+    (a : Γ(Spec A, U))
+    (x : ((TopCat.Sheaf.pushforward (ModuleCat k)
+      (Spec.map (CommRingCat.ofHom φ.toRingHom)).base).obj (formsSheaf k XB n)).obj.obj (op U)) :
+    ((TopCat.Sheaf.pushforward (ModuleCat k)
+      (Spec.map (CommRingCat.ofHom φ.toRingHom)).base).obj (formsSheaf k XB n)).obj.obj (op U) :=
+  formsSheafSMul k XB n ((Spec.map (CommRingCat.ofHom φ.toRingHom)) ⁻¹ᵁ U)
+    ((Spec.map (CommRingCat.ofHom φ.toRingHom)).app U a) x
+
+/-- The retained structure-sheaf scalar action on associated forms with restricted scalars. -/
+def specFormsPushforwardAssociatedBaseSMul (φ : A →ₐ[k] B) (n : ℕ) (U : (Spec A).Opens)
+    (a : Γ(Spec A, U))
+    (x : ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).obj
+        (modulesSpecToSheaf.obj (tilde ((ModuleCat.restrictScalars φ.toRingHom).obj
+          (ModuleCat.of B (⋀[B]^n Ω[B⁄k])))))).obj.obj (op U)) :
+    ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).obj
+        (modulesSpecToSheaf.obj (tilde ((ModuleCat.restrictScalars φ.toRingHom).obj
+          (ModuleCat.of B (⋀[B]^n Ω[B⁄k])))))).obj.obj (op U) :=
+  (Scheme.Modules.smul (M := tilde ((ModuleCat.restrictScalars φ.toRingHom).obj
+    (ModuleCat.of B (⋀[B]^n Ω[B⁄k])))) a).asHom.hom x
+
+/-- The base-linear affine pushforward comparison respects structure-sheaf scalars on every
+section, without requiring algebraic representatives. -/
+lemma specFormsSheafPushforwardAssociatedBaseIso_smul (φ : A →ₐ[k] B) (n : ℕ)
+    (U : (Spec A).Opens) (a : Γ(Spec A, U))
+    (x : ((TopCat.Sheaf.pushforward (ModuleCat k)
+      (Spec.map (CommRingCat.ofHom φ.toRingHom)).base).obj (formsSheaf k XB n)).obj.obj (op U)) :
+    (specFormsSheafPushforwardAssociatedBaseIso φ n).hom.hom.app (op U)
+      (specFormsSheafPushforwardSMul φ n U a x) =
+      specFormsPushforwardAssociatedBaseSMul φ n U a
+        ((specFormsSheafPushforwardAssociatedBaseIso φ n).hom.hom.app (op U) x) := by
+  let V := (Spec.map (CommRingCat.ofHom φ.toRingHom)) ⁻¹ᵁ U
+  let b := (Spec.map (CommRingCat.ofHom φ.toRingHom)).app U a
+  let e := formsModuleSheafBaseIso k XB n V
+  have he : e.inv (formsSheafSMul k XB n V b x) = b • e.inv x := e.hom_inv_id_apply _
+  change (specFormsModuleSheafPushforwardAssociatedIso (k := k) φ.toRingHom n).hom.app U
+    (e.inv (formsSheafSMul k XB n V b x)) =
+      a • (specFormsModuleSheafPushforwardAssociatedIso (k := k) φ.toRingHom n).hom.app U (e.inv x)
+  exact (congrArg (fun z =>
+    (specFormsModuleSheafPushforwardAssociatedIso (k := k) φ.toRingHom n).hom.app U z) he).trans
+      (Scheme.Modules.Hom.app_smul
+        (specFormsModuleSheafPushforwardAssociatedIso (k := k) φ.toRingHom n).hom a
+        (show Γ((Scheme.Modules.pushforward
+          (Spec.map (CommRingCat.ofHom φ.toRingHom))).obj (formsModuleSheaf k XB n), U) from
+            e.inv x))
+
+/-- The typed affine pushforward target action is its associated structure-sheaf module action. -/
+lemma specFormsPushforwardAssociatedBaseSMul_eq (φ : A →ₐ[k] B) (n : ℕ)
+    (U : (Spec A).Opens) (a : Γ(Spec A, U))
+    (x : ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).obj
+        (modulesSpecToSheaf.obj (tilde ((ModuleCat.restrictScalars φ.toRingHom).obj
+          (ModuleCat.of B (⋀[B]^n Ω[B⁄k])))))).obj.obj (op U)) :
+    dsimp% specFormsPushforwardAssociatedBaseSMul φ n U a x =
+      a • (show Γ(tilde ((ModuleCat.restrictScalars φ.toRingHom).obj
+        (ModuleCat.of B (⋀[B]^n Ω[B⁄k]))), U) from x) := rfl
 
 end Base
 
