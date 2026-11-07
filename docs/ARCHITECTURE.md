@@ -82,6 +82,11 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Exterior/BaseChange`   | base change in `lem:dr-exterior`, for any `IsBaseChange`, including localizations |
 | `DeRham/Exterior/Quotient`     | the quotient formula in `lem:dr-exterior` |
 | `DeRham/Exterior`              | the kernel of `⋀_A^n M → ⋀_S^n M'` for surjections of rings and of modules, the form used by `lem:dr-presentation` and `lem:dr-quotient`; the module to import |
+| `DeRham/Homotopy/Polynomial`  | the cotangent splitting and total polynomial-form decomposition of `lem:dr-polynomial-splitting` |
+| `DeRham/Homotopy/Degree`      | the degreewise decomposition and its agreement with total forms |
+| `DeRham/Homotopy/Integration` | coefficientwise differentiation and integration over a ring in which positive integers are units |
+| `DeRham/Homotopy/Differential` | the differential matrix in `lem:dr-polynomial-splitting` |
+| `DeRham/Homotopy`             | the explicit integration homotopy and canonical cohomology equivalence of `thm:dr-homotopy`; the module to import |
 | `DeRham/Localization`          | `lem:dr-localization`, for any `IsLocalization`; `dlog`, and the extension of derivations |
 | `DeRham/Log/Basic`             | `def:dr-log`, `lem:dr-log-dga`: `theta`, `logForms`, `logPower`, `logMk`, the differential and the ideal `f L^•`; no smoothness |
 | `DeRham/Log/Residue`           | `IsSmoothPrincipalPair`, `lem:dr-regularity`, `def:dr-residue`, `thm:dr-residue-sequence` on elements, `lem:dr-form-projection` |
@@ -96,6 +101,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
 | `Examples/DeRhamCohomology`    | exact forms are not an ideal of all forms, `X²` in characteristic two, the point over `ℤ` and `ZMod 2`, the zero algebra |
 | `Examples/DeRhamComplex`     | `d` is not linear over the algebra, characteristic two and the zero algebra |
+| `Examples/DeRhamHomotopy`     | rational dual numbers, zero coefficients, homotopy normalization and failure of the integration hypothesis in characteristic two |
 | `Examples/DeRhamLocalization` | nilpotent, zero and unit equations; a conormal map that is not injective over `ZMod 2` |
 | `Examples/DeRhamLog`         | signs of the projection formulas; unit, zero-algebra, disconnected and divisor-pair consumers of `DeRham/Log` |
 | `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
@@ -540,10 +546,11 @@ field may be weakened, and no comparison or exactness statement may become a hyp
 declaration names are proposals, as with the first blueprint.
 
 The namespace is `OrlikSolomon.DeRham`. Exterior calculus, the dg algebra and its differential,
-its cohomology algebra, forms on localizations and principal quotients, projectivity and regular
-scalar action in every form degree, injectivity into localization, conormal splitting, global and
-localized normal derivations, wedge exactness modulo the divisor, and logarithmic forms with their
-residue sequence exist; the other parts below remain planned.
+its cohomology algebra, polynomial-form decomposition and homotopy invariance, forms on
+localizations and principal quotients, projectivity and regular scalar action in every form degree,
+injectivity into localization, conormal splitting, global and localized normal derivations, wedge
+exactness modulo the divisor, and logarithmic forms with their residue sequence exist; the other
+parts below remain planned.
 The table groups modules by issues #72–#83. The conormal and normal-derivation results need only
 Mathlib's Kähler differentials and formal-smoothness lifts. Normalizing a derivation on
 `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge exactness uses exterior
@@ -740,14 +747,32 @@ included, without finite presentation or smoothness of a quotient.
   and it holds because `L` is homogeneous. `homogeneousSubalgebraGradedAlgebra` and
   `gradedAlgebraOfIsHomogeneous` give its grading, and `RelationQuotient.liftLinear` gives `H(ρ)`.
 
+### Polynomial homotopy
+
+`DeRham/Homotopy` requires only commutative rings and a `k`-algebra `A`. The cotangent splitting
+uses the Jacobi–Zariski sequence for `k → A → A[X]` and formal smoothness of the polynomial
+extension over `A`, without assuming smoothness of `A` over `k`. Exterior base change and the
+existing line-splitting API give `polynomialFormDecomposition` on total forms. Its degreewise
+restriction `polynomialPowerDecomposition`, the coefficient-degree lemmas and the vanishing of
+the variable component in degree zero give exactly `lem:dr-polynomial-splitting`.
+
+The differential matrix is `d_A α + dX ∧ (∂_X α - d_A β)`. Coefficientwise integration is only
+`k`-linear, as is `d_A`. It needs the hypothesis `∀ n : ℕ, IsUnit (n + 1 : k)` and includes zero
+coefficients. `polynomialHomotopy` is the actual degree-lowering operator `K(α + dX ∧ β) = Iβ`,
+with `polynomialHomotopy_identity` proving `dK + Kd = id - inc ∘ ev₀`. The algebra equivalence
+`polynomialCohomologyEquiv` is induced by inclusion of constants, with inverse induced by
+`polynomialEvaluationAtZero`; its public formulas fix both maps and its degree lemma records
+preservation and reflection of the grading. `bijective_cohomologyMap_C` is the input for the
+polynomial axiom of the instance. The rational dual-number and zero-ring regressions require no
+smoothness of the coefficient algebra.
+
 The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Its opening
-names the exterior calculus, dg algebra, cohomology algebra, forms on localizations and quotients,
-projectivity and regularity of forms, injectivity into localization, conormal splitting, normal
-derivations, modulo-divisor wedge exactness, and logarithmic forms with their residue sequence as
-formalized, and lists what remains. The first page,
-`Organization` and the chapter on the axioms say the instance is in progress. No nonzero value of
-`OrdinaryTheory` has been constructed. The build does not check that prose, so keep it current as
-nodes land. The PR
+names the exterior calculus, dg algebra, cohomology algebra, polynomial homotopy, forms on
+localizations and quotients, projectivity and regularity of forms, injectivity into localization,
+conormal splitting, normal derivations, modulo-divisor wedge exactness, and logarithmic forms with
+their residue sequence as formalized, and lists what remains. The first page, `Organization` and the
+chapter on the axioms say the instance is in progress. No nonzero value of `OrdinaryTheory` has been
+constructed. The build does not check that prose, so keep it current as nodes land. The PR
 that proves `thm:dr-instance` must update the sentences saying that no nonzero value
 of the structure has been constructed: on the first page, in the chapter on the axioms, on the
 status page and in `README.md`.
