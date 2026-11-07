@@ -454,12 +454,18 @@ instance : IsOpenImmersion (complementInclusion h).left := by
     infer_instance
   exact .of_comp _ (complementι 𝒜).left
 
+/-- The inclusion pulls back the restriction of a function to `U_𝒜` to its restriction to `U_ℬ`. -/
+lemma complementInclusion_appTop (x : Γ((affineSpace k V).left, ⊤)) :
+    (complementInclusion h).left.appTop ((complementι 𝒜).left.appTop x) =
+      (complementι ℬ).left.appTop x := by
+  rw [← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop, ← Over.comp_left,
+    complementInclusion_comp_complementι]
+
 /-- The inclusion pulls back the unit of `f` on `U_𝒜` to the unit of `f` on `U_ℬ`. -/
 lemma complementInclusion_appTop_complementUnit (hf : 𝒜.Covers (zeroLocus f)) :
     (complementInclusion h).left.appTop (complementUnit 𝒜 f hf : Γ((complement 𝒜).left, ⊤)) =
-      (complementUnit ℬ f (hf.mono h) : Γ((complement ℬ).left, ⊤)) := by
-  rw [coe_complementUnit, coe_complementUnit, ← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop,
-    ← Over.comp_left, complementInclusion_comp_complementι]
+      (complementUnit ℬ f (hf.mono h) : Γ((complement ℬ).left, ⊤)) :=
+  complementInclusion_appTop h _
 
 @[simp] lemma complementInclusion_refl : complementInclusion (le_refl 𝒜) = 𝟙 (complement 𝒜) :=
   hom_ext_complement (by simp)

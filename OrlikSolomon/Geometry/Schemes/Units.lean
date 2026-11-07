@@ -22,6 +22,7 @@ global function, used in its proof of `thm:geo-log-laws`.
 * `Geometric.gmCoord k`: the coordinate `z`, a unit on `𝔾ₘ`.
 * `Geometric.unitsEquivHomGm X`: `Γ(X, 𝒪_X)ˣ ≃* (X ⟶ 𝔾ₘ)`, `u ↦ û`, an isomorphism of groups for
   the group structure of `X ⟶ 𝔾ₘ` given by the group object `𝔾ₘ`. Its inverse is `f ↦ f^* z`.
+* `Geometric.specUnit u`: a unit of a `k`-algebra `A`, as a global unit on `Spec A`.
 
 ## Main results
 
@@ -220,5 +221,20 @@ lemma unitsEquivHomGm_comp_inv (u : Γ(X.left, ⊤)ˣ) :
 Blueprint: `thm:geo-units`. -/
 lemma toUnit_comp_one : toUnit X ≫ η[gm k] = unitsEquivHomGm X 1 := by
   rw [map_one, Hom.one_def]
+
+/-! ### Units of spectra -/
+
+/-- A unit `u` of a `k`-algebra `A`, as a global unit on `Spec A`. -/
+abbrev specUnit {A : CommAlgCat.{u} k} (u : Aˣ) : Γ((spec A).left, ⊤)ˣ :=
+  Units.map ((Scheme.ΓSpecIso (.of A)).inv.hom.toMonoidHom : A →* Γ((spec A).left, ⊤)) u
+
+lemma coe_specUnit {A : CommAlgCat.{u} k} (u : Aˣ) :
+    (specUnit u : Γ((spec A).left, ⊤)) = (Scheme.ΓSpecIso (.of A)).inv u :=
+  rfl
+
+/-- Pulling back a unit along `Spec φ` gives the unit of its image. -/
+lemma map_specMap_specUnit {A B : CommAlgCat.{u} k} (φ : A ⟶ B) (u : Aˣ) :
+    Units.map (specMap φ).left.appTop.hom (specUnit u) = specUnit (Units.map (φ.hom : A →* B) u) :=
+  Units.ext (specMap_left_appTop_ΓSpecIso_inv φ u)
 
 end OrlikSolomon.Geometric
