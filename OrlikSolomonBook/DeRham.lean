@@ -22,8 +22,8 @@ The exterior calculus and the de Rham dg algebra of an arbitrary algebra, includ
 The polynomial decomposition of forms and the integration homotopy are formalized as well, including the cohomology equivalence whose inverse is induced by evaluation at zero.
 Projectivity in every form degree, injectivity of regular scalar multiplication and of restriction into localization, conormal splitting, global and localized normal derivations, and wedge exactness modulo the divisor are also formalized, as are logarithmic forms and the residue sequence of a smooth divisor.
 Cartan calculus, the pole filtration, contraction of its positive quotients, and finite reduction to logarithmic cohomology are formalized.
-The residue and Gysin maps before the twist, their long exact sequence and projection formula, and their naturality for morphisms that need not be flat are formalized.
-The Laurent-twisted functor and the fields of the structure of axioms that precede the Gysin and residue maps are formalized too.
+The residue and Gysin maps before the twist, their long exact sequence and projection formula, and their naturality for morphisms that need not be flat are formalized too.
+So are the Laurent-twisted functor and the fields of the structure of axioms that precede the Gysin and residue maps.
 The remaining fields and the final instance remain planned.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
@@ -77,7 +77,7 @@ The whole argument runs on a single global derivation, in the following steps.
  * *Finite reduction.* Every localized form has a finite pole order, and a contractible quotient lowers the pole order of a cocycle, or of a primitive, by one step. Both directions are finite inductions on a natural number, so no spectral sequence and no limit is needed. See {bp "thm:dr-comparison"}[].
 
 The derivation $`v` is used only to prove bijectivity: the comparison map and its inverse are canonical.
-This gives the canonical comparison needed for the planned cohomological residue and Gysin maps.
+This gives the canonical comparison needed for the planned residue on localization cohomology and the remaining localization fields.
 
 # Why characteristic zero is needed
 
