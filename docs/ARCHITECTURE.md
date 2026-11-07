@@ -299,9 +299,12 @@ three rings. State results for every equation of `H`.
   whose ring is `k`. For `W = 0`, `Proj Sym(W*)` is empty, so its ring is zero and not `k`.
 - Consumers use `SmoothAlg.coneIso`, `SmoothAlg.deconeIso` and `SmoothAlg.projectiveRatioUnit`. The
   formula `ℓ_i = t (ℓ_i / ℓ_0)` is `mapUnits_coneIso_hom_complementUnit`.
-- `Geometry/ProjectiveScheme` is the only module that imports Mathlib's schemes. It adds about 250
-  Mathlib modules to the closure of the root and of the book, about 11%. It is a leaf: nothing else
-  in the library may import it, so the proof of the structure theorem stays free of schemes.
+- `Geometry/ProjectiveScheme` is at present the only module that imports Mathlib's schemes. It adds
+  about 250 Mathlib modules to the closure of the root and of the book, about 11%. It is a leaf for
+  the algebraic development: the proof of the structure theorems, the algebra, the combinatorics and
+  the algebraic de Rham instance may not import it, so they stay free of schemes. The planned scheme
+  layer of milestone M6 is the exception: `Geometry/Schemes/Projective` and the modules built on it
+  may import it. See "The geometric refactor" below.
 
 ### Projective structure maps
 
@@ -558,10 +561,19 @@ The `Book` workflow runs all of this on pull requests and deploys `main` to
 ## Scope
 
 In scope: the ordinary affine and projective theorems, their combinatorial corollaries,
-the bridge from a standard degreewise theory, the de Rham instance, and the exposition.
+the bridge from a standard degreewise theory, the de Rham instance, the geometric refactor, and the
+exposition.
 
 The de Rham instance has its own blueprint, `blueprint/de_rham_instance_blueprint.tex`, and is
 tracked by the GitHub milestone "M5 De Rham instance". See the next section.
+
+The geometric refactor, milestone M6, has its own blueprint,
+`blueprint/geometric_refactor_blueprint.tex`, and is tracked by the GitHub milestone
+"M6 Geometric refactor". It restates the affine and projective theorems for cohomology theories on
+smooth schemes, with complements as open subschemes, and transports the de Rham instance to smooth
+affine schemes. It builds on the algebraic development and the de Rham instance and changes
+neither. A de Rham instance on schemes that are not affine is not part of it. See "The geometric
+refactor" below.
 
 The stable extension is **deferred** unless Adam asks for it. It is §11 of
 `blueprint/arrangement_cohomology_lean_blueprint.tex`, the second half of that blueprint's
@@ -945,3 +957,101 @@ theory; and the checks against singular and `ℓ`-adic cohomology are by hand. T
 the two corollaries as elaborated Lean, with `#print axioms`. The docstrings of `OrdinaryTheory`,
 `BridgeData/Basic` and `Examples/Sanity` also name the instance. The build does not check that
 prose, so keep it current as nodes land.
+
+## The geometric refactor
+
+`blueprint/geometric_refactor_blueprint.tex` is authoritative for the mathematics of milestone M6.
+It makes cohomology a contravariant functor on a category of smooth `k`-schemes, makes the
+complements the actual open subschemes of `Spec Sym(V*)` and `Proj Sym(W*)`, and reuses every proved
+algebraic result through the equivalence between smooth algebras and smooth affine schemes. It adds
+no field to the axioms, keeps the hypotheses of both structure theorems, and changes no conclusion.
+No node is formalized yet. Its declaration names are proposals, as with the other blueprints.
+
+The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
+`DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
+so refer to the existing ones by their full names, as the blueprint's signatures do:
+`OrlikSolomon.OrdinaryTheory`, `OrlikSolomon.DivisorPair`, `OrlikSolomon.DeRham.ordinaryTheory`.
+
+### Decisions
+
+- **Admissible domains.** A theory takes a domain (`def:geo-domain`): a full, isomorphism-closed
+  subcategory of smooth schemes over `Spec k` that contains every smooth affine scheme and is closed
+  under products with `𝔸¹` and `𝔾ₘ`. Its morphisms are all morphisms over `Spec k`, with no
+  smoothness or flatness condition. The canonical domains are all smooth schemes, smooth separated
+  schemes of finite type, and smooth affine schemes. A theory restricts to a smaller domain with no
+  input (`lem:geo-restriction`), so a theory on all smooth schemes applies directly. Membership of
+  smooth affine schemes is supplied by instances, never by a hypothesis on an arrangement.
+- **Contravariance.** The value at `X` is `T.C.obj (op X)` and pullback along `g` is `T.C.map g.op`.
+  The blueprint suggests the abbreviations `obj T X` and `pull T g`, so that user lemmas do not show
+  coercions of opposite objects.
+- **Principal pairs, with reversed morphisms.** `Geometric.DivisorPair` keeps a global regular
+  equation, certified as in the algebraic `DivisorPair`, and is not a general Cartier divisor
+  (`def:geo-divisor-pair`). Its morphisms run in the geometric direction: `g : P ⟶ Q` has scheme
+  maps from the parts of `P` to those of `Q`, and the unit `u` in `g_X^* f_Q = u f_P` is a global
+  unit on the source `X_P`. Its existence is a `Prop`, not data. So the anti-equivalence with
+  algebraic pairs (`thm:geo-pair-duality`) reverses morphisms. The condition on equations says that
+  the source divisor is the scheme-theoretic pullback of the target divisor, and it needs no
+  flatness (`thm:geo-cartesian`).
+- **The algebraic structure stays the kernel interface.** `OrlikSolomon.OrdinaryTheory` is not
+  retired. `toAlgebraic` restricts a geometric theory on any domain to it, by evaluating on spectra
+  (`thm:geo-to-algebraic`), and `ofAlgebraic` transports a value of it to the affine domain, by
+  evaluating on global sections (`thm:geo-from-algebraic`). The geometric theorems apply the
+  existing ones to `T.toAlgebraic` and compose with the comparisons `s_𝒜` and `s_P` of a complement
+  with the spectrum of its existing ring: the public `affineEquiv_apply` is `Φ^geo = s_𝒜^* ∘ Φ`,
+  where `Φ` is the existing equivalence for `T.toAlgebraic`. Any other construction is identified
+  with it by the uniqueness on generators. The existing public theorems remain, and the geometric
+  ones are additional entries.
+- **The de Rham instance is on the affine domain.** It is `ofAlgebraic (DeRham.ordinaryTheory k)`
+  (`thm:geo-dr-instance`), and its cohomology is `OrlikSolomon.DeRham.Cohomology` of the global
+  sections, with the comparison to the cohomology of global forms as its specification
+  (`def:geo-dr-cohomology`). The sheaf of forms and the sheaf logarithmic comparison
+  (`thm:geo-log-sheaves`) are in scope for every scheme, but they are inputs to an instance on
+  schemes that are not affine, not such an instance. That instance needs hypercohomology, as the
+  example of `ℙ¹` in `prop:geo-nonaffine` shows, and it is a separate project, not part of M6.
+- **`Geometry/ProjectiveScheme` stops being a leaf for the new consumers.**
+  `Geometry/Schemes/Projective` and the modules built on it may import it. The algebra, the
+  combinatorics, the proof of the structure theorems and the algebraic de Rham instance still may
+  not import it or anything in the scheme layer, which depends on them and not conversely.
+- **The implementation traps carry over.** Keep named geometric objects, pairs, functors and
+  theories as `def`s with comparison and `simp` lemmas, keep typed residue and Gysin wrappers, keep
+  `mapOverR`, `gysinOverR` and `residueOverR` for the case `R = B`, and keep the coefficient on the
+  left in `TwistedCohomology`. Prove one set of naturality lemmas for `s_𝒜` and `s_P` and use them,
+  rather than rewriting through `Spec` and `Γ`.
+
+### Modules
+
+The paths are the blueprint's proposals, and each row is one of #107–#118. A PR that splits a row
+into other files updates this table.
+
+| Module under `OrlikSolomon/` | Blueprint labels | Issue |
+| ---------------------------- | ---------------- | ----- |
+| `Geometry/Schemes/Basic`, `Geometry/Schemes/AffineDuality` | `def:geo-domain`, `thm:geo-affine-duality`, `lem:geo-affine-pairs`, `lem:geo-products`, `thm:geo-units` | #107 |
+| `Geometry/Schemes/PrincipalPair` | `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-cartesian`, `thm:geo-pair-duality` | #108 |
+| `Cohomology/Geometric/Axioms`, `Cohomology/Geometric/Transport` | `def:geo-theory`, `lem:geo-restriction`, `lem:geo-empty`, `thm:geo-to-algebraic`, `thm:geo-from-algebraic` | #109 |
+| `Cohomology/Geometric/Bridge` | `def:geo-supports`, `thm:geo-bridge` | #110 |
+| `Geometry/Schemes/Complement` | `def:geo-affine-space`, `def:geo-complement`, `thm:geo-complement-spec`, `thm:geo-deletion`, `thm:geo-small-targets` | #111 |
+| `Geometry/Schemes/Projective` | `def:geo-projective`, `thm:geo-projective-geometry` | #112 |
+| `Cohomology/Geometric/Logarithms` | `def:geo-log`, `thm:geo-log-laws`, `thm:geo-gm-product` | #113 |
+| `Presentation/Geometric` | `thm:geo-affine`, `thm:geo-projective`, `thm:geo-transport-all` | #114 |
+| `Geometry/Schemes/ModuleGluing` | `lem:geo-module-gluing`: exactness of associated module sheaves, for any modules, with no forms | #115 |
+| `DeRham/Schemes/Forms`, the module to import, over `DeRham/Schemes/Forms/Presheaf`, `DeRham/Schemes/Forms/Sheaf`, `DeRham/Schemes/Forms/Affine` and `DeRham/Schemes/Forms/Pullback` | `def:geo-forms-sheaf`, `thm:geo-forms-comparison` | #115 |
+| `DeRham/Schemes/Affine`, `DeRham/Schemes/Instance`, `DeRham/Schemes/Corollaries` | `def:geo-dr-cohomology`, `thm:geo-dr-instance`, `cor:geo-dr-arrangements` | #116 |
+| `DeRham/Schemes/Log` | `thm:geo-log-sheaves` | #117 |
+| `Examples/Geometric` | `prop:geo-finite-field`, `prop:geo-degenerate`, `prop:geo-exclusions`, `prop:geo-nonflat`, `prop:geo-nonaffine`, `prop:geo-affine-regressions`, and the blueprint's acceptance consumers | #118 |
+
+`Geometry/Schemes/ModuleGluing` is generic and uses the namespace `OrlikSolomon.Geometric`. Only
+`DeRham/Schemes/Forms` and its four submodules use `OrlikSolomon.Geometric.DeRham`.
+
+`Presentation/Geometric` is a facade: the blueprint's acceptance test is a consumer that imports
+only it and states both theorems for a theory on all smooth schemes. The blueprint's stages fix the
+order. Stage G0 is #107 and #108. After it, stage G1 (#109) and stage G2 (#111, #112) are
+independent, and the geometric bridge #110 needs only #109. Stage G3 (#113, #114) needs G1 and G2.
+Stage G4 (#115) is independent of G0–G3, stage G5 (#116) needs G1, G3 and G4, and stage G6 (#117)
+needs G0 and G4. Parts of #118 land with the modules they test.
+
+The chapter `OrlikSolomonBook/Geometric.lean` presents all 42 nodes as planned, and its opening says
+that none is formalized. When nodes land, update that opening, the paragraph "A planned third part"
+on the first page, the row in `Organization`, the sentence on the status page, the pointers in
+`Geometry`, `Axioms` and `Projective`, and the line in `README.md`. In particular, `Projective` says
+that no proof module imports `Geometry/ProjectiveScheme`, which stops being true with #112. The
+build does not check this prose.

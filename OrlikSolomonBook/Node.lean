@@ -530,6 +530,7 @@ def blueprintName (source : String) : String :=
   match source with
   | "arrangement_cohomology_lean_blueprint.tex" => "Main theorem"
   | "de_rham_instance_blueprint.tex" => "De Rham instance"
+  | "geometric_refactor_blueprint.tex" => "Geometric refactor"
   | other => other
 
 /-- The nodes of each blueprint file, in the order in which the files first occur. -/

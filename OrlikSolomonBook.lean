@@ -15,6 +15,7 @@ import OrlikSolomonBook.SecondInduction
 import OrlikSolomonBook.Multiplicities
 import OrlikSolomonBook.Projective
 import OrlikSolomonBook.DeRham
+import OrlikSolomonBook.Geometric
 import OrlikSolomonBook.Generalized
 import OrlikSolomonBook.Status
 
@@ -392,7 +393,7 @@ All of these are outputs of the proof.
  * In the projective case the empty arrangement is excluded. There is no hyperplane to put at infinity, the space is $`\mathbb{P}^n` itself, and its cohomology needs a projective bundle formula that the axioms do not provide.
 
 *How this book is tied to the code.*
-Every result appears in a box that shows a status and its label in the [blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), or, for the de Rham instance, in the [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex):
+Every result appears in a box that shows a status and its label in one of three blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, or the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the planned refactor on schemes:
  * *Planned* means that the result is in scope and no Lean declaration is attached to it yet. The text describes what is intended, and nothing has been checked.
  * *Deferred* means that the result is in the blueprint but outside the current scope of the project.
  * *Partly formalized* means that the box names Lean declarations for part of the result, shows their statements with links to their source, and says what is missing.
@@ -404,7 +405,7 @@ Open that line to compare them with the text.
 *What the build checks.*
 A box cannot claim the last two statuses by assertion, because they follow from naming declarations.
 For each named declaration, the build of this book checks only that it exists, and that it depends on no `sorry` and on no axiom other than Lean's standard `propext`, `Classical.choice` and `Quot.sound`.
-A second check fails the build if either blueprint has a node that the book does not present, if the book presents a node twice, or if a label is used twice, even across the two blueprints.
+A second check fails the build if any of the blueprints has a node that the book does not present, if the book presents a node twice, or if a label is used twice, even in two different blueprints.
 The {ref "status"}[status page] is generated from the same data.
 Lean code in the text, such as the statements above, is elaborated when the book is built.
 So are the names of declarations that the text sets in Lean's highlighting, and the build fails if one of them does not resolve.
@@ -418,12 +419,19 @@ So do not read *Formalized* as a machine-checked claim about the words in a box.
 What the build has checked is the declarations shown there, and you can compare their statements with the text yourself.
 
 *A de Rham instance.*
-The status lines at the top of this page count two blueprints separately.
-The second constructs a value of the structure of axioms: algebraic de Rham cohomology over a field of characteristic zero.
+The status lines at the top of this page count each blueprint separately.
+The second blueprint constructs a value of the structure of axioms: algebraic de Rham cohomology over a field of characteristic zero.
 That value is formalized, so the axioms have a nonzero model in Lean.
 So are the forms of the two theorems with no hypothetical cohomology theory in them, which instantiate the theorems at this value and identify the generators with the classes of the forms $`df/f`, as stated above.
 {ref "de-rham"}[Its chapter] presents the construction and the worked regressions.
 The main theorem does not depend on it: the dependence runs the other way.
+
+*A planned third part.*
+The third blueprint plans to restate both theorems for cohomology theories defined on smooth schemes, with the complements as actual open subschemes of affine and projective space, so that a theory on all smooth schemes would apply to them directly.
+It would reuse every proved algebraic result through the equivalence between smooth algebras and smooth affine schemes, and transport the de Rham instance to smooth affine schemes.
+None of it is formalized yet, so its statements are not theorems of the library.
+{ref "geometric"}[Its chapter] presents the plan, and its nodes are counted separately above.
+Nothing on this page depends on it: the dependence runs the other way.
 
 {include 1 OrlikSolomonBook.Organization}
 
@@ -446,6 +454,8 @@ The main theorem does not depend on it: the dependence runs the other way.
 {include 1 OrlikSolomonBook.Projective}
 
 {include 1 OrlikSolomonBook.DeRham}
+
+{include 1 OrlikSolomonBook.Geometric}
 
 {include 1 OrlikSolomonBook.Generalized}
 

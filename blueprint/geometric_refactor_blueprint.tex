@@ -1,0 +1,1126 @@
+% Standalone source. Compile with pdflatex or latexmk -pdf.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype,enumitem,booktabs,longtable,array,xcolor,listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage{xurl}
+\usepackage[colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small Geometric refactor: Lean blueprint}
+\fancyhead[R]{\small\thepage}
+\setlength{\headheight}{14pt}
+\setlength{\emergencystretch}{2em}
+\setlist{itemsep=3pt,topsep=5pt}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible,keepspaces=true,frame=single,rulecolor=\color{black!20},xleftmargin=4pt,xrightmargin=4pt}
+\newcommand{\A}{\mathbb A}
+\newcommand{\PP}{\mathbb P}
+\newcommand{\Gm}{{\mathbb G_m}}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\N}{\mathbb N}
+\newcommand{\cA}{\mathcal A}
+\newcommand{\cP}{\mathcal P}
+\newcommand{\OS}{\operatorname{OS}}
+\newcommand{\pOS}{\overline{\operatorname{OS}}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\kerop}{\operatorname{ker}}
+\newcommand{\res}{\operatorname{res}}
+\newcommand{\codim}{\operatorname{codim}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\Spec}{\operatorname{Spec}}
+\newcommand{\SH}{\operatorname{SH}}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\logc}[1]{[#1]}
+\newcommand{\planned}[1]{\texttt{\detokenize{#1}}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\lean}[1]{\par\smallskip{\footnotesize\color{blue!50!black}\textsf{Planned declaration: }\nolinkurl{#1}}\par\smallskip}
+\newcommand{\uses}[1]{}
+
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\Sm}{\mathsf{Sm}}
+\newcommand{\Aff}{\mathsf{Aff}}
+\newcommand{\Dom}{\mathcal D}
+\newcommand{\OO}{\mathcal O}
+\newcommand{\Om}{\Omega}
+\newcommand{\dR}{\mathrm{dR}}
+\newcommand{\op}{\mathrm{op}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\HH}{\mathbb H}
+\newcommand{\old}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\G}{\ensuremath{\Gamma}}
+\renewcommand{\Spec}{\ensuremath{\operatorname{Spec}}}
+\newcommand{\Proj}{\ensuremath{\operatorname{Proj}}}
+\renewcommand{\planned}[1]{\nolinkurl{#1}}
+\hypersetup{pdftitle={Geometric refactoring of Orlik--Solomon cohomology},pdfauthor={Prepared for Adam Topaz}}
+\title{Orlik--Solomon cohomology on schemes\\\large A geometric refactoring blueprint}
+\author{Prepared for Adam Topaz and the formalization team}
+\date{7 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+The public objects become open subschemes of affine and projective space; cohomology becomes contravariant on a full category of smooth schemes over the base. The existing algebraic proofs survive behind an explicit, fully compatible affine duality. A theory on all smooth schemes applies to the arrangement theorems by an automatic restriction, with no descent axiom and no new arrangement hypothesis. Algebraic de Rham cohomology is constructed on smooth affine schemes from a scheme-level sheaf of forms and its global sections, using the already proved algebraic instance. The sheaf of forms and the logarithmic comparison are also constructed on arbitrary smooth schemes. Extending the cohomology instance to non-affine schemes is deliberately a separate hypercohomology project, not an unproved step in this refactor.
+
+Every new declaration below is proposed and has not been elaborated in Lean. Existing source was inspected at repository commit \texttt{44a0c98}; the pinned Mathlib revision is \texttt{6db5db0d2279846cc8fb25901bd53221d37a77d8}. Source inspection is not a fresh build or kernel replay.
+\end{abstract}
+\paragraph{Decisions that affect the interface.}
+Use an admissible full subcategory of smooth schemes, with canonical choices for all smooth schemes, smooth separated schemes of finite type, and smooth affine schemes. Keep principal regular smooth divisor pairs. Reverse pair morphisms when passing from algebras to schemes. In Lean the value at $X$ is \planned{T.C.obj (op X)}, not \planned{T.C.obj X}. Preserve the nonempty-arrangement hypothesis in the projective structure theorem: the complement of an empty projective arrangement is usually non-affine and has different cohomology. No mathematical conclusion of either ordinary structure theorem changes.
+
+\paragraph{A correction to the supplied status summary.}
+The checked-in book \planned{OrlikSolomonBook/Generalized.lean} marks the six stable/generalized nodes of the first blueprint as deferred. They remain unchanged and deferred here. This does not affect the ordinary affine/projective theorems or the completed de Rham instance. The migration inventory below covers all 105 old mathematical nodes, including those six.
+\tableofcontents
+\newpage
+\section{Decisions, scope, and hypotheses}
+
+The base $k$ is a commutative ring in the categorical and sheaf constructions. The arrangement theorems retain their existing hypothesis that $k$ is a field and the ambient vector space is finite dimensional. The de Rham ordinary instance retains $k$ a field of characteristic zero. Coefficient rings $R$ and $B$ are independent of $k$ and may be zero. All schemes and indexing types are bounded by declared universes; no smallness assertion about all schemes is implicit.
+
+\begin{definition}[Smooth schemes and admissible domains]\label{def:geo-domain}
+\lean{OrlikSolomon.Geometric.SmoothDomain}
+Put $S=\Spec k$. Let $\Sm_k$ be the full subcategory of $\operatorname{Over}(S)$ on smooth structure morphisms. Let $\Sm_k^{\mathrm{aff}}$ be its full subcategory on affine underlying schemes. An admissible domain $\Dom$ is a full, isomorphism-closed subcategory of $\Sm_k$ containing every smooth affine $k$-scheme, and closed under $X\mapsto X\times_S\A^1_S$ and $X\mapsto X\times_S\Gm$. Its morphisms are all $S$-morphisms between its objects; they need not be smooth, flat, dominant, or of constant relative dimension.
+
+Use the canonical domains $\Dom_{\mathrm{all}}=\Sm_k$, $\Dom_{\mathrm{aff}}=\Sm_k^{\mathrm{aff}}$, and $\Dom_{\mathrm{sft}}$ of smooth separated finite-type $S$-schemes. A divisor pair in a domain will require membership of all three of its objects. Closure under every smooth divisor is not required of an arbitrary domain.
+\end{definition}
+\begin{proof}
+Products of smooth schemes over $S$ are smooth: the projection to one factor is a base change of the other structure morphism, and compose it with the first structure morphism. Affine products are affine, by the tensor-product universal property. Smooth affine morphisms are of finite presentation, hence of finite type, and are separated. Separatedness and finite type are preserved by base change and composition. These facts prove the three stated examples are admissible; the affine-local algebraic criterion for smoothness used here is the existing scheme smoothness API. The empty scheme is affine and smooth and is included in every domain. No irreducibility or nonemptiness condition is imposed.
+\end{proof}
+
+\paragraph{Why this choice.}
+The domain parameter is an object-property full subcategory, not a new abstract geometry containing the desired theorems as fields. All geometric operations below are constructed on actual schemes. Asking that every smooth affine scheme belong to the domain is a convenient sufficient condition; the old proof only uses a smaller collection of affine spaces, localizations and smooth principal pairs. A smaller domain could instead carry a list of those closure proofs, but every restriction and low-dimensional target would then acquire membership bookkeeping. There is no mathematical gain for this project.
+
+A theory already defined on all smooth schemes is used with $\Dom_{\mathrm{all}}$ directly. A theory defined on smooth separated schemes of finite type is used with $\Dom_{\mathrm{sft}}$ directly. Neither user supplies an affine comparison theorem, a descent axiom, or an auxiliary algebraic theory: the adapter constructs the latter. Smooth affine schemes give a genuine geometric category for the de Rham instance, rather than a renamed type of algebras.
+
+\begin{center}
+\begin{tabular}{p{.20\textwidth}p{.35\textwidth}p{.34\textwidth}}
+\toprule Choice & Benefit & Additional implementation cost\\\midrule
+All smooth schemes only & Largest domain in one fixed type & A global de Rham instance requires hypercohomology, products, functoriality, descent and an affine computation. This is a separate substantial foundation project.\\
+Smooth affine schemes only & Direct reuse of every existing algebraic proof & Smallest core refactor, but users of global theories must explicitly restrict unless wrappers are added.\\
+Admissible domain; affine de Rham instance & Global theories apply directly; all existing de Rham results remain unconditional & One restriction constructor and variance bookkeeping beyond the affine option. Recommended.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+These are relative engineering estimates: the affine transport is a bounded collection of compatibility lemmas; the domain parameter adds a small amount of category plumbing; sheaf forms are a medium-sized independent development; a multiplicative hypercohomology realization on all smooth schemes is substantially larger than those adapters. The pinned checkout does not justify a reliable calendar estimate. In particular, \planned{Sheaf.H} and the existing $\ell$-adic groups do not by themselves provide de Rham hypercohomology or the needed realization fields.
+
+\paragraph{What is intentionally preserved.}
+Keep hyperplanes, charts, restrictions and incidence combinatorics as linear-algebra data. Keep the Orlik--Solomon algebra, its quotients, exterior words, the boundary, gradings, bases, polynomial recursions and M\"obius theory algebraic. Keep all existing de Rham algebra lemmas in their actual generality, often over arbitrary commutative rings. An intrinsic affine hyperplane scheme will be attached to the linear-algebra datum. No complement is a set of rational vectors, and no equality of scheme maps is tested on $k$-points. The old internal chart may retain its existing linear-algebra choice; the new adapter uses its proved coordinate-ring isomorphism and never chooses a rational point of a complement.
+
+\section{Affine duality with all required compatibilities}
+
+We use the existing foundations of schemes, \Spec, global sections, associated module sheaves, and the affine smoothness criterion. The new proofs below explain the base structure and the compatibility required for transport; they do not reprove Mathlib's construction of \Spec.
+
+\begin{theorem}[Smooth affine duality over the base]\label{thm:geo-affine-duality}
+\lean{OrlikSolomon.Geometric.smoothAffineEquivalence}
+There are inverse equivalences
+\[
+ \mathsf{SmoothAlg}_k\ \simeq\ (\Sm_k^{\mathrm{aff}})^{\op},\qquad
+ A\longmapsto\Spec A,\quad X\longmapsto\G(X,\OO_X).
+\]
+For $X,Y$ affine, the morphism bijection is
+\[
+ \Hom_S(X,Y)\simeq\Hom_{k\text{-alg}}(\G(Y,\OO_Y),\G(X,\OO_X)).
+\]
+Write $\eta_A:A\xrightarrow\sim\G(\Spec A,\OO)$ and
+$\epsilon_X:\Spec\G(X,\OO_X)\xrightarrow\sim X$. These are natural, respect the $k$-algebra or $S$-scheme structures, and satisfy the triangle identities.
+\uses{def:geo-domain}
+\end{theorem}
+\begin{proof}
+The structure map of $\Spec A$ is $\Spec(k\to A)$. A scheme map $\Spec B\to\Spec A$ is over $S$ exactly when its ring map $A\to B$ commutes with the two maps from $k$: apply faithfulness of \Spec to the equation for the two composites to $S$. Thus the usual affine morphism bijection restricts to the displayed algebra-morphism bijection. A structure map $X\to S$ makes global sections a $k$-algebra by pullback; the global-sections functor respects these structures and reverses composition.
+
+The standard affine isomorphisms $\eta$ and $\epsilon$ respect the structures because their maps on sections send each base scalar to the same scalar. Naturality follows on every element under the affine morphism bijection. The triangle identities reduce, under that bijection, to sending each element to itself. The criterion for a map of affine schemes to be smooth is exactly smoothness of its ring homomorphism, with the induced scalar structure. Hence these equivalences restrict to smooth objects in both directions. Affine schemes include $\Spec0=\varnothing$; neither the hom-set bijection nor the triangle identities needs nonzero rings. Separatedness and a choice of coordinates play no role.
+\end{proof}
+
+\begin{lemma}[Regular sections, closed subschemes, and basic opens]\label{lem:geo-affine-pairs}
+\lean{OrlikSolomon.Geometric.affinePrincipalComparisons}
+For any affine $X$ over $S$, put $A=\G(X,\OO_X)$ and let $f\in A$. Under $\epsilon_X$, the closed subscheme $Z_X(f)$ defined by the image ideal sheaf of multiplication by $f$ is $\Spec(A/(f))$, and the open subscheme $X_f$ where $f$ is invertible is $\Spec A_f$. These identifications commute with the closed and open immersions into $X$. Multiplication by $f$ on $\OO_X$ is injective if and only if multiplication by $f$ on $A$ is injective. If $X$ is smooth, then $X_f$ is smooth; $Z_X(f)$ is smooth precisely when $A/(f)$ is smooth over $k$.
+\uses{thm:geo-affine-duality}
+\end{lemma}
+\begin{proof}
+On each distinguished open $D(a)\subseteq\Spec A$, the quotient structure sheaf has ring
+$A_a/fA_a\simeq(A/(f))_{\bar a}$; the isomorphism sends $b/a^m$ to $\bar b/\bar a^m$ and has the same fraction formula backwards. It therefore identifies the ideal-sheaf closed subscheme with $\Spec(A/(f))$, including its map into $\Spec A$. The distinguished open $D(f)$ has sections $A_f$ and its structure map is induced by $A\to A_f$. The corresponding identifications on smaller distinguished opens agree, so these are scheme isomorphisms, not just homeomorphisms.
+
+If $f$ acts injectively on $A$, it acts injectively on every localization: $f(b/a^m)=0$ implies $a^r f b=0$ for some $r$, whence $a^r b=0$. Thus it acts injectively on every stalk and on the sheaf. The reverse implication follows by taking global sections of a monomorphism. Open immersions preserve smoothness, while the last assertion is affine duality's smoothness criterion. No condition on $f$ was needed for the quotient and open comparisons themselves; in particular they cover units and the zero ring.
+\end{proof}
+
+\begin{lemma}[Products, affine lines and multiplicative groups]\label{lem:geo-products}
+\lean{OrlikSolomon.Geometric.specPolynomialAndLaurent}
+Set $\A^1_S=\Spec k[z]$ and $\Gm=\Spec k[z,z^{-1}]$. For affine $X=\Spec A$ there are natural $S$-isomorphisms
+\[
+ \Spec A[z]\simeq X\times_S\A^1_S,
+ \qquad \Spec A[z,z^{-1}]\simeq X\times_S\Gm.
+\]
+The ring inclusions from $A$ correspond to the first projections, evaluation at $0$ or $1$ to the respective sections, and $A[z]\to A[z,z^{-1}]$ to the open immersion. The standard pair becomes
+\[
+ X\xrightarrow{z=0}X\times_S\A^1_S
+ \xleftarrow{j}X\times_S\Gm.
+\]
+\uses{thm:geo-affine-duality,lem:geo-affine-pairs}
+\end{lemma}
+\begin{proof}
+For affine targets the universal property of the tensor product gives
+$\Spec(A\otimes_k B)\simeq\Spec A\times_S\Spec B$. Indeed, two ring maps from $A$ and $B$ to a third $k$-algebra extend uniquely by $a\otimes b\mapsto\phi(a)\psi(b)$. On arbitrary test schemes the same assertion follows from the adjunction with global sections. For $B=k[z]$ or $k[z,z^{-1}]$, the tensor-product algebra is the stated polynomial or Laurent algebra, by sending $1\otimes z$ to $z$ and $a\otimes1$ to $a$. These maps determine both inverse maps uniquely. Checking $a$ and $z$ also proves every compatibility in the statement. Multiplication by $z$ on $A[z]$ is injective by coefficient comparison, even when $A=0$; its quotient is $A$ and its localization is the Laurent algebra. This proves the standard-pair claim without any smoothness assertion about the projection beyond the usual base-change property.
+\end{proof}
+
+\begin{theorem}[Units represent maps to the multiplicative group]\label{thm:geo-units}
+\lean{OrlikSolomon.Geometric.unitsEquivHomGm}
+For every $S$-scheme $X$, affine or not, there is a natural bijection
+\[
+ \G(X,\OO_X)^\times\simeq\Hom_S(X,\Gm),\qquad u\longmapsto\widehat u.
+\]
+Under it, multiplication, inverse and the constant unit $1$ correspond to the group-scheme multiplication, inverse and identity. For $g:X'\to X$, $\widehat{g^*u}=\widehat u\circ g$.
+\uses{lem:geo-products}
+\end{theorem}
+\begin{proof}
+The scheme--global-sections adjunction identifies maps $X\to\Spec k[z,z^{-1}]$ over $S$ with $k$-algebra maps $k[z,z^{-1}]\to\G(X,\OO_X)$. Such a map is determined by the image $u$ of $z$, and $u$ must be invertible. Conversely a unit gives the unique Laurent-polynomial evaluation map, sending $z^{-1}$ to $u^{-1}$. The two constructions are inverse by evaluation on the Laurent generator. The map on coordinate rings defining multiplication sends $z$ to $z_1z_2$, inverse sends $z$ to $z^{-1}$, and identity sends $z$ to $1$. This proves all the product assertions and the group identities. Pullback on global sections and uniqueness of Laurent evaluation prove naturality. The adjunction works for arbitrary schemes, so affineness, smoothness and rational points are unnecessary here.
+\end{proof}
+
+\section{Principal smooth divisor pairs and transversality}
+
+\begin{definition}[Geometric divisor pairs]\label{def:geo-divisor-pair}
+\lean{OrlikSolomon.Geometric.DivisorPair}
+A principal smooth divisor pair in $\Dom$ consists of objects $X,D,U$, maps $i:D\to X$ and $j:U\to X$, and $f\in\G(X,\OO_X)$, with the following certificates:
+\begin{enumerate}
+\item multiplication by $f$ on $\OO_X$ is a monomorphism;
+\item $i$ identifies $D$, as a closed subscheme of $X$, with $Z_X(f)$;
+\item $j$ identifies $U$, as an open subscheme of $X$, with $X_f$.
+\end{enumerate}
+The smoothness of $X,D,U$ is contained in their membership in $\Dom$. Certificates allow named objects, including actual arrangement complements, instead of forcing a literal quotient or a literal open restriction. A unit $f$ and an empty ambient scheme are allowed.
+\uses{def:geo-domain,lem:geo-affine-pairs}
+\end{definition}
+
+\begin{definition}[Morphisms in the geometric direction]\label{def:geo-pair-hom}
+\lean{OrlikSolomon.Geometric.DivisorPair.Hom}
+For pairs $P,Q$, a morphism $g:P\to Q$ has scheme maps
+$g_X:X_P\to X_Q$, $g_D:D_P\to D_Q$, $g_U:U_P\to U_Q$, with
+\[
+ g_Xi_P=i_Qg_D,\qquad g_Xj_P=j_Qg_U,
+ \qquad g_X^*f_Q=u f_P
+ \quad\text{for some }u\in\G(X_P,\OO)^\times.
+\]
+The multiplier lives on the \emph{source scheme}, which is the target of the ring map. Its existence is a proposition; the multiplier is not additional morphism data. Identity and composition are those of schemes.
+\uses{def:geo-divisor-pair,thm:geo-units}
+\end{definition}
+\begin{proof}
+For $g:P\to Q$ with multiplier $u$ and $h:Q\to R$ with multiplier $v$,
+$(hg)^*f_R=g^*(v f_Q)=g^*v\,u f_P$, and $g^*v\,u$ is a unit. Identities have multiplier $1$. The squares compose, so the category laws follow componentwise from those of schemes. In fact $g_D$ and $g_U$ are uniquely determined by $g_X$: the zero-scheme universal property supplies the first map, the open-immersion universal property the second, and closed and open immersions are monomorphisms. Thus these morphisms can also be constructed by an \planned{homOfAmbient} adapter.
+\end{proof}
+
+\begin{theorem}[Cartesian characterization and absence of a flatness requirement]\label{thm:geo-cartesian}
+\lean{OrlikSolomon.Geometric.associatedIffCartesian}
+For two principal smooth divisor pairs and a map $g_X:X_P\to X_Q$, the associated-equation condition is equivalent to an identification
+\[
+ D_P\simeq X_P\times_{X_Q}D_Q
+\]
+as closed subschemes of $X_P$. Then also
+$U_P\simeq X_P\times_{X_Q}U_Q$. The closed square is Tor independent and its conormal map is an isomorphism of line bundles. Ambient flatness is not necessary.
+\uses{def:geo-pair-hom,lem:geo-affine-pairs}
+\end{theorem}
+\begin{proof}
+Pulling back the ideal of $D_Q$ gives the ideal generated by $g_X^*f_Q$. If it is a unit times $f_P$, this equals the ideal of $D_P$, which proves the closed-square assertion. Their invertibility opens are the same, giving the open square.
+
+Conversely, equality of the two ideal sheaves locally expresses
+$g_X^*f_Q=a f_P$ and $f_P=b\,g_X^*f_Q$. On such an open,
+$(1-ba)f_P=0$. Regularity of $f_P$ implies $ba=1$, so $a$ is a unit. If $a'$ is another such local ratio, $(a-a')f_P=0$ gives $a=a'$. The ratios and their inverses therefore glue to one global unit $u$. This proves precisely the global associated-equation condition, including on non-affine $X_P$. Equality of underlying closed sets would not suffice.
+
+Locally a free resolution of $\OO_{D_Q}$ is
+$0\to\OO_{X_Q}\xrightarrow{f_Q}\OO_{X_Q}\to\OO_{D_Q}\to0$.
+After pullback its first map is multiplication by $u f_P$, which is injective. The tensor complex has no positive homology, proving the Tor assertion. Modulo the ideals, the conormal generator $f_Q$ maps to $u f_P$; multiplication by $u|_{D_P}$ is invertible. Thus the conormal and normal-line maps are isomorphisms. This is exactly the transversality needed for oriented divisor purity, even if the ambient map is not flat.
+\end{proof}
+
+\begin{theorem}[Duality for certified pairs]\label{thm:geo-pair-duality}
+\lean{OrlikSolomon.Geometric.affinePairEquivalence}
+Geometric pairs with affine ambient scheme are anti-equivalent to the existing algebraic \planned{OrlikSolomon.DivisorPair k}. The equivalence preserves the two immersions, the equation, its unit on the complement, standard pairs, and equation changes. Its functor on morphisms reverses direction.
+\uses{thm:geo-affine-duality,lem:geo-affine-pairs,lem:geo-products,thm:geo-cartesian}
+\end{theorem}
+\begin{proof}
+For an old pair, take \Spec of its three rings. Surjectivity with kernel $(f)$ identifies its closed map with $\Spec(A/(f))\to\Spec A$ by the first isomorphism theorem. The certified localization identifies its open map with $\Spec A_f\to\Spec A$. The non-zero-divisor certificate becomes regularity by Lemma~\ref{lem:geo-affine-pairs}. Conversely, a geometric pair with affine $X$ has affine $D$ and $U$ by that lemma; global sections give exactly the surjection, kernel and localization certificates required by the old record. The ring map of a geometric $P\to Q$ is $\G(X_Q)\to\G(X_P)$ and sends $f_Q$ to a unit times $f_P$, so it is an old morphism $Q\to P$. The units and their locations match without alteration.
+
+The componentwise affine unit and counit identify the two composites with the original pairs. Their compatibility with the immersions follows from naturality, and compatibility with equations follows from $\eta_A(a)$ being the section represented by $a$. Apply Lemma~\ref{lem:geo-products} to get the standard pair, and use identity maps with a unit multiplier to get equation-change pairs. Thus transport is of the whole pair diagram, not only of its three objects.
+\end{proof}
+
+\paragraph{Why principal, rather than just a trivial normal bundle.}
+An effective Cartier divisor requires an invertible ideal sheaf locally generated by a regular function. A global regular equation trivializes that ideal sheaf on the whole ambient scheme; a trivialization of its restriction to $D$ only trivializes the conormal bundle on $D$. These are different requirements. For example, one rational point of $\PP^1_k$ has a one-dimensional, hence trivial, normal bundle over that point, but cannot be the zero scheme of a global regular function: $\G(\PP^1_k,\OO)=k$, as proved in Proposition~\ref{prop:geo-nonaffine}. A nonzero constant cuts out nothing, and zero cuts out the whole scheme. Keep the principal record; a general Cartier-divisor record can be added later with its own purity adapter. The current algebraic instance alone does not supply that adapter. A principal equation is not an axiom that Gysin maps vanish.
+
+\section{The geometric cohomology interface and the bridge}
+
+\begin{definition}[Ordinary theory on a geometric domain]\label{def:geo-theory}
+\lean{OrlikSolomon.Geometric.OrdinaryTheory}
+Fix the old coefficient data $R,B,\mathcal B$ and an admissible domain $\Dom$. A geometric ordinary theory has a contravariant functor
+\[
+ C:\Dom^{\op}\longrightarrow\mathsf{AlgCat}_B,
+ \qquad C(X):=C(\operatorname{op}X),\quad
+ g^*:=C(g^{\op})\quad(g:X\to Y).
+\]
+It has exactly the fields in the following table, with the same scalar coherence and internal grading conventions as \old{def:cohomology}. Denote the bidegree $(p,w)$ piece by $C(X)_{p,w}$. For a pair $P$ write $G_P:C(D_P)\to C(X_P)$ and $r_P:C(U_P)\to C(D_P)$.
+
+\small
+\begin{longtable}{p{.40\textwidth}p{.54\textwidth}}
+\toprule Old field (new meaning) & Geometric requirement\\\midrule\endhead
+\planned{bijective_algebraMap_gradeZero} & $R\to\mathcal B_0$ is bijective.\\
+\planned{C} & The functor on $\Dom^{\op}$ above; targets are possibly noncommutative $B$-algebras.\\
+\planned{algebra} & Each $C(X)$ has its specified $R$-algebra structure.\\
+\planned{isScalarTower} & Its $R$-action agrees with restriction of its $B$-action.\\
+\planned{grading} & $\Z^2\to\operatorname{Submodule}_R C(X)$.\\
+\planned{gradedAlgebra} & The grading is an internal direct sum and multiplication adds degrees.\\
+\planned{algebraMap_mem_grading} & $b\in\mathcal B_w$ maps into $C(X)_{0,w}$.\\
+\planned{isHomogeneousOfShift_map} & $g^*:C(Y)\to C(X)$ has shift $(0,0)$.\\
+\planned{isGradedCommutative} & $ab=(-1)^{pq}ba$ for cohomological degrees $p,q$.\\
+\planned{bijective_algebraMap_point} & $B\to C(S)$ is bijective.\\
+\planned{eq_zero_of_mem_grading_point} & $C(S)_{p,w}=0$ for $p\ne0$.\\
+\planned{bijective_map_polynomialC} & Renamed \planned{bijective_pullback_affineLine}: $\pi^*:C(X)\to C(X\times_S\A^1)$ is bijective for every $X\in\Dom$.\\
+\planned{gysin} & $G_P$ is $B$-linear, for every geometric pair in $\Dom$.\\
+\planned{residue} & $r_P$ is $B$-linear, for every such pair.\\
+\planned{isHomogeneousOfShift_gysin} & $G_P$ has shift $(2,1)$.\\
+\planned{isHomogeneousOfShift_residue} & $r_P$ has shift $(-1,-1)$.\\
+\planned{exact_gysin_map} & $\im G_P=\ker j_P^*$.\\
+\planned{exact_map_residue} & $\im j_P^*=\ker r_P$.\\
+\planned{exact_residue_gysin} & $\im r_P=\ker G_P$.\\
+\planned{gysin_map} & For $g:P\to Q$, $G_Pg_D^*=g_X^*G_Q$.\\
+\planned{residue_map} & For $g:P\to Q$, $r_Pg_U^*=g_D^*r_Q$.\\
+\planned{residue_mul_map} & $r_P(\alpha j_P^*\beta)=r_P(\alpha)i_P^*\beta$ if $\alpha\in C(U_P)_{1,1}$, for arbitrary $\beta\in C(X_P)$.\\
+\bottomrule
+\end{longtable}
+\normalsize
+There is no axiom about the value at the empty scheme, about any special arrangement, or about logarithmic generation, vanishing, freeness, or short exact deletion. There is no K\"unneth axiom. Do not replace \planned{AlgCat B} by \planned{CommAlgCat B} or grade by $B$-submodules: the cohomology ring is graded commutative and multiplication by $B_w$ changes the weight.
+\uses{def:geo-domain,def:geo-divisor-pair,def:geo-pair-hom,def:cohomology}
+\end{definition}
+
+\begin{lemma}[Restriction and change of domain]\label{lem:geo-restriction}
+\lean{OrlikSolomon.Geometric.OrdinaryTheory.restrict}
+An inclusion of admissible full domains $J:\Dom_1\hookrightarrow\Dom_2$ restricts a theory $T$ by $J^{\op}\mathbin{\!\circ\!}T.C$ in diagrammatic functor order. All fields restrict. In particular a theory on all smooth schemes supplies a theory on the affine domain with no extra mathematical input. Restriction is compatible with the canonical product and point isomorphisms if the domains use different chosen models.
+\uses{def:geo-theory,lem:geo-products}
+\end{lemma}
+\begin{proof}
+On an object and a morphism use exactly the original algebra, grading and pullback. A pair or pair morphism in the smaller domain is one in the larger domain, so use the same Gysin and residue. Every field is then the original field at those objects. If products were chosen independently, the unique product isomorphism commutes with the projections; functoriality turns it into an algebra equivalence conjugating the two pullbacks. Conjugation by a bijection preserves bijectivity, kernel/image equalities, products and homogeneous degrees. The same argument handles the point. No comparison of cohomology across a covering is involved.
+\end{proof}
+
+\begin{theorem}[Restriction to the old algebraic interface]\label{thm:geo-to-algebraic}
+\lean{OrlikSolomon.Geometric.OrdinaryTheory.toAlgebraic}
+Every geometric theory $T$ on $\Dom$ canonically supplies an old ordinary theory $T_{\mathrm{alg}}$ with
+\[
+ T_{\mathrm{alg}}(A)=C(\Spec A),\qquad
+ T_{\mathrm{alg}}(\phi)=(\Spec\phi)^*.
+\]
+Gysin and residue are the geometric maps of the \Spec-pair. All 22 old fields hold, with exactly their old degrees and signs.
+\uses{thm:geo-affine-duality,thm:geo-pair-duality,lem:geo-products,def:geo-theory}
+\end{theorem}
+\begin{proof}
+Compose the functor $\mathsf{SmoothAlg}_k\to\Dom^{\op}$ from affine duality and domain inclusion with $C$. Copy the scalar structures and the grading. Functoriality and the coefficient and commutativity fields are then the geometric ones. The point is $\Spec k=S$. The map $A\to A[z]$ corresponds, under Lemma~\ref{lem:geo-products}, to the affine-line projection, so the old polynomial field is the conjugate of the geometric affine-line field by the stated product isomorphism.
+
+For an old pair use Theorem~\ref{thm:geo-pair-duality}. Its maps $i:A\to D$ and $j:A\to U$ become geometric immersions $\Spec D\to\Spec A$ and $\Spec U\to\Spec A$, so their pullbacks have exactly the old source and target. Thus the two shifts, all three exactness statements and the right projection formula are literally the corresponding geometric formulas. An old morphism $F:P\to Q$ becomes a geometric morphism $\Spec Q\to\Spec P$. Substitution in $G_{\Spec Q}(\Spec F_D)^*=(\Spec F_X)^*G_{\Spec P}$ gives the old \planned{gysin_map}; substitution in the residue formula gives \planned{residue_map}. This checks every field, not just the cohomology functor.
+\end{proof}
+
+\begin{theorem}[Transport back to affine schemes]\label{thm:geo-from-algebraic}
+\lean{OrlikSolomon.Geometric.OrdinaryTheory.ofAlgebraic}
+Every old ordinary theory $E$ supplies a geometric theory $E_{\mathrm{aff}}$ on $\Dom_{\mathrm{aff}}$ with
+\[
+ E_{\mathrm{aff}}(X)=E(\G(X,\OO_X)),\qquad
+ g^*=E(\G(g)).
+\]
+Use the global-sections pair for its Gysin and residue. The two transports are inverse up to canonical graded $B$-algebra equivalences commuting with pullback, Gysin, residue and coefficient maps. For a general geometric theory only its affine restriction is recovered; no extension from affines to non-affines is asserted.
+\uses{thm:geo-affine-duality,thm:geo-pair-duality,lem:geo-products,thm:geo-to-algebraic}
+\end{theorem}
+\begin{proof}
+All fields except the point and affine-line condition are the corresponding old fields on the global-sections objects and pairs. The point ring is identified with $k$ by $\eta_k$. The ring of $X\times\A^1$ is naturally $\G(X)[z]$, with the projection corresponding to inclusion of constants; the old polynomial field proves the new one. For a geometric pair morphism, global sections reverse it, so the old naturality formulas give the new formulas in their stated directions.
+
+On an algebra $A$ the comparison is $E(\eta_A)$, with inverse $E(\eta_A^{-1})$. On an affine scheme $X$ it is pullback by $\epsilon_X$, or its inverse according to the direction of the displayed equivalence. Naturality of $\eta$ and $\epsilon$ gives the pullback square. They are also isomorphisms of certified pairs, so the Gysin and residue squares follow from the theory's pair naturality. Products, coefficients and grading are preserved because these are pullbacks. The triangle identities from affine duality prove that the two comparison transformations are compatible inverses. No literal equality of differently wrapped objects is required.
+\end{proof}
+
+\begin{lemma}[The empty scheme is forced to have zero cohomology]\label{lem:geo-empty}
+\lean{OrlikSolomon.Geometric.OrdinaryTheory.emptySubsingleton}
+Every geometric ordinary theory has $C(\varnothing)=0$. A pair with unit equation has $D=\varnothing$, $U\simeq X$, and zero Gysin and residue.
+\uses{def:geo-theory,def:geo-divisor-pair}
+\end{lemma}
+\begin{proof}
+Use the pair $(X,\varnothing,X,1)$ with both copies of $X$ identified. Exactness at $C(X)$ says $\im G=\ker\id=0$, so $G=0$. Exactness at the next copy says $\ker r=\im\id=C(X)$, so $r=0$. Exactness at $C(\varnothing)$ then says $\ker0=\im0=0$, proving the assertion. For any unit equation the certificates identify the pair with this one and pair naturality transports the maps. This proof adds no empty-object axiom and works also for zero coefficients.
+\end{proof}
+
+\begin{definition}[Degreewise geometric theory and supports]\label{def:geo-supports}
+\lean{OrlikSolomon.Geometric.SupportsAndPurity}
+A geometric \planned{DegreewiseTheory} has $R$-modules $H^{p,w}(X)$, indexed unital associative products, graded commutativity by $p$, contravariant degree-preserving pullbacks, and the degreewise coefficient, point and affine-line conditions of the existing record. Replace an algebra morphism there by a scheme morphism in the opposite direction, and replace the polynomial inclusion by the affine-line projection.
+
+For a geometric pair, a \planned{SupportsAndPurity} package consists of $R$-modules $H_D^{p,w}(X)$, maps
+\[
+ a:H_D^{p,w}(X)\to H^{p,w}(X),\qquad
+ \delta:H^{p,w}(U)\to H_D^{p+1,w}(X),
+ \qquad \vartheta:H^{p,w}(D)\xrightarrow\sim H_D^{p+2,w+1}(X),
+\]
+exactness at the three consecutive positions $(a,j^*,\delta,a)$, transverse contravariant support pullbacks, and their commutation with $a,\delta,\vartheta$. Include a right mixed product $x\cdot y$ of a supported class and an ambient class, and exactly the standard identities
+\[
+ a(x\cdot y)=a(x)y,\quad
+ \vartheta(x i^*y)=\vartheta(x)\cdot y,\quad
+ \delta(xj^*y)=\delta(x)\cdot y.
+\]
+These are the degreewise fields of the old bridge with the geometric objects and arrows substituted. The last formula has no sign. Indices are equalities in $\Z^2$, with the same sigma-equality implementation for reassociation as the old record.
+\uses{def:geo-theory,lem:standard-bridge}
+\end{definition}
+
+\begin{theorem}[Geometric supports-and-purity bridge]\label{thm:geo-bridge}
+\lean{OrlikSolomon.Geometric.ofSupportsAndPurity}
+The preceding data give a geometric ordinary theory, with
+\[
+ C(X)=\bigoplus_{p,w}H^{p,w}(X),\qquad
+ G=a\vartheta,\qquad r=\vartheta^{-1}\delta.
+\]
+The construction commutes with restriction and affine duality.
+\uses{def:geo-supports,lem:standard-bridge,thm:geo-to-algebraic}
+\end{theorem}
+\begin{proof}
+Use the old direct-sum algebra and image grading, which are pure algebra and independent of the geometric category. On a finite homogeneous sum the formulas define additive maps. The shifts are $(2,1)$ and $(1,0)-(2,1)=(-1,-1)$. Each consecutive exactness equality follows degreewise: if a finite sum maps to zero, grading independence makes each component map to zero; choose a preimage in its shifted degree and add finitely many preimages. Conversely every image is in the kernel by the corresponding degreewise composition. The shifts are bijections on $\Z^2$, so distinct source degrees do not collide.
+
+For $b\in\mathcal B_w$, the mixed-product identities with its coefficient class give $G(bx)=bG(x)$ and $r(bx)=br(x)$. Extend by additivity to all $b\in B$. The three naturality squares compose to give Gysin and residue naturality. For the projection formula, apply $\vartheta$ to both candidates:
+$\vartheta r(\alpha j^*\beta)=\delta(\alpha j^*\beta)=\delta(\alpha)\cdot\beta
+=\vartheta(r(\alpha)i^*\beta)$.
+Injectivity of $\vartheta$ gives the result. The coefficient, point and affine-line fields come from the degreewise ones, by the same finite-sum argument. These are exactly the proofs already implemented for \old{lem:standard-bridge}; their algebraic lemmas are reused verbatim. All constructions are objectwise sums and compositions, so restriction and the affine comparison isomorphisms commute with them.
+\end{proof}
+
+\subsection*{Hand checks against the standard realizations}
+
+These checks are an interpretation of the interface, not additional formal instances. They use the usual localization and oriented-purity inputs of the named cohomology theories, just as the first blueprint's bridge does. Constructing singular or \(\ell\)-adic cohomology and proving its foundational purity theorem is not a new claim of this refactor. Every passage from those standard inputs to our fields is given explicitly here; the de Rham affine inputs are already proved in the repository.
+
+For Betti cohomology choose an embedding $k\hookrightarrow\mathbb C$ and use the domain of smooth separated finite-type $k$-schemes. Set $B=R[t,t^{-1}]$ for any commutative $R$ and $C(X)=H^*(X(\mathbb C);R)\otimes_R B$. Products and pullbacks give the functor and the first nine fields. A point has cohomology $R$ in degree zero; the projection $X(\mathbb C)\times\mathbb C\to X(\mathbb C)$ has inverse the zero section up to the explicit homotopy $(x,z,s)\mapsto(x,sz)$. This verifies all three point/line fields. The allowed geometric domain avoids imposing a Hausdorff-manifold interpretation on arbitrary non-separated smooth schemes.
+
+For a pair let $M=X(\mathbb C)$ and $N=D(\mathbb C)$. Smoothness and regularity make $N$ a smooth complex codimension-one submanifold. Use supported groups $H^p(M,M\setminus N;R)t^w$. Its complex normal line has its canonical real orientation. The Thom isomorphism has degree two; multiply it by $t$ to obtain $\vartheta$ of bidegree $(2,1)$. Define $G=a\vartheta$ and $r=\vartheta^{-1}\delta$. Relative-cohomology exactness gives all three exactness fields; the twists give exactly the two required shifts. By Theorem~\ref{thm:geo-cartesian}, the normal map under a pair morphism is multiplication by a nonvanishing complex number at each point, hence is an isomorphism preserving the complex orientation. The Thom class pulls back to the Thom class. Relative-cohomology naturality then proves both map fields, without ambient flatness. On cochains, if $b$ represents a closed ambient class, a lift $\widetilde a$ of the open class satisfies
+\[
+ d(\widetilde a\smile b)=d\widetilde a\smile b
+       +(-1)^{\deg a}\widetilde a\smile db
+       =d\widetilde a\smile b.
+\]
+Thus $\delta(aj^*b)=\delta(a)b$. The Thom class has even degree, so its right module compatibility introduces no further sign. This is the stated \planned{residue_mul_map}. The coefficient extension is free with basis $t^w$, so exactness survives it for arbitrary $R$, including $\Z/2$ and $0$. This checks every row of the table.
+
+For geometric \(\ell\)-adic cohomology choose a separable/algebraic closure $\bar k$ and $\ell\ne\operatorname{char}k$, again on smooth separated finite-type schemes. The degreewise model is
+\[
+ H^{p,w}(X)=H^p_{\mathrm{\acute et}}(X_{\bar k},R(w)),
+ \qquad B=\bigoplus_w R(w),
+\]
+where one may use the standard finite-coefficient theory $R=\Z/\ell^m$ or the standard derived $\ell$-adic theory with $R=\Z_\ell$ or $\Q_\ell$. Tate lines and their coherent tensor products provide the grading and coefficient multiplication; do not choose a basis in every twist. The geometric point has no higher cohomology, and the usual prime-to-characteristic affine-line invariance supplies the line field. Localization with supports and oriented purity give
+$H_D^{p+2}(X_{\bar k},R(w+1))\simeq H^p(D_{\bar k},R(w))$,
+which is exactly $\vartheta$. Naturality for the Tor-independent Cartesian squares in Theorem~\ref{thm:geo-cartesian} and the right supported cup product give the bridge's remaining fields, by the same displayed composite and sign calculation. A unit multiplier changes the conormal generator by an isomorphism and leaves the oriented fundamental class unchanged. For integral coefficients use the already derived $\ell$-adic localization/purity formalism; termwise inverse limits of arbitrary exact sequences would not be a proof. Arithmetic $H^*(X,R(w))$ without geometric base change generally has higher cohomology at $\Spec k$ and is not a model of the point axiom. Taking Galois invariants is not a replacement: invariants need not preserve exactness. Equivariance of the resulting geometric comparison can be retained separately.
+
+For algebraic de Rham cohomology on smooth affine schemes, all table entries follow unconditionally from Theorem~\ref{thm:geo-dr-instance} below. In the twisted model use $B\otimes_k H^*_{\dR}(X)$, with the coefficient on the left as in the implementation, $G=tG_{\dR}$ and $r=t^{-1}r_{\dR}$. On forms, $\rho((df/f)\wedge\eta)=\eta|_D$, $\rho d=-d\rho$, and the Gysin convention is $G[\gamma]=[d\lambda]$. The affine comparison preserves these formulas exactly. On non-affine schemes one would use $\HH^*(X,\Om^\bullet)$; the local sheaf comparison proved below is an input to such an extension, not a proof that ordinary global sections compute it.
+
+\section{Arrangements as open subschemes}
+
+\begin{definition}[Coordinate-free affine space and hyperplane schemes]\label{def:geo-affine-space}
+\lean{OrlikSolomon.Geometric.affineSpace}
+For a finite-dimensional vector space $V$ over a field $k$, set
+$\A_V=\Spec\operatorname{Sym}_k(V^*)$. An affine function $f:V\to k$ determines the section
+$\widetilde f=\iota(f_{\mathrm{lin}})+f(0)$, and an affine map $a:W\to V$ determines the scheme map $\A_a:\A_W\to\A_V$ induced by the existing \planned{CoordinateRing.pull a}.
+For a hyperplane $H$, let $I_H$ be the ideal generated by the sections of all its equations and put $\mathbf H=\Spec(\operatorname{Sym}(V^*)/I_H)$, with its closed immersion into $\A_V$.
+\uses{def:arrangement,lem:equations,thm:geo-affine-duality}
+\end{definition}
+\begin{proof}
+The existing equation lemma says that any two equations differ by a unit of $k$, hence $I_H=(\widetilde f_H)$ for every equation. This proves equation independence as an equality of ideals, including the scheme structure. Affine pullback sends $\widetilde f$ to $\widetilde{f\circ a}$; identity and composition hold by the symmetric-algebra universal property, as already proved in \planned{Geometry/CoordinateRing}. Applying \Spec reverses them to the scheme functor laws. A basis of $V^*$ identifies the symmetric algebra with a polynomial ring in $\dim V$ variables, proving smoothness of $\A_V$. The basis is used for the proof, not its definition. It also gives an isomorphism with Mathlib's indexed affine space. The existing quotient equivalence for $H$ identifies its quotient ring with $\operatorname{Sym}(H.\mathrm{direction}^*)$, so $\mathbf H$ is smooth of the expected dimension. None of these statements tests a polynomial by its values at rational points.
+\end{proof}
+
+\begin{definition}[The affine complement as an actual open]\label{def:geo-complement}
+\lean{OrlikSolomon.Geometric.complement}
+For an arrangement $\cA$ retain its finite hyperplane index type and incidence data. Define
+\[
+ U_{\cA}=\Bigl(\bigcap_{H\in\cA}(\A_V\setminus|\mathbf H|)\Bigr)^{\mathrm{open}}
+ \quad\text{with }j_{\cA}:U_{\cA}\hookrightarrow\A_V.
+\]
+Here the superscript denotes the open subscheme with the restricted structure sheaf, not the set of $k$-points. For the empty arrangement use the full open, hence $U_{\varnothing}=\A_V$ up to its canonical open-restriction isomorphism.
+\uses{def:geo-affine-space}
+\end{definition}
+
+\begin{theorem}[The canonical complement comparison]\label{thm:geo-complement-spec}
+\lean{OrlikSolomon.Geometric.complementIsoSpec}
+The complement is smooth affine and has a canonical isomorphism over $\A_V$
+\[
+ s_{\cA}:U_{\cA}\xrightarrow\sim\Spec(\cA.\mathrm{ComplementRing}).
+\]
+For every product $F=\prod_{H\in\cA}\widetilde f_H$ of equations, it is the basic open $D(F)$ and its ring is the localization at $F$. Under $s_{\cA}$ each equation unit is the restriction of its corresponding section. The comparison is compatible with inclusion of arrangements and every affine-map pullback covered by the existing complement API.
+\uses{def:geo-complement,lem:geo-affine-pairs,lem:geometry-adapter}
+\end{theorem}
+\begin{proof}
+In any commutative ring, a product is a unit if and only if every factor is a unit: for the forward direction the inverse of a factor is the product of the other factors times the inverse of the product. Equivalently, a prime avoids the product if and only if it avoids each factor. Thus the intersection defining the complement is $D(F)$. By the existing \planned{ComplementRing.isLocalizationAway}, the old complement ring is a localization of $\operatorname{Sym}(V^*)$ away from every such $F$. Uniqueness of localization gives the isomorphism to the ring of $D(F)$ and hence the displayed scheme isomorphism. Its composite into $\A_V$ is fixed by the ring structure map, so it is independent of $F$: two isomorphisms over $\A_V$ into that open immersion agree by its monomorphism property. The old complement ring is smooth, so its spectrum and hence the open are smooth affine.
+
+On sections the comparison sends $\widetilde f$ to its localized image by construction. Its image is a unit exactly as in the old \planned{complementUnit}. If an affine map pulls each removed hyperplane back to a removed hyperplane or to the empty zero locus, its coordinate-ring map sends every denominator to a unit. Its unique localization extension is the old \planned{complementMap}. Its spectrum is the scheme map into the complement. Both the required square into affine space and all compositions follow by uniqueness of localization, or by cancellation of the open immersion. This proves the full compatibility, including maps whose source complement has no rational points.
+\end{proof}
+
+\begin{theorem}[Geometric deletion and restriction]\label{thm:geo-deletion}
+\lean{OrlikSolomon.Geometric.deletionPair}
+For $H\in\cA$ and any equation $f_H$, let $\cA'=\cA\setminus\{H\}$ and retain the existing restriction $\cA''$ on $H.\mathrm{direction}$. On $X=U_{\cA'}$ the restriction of $\widetilde f_H$ is regular, with
+\[
+ Z_X(f_H)=X\times_{\A_V}\mathbf H\simeq U_{\cA''},
+ \qquad X_{f_H}\simeq U_{\cA}.
+\]
+These identifications give a geometric divisor pair whose global-sections pair is the existing deletion pair up to the canonical comparison. Its residue and Gysin are independent of the chosen equation. The restriction of an old equation is a unit scalar or a scalar times the equation of its retained trace, with repeated traces identified.
+\uses{thm:geo-complement-spec,thm:geo-pair-duality,lem:restriction-geometry,lem:geometry-adapter}
+\end{theorem}
+\begin{proof}
+Use the existing deletion-pair certificate, whose closed map is \planned{complementRestriction}, whose open map is \planned{complementInclusion}, and whose equation is the image of $\widetilde f_H$. It proves the non-zero-divisor, quotient and localization conditions. Applying affine pair duality and then $s_{\cA'},s_{\cA''},s_{\cA}$ identifies its maps with the closed/open maps in the display: the quotient map kills exactly the ideal of $\mathbf H$, and the localization additionally inverts $f_H$. This proves the scheme-theoretic fiber-product assertion, not merely an assertion about its support.
+
+The existing quotient-ring equivalence through the chart identifies the closed scheme with the intrinsic hyperplane complement. Its pullback formula on affine functions is precisely the old chart restriction; thus its constant, scalar-multiple and repeated-trace identities become identities of global sections. An alternative equation is $cf_H$ for $c\in k^\times$. The identity scheme maps give a transverse isomorphism of pairs with this multiplier. Naturality of the theory's maps makes both cohomological maps independent of it. In particular no replacement of the smooth-divisor hypothesis by a reduced-support condition has occurred.
+\end{proof}
+
+\begin{theorem}[Small relation targets as scheme morphisms]\label{thm:geo-small-targets}
+\lean{OrlikSolomon.Geometric.relationTargetMaps}
+The two targets of \old{lem:small-targets} become smooth affine scheme complements $Y$ and maps $U_{\cA}\to Y$. For an empty intersection of $s$ hyperplanes, the coordinate functions pull back to $f_1,\ldots,f_s$, and the ambient affine dimension of $Y$ is at most $s-1$. For a dependent nonempty intersection of $s+1$ hyperplanes, the normalized slice has dimension at most $s-1$, and the functions pull back to $f_i/f_0$ for $1\leq i\leq s$. These are identities of sections.
+\uses{thm:geo-complement-spec,lem:small-targets}
+\end{theorem}
+\begin{proof}
+The existing \planned{toAffineImageRing} and \planned{toNormalizedSliceRing} have source the corresponding target complement rings and target $\cA.\mathrm{ComplementRing}$. Apply \Spec and the complement comparisons. The resulting arrow points from $U_{\cA}$ to the target. The old equations \planned{toAffineImageRing_algebraMap_coord} and \planned{toNormalizedSliceRing_algebraMap_coord} give the pullback formulas; the latter uses the inverse of the unit $f_0$ in the complement ring. The old linear-algebra rank calculations give the two dimension inequalities unchanged. They are independent of any scheme's rational points. Factorization through the affine image or normalized slice was already proved as a quotient-ring identity; the geometric adapter preserves that identity by affine duality. This proves the whole target statement without another argument about dependence or relations.
+\end{proof}
+
+\begin{definition}[Projective space and its complement]\label{def:geo-projective}
+\lean{OrlikSolomon.Geometric.projectiveComplementOpen}
+For a finite-dimensional vector space $W$, put
+$\PP(W)=\operatorname{Proj}\operatorname{Sym}(W^*)$ with the existing symmetric grading. Retain the existing finite set $P$ of linear hyperplanes. Define $U_P$ as the intersection of the opens $D_+(\ell_H)$, for equations of all hyperplanes of $P$; equivalently remove their homogeneous ideal-sheaf closed subschemes. The definition as an open makes sense for empty $P$ and then gives all of $\PP(W)$.
+\uses{def:projective,def:geo-affine-space}
+\end{definition}
+\begin{proof}
+Multiplying an equation by a nonzero scalar leaves its homogeneous principal ideal and $D_+$ open unchanged. A basis of $W^*$ identifies this graded symmetric algebra with the standard graded polynomial ring; the existing \planned{projIsoMvPolynomial} identifies its \Proj with projective space. If $\dim W=0$, the positive-degree irrelevant ideal is zero and \Proj is empty. Otherwise the $D_+(x_i)$ cover and have degree-zero localization rings $k[x_j/x_i\mid j\ne i]$, so the space is smooth; this also follows by the dehomogenization computation in the next theorem. These are scheme charts. No set of projective rational points enters the definition.
+\end{proof}
+
+\begin{theorem}[Projective complement, decone and cone]\label{thm:geo-projective-geometry}
+\lean{OrlikSolomon.Geometric.projectiveComparisons}
+Suppose $P$ is nonempty. The open $U_P$ is smooth affine and the existing
+\planned{ProjectiveArrangement.complementOpenIso} gives a canonical comparison
+$s_P:U_P\xrightarrow\sim\Spec(P.\mathrm{ComplementRing})$.
+For every equation $\ell_0$ of a member of $P$, there are isomorphisms
+\[
+ U_P\simeq U_{\operatorname{decone}_{\ell_0}P},\qquad
+ V_P:=U_{\operatorname{cone}P}\simeq U_P\times_S\Gm.
+\]
+The map $V_P\to U_P$ is canonical and corresponds to the existing inclusion of degree-zero fractions. The product trivialization depends on $\ell_0$; its second coordinate is $\ell_0$. On $V_P$,
+\[
+ \ell_i=\ell_0\,q^*(\ell_i/\ell_0).
+\]
+The functions $\ell_i/\ell_j$ are global units on $U_P$.
+\uses{def:geo-projective,thm:geo-complement-spec,lem:geo-products,lem:decone}
+\end{theorem}
+\begin{proof}
+For $F=\prod_{H\in P}\ell_H$, primality of a homogeneous prime gives
+$U_P=D_+(F)$. Its positive degree is $|P|>0$, so the \Proj basic-open theorem identifies it with the spectrum of the degree-zero localization at $F$. The existing \planned{ComplementRing.awayEquiv} identifies this ring with $P.\mathrm{ComplementRing}$, independently of the equations. The code's \planned{complementOpenIso} is exactly this composite. Its description on equal-degree fractions shows that it is over $S$: it fixes every degree-zero constant from $k$. Thus the existing isomorphism of schemes must be upgraded with an over-$S$ certificate, not reconstructed. The old projective complement is smooth by deconing; hence so is $U_P$.
+
+For clarity, the chart behind deconing has a completely algebraic description. The map from the degree-zero part of $\operatorname{Sym}(W^*)[1/\ell_0]$ to
+$\operatorname{Sym}(W^*)/(\ell_0-1)$ sends a homogeneous fraction $a/\ell_0^d$, with $\deg a=d$, to $\bar a$. Its inverse sends a homogeneous component $a_d$ to $a_d/\ell_0^d$ and extends by the finite homogeneous decomposition. Multiplication respects this formula, and $\ell_0$ maps to $1$, so it factors through the quotient. The two composites fix the displayed generators and hence are identities. Restricting the other hyperplane equations sends $\ell_i$ to $\ell_i/\ell_0$. Inverting these equations identifies the complement with the affine slice complement. The existing \planned{deconeIso} proves these ring identities, and \Spec transports them to the first displayed isomorphism with its open embeddings.
+
+For the cone apply \Spec to the existing ring isomorphism
+$\OO(V_P)\simeq\OO(U_P)[t,t^{-1}]$, then apply Lemma~\ref{lem:geo-products}. Its coordinate formula sends $t$ to $\ell_0$ and every degree-zero fraction to itself, so the first projection is the canonical cone map and gives the displayed equation. Changing $\ell_0$ changes $t$ by the unit $\ell_0'/\ell_0$ from $U_P$, which explains why the product decomposition is not canonical. The equal-degree fraction $\ell_i/\ell_j$ has inverse $\ell_j/\ell_i$ in the old homogeneous localization, and under $s_P$ these are the stated global units. The ring must retain arbitrary equal-degree numerators: the subalgebra generated only by ratios of arrangement equations is generally smaller, as the existing \planned{ratio_notMem_adjoin_ratioUnit} regression demonstrates.
+\end{proof}
+
+\section{Logarithms and the geometric public structure theorems}
+
+\begin{definition}[The geometric logarithmic class]\label{def:geo-log}
+\lean{OrlikSolomon.Geometric.OrdinaryTheory.logClass}
+Let $T$ be a geometric theory. Transport the unique old class of \old{lem:gm} to obtain
+$\tau\in C(\Gm)_{1,1}$ with residue $1$ in the standard pair. For $u\in\G(X,\OO_X)^\times$, define
+\[
+ [u]_T=\widehat u^*\tau\in C(X)_{1,1}.
+\]
+This definition applies to every $X$ of the domain, including non-affine schemes.
+\uses{thm:geo-to-algebraic,thm:geo-units,lem:gm,def:log}
+\end{definition}
+\begin{proof}
+The affine comparison identifies the standard pair and its residue, so uniqueness and the normalization of the old $\tau$ give precisely the stated class. Pullback is homogeneous of shift zero, giving its degree. The map $\widehat u$ is unique by Theorem~\ref{thm:geo-units}, so there is no choice of logarithm or generator of a Tate line in this definition.
+\end{proof}
+
+\begin{theorem}[Logarithmic identities on every object of the domain]\label{thm:geo-log-laws}
+\lean{OrlikSolomon.Geometric.OrdinaryTheory.logClassLaws}
+For a scheme map $g:X'\to X$, units $u,v$ on $X$, and $c\in k^\times$,
+\[
+ g^*[u]=[g^*u],\quad [c]=0,\quad [u]^2=0,\quad
+ [uv]=[u]+[v],\quad [u^{-1}]=-[u].
+\]
+For every pair with equation $f$,
+$r_P([f|_U])=1$, and
+$r_P([f|_U]j^*\beta)=i^*\beta$.
+On affines these definitions and identities agree with the old ones under affine duality.
+\uses{def:geo-log,thm:geo-units,thm:geo-cartesian,lem:log-basic,lem:log-mul,lem:log-residue}
+\end{theorem}
+\begin{proof}
+Naturality follows from the composition identity for $\widehat u$. Constants factor through $S$, whose degree $(1,1)$ vanishes. The old identity $\tau^2=0$ on the affine scheme $\Gm$ pulls back to give squares zero; it is not a consequence of dividing the graded-commutativity identity by $2$. On the affine scheme $\Gm^2$, the old multiplication identity says $\mu^*\tau=p_1^*\tau+p_2^*\tau$. Pull it back along $(\widehat u,\widehat v):X\to\Gm^2$ to prove multiplicativity for arbitrary $X$. Applying it to $u u^{-1}=1$ gives the inverse formula.
+
+The global function $f$ defines a map $X\to\A^1$ by the same adjunction. Along with $D\to S$ and $\widehat{f|_U}:U\to\Gm$ it is a map to the standard pair, with multiplier $1$. Residue naturality and $r(\tau)=1$ give the first residue formula; the right projection field gives the second, with the logarithmic class on the left. Compatibility with old logarithms follows from the natural units--maps bijection and the characterization of $\tau$. None of these arguments requires $X$ to have a rational point.
+\end{proof}
+
+\begin{theorem}[Product with the multiplicative group on every object]\label{thm:geo-gm-product}
+\lean{OrlikSolomon.Geometric.OrdinaryTheory.gmProductEquiv}
+For every $X\in\Dom$, the standard pair gives a graded $B$-module isomorphism
+\[
+ C(X)\oplus C(X)[(1,1)]\xrightarrow\sim C(X\times_S\Gm),
+ \qquad (a,b)\longmapsto\pi^*a+[z]\pi^*b.
+\]
+It is natural in $X$. This is the geometric form of \old{lem:gm-product}; it is not an ungraded tensor-product algebra assertion.
+\uses{thm:geo-log-laws,def:geo-theory,lem:geo-products,lem:gm-product}
+\end{theorem}
+\begin{proof}
+The section $z=1$ makes $\pi_U^*:C(X)\to C(X\times\Gm)$ injective. Since $\pi_{\A^1}^*$ is bijective and $j^*\pi_{\A^1}^*=\pi_U^*$, $j^*$ is injective. Exactness then gives $G=0$, and the next exactness equality gives surjectivity of $r$. The previous theorem gives $r([z]\pi_U^*b)=b$, so for $x$ subtract $[z]\pi_U^*r(x)$. The difference lies in $\ker r=\im j^*=\im\pi_U^*$, and has a unique preimage $a$. This proves surjectivity and uniqueness for the displayed formula. Applying the section at $1$ gives $a=s_1^*x$ since $[1]=0$; hence the inverse is $(s_1^*x,r(x))$. Every map has the advertised degree, and naturality follows from pair naturality, naturality of $[z]$, and the projection/section squares. This proves the result on non-affine objects as well.
+\end{proof}
+
+\begin{theorem}[Geometric affine structure theorem and its complete API]\label{thm:geo-affine}
+\lean{OrlikSolomon.Geometric.OrdinaryTheory.affineEquiv}
+For every arrangement $\cA$ in a finite-dimensional $k$-vector space, every geometric ordinary theory on any admissible domain has a canonical bigrading-preserving $B$-algebra equivalence
+\[
+ \Phi_{\cA}:\OS_B(\cA)\xrightarrow\sim C(U_{\cA}),
+ \qquad e_H\longmapsto[f_H|_{U_{\cA}}].
+\]
+Its diagonal form, component forms, equation independence, uniqueness on generators, naturality for arrangement inclusions and affine equivalences, and compatibility with deletion residue are the geometric transports of \old{thm:affine}, \old{cor:ordinary} and their existing public declarations. In particular,
+\[
+ H^{p,w}(U_{\cA})\simeq_R\OS_R^p(\cA)\otimes_R\mathcal B_{w-p}\quad(p\geq0),
+ \qquad \OS_R(\cA)\simeq_R\bigoplus_{q\geq0}H^{q,q}(U_{\cA}).
+\]
+The same vanishing bounds, recursive monomial bases and integer Betti/M\"obius formulas hold. No restriction on the characteristic of $k$ or $R$ is added.
+\uses{thm:geo-to-algebraic,thm:geo-complement-spec,thm:geo-deletion,thm:geo-log-laws,thm:affine,cor:ordinary,thm:betti,lem:mobius}
+\end{theorem}
+\begin{proof}
+Apply the old affine theorem to $T_{\mathrm{alg}}$. Its target is
+$C(\Spec\cA.\mathrm{ComplementRing})$. Compose it with $s_{\cA}^*$ from Theorem~\ref{thm:geo-complement-spec}; since $s_{\cA}$ is an isomorphism, this is an algebra equivalence. It preserves and reflects each grade by the pullback fields applied to both directions of $s_{\cA}$. The unit comparison and Theorem~\ref{thm:geo-log-laws} give the displayed generator formula. The old uniqueness theorem, or word spanning, proves uniqueness on generators and hence equation independence.
+
+The comparison squares for inclusion, affine changes and deletion were proved in Theorems~\ref{thm:geo-complement-spec} and \ref{thm:geo-deletion}. Apply $C$ to those squares and use pair naturality for the residue square. Thus each old naturality or residue identity transports by conjugating its target maps. Restriction of the resulting equivalence to each submodule piece gives the component formulas, and direct sum gives the diagonal formula, exactly as in the old API. Transport each vector of the old recursive basis along $s_{\cA}^*$. Its indexing words and their counts are unchanged, so the old integer Betti and M\"obius statements hold with precisely the same hypotheses, including zero coefficients. This proof uses the existing induction and relation calculations as theorems; it neither reruns them nor promotes a conclusion to an axiom.
+\end{proof}
+
+\begin{theorem}[Geometric projective structure theorem]\label{thm:geo-projective}
+\lean{OrlikSolomon.Geometric.OrdinaryTheory.projectiveEquiv}
+For nonempty $P$ there are canonical graded equivalences
+\[
+ \pOS_B(P)\xrightarrow\sim C(U_P),\qquad
+ \pOS_R(P)\xrightarrow\sim\bigoplus_{q\geq0}H^{q,q}(U_P),
+ \qquad e_i-e_j\longmapsto[\ell_i/\ell_j].
+\]
+Here $\pOS$ is exactly the existing boundary-kernel algebra of the central cone, not a new presentation. The equivalences are independent of the equation representatives and of a hyperplane at infinity, commute with the canonical cone pullback, and retain every component and multiplicity statement of \old{thm:projective} and \old{cor:projective-betti}.
+\uses{thm:geo-projective-geometry,thm:geo-to-algebraic,thm:geo-log-laws,thm:projective,cor:projective-betti}
+\end{theorem}
+\begin{proof}
+Apply the old projective equivalence to $T_{\mathrm{alg}}$ and compose with $s_P^*$. The comparison identifies the old degree-zero ratio unit with the geometric one, so the old difference formula gives the displayed formula. It also identifies \planned{projectiveToCone} with the canonical scheme projection, giving its commuting square. The old uniqueness characterization by differences proves independence of all choices; alternatively conjugate the old uniqueness theorem. Restricting to graded pieces and assembling the diagonal direct sum gives the remaining statements, just as for the affine theorem. The open complement is affine for nonempty $P$ by Theorem~\ref{thm:geo-projective-geometry}, so this argument is available in every admissible domain. Dropping that hypothesis is not part of the theorem and would change its mathematics.
+\end{proof}
+
+\section{De Rham forms on schemes and the affine instance}
+
+Everything in this section reuses the algebraic differential already implemented. In particular, do not redo the polynomial presentation of the differential, the conormal calculation, integration, or the pole contraction. The new mathematical work is compatibility with sheaves, scheme pullback and the affine comparison.
+
+\begin{lemma}[The associated module sheaf on distinguished opens]\label{lem:geo-module-gluing}
+\lean{OrlikSolomon.Geometric.moduleDistinguishedGluing}
+For a commutative ring $A$ and an $A$-module $M$, the rule
+$D(a)\mapsto M_a$ with its localization restriction maps defines the associated module sheaf $\widetilde M$ on $\Spec A$. It has $\G(\Spec A,\widetilde M)\simeq M$, naturally in $A,M$. Localization of an exact sequence of modules is exact, so associated sheaves preserve exact sequences. These assertions include the zero ring and arbitrary, not necessarily finitely generated, modules.
+\end{lemma}
+\begin{proof}
+It suffices to check finite distinguished covers of a distinguished open: localize $A,M$ first to reduce to a cover $D(s_1),\ldots,D(s_r)$ of $\Spec A$. Any distinguished cover has a finite subcover by quasi-compactness of an affine scheme. For every positive integer $N$ the elements $s_i^N$ generate the unit ideal, since otherwise a maximal ideal containing them would be a prime outside the cover.
+
+If $m\in M$ becomes zero in each $M_{s_i}$, some power $s_i^{n_i}$ kills $m$. Choose a common $N$ and $a_i$ with $\sum_i a_i s_i^N=1$; multiplying by $m$ gives $m=0$. For gluing, let $x_i\in M_{s_i}$ agree in every $M_{s_i s_j}$. First choose powers so that $s_i^{n_i}x_i$ is represented by $y_i\in M$. In $M_{s_j}$ the element $y_i-s_i^{n_i}x_j$ becomes zero after inverting $s_i$. A further power of $s_i$ kills it. Because there are only finitely many pairs $(i,j)$, enlarge the exponents to one $N$ and multiply the representatives accordingly so that
+$y_i|_{s_j}=s_i^N x_j$ for every $i,j$. Then $m=\sum_i a_i y_i$ restricts to $x_j$ on every $D(s_j)$. The preceding injectivity proves uniqueness. This proves the sheaf equalizer property. Gluing on an arbitrary cover follows by gluing on a finite subcover and using uniqueness on its intersections with the remaining members. The value at $D(1)$ is $M$, which gives the global-sections comparison and its naturality.
+
+For exactness, a fraction that maps to zero has a numerator whose image is killed by a denominator power. Multiply the numerator by that power and use exactness before localization to find a preimage. Surjectivity onto the localized image follows by lifting numerators. Thus localized kernels and images are the original kernels and images localized; taking stalks proves the sheaf assertion. This proves only exactness for associated module sheaves and the displayed sections calculation, not vanishing of all higher sheaf cohomology. The pinned \planned{Modules/Tilde} API already supplies associated sheaves and their global sections, so the proof also specifies the properties to reuse.
+\end{proof}
+
+\begin{definition}[The sheaf of relative forms and its differential]\label{def:geo-forms-sheaf}
+\lean{OrlikSolomon.Geometric.DeRham.formsSheaf}
+For an $S=\Spec k$ scheme $X$, form the presheaf
+\[
+ V\longmapsto \Om^n_{\G(V,\OO_X)/k}
+\]
+on all opens of $X$, with restriction induced by restriction of functions. Sheafify degreewise in $k$-modules, retaining the natural $\OO_X$-module structures, and denote the result by $\Om^n_{X/k}$. Put the negative degrees equal to zero. Sheafify the already proved differential and wedge product to obtain the de Rham dg algebra $\Om^\bullet_{X/k}$. Its differential is a morphism of sheaves of $k$-modules, generally not of $\OO_X$-modules.
+\uses{def:dr-forms,thm:dr-dga,lem:dr-localization,lem:geo-module-gluing}
+\end{definition}
+\begin{proof}
+Restrictions of functions are $k$-algebra maps. The old functorial differential makes a presheaf complex, and its natural wedge product makes a presheaf dg algebra. An element of the sheafification is locally represented by a presheaf section. Define scalar multiplication, wedge product and differential on these local representatives. If two representatives agree locally, their images under any of these operations agree locally, by the presheaf identities. Thus these operations glue uniquely. The same argument proves $d^2=0$, the signed Leibniz rule, associativity, units and graded commutativity: each equation is true on local representatives by \old{thm:dr-dga}. Degree zero is $\OO_X$ since it was already a sheaf. Scalar multiplication glues along the degree-zero restrictions, giving the asserted module structure in each degree.
+
+On an affine open $V=\Spec A$, the restriction to its distinguished basis is
+$D(a)\mapsto\Om^n_{A_a/k}\simeq(\Om^n_{A/k})_a$ by \old{lem:dr-localization}. Compatibility of this isomorphism with a further localization follows either from the proved localization functoriality or by checking the spanning words $a_0\,da_1\wedge\cdots\wedge da_n$. Lemma~\ref{lem:geo-module-gluing} identifies its extension with $\widetilde{\Om^n_{A/k}}$. Thus the sheafification does not change the prescribed affine values. This proves existence with no choice of affine cover and also shows that the construction is the usual sheaf of relative K\"ahler forms: on affines its degree one represents derivations, and these local representing maps glue uniquely. Exterior powers and wedge products agree locally and hence as sheaves.
+\end{proof}
+
+\begin{theorem}[Affine evaluation and arbitrary scheme pullback]\label{thm:geo-forms-comparison}
+\lean{OrlikSolomon.Geometric.DeRham.affineFormsComparison}
+For affine $X$ and $A=\G(X,\OO_X)$ there is a canonical degreewise dg algebra comparison
+\[
+ \Om^\bullet_{A/k}\xrightarrow\sim\G(X,\Om^\bullet_{X/k}).
+\]
+For every $S$-map $g:X\to Y$ there is a functorial map of complexes of sheaves of $k$-modules
+$g^{-1}\Om^\bullet_{Y/k}\to\Om^\bullet_{X/k}$, preserving products. In degree $n$ it is the usual semilinear form pullback, equivalently an $\OO_X$-linear map $g^*\Om^n_{Y/k}\to\Om^n_{X/k}$. For affine $X,Y$, the induced global map agrees with the old form map for $\G(g)$ under the displayed comparisons.
+\uses{def:geo-forms-sheaf,lem:geo-module-gluing,thm:dr-dga,lem:dr-localization}
+\end{theorem}
+\begin{proof}
+The associated-sheaf identification in the preceding proof and its global-sections comparison give the degreewise isomorphism on $\Spec A$. Transport along the canonical $\epsilon_X$ gives it for any affine $X$. It sends a word in functions and their differentials to the same word in global sections, so it commutes with $d$, multiplication and scalars; these words span by the old forms API. This also proves naturality, without choosing a presentation of $X$.
+
+For pullback, choose an affine open $V\subseteq Y$ and an affine open $W\subseteq g^{-1}V$. The ring map $\G(V,\OO_Y)\to\G(W,\OO_X)$ gives the old form map. On a smaller affine open the two possible composites agree by functoriality of forms. Intersections have affine open refinements, so these local maps glue, or equivalently induce the stated map on sheafifications. The formulas on words prove product and differential compatibility, identity and composition. In degree one they are the universal differential pullback; in higher degrees they are its exterior powers after changing scalars. The degreewise $\OO_X$-linear formulation must not be treated as a chain complex in $\OO_X$-modules: its differentials are only $k$-linear. On affine $X,Y$, the same formula on words proves agreement with the old global ring map. No flatness of $g$ is used.
+\end{proof}
+
+\begin{theorem}[Sheaf logarithmic residue and local comparison]\label{thm:geo-log-sheaves}
+\lean{OrlikSolomon.Geometric.DeRham.logSheafComparison}
+Let $k$ be a characteristic-zero field and $P=(X,D,U,f)$ a geometric pair on any domain. Put $\theta=df/f$ on $U$ and, inside $j_*\Om^n_{U/k}$, put
+\[
+ L^n=\Om^n_{X/k}+\theta\wedge\Om^{n-1}_{X/k}.
+\]
+The regular-form inclusion is injective and $L^\bullet$ is a dg subalgebra. There is a degreewise short exact sequence of complexes of sheaves of $k$-modules
+\[
+ 0\longrightarrow\Om^\bullet_{X/k}\longrightarrow L^\bullet
+ \xrightarrow{\rho}i_*\Om^\bullet_{D/k}[-1]\longrightarrow0,
+ \qquad \rho(\omega+\theta\wedge\eta)=\eta|_D,
+\]
+where the shifted differential is $-d$. The map $L^\bullet\to j_*\Om^\bullet_{U/k}$ is a quasi-isomorphism of complexes of sheaves. All maps are natural for the geometric transverse morphisms, with the form-level right projection identity and exactly the old signs.
+\uses{def:geo-divisor-pair,thm:geo-forms-comparison,lem:geo-module-gluing,thm:dr-residue-sequence,thm:dr-comparison,thm:dr-log-naturality,lem:dr-form-projection}
+\end{theorem}
+\begin{proof}
+Take an affine open $V\subseteq X$. Its closed part is $D\cap V\simeq\Spec(\G(V)/(f))$ and its open part is $U\cap V\simeq\Spec\G(V)_f$. They are smooth because they are open subschemes of the smooth schemes $D,U$. Thus the old smooth-pair theorems apply. They prove injectivity of regular forms, the dg algebra assertion, the regularity criterion for a logarithmic term, the well-defined residue, its exactness and its anticommutation with $d$.
+
+There is no illicit passage from a sheaf image to global sections here. On $V$ the map whose image is $L^n$ is the map of associated modules
+$\Om_A^n\oplus\Om_A^{n-1}\to\Om^n_{A_f}$, $(\omega,\eta)\mapsto\omega+\theta\wedge\eta$.
+Its image localizes to the analogous image on every $D(a)\subseteq V$, since localization is exact and the localization comparisons for forms commute with the formula. Lemma~\ref{lem:geo-module-gluing} therefore identifies $L^n|_V$ with the associated sheaf of the old module $L_A^n$, and gives $\G(V,L^n)=L_A^n$. The same argument identifies the quotient with the pushforward of forms on $D\cap V$. Consequently the old maps glue and their local exact sequences give a sheaf exact sequence. Their differential signs agree on overlaps because the formula for $\rho$ is the same formula in the global $f$.
+
+On each such $V$, the old global pole-order theorem proves that $\G(V,L^\bullet)\to\Om^\bullet_{A_f}$ is a quasi-isomorphism. Stalks are filtered colimits over affine neighborhoods, and filtered colimits of module complexes commute with cohomology: a class is represented at one stage; being closed, being zero, and having a specified primitive each involve one equality and thus hold at some later stage. This proves both surjectivity and injectivity of the cohomology comparison at every stalk. Hence the map of sheaf complexes is a quasi-isomorphism.
+
+For a pair map $g$ with $g^*f_Q=u f_P$ one has
+$g^*\theta_Q=\theta_P+du/u$. The second term is regular. The old formula then proves preservation of $L$, commutation with $\rho$, and the right product identity on affine neighborhoods. They glue by Theorem~\ref{thm:geo-forms-comparison}. This proves naturality for arbitrary permitted ambient maps, including non-flat ones. The only characteristic-zero input in this proof is the old logarithmic comparison; the sheaf residue sequence and its signs themselves require no rational denominators.
+\end{proof}
+
+\paragraph{What this last theorem does not assert.}
+The target is the ordinary direct image complex $j_*\Om_U^\bullet$. Identifying it with $Rj_*\Om_U^\bullet$, and identifying affine hypercohomology with the cohomology of global forms, require acyclicity results. A stalkwise quasi-isomorphism is not a license to apply underived global sections to arbitrary complexes. In particular, taking $\G(X,-)$ of the sheaf residue sequence on a non-affine $X$ is not asserted to be degreewise exact.
+
+\begin{definition}[Scheme de Rham cohomology on the affine domain]\label{def:geo-dr-cohomology}
+\lean{OrlikSolomon.Geometric.DeRham.Cohomology}
+For a smooth affine scheme $X$ define
+\[
+ H^n_{\dR}(X/k)=H^n\bigl(\G(X,\Om^\bullet_{X/k})\bigr),
+ \qquad H^*_{\dR}(X/k)=\bigoplus_{n\geq0}H^n_{\dR}(X/k),
+\]
+with the cup product induced by wedge and pullback induced by Theorem~\ref{thm:geo-forms-comparison}. In Lean implement the total algebra by the already constructed
+\planned{DeRham.Cohomology k (globalSections X)} and provide the displayed comparison as its public specification. The degreewise maps are taken before forming the direct sum; do not silently commute global sections with an infinite direct sum of sheaves.
+\uses{thm:geo-forms-comparison,def:dr-cohomology}
+\end{definition}
+\begin{proof}
+A dg algebra isomorphism gives bijections on cycles and boundaries, preserving their products, and hence an isomorphism of cohomology algebras. Apply the affine forms comparison degreewise and the old comparison between total cohomology and the direct sum of its pieces. Naturality of forms gives identity and composition for cohomological pullback. Thus the specified implementation and the displayed definition agree canonically, with no cover or choice of affine coordinates. This is a construction of cohomology for affine schemes. We do not assign the same formula as the usual de Rham cohomology of a non-affine scheme.
+\end{proof}
+
+\begin{theorem}[The nonzero geometric de Rham instance]\label{thm:geo-dr-instance}
+\lean{OrlikSolomon.Geometric.DeRham.ordinaryTheory}
+For a field $k$ of characteristic zero, $B=k[t,t^{-1}]$ and $\mathcal B_w=kt^w$, there is a geometric ordinary theory on $\Dom_{\mathrm{aff}}$ with
+\[
+ C(X)=B\otimes_k H^*_{\dR}(X/k),\qquad C(X)_{p,w}=t^w\otimes H^p_{\dR}(X/k).
+\]
+It is obtained by \planned{ofAlgebraic (DeRham.ordinaryTheory k)}. Gysin and residue agree with those constructed from the global logarithmic sequence on each affine pair, with
+\[
+ G(t^w\otimes y)=t^{w+1}\otimes G_{\dR}(y),\qquad
+ r(t^w\otimes x)=t^{w-1}\otimes r_{\dR}(x).
+\]
+Its coefficients and value at $S$ are nonzero, and $[u]_T=t\otimes[du/u]$.
+\uses{thm:geo-from-algebraic,def:geo-dr-cohomology,thm:geo-log-sheaves,thm:dr-instance,lem:dr-tau,thm:dr-naturality}
+\end{theorem}
+\begin{proof}
+Apply Theorem~\ref{thm:geo-from-algebraic} to the existing value \planned{OrlikSolomon.DeRham.ordinaryTheory k}. This constructs all 22 fields, not just a functor. The affine forms comparison gives the stated interpretation of its algebra and grading. For an affine pair, Lemma~\ref{lem:geo-affine-pairs} identifies global sections of $D,U$ with the certified quotient and localization of $A=\G(X,\OO_X)$. The proof of Theorem~\ref{thm:geo-log-sheaves} identifies global log sections with the old log modules. On these representatives both residue maps are $\omega+\theta\wedge\eta\mapsto\eta|_D$, both comparisons are induced by inclusion, and both Gysin maps are $[\gamma]\mapsto[d\lambda]$. Thus the comparison commutes with the maps before twisting; the old twist formulas give the display. All functorial, exactness and product identities follow under these identifications from the old proved fields.
+
+In particular $\rho d=-d\rho$ means a chain map to the shift with differential $-d$; it does not change the residue normalization or insert a sign in $r(\alpha j^*\beta)$. For arbitrary degree of $\beta$, the log factor stays on the left. Nonzero coefficients and point follow from the old instance and the point comparison. The normalized $\tau$ is $t\otimes[dz/z]$ by \old{lem:dr-tau}; pull back along $\widehat u$ to obtain the logarithm formula. This uses the field and characteristic assumptions exactly where the old instance uses them: to supply inverses to positive integers for integration and pole reduction. No new smoothness, connectedness, flatness or nonemptiness hypothesis has been introduced.
+\end{proof}
+
+\begin{corollary}[Unconditional scheme-level de Rham structure theorems]\label{cor:geo-dr-arrangements}
+\lean{OrlikSolomon.Geometric.DeRham.arrangementEquivalences}
+For a characteristic-zero field, with complements the actual open subschemes defined above,
+\[
+ \OS_k(\cA)\xrightarrow\sim H^*_{\dR}(U_{\cA}/k),\quad
+ e_H\longmapsto[df_H/f_H],
+\]
+\[
+ \pOS_k(P)\xrightarrow\sim H^*_{\dR}(U_P/k)\quad(P\ne\varnothing),\quad
+ e_i-e_j\longmapsto[d(\ell_i/\ell_j)/(\ell_i/\ell_j)].
+\]
+Both are graded $k$-algebra equivalences, with the same canonicity, component equivalences, direct-sum forms and finrank/Betti statements as the existing \planned{DeRham/Corollaries}.
+\uses{thm:geo-affine,thm:geo-projective,thm:geo-dr-instance,cor:dr-affine,cor:dr-projective}
+\end{corollary}
+\begin{proof}
+Apply the geometric structure theorems to the preceding affine-domain instance; both complements are affine by the geometric comparison theorems. On the diagonal piece $(q,q)$ use the old \planned{TwistedCohomology.diagonalEquiv}, whose inverse evaluates $t$ at $1$. It sends $t^q\otimes x$ to $x$, preserves products, and in degree one sends the logarithmic class to $[du/u]$. This proves the two displayed equivalences and generator formulas. Alternatively transport the already proved unconditional corollaries along $s_{\cA}$ and $s_P$ and the affine forms comparison; the generator formulas show the two constructions are equal by the old uniqueness theorem. Restricting to degrees and applying the same basis equivalences preserves all finrank and Betti statements. This completes the requested geometric de Rham instance without needing higher cohomology of a sheaf on an affine scheme.
+\end{proof}
+
+\subsection*{A precise boundary for a later non-affine realization}
+
+A future all-smooth de Rham instance should define $H^n_{\dR}(X)=\HH^n(X,\Om^\bullet_{X/k})$. Its implementation must provide the following mathematical constructions and comparisons; they are not axioms of the present theory and are not claimed as completed results here.
+\begin{enumerate}
+\item A functorial hypercohomology construction with pullback, coherent cup products, unit and graded commutativity, together with invariance under quasi-isomorphisms. Merely naming the homology of an arbitrarily chosen resolution does not provide this product API.
+\item Higher-cohomology acyclicity of quasi-coherent modules on affines, and the resulting comparison $\HH^*(\Spec A,\Om^\bullet)\simeq H^*(\Om_A^\bullet)$. A finite separated affine cover can then compute hypercohomology by a total \v{C}ech complex; common refinements and augmentations must prove cover independence and functoriality.
+\item The compatibility $\HH^*(X,Rj_*\Om_U^\bullet)=\HH^*(U,\Om_U^\bullet)$, and the comparison of $j_*\Om_U^\bullet$ with $Rj_*\Om_U^\bullet$ for the principal open $j$. The latter uses the affine acyclicity on $V\cap U$ for affine $V\subseteq X$. Only then does Theorem~\ref{thm:geo-log-sheaves} yield the global localization sequence by applying derived global sections.
+\item Affine-line invariance by applying the existing polynomial integration homotopy on affine cover intersections and proving compatibility with all \v{C}ech restrictions. For separated schemes the intersections of affine opens are affine. For all smooth schemes without separatedness, a more general cover/descent construction is required; do not insert that affineness assumption silently.
+\item Naturality and the right projection formula at the hypercohomology level, with the same shifted residue convention, and comparison of this resulting affine restriction with the instance constructed here.
+\end{enumerate}
+These are substantive prerequisites, which explains the narrower construction chosen here. The public theorem already accepts such a future instance without any change: choose $\Dom_{\mathrm{all}}$ or $\Dom_{\mathrm{sft}}$. Restriction to affines and the existing comparisons will supply its arrangement theorem automatically. Nothing in the current milestone is conditional on this future work.
+
+\section{Worked geometric regressions}
+
+\begin{proposition}[A nonempty complement without rational points]\label{prop:geo-finite-field}
+\lean{OrlikSolomon.Geometric.Examples.twoPointsOverF2}
+For the two hyperplanes $0,1$ in $\A^1_{\mathbb F_2}$ the complement is
+\[
+ U=D(x(x-1))\simeq\Spec\mathbb F_2[x,1/(x(x-1))].
+\]
+It is smooth affine and nonempty, but $\Hom_{\mathbb F_2}(\Spec\mathbb F_2,U)$ is empty. Its combinatorial Poincar\'e polynomial is $1+2z$, and every supplied ordinary theory has the corresponding two degree-one basis words, with the same zero-coefficient qualifications as before.
+\uses{thm:geo-complement-spec,thm:geo-affine,thm:betti}
+\end{proposition}
+\begin{proof}
+The complement comparison gives the displayed localization. The polynomial $x(x-1)$ is nonzero, so localization embeds into $\mathbb F_2(x)$. The zero prime of this domain is an underlying scheme point, proving nonemptiness. A rational point would give an algebra map to $\mathbb F_2$. The image $a$ of $x$ is $0$ or $1$, whereas both $a$ and $a-1$ must be units; this is impossible. This is also the exact content of the existing \planned{Sanity.isEmpty_algHom_twoPoints} and \planned{nontrivial_complementRing_twoPoints}, now stated through the scheme hom-set bijection.
+
+For the polynomial, the empty subset of labels contributes $1$, each singleton contributes $z$, and the pair has empty intersection and contributes nothing in the affine intersection formula. Hence $1+2z$. The transported recursive basis has two length-one words by the old word-count theorem. This number is an integer combinatorial count; it is not inferred from uniqueness of rank over the zero ring. The scheme never becomes empty merely because the rational-point set is empty.
+\end{proof}
+
+\begin{proposition}[Unit, empty, and disconnected pairs]\label{prop:geo-degenerate}
+\lean{OrlikSolomon.Geometric.Examples.degeneratePairs}
+The unit pair is $(X,\varnothing,X,1)$, and $\Spec0$ is the empty smooth affine scheme. Its de Rham cohomology is zero. The smooth disconnected scheme
+$X=\Spec k\amalg\A^1_k$ with section $f=(1,z)$ has
+\[
+ D\simeq\Spec k\quad\text{on the second component},\qquad
+ U\simeq\Spec k\amalg\Gm.
+\]
+In characteristic zero its untwisted de Rham cohomology is
+$H^0(X)=k\times k$, $H^{>0}(X)=0$, $H^0(U)=k\times k$, $H^1(U)=k[\,(0,dz/z)\,]$, and $H^{>1}(U)=0$. The residue of $(0,dz/z)$ is $1$. There is no global derivation $v$ with $v(f)=1$.
+\uses{lem:geo-empty,thm:geo-pair-duality,thm:geo-dr-instance,prop:dr-unit-example,prop:dr-zero-example,prop:dr-product-example}
+\end{proposition}
+\begin{proof}
+A unit has empty zero scheme and full invertibility open; this proves the unit-pair assertion and its maps by Lemma~\ref{lem:geo-empty}. The spectrum of the zero ring has no prime ideals and is empty, and all its sheaves of forms and global form modules are zero. It is smooth by affine duality, including the vacuous regularity of its unique section. No nontriviality typeclass belongs on the objects of either domain.
+
+The disjoint union is affine with ring $k\times k[z]$. The section $(1,z)$ is a non-zero-divisor because multiplication is injective in both factors. Quotient and localization give $k$ and $k\times k[z,z^{-1}]$. Thus the scheme pair is exactly the \Spec-transport of \old{prop:dr-product-example}. The affine forms comparison transports its proved cohomology and residue calculations to the displayed groups. The asserted failure of normalization also transports, or follows directly: every derivation kills the idempotents of a product ring, and on the first factor it is a $k$-derivation of $k$, hence zero; its value on $f$ has first component zero. The old pole proof requires only $v(f)\equiv1\pmod f$, and that weaker statement remains valid. None of these examples requires a chosen rational point for the construction.
+\end{proof}
+
+\begin{proposition}[Regularity, smoothness, and multiplicity cannot be dropped]\label{prop:geo-exclusions}
+\lean{OrlikSolomon.Geometric.Examples.excludedDivisors}
+The following are excluded for different reasons:
+\begin{enumerate}
+\item $f=(1,0)$ on $\Spec(k\times k)$ is not regular; treating its second component as a codimension-one smooth divisor would make the ordinary localization shifts false for actual de Rham or singular cohomology.
+\item $f=xy$ on $\A^2_k$ is regular, but $D=\Spec k[x,y]/(xy)$ is not smooth and the one-divisor logarithmic residue sequence used here fails.
+\item The map $\A^1_x\to\A^1_z$, $z\mapsto x^2$, does not give a morphism between the pairs with equations $x$ and $z$. Its pullback divisor is the doubled point, not the reduced point. The residue of $d(x^2)/x^2$ is $2$, whereas the transverse formula would give $1$.
+\end{enumerate}
+\uses{thm:geo-cartesian,thm:geo-forms-comparison,prop:dr-crossing-example,prop:dr-morphism-examples}
+\end{proposition}
+\begin{proof}
+For (1), $(1,0)(0,1)=0$ with $(0,1)\ne0$. In the actual cohomology of two points, $H^0(X)=k^2$, $H^0(U)=k$, and the kernel of restriction to the first component is $k$. The shifted Gysin contribution to degree zero would come from $H^{-2}(D)=0$, contradicting exactness. This shows why regularity is essential rather than just a convenient certificate.
+
+For (2), the old crossing regression proves failure of formal smoothness of $k[x,y]/(xy)$, so affine duality excludes it. It also exhibits the concrete obstruction: with $\eta=y\,dx$ and $\theta=d(xy)/(xy)$,
+$\theta\wedge\eta=dy\wedge dx$ is regular, but $\eta|_D\ne0$ in
+$\Om^1_D=(k[x,y]/(xy))\{dx,dy\}/(y\,dx+x\,dy)$.
+Thus a residue killing regular forms and sending $\theta\wedge\eta$ to $\eta|_D$ cannot be well defined. This old module counterexample is a sheaf counterexample too: the nonzero class is annihilated by $x$ and $y$, so it survives at the origin (an element outside $(x,y)$ acts by a nonzero scalar on it). The issue is smoothness of the whole divisor, not regularity of its ambient equation.
+
+For (3), $(x^2)\ne(x)$ and $x$ is not a unit in $k[x]$. The Cartesian criterion therefore fails scheme-theoretically, even though the two closed supports are equal. The differential identity $d(x^2)/x^2=2\,dx/x$ and the normalized residue give the stated value. These are the same old ramification regression under \Spec. The cohomological assertion uses a characteristic-zero de Rham realization, or the corresponding ordinary topological residue; it is not used to change the allowed morphisms.
+\end{proof}
+
+\begin{proposition}[A permitted non-flat pullback]\label{prop:geo-nonflat}
+\lean{OrlikSolomon.Geometric.Examples.nonFlatTransverseMap}
+The ring map $k[z,v]\to k[x,y,y^{-1}]$, $z\mapsto xy$, $v\mapsto0$, defines the geometric transverse morphism
+\[
+ (\Spec k[x,y,y^{-1}],x)\longrightarrow(\A^2_{z,v},z).
+\]
+It is not flat, yet both naturality identities hold. The simpler map from $\Spec k[x,y,y^{-1}]$ to $\A^1_z$ is flat and is an example with different ambient dimensions.
+\uses{thm:geo-cartesian,thm:geo-pair-duality,prop:dr-morphism-examples}
+\end{proposition}
+\begin{proof}
+The source equation $x$ is taken to the pullback $xy$, a unit multiple because $y$ is invertible. Both divisors are smooth, and their scheme-theoretic pullback is given by $(xy)=(x)$. Multiplication by $v$ is injective on the domain $k[z,v]$, but after tensoring with the nonzero target algebra it becomes the zero endomorphism. Therefore the target is not flat as a module over the source ring. The pair is nevertheless transverse, so the geometric theory's two naturality fields apply; for de Rham these are also the transports of the proved \planned{nonFlatHom_gysin_map} and \planned{nonFlatHom_residue_map}. In particular the pullback of $dz/z$ is $dx/x+dy/y$ and has residue $1$ along $x=0$.
+
+For the simpler ring map, write $x=z/y$ to identify the target with $k[z,y,y^{-1}]$. It is free over $k[z]$ with basis the Laurent powers of $y$, hence flat. This corrects the old misleading use of that simpler example as a non-flat map. Both instances are covered without adding a relative-dimension condition to morphisms.
+\end{proof}
+
+\begin{proposition}[A non-affine object and the global-sections obstruction]\label{prop:geo-nonaffine}
+\lean{OrlikSolomon.Geometric.Examples.projectiveLineScope}
+The scheme $\PP^1_k$ is a non-affine object of the all-smooth and separated finite-type domains. For every geometric ordinary theory on either domain, the pair
+\[
+ (\PP^1_k\times\A^1,\ \PP^1_k\times\{0\},\ \PP^1_k\times\Gm,\ z)
+\]
+is permitted and satisfies Theorem~\ref{thm:geo-gm-product}. The affine de Rham instance constructed here does not purport to evaluate this object.
+
+For a characteristic-zero field, the complex of global de Rham forms on $\PP^1_k$ has cohomology $k$ in degree zero and zero otherwise. In contrast, the total two-chart \v{C}ech--de Rham complex has cohomology $k$ in degrees zero and two and zero otherwise. Any extension agreeing with the affine de Rham theory and satisfying the usual two-open Mayer--Vietoris triangle must have the latter answer. This is why applying the affine global-sections definition to all schemes would be wrong.
+\uses{def:geo-domain,thm:geo-forms-comparison,thm:geo-gm-product,prop:dr-gm-example,thm:dr-homotopy}
+\end{proposition}
+\begin{proof}
+The two standard charts have rings $k[x]$ and $k[y]$, with $y=x^{-1}$ on their intersection $k[x,x^{-1}]$. The intersection of $k[x]$ and $k[x^{-1}]$ in that Laurent ring is $k$, proving $\G(\PP^1,\OO)=k$. The scheme is not affine: if it were, its canonical map to $\Spec k$ would be an isomorphism, whereas the two distinct homogeneous prime ideals $(X_0)$ and $(X_1)$ give distinct underlying scheme points. This argument uses the spectrum/Proj spaces, not a test of scheme morphisms on rational points. The standard charts prove smoothness and finite type. The diagonal in $\PP^1\times\PP^1$ is the closed subscheme cut out by $X_0Y_1-X_1Y_0$: on any chart meeting it, dehomogenizing this equation identifies the two affine coordinates, while charts with disjoint zero coordinates give the empty locus. Thus it is the diagonal scheme-theoretically, proving separatedness. On each product chart, $z$ acts injectively on its polynomial ring. Hence it is a regular global section, with zero fiber $\PP^1$ and open complement $\PP^1\times\Gm$. Domain membership and the displayed pair follow. Apply Theorem~\ref{thm:geo-gm-product} to this $X$; no calculation of $C(\PP^1)$ from the principal-pair axioms alone is asserted.
+
+For global forms, $dy=-x^{-2}dx$. Thus
+$k[x]dx\cap x^{-2}k[x^{-1}]dx=0$ on the intersection. Global one-forms are zero and higher forms vanish locally by dimension one. With the preceding calculation of global functions this gives the global-complex answer.
+
+The two-chart total complex has terms
+\[
+ \begin{split}
+ K^0&=k[x]\oplus k[y],\\
+ K^1&=(k[x]dx\oplus k[y]dy)\oplus k[x,x^{-1}],\\
+ K^2&=k[x,x^{-1}]dx.
+ \end{split}
+\]
+Use total differential $D=\delta+(-1)^a d$ on \v{C}ech degree $a$. In degree two, the boundaries are the sum of the restrictions of the two regular one-form spaces and derivatives of Laurent functions. The first two spaces contain exactly the monomials $x^m dx$ with $m\geq0$ and with $m\leq-2$. Laurent derivatives contain no $x^{-1}dx$ term. Hence $H^2(K)=k[dx/x]$. The complex is the homotopy fiber of the difference of the two chart de Rham complexes mapping to that of the intersection. Its elementary long exact cohomology sequence, using $H^*(\A^1)=k$ and $H^*(\Gm)=k\oplus k[dx/x]$, gives $H^0(K)=k$ and $H^1(K)=0$: the degree-zero map $k\oplus k\to k$ is $(a,b)\mapsto b-a$, which is surjective with diagonal kernel. All other groups vanish. An extension with this Mayer--Vietoris triangle therefore has this cohomology, by the same exact sequence. This computation does not assume or claim a proof of independence of arbitrary \v{C}ech covers; it precisely states the extra descent property a global realization must have.
+\end{proof}
+
+\paragraph{Further regression preservation.}
+The punctured line and two-dimensional torus remain the actual schemes $\Gm$ and $\Gm^2$; the affine comparison transports their old exterior-algebra calculations and both residue signs. In characteristic $p$, the old closed nonexact form $x^{p-1}dx$ remains so on $\A^1_k$ by the same comparison, so there is no new positive-characteristic de Rham instance. Single projective hyperplanes, projective points, zero coefficients, and ambient dimension zero retain all the existing tests. These are transports of \old{prop:dr-gm-example}, \old{prop:dr-torus-example}, \old{prop:dr-characteristic-p} and the regression inventory; no additional proof of their algebraic calculations is needed.
+
+\section{Intended Lean API and transport discipline}
+
+The following are schematic signatures, not elaborated Lean. Every new name belongs to the proposed namespace \planned{OrlikSolomon.Geometric}; the old namespaces remain available. Write \planned{obj T X} for \planned{T.C.obj (Opposite.op X)} and \planned{pull T g} for \planned{T.C.map g.op}. This keeps contravariance visible without exposing opposite-object coercions in every user lemma.
+
+\begin{lstlisting}
+-- Categories are full subcategories of CategoryTheory.Over (Spec k).
+-- SmoothDomain packages an object predicate and geometric closure proofs.
+-- Cohomology has no arrangement-theoretic fields.
+structure OrdinaryTheory (D : SmoothDomain k) (BWeight : ...) where
+  C : Functor (Opposite D.Obj) (AlgCat B)
+  -- Exactly the other fields of the field table above, in geometric directions.
+
+def toAlgebraic (T : OrdinaryTheory D BWeight) :
+  OrlikSolomon.OrdinaryTheory k BWeight
+
+def ofAlgebraic (T : OrlikSolomon.OrdinaryTheory k BWeight) :
+  OrdinaryTheory (affineDomain k) BWeight
+
+def affineEquiv (T : OrdinaryTheory D BWeight) (A : Arrangement k V) :
+  AlgEquiv B (OSAlgebra B A) (T.obj (complement D A))
+
+def diagonalEquiv (T : OrdinaryTheory D BWeight) (A : Arrangement k V) :
+  AlgEquiv R (OSAlgebra R A)
+    (DirectSum Nat (fun q => diagonalGrading (T.grading (complement D A)) q))
+
+def projectiveEquiv (T : OrdinaryTheory D BWeight)
+    (P : ProjectiveArrangement k W) [Nonempty P] :
+  AlgEquiv B (projectiveAlgebra B P.cone_isCentral)
+    (T.obj (projectiveComplement D P))
+
+-- [Field k] [CharZero k] in the following declarations.
+def DeRham.ordinaryTheory :
+  OrdinaryTheory (affineDomain k) (laurentGrading k)
+
+def DeRham.affineEquiv (A : Arrangement k V) :
+  AlgEquiv k (OSAlgebra k A)
+    (DeRham.Cohomology (complement (affineDomain k) A))
+
+def DeRham.projectiveEquiv (P : ProjectiveArrangement k W) [Nonempty P] :
+  AlgEquiv k (projectiveAlgebra k P.cone_isCentral)
+    (DeRham.Cohomology (projectiveComplement (affineDomain k) P))
+\end{lstlisting}
+
+Provide \planned{affineEquiv_generator_of_isEquation}, \planned{projectiveEquiv_difference_of_ker_eq}, the component and direct-sum equivalences, \planned{finrank_degree_complement}, and \planned{finrank_degree_projectiveComplement} with their old hypotheses and with the scheme targets substituted. The generators land in \planned{logClass} of global-section units; in the de Rham specialization they land in the class of the global form $du/u$. Membership in an admissible domain should be discharged by instances for smooth affines, not passed as a new user hypothesis on an arrangement.
+
+\paragraph{Avoiding the already encountered implementation traps.}
+Keep named geometric objects, pairs, functors and theories as \planned{def}s with public comparison and \planned{simp} lemmas; do not rely on an \planned{abbrev} to make their ring presentations transparent. The existing architecture records concrete failures of simp indexing when these objects unfold. Keep typed \planned{standardResidue} and \planned{deletionResidue} wrappers, with equations identifying them with the pair fields. Prove one set of naturality lemmas for $s_{\cA}$ and $s_P$, and use those lemmas rather than repeated rewriting through \Spec/\G. Retain \planned{mapOverR}, \planned{gysinOverR} and \planned{residueOverR} wrappers to avoid the documented competing scalar structures when $R=B$. Keep the coefficient factor on the left in \planned{TwistedCohomology}.
+
+In particular the main geometric equivalence has the explicit formula
+\[
+ \Phi^{\mathrm{geo}}_{\cA}=s_{\cA}^*\circ (T_{\mathrm{alg}}.\Phi_{\cA}).
+\]
+This is the formula that should be the public \planned{affineEquiv_apply} lemma. Its inverse is the inverse old equivalence after pullback by $s_{\cA}^{-1}$. The identical prescription with $s_P$ defines the projective equivalence. Prove equality of any alternate construction by the generator/difference uniqueness lemmas. No proof should depend on the choice of a deconing isomorphism merely to type the canonical target.
+
+\begin{proposition}[The remaining affine realization regressions]\label{prop:geo-affine-regressions}
+\lean{OrlikSolomon.Geometric.Examples.affineDeRhamRegressions}
+Over a characteristic-zero field, $H^*_{\dR}(\Gm)=k\oplus k[dx/x]$, with square-zero degree-one generator and residue $1$, and
+\[
+ H^*_{\dR}(\Gm^2)=\bigwedge_k(e_x,e_y),\qquad
+ e_x=[dx/x],\ e_y=[dy/y].
+\]
+In the respective smooth pairs with ambient $\A^1_x\times\Gm_y$ or $\Gm_x\times\A^1_y$, the residues of $e_xe_y$ are $e_y$ and $-e_x$. In characteristic $p>0$ the nonconstant closed function $x^p$ and the nonexact form $x^{p-1}dx$ on $\A^1$ prevent its de Rham global-form cohomology from being an ordinary theory satisfying affine-line invariance.
+\uses{thm:geo-forms-comparison,def:geo-dr-cohomology,prop:dr-gm-example,prop:dr-torus-example,prop:dr-characteristic-p}
+\end{proposition}
+\begin{proof}
+Apply the affine forms comparison to $k[x,x^{-1}]$, $k[x,x^{-1},y,y^{-1}]$ and $k[x]$, respectively. It is the identity on the displayed differential words. Thus the first two cohomology calculations and the characteristic-$p$ obstructions are exactly the old proved regressions. The logarithmic sequence comparison preserves residue, and moving $dy/y$ from the second to the first position in $dx/x\wedge dy/y$ gives the stated minus sign. No K\"unneth theorem or fresh computation is being assumed.
+\end{proof}
+
+\section{Complete migration inventory}
+
+\begin{theorem}[A statement-by-statement transport rule]\label{thm:geo-transport-all}
+\lean{OrlikSolomon.Geometric.transportAffineDevelopment}
+The following prescription, denoted $\mathsf G$, gives the full geometric restatement of an old statement about an algebraic theory and its named smooth objects. It preserves all its hypotheses and conclusions, including naturality and component formulas.
+\begin{enumerate}
+\item Replace an arbitrary smooth algebra variable $A$ by $\G(X,\OO_X)$ with $X$ a smooth affine scheme, and an algebra morphism $A\to A'$ by the pullback of a scheme morphism $X'\to X$. Replace a certified pair by the dual geometric pair and reverse a pair morphism.
+\item Replace each named affine, arrangement-complement or nonempty projective-complement object by the scheme defined here and use its specified \Spec-comparison. Replace polynomial and Laurent extension by product with $\A^1$ and $\Gm$ with the projection/section comparisons. Leave the linear-algebra labels, words, incidence data and Orlik--Solomon objects unchanged.
+\item Replace $E.C.obj A$ by $T.C.obj(\operatorname{op}X)$; replace $E.C.map\phi$ by $(\Spec\phi)^*$, conjugated by the named comparisons. Replace a unit by its corresponding global-section unit, \planned{gmHom} by $\widehat u$, and logarithmic classes by Definition~\ref{def:geo-log}. Transport every grading piece and map by the same graded equivalence. Replace residue and Gysin by the compared geometric pair maps, with no sign change.
+\item For an old de Rham statement to be publicly restated, use the affine forms and cohomology comparisons instead of a supplied $T$. Keep its original coefficient and characteristic hypotheses. In particular this never turns an affine global normal derivation into an assertion about a non-affine scheme.
+\end{enumerate}
+Every old proof with these substitutions yields a proof of its $\mathsf G$-restatement. On named arrangement objects the geometric theory may be on any admissible domain. On other arbitrary objects this rule asserts only the affine version; the extra all-object logarithm and product results were proved separately above.
+\uses{thm:geo-to-algebraic,thm:geo-from-algebraic,thm:geo-complement-spec,thm:geo-deletion,thm:geo-small-targets,thm:geo-projective-geometry,thm:geo-log-laws,thm:geo-forms-comparison,thm:geo-dr-instance}
+\end{theorem}
+\begin{proof}
+Theorems~\ref{thm:geo-to-algebraic} and \ref{thm:geo-from-algebraic} supply the old structure and all its fields. The named object comparisons commute with every map used in the proof: this is the content of the complement, deletion, small-target, product and projective comparison theorems. The log comparison handles each generator formula, and pair naturality handles every residue and Gysin expression. Consequently evaluation of an old expression followed by its target comparison equals evaluation of the substituted expression. Prove this by induction on expressions: constants and variables are the definitions, addition and multiplication use an algebra map, scalar multiplication uses its scalar compatibility, and pullbacks, residue and Gysin use the respective commuting squares. Restriction to a grade uses the equivalence of membership in that grade.
+
+Equalities, zero statements, images, kernels, injectivity, surjectivity, exactness, bases and algebra/linear equivalences are preserved under these bijections. Universal quantifiers over affine schemes or their morphisms are transported using the essential surjectivity and full faithfulness of affine duality; existential quantifiers use its inverse and the same comparisons. Thus applying the old theorem at $T_{\mathrm{alg}}$ and composing its maps gives exactly the entire translated statement, with no lost side condition. The identical argument uses the de Rham comparison for item 4. This is a proof-reuse rule, not a new axiom or an automated assertion that arbitrary statements about non-affine schemes follow from affines.
+\end{proof}
+
+The table has one row for each theorem-like node in the two checked-in blueprints. Its statuses are: \textbf{U}, unchanged; \textbf{I}, retained in the internal algebraic/affine-local layer; \textbf{R}, publicly restated geometrically. ``$\mathsf G$'' refers to the complete substitution above, not merely a summary of a theorem. A reference in the last column is the new node proving the needed comparison or grouping the new public statement. Retain all old declarations as compatibility APIs; ``internal'' describes their role and import layering, not a request to weaken them or delete their general hypotheses. A node containing both incidence and geometric material has its incidence part unchanged and its full public statement restated by $\mathsf G$.
+\footnotesize
+\begin{longtable}{p{.31\textwidth}p{.07\textwidth}p{.52\textwidth}}
+\toprule Old node & Status & New statement or retained role\\\midrule\endhead
+\old{def:grading} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:extraction} & U & Pure algebra or incidence statement unchanged.\\
+\old{def:twosided} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:quotient-api} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:exterior-words} & U & Pure algebra or incidence statement unchanged.\\
+\old{def:arrangement} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:equations} & U & Pure algebra or incidence statement unchanged.\\
+\old{def:deletion} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:restriction-geometry} & R & The closed complement is the scheme-theoretic restriction; all incidence hypotheses retained. See \ref{thm:geo-deletion}; the exact restatement is $\mathsf G(\old{lem:restriction-geometry})$.\\
+\old{def:geometry-interface} & R & Concrete schemes and their certified pairs; all construction comparisons of Sections 2--5. See \ref{thm:geo-pair-duality}; the exact restatement is $\mathsf G(\old{def:geometry-interface})$.\\
+\old{lem:geometry-adapter} & R & Concrete schemes and their certified pairs; all construction comparisons of Sections 2--5. See \ref{thm:geo-pair-duality}; the exact restatement is $\mathsf G(\old{lem:geometry-adapter})$.\\
+\old{def:cohomology} & R & The 22-field contravariant interface on the geometric domain. See \ref{def:geo-theory}; the exact restatement is $\mathsf G(\old{def:cohomology})$.\\
+\old{lem:standard-bridge} & R & Degreewise geometric groups, supports, purity and the total theory. See \ref{thm:geo-bridge}; the exact restatement is $\mathsf G(\old{lem:standard-bridge})$.\\
+\old{lem:gm} & R & The normalized class on the scheme $\Gm$ and pullback along a global unit. See \ref{def:geo-log}; the exact restatement is $\mathsf G(\old{lem:gm})$.\\
+\old{def:log} & R & The normalized class on the scheme $\Gm$ and pullback along a global unit. See \ref{def:geo-log}; the exact restatement is $\mathsf G(\old{def:log})$.\\
+\old{lem:log-basic} & R & Full $\mathsf G$ statement; the stated identities also hold on all domain objects. See \ref{thm:geo-log-laws}; the exact restatement is $\mathsf G(\old{lem:log-basic})$.\\
+\old{lem:log-mul} & R & Full $\mathsf G$ statement; the stated identities also hold on all domain objects. See \ref{thm:geo-log-laws}; the exact restatement is $\mathsf G(\old{lem:log-mul})$.\\
+\old{lem:log-residue} & R & Full $\mathsf G$ statement; the stated identities also hold on all domain objects. See \ref{thm:geo-log-laws}; the exact restatement is $\mathsf G(\old{lem:log-residue})$.\\
+\old{lem:restriction-surj} & R & Full $\mathsf G$ statement for geometric deletion diagrams, generation, vanishing or bases, respectively; each is a conclusion. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{lem:restriction-surj})$.\\
+\old{lem:ses} & R & Full $\mathsf G$ statement for geometric deletion diagrams, generation, vanishing or bases, respectively; each is a conclusion. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{lem:ses})$.\\
+\old{thm:generation} & R & Full $\mathsf G$ statement for geometric deletion diagrams, generation, vanishing or bases, respectively; each is a conclusion. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{thm:generation})$.\\
+\old{lem:basis-ses} & U & Pure algebra or incidence statement unchanged.\\
+\old{thm:cohom-basis} & R & Full $\mathsf G$ statement for geometric deletion diagrams, generation, vanishing or bases, respectively; each is a conclusion. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{thm:cohom-basis})$.\\
+\old{def:os} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:os-basic} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:small-targets} & R & The same low-dimensional targets with scheme maps and pullback identities. See \ref{thm:geo-small-targets}; the exact restatement is $\mathsf G(\old{lem:small-targets})$.\\
+\old{lem:empty-relation} & R & Full $\mathsf G$ statement, including every side condition and map or component formula. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{lem:empty-relation})$.\\
+\old{lem:boundary-expansion} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:dependent-relation} & R & Full $\mathsf G$ statement, including every side condition and map or component formula. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{lem:dependent-relation})$.\\
+\old{def:realization} & R & Full $\mathsf G$ statement, including every side condition and map or component formula. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{def:realization})$.\\
+\old{lem:realization-basic} & R & Full $\mathsf G$ statement, including every side condition and map or component formula. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{lem:realization-basic})$.\\
+\old{lem:representatives} & U & Pure algebra or incidence statement unchanged.\\
+\old{def:lift-map} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:lift-surj} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:comparison} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:comparison-residue} & R & Full $\mathsf G$ statement, including every side condition and map or component formula. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{lem:comparison-residue})$.\\
+\old{thm:affine} & R & Full $\mathsf G$ statement, including every side condition and map or component formula. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{thm:affine})$.\\
+\old{cor:ordinary} & R & Full $\mathsf G$ statement, including every side condition and map or component formula. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{cor:ordinary})$.\\
+\old{def:polynomials} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:polynomial-recursion} & U & Pure algebra or incidence statement unchanged.\\
+\old{thm:betti} & R & Full $\mathsf G$ statement, including every side condition and map or component formula. See \ref{thm:geo-affine}; the exact restatement is $\mathsf G(\old{thm:betti})$.\\
+\old{lem:mobius} & U & Pure algebra or incidence statement unchanged.\\
+\old{def:projective} & R & Linear hyperplane data retained; complement is the specified open of $\operatorname{Proj}$. See \ref{def:geo-projective}; the exact restatement is $\mathsf G(\old{def:projective})$.\\
+\old{lem:decone} & R & Decone and cone isomorphisms of schemes, over the indicated ambient spaces. See \ref{thm:geo-projective-geometry}; the exact restatement is $\mathsf G(\old{lem:decone})$.\\
+\old{lem:central-boundary} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:projective-algebra} & U & Pure algebra or incidence statement unchanged.\\
+\old{lem:gm-product} & R & Full $\mathsf G$ statement; the module decomposition is proved for every domain object. See \ref{thm:geo-gm-product}; the exact restatement is $\mathsf G(\old{lem:gm-product})$.\\
+\old{thm:projective} & R & Full $\mathsf G$ statement for nonempty projective arrangements, with canonicity and multiplicities. See \ref{thm:geo-projective}; the exact restatement is $\mathsf G(\old{thm:projective})$.\\
+\old{cor:projective-betti} & R & Full $\mathsf G$ statement for nonempty projective arrangements, with canonicity and multiplicities. See \ref{thm:geo-projective}; the exact restatement is $\mathsf G(\old{cor:projective-betti})$.\\
+\old{def:stable-realization} & U & Unchanged and still deferred at the inspected commit; no new formalization claim.\\
+\old{lem:split-triangle} & U & Unchanged and still deferred at the inspected commit; no new formalization claim.\\
+\old{thm:stable-splitting} & U & Unchanged and still deferred at the inspected commit; no new formalization claim.\\
+\old{cor:generalized} & U & Unchanged and still deferred at the inspected commit; no new formalization claim.\\
+\old{def:universal-coefficients} & U & Unchanged and still deferred at the inspected commit; no new formalization claim.\\
+\old{thm:universal-basechange} & U & Unchanged and still deferred at the inspected commit; no new formalization claim.\\
+\midrule\multicolumn{3}{l}{\textit{The de Rham blueprint}}\\
+\old{lem:dr-exterior} & U & General algebraic lemma unchanged; its full coefficient generality remains public.\\
+\old{lem:dr-contraction} & U & General algebraic lemma unchanged; its full coefficient generality remains public.\\
+\old{def:dr-forms} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{def:geo-forms-sheaf}.\\
+\old{lem:dr-polynomial-dga} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{def:geo-forms-sheaf}.\\
+\old{lem:dr-presentation} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{def:geo-forms-sheaf}.\\
+\old{def:dr-complex} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{def:geo-forms-sheaf}.\\
+\old{thm:dr-dga} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-forms-comparison}.\\
+\old{lem:dr-localization} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-forms-comparison}.\\
+\old{lem:dr-quotient} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{def:dr-cohomology} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{def:geo-dr-cohomology}.\\
+\old{lem:dr-polynomial-splitting} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-dr-instance}.\\
+\old{thm:dr-homotopy} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-dr-instance}.\\
+\old{lem:dr-projective} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-conormal} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-normal-derivation} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-modf-koszul} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{def:dr-log} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-log-dga} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-regularity} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{def:dr-residue} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{thm:dr-residue-sequence} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-form-projection} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-cartan} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-euler} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{def:dr-pole-filtration} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-pole-quotient} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{thm:dr-pole-contraction} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-filtration-reduction} & U & General algebraic lemma unchanged; its full coefficient generality remains public.\\
+\old{thm:dr-comparison} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{def:dr-gysin} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{lem:dr-exactness} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{thm:dr-projection} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{thm:dr-log-naturality} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{thm:dr-naturality} & I & Original algebraic statement and proof retained in full generality. Scheme companion or use: \ref{thm:geo-log-sheaves}.\\
+\old{def:dr-twisted-functor} & R & Full $\mathsf G$ statement on smooth affine schemes, with the old formulas and hypotheses. See \ref{thm:geo-dr-instance}; the exact restatement is $\mathsf G(\old{def:dr-twisted-functor})$.\\
+\old{lem:dr-ordinary-basic} & R & Full $\mathsf G$ statement on smooth affine schemes, with the old formulas and hypotheses. See \ref{thm:geo-dr-instance}; the exact restatement is $\mathsf G(\old{lem:dr-ordinary-basic})$.\\
+\old{def:dr-twisted-maps} & R & Full $\mathsf G$ statement on smooth affine schemes, with the old formulas and hypotheses. See \ref{thm:geo-dr-instance}; the exact restatement is $\mathsf G(\old{def:dr-twisted-maps})$.\\
+\old{thm:dr-ordinary-localization} & R & Full $\mathsf G$ statement on smooth affine schemes, with the old formulas and hypotheses. See \ref{thm:geo-dr-instance}; the exact restatement is $\mathsf G(\old{thm:dr-ordinary-localization})$.\\
+\old{thm:dr-instance} & R & Full $\mathsf G$ statement on smooth affine schemes, with the old formulas and hypotheses. See \ref{thm:geo-dr-instance}; the exact restatement is $\mathsf G(\old{thm:dr-instance})$.\\
+\old{lem:dr-tau} & R & Full $\mathsf G$ statement on smooth affine schemes, with the old formulas and hypotheses. See \ref{thm:geo-dr-instance}; the exact restatement is $\mathsf G(\old{lem:dr-tau})$.\\
+\old{cor:dr-affine} & R & Unconditional equivalence for the actual open subscheme, with all old corollary variants. See \ref{cor:geo-dr-arrangements}; the exact restatement is $\mathsf G(\old{cor:dr-affine})$.\\
+\old{cor:dr-projective} & R & Unconditional equivalence for the actual open subscheme, with all old corollary variants. See \ref{cor:geo-dr-arrangements}; the exact restatement is $\mathsf G(\old{cor:dr-projective})$.\\
+\old{prop:dr-gm-example} & R & Same calculation on the corresponding affine scheme; characteristic assumptions unchanged. See \ref{prop:geo-affine-regressions}; the exact restatement is $\mathsf G(\old{prop:dr-gm-example})$.\\
+\old{prop:dr-unit-example} & R & Empty, disconnected, or unit geometric pair, with the old calculations. See \ref{prop:geo-degenerate}; the exact restatement is $\mathsf G(\old{prop:dr-unit-example})$.\\
+\old{prop:dr-product-example} & R & Empty, disconnected, or unit geometric pair, with the old calculations. See \ref{prop:geo-degenerate}; the exact restatement is $\mathsf G(\old{prop:dr-product-example})$.\\
+\old{prop:dr-zero-example} & R & Empty, disconnected, or unit geometric pair, with the old calculations. See \ref{prop:geo-degenerate}; the exact restatement is $\mathsf G(\old{prop:dr-zero-example})$.\\
+\old{prop:dr-crossing-example} & R & The crossing closed subscheme is excluded; the same residue obstruction persists. See \ref{prop:geo-exclusions}; the exact restatement is $\mathsf G(\old{prop:dr-crossing-example})$.\\
+\old{prop:dr-morphism-examples} & R & Scheme arrows reversed; non-flat transverse map and excluded ramification retained. See \ref{prop:geo-nonflat}; the exact restatement is $\mathsf G(\old{prop:dr-morphism-examples})$.\\
+\old{prop:dr-torus-example} & R & Same calculation on the corresponding affine scheme; characteristic assumptions unchanged. See \ref{prop:geo-affine-regressions}; the exact restatement is $\mathsf G(\old{prop:dr-torus-example})$.\\
+\old{prop:dr-characteristic-p} & R & Same calculation on the corresponding affine scheme; characteristic assumptions unchanged. See \ref{prop:geo-affine-regressions}; the exact restatement is $\mathsf G(\old{prop:dr-characteristic-p})$.\\
+\bottomrule\end{longtable}\normalsize
+
+\section{Dependency graph, migration order, and acceptance criteria}
+
+The new \old{geo-} labels form a dependency graph through their \planned{uses} annotations. References to the two older blueprints are external edges. In particular, the new geometric structure theorem depends on the old algebraic theorem, not conversely. The existing combinatorics and algebra must not import the new scheme-level layer.
+
+\begin{center}
+\begin{tabular}{p{.11\textwidth}p{.41\textwidth}p{.38\textwidth}}
+\toprule Stage & Deliverable & Prerequisites and completion condition\\\midrule
+G0 & Geometric categories; \Spec--\G equivalence; principal pairs & Existing smooth-algebra and Mathlib scheme APIs. Unit, empty, product and pair-direction tests compile.\\
+G1 & Contravariant theory and both affine transports & G0. The full field table is implemented; round-trip comparisons commute with Gysin and residue.\\
+G2 & Actual affine/projective opens and map comparisons & G0 and existing geometry. The named deletion and small-target squares commute on schemes.\\
+G3 & Geometric logarithms and public structure API & G1 and G2. Old equivalences are reused, with generator and canonicity formulas on actual opens.\\
+G4 & Sheaves of forms and affine evaluation & Existing de Rham algebra and Mathlib sheaf APIs. No dependence on G2 or the OS theorem.\\
+G5 & Affine scheme de Rham instance and corollaries & G1, G3, G4 and old instance. Every field and regression is transported; no hypercohomology gap.\\
+G6 & Global sheaf logarithmic comparison & G0, G4 and old log/pole results. This is optional for the affine-instance build, but is part of the mathematical blueprint and must have its own checked node.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+G1 and G2 can proceed independently after G0. G4 can proceed alongside them, and G6 is independent of the OS presentation. These are dependency statements for the team's implementation, not a request to modify repository state as part of producing this file.
+
+\paragraph{An incremental sequence that keeps the project compiling.}
+First add new modules under a distinct namespace without changing any old declaration or import. The existing algebraic \planned{OrdinaryTheory} survives as the kernel interface and as the derived restriction of a geometric theory; it is not retired. After G0, add G1 and prove the pair-level round-trip lemmas before applying it to arrangements. Next add G2, importing the old ring geometry and the now-promoted \planned{Geometry/ProjectiveScheme}; remove that file's old ``leaf only'' architectural prohibition for these new consumers, while leaving pure algebra independent of it. Then add G3 wrappers: the old public theorems remain available throughout and the new geometric theorems are additional public entries. Next add G4/G5; compare the new de Rham corollaries to the old ones on generators so there cannot be two conflicting public maps. Finally update documentation and examples to prefer the scheme API. Any later renaming or physical movement of files is a separate compatibility-preserving step, not a prerequisite for the mathematics.
+
+Suggested modules are \planned{Geometry/Schemes/Basic}, \planned{AffineDuality}, \planned{PrincipalPair}, \planned{Complement}, and \planned{Projective}; \planned{Cohomology/Geometric/Axioms}, \planned{Transport}, \planned{Bridge}, and \planned{Logarithms}; a \planned{Presentation/Geometric} facade; and \planned{DeRham/Schemes/Forms}, \planned{Affine}, \planned{Log}, \planned{Instance}, and \planned{Corollaries}. All are proposed paths, not assertions about files already present. Preserve the existing separation of pure module/exterior/complex lemmas from the realization. Do not move algebraic statements into a scheme file merely because they are used locally on schemes.
+
+\paragraph{Book integration is a build obligation.}
+The inspected \planned{OrlikSolomonBook/Blueprint.lean} reads every \planned{blueprint/*.tex}, rejects duplicated labels across files, and requires a theorem-like environment to have its label immediately after the opening environment and optional title. The source here follows that stricter rule. When this file is first placed in the repository, add book entries for every new node as \emph{planned}, so that the completeness check continues to pass; do not add the file alone and leave the book broken. Add its display name in \planned{Node.lean}, then fill declarations in as each stage lands. The six existing stable nodes retain their deferred status. The book's axiom audit checks declarations but does not itself prove that they cover the prose of a node, so a reviewer must check the comparison formulas, not merely attach a proved declaration to each label.
+
+\paragraph{Required acceptance tests.}
+In addition to the worked geometric regressions, use a consumer file that imports only the geometric public facade and states the affine and nonempty projective equivalences for a theory on $\Dom_{\mathrm{all}}$. It must require no affine comparison supplied by the user. A second consumer states the two unconditional de Rham corollaries with open-subscheme targets, with no theory parameter and no Laurent variable in the statement. Test their generator and ratio formulas through public lemmas. Test both geometric naturality fields on the non-flat pair map, to detect an accidental assumption that every scheme morphism is smooth or flat. Test that \Spec/global-sections comparisons commute with all three arrows in deletion, not just with the open inclusion. Test the point, empty scheme, zero coefficients, $R=B$, and product with $\Gm$. Preserve all old unit-change and zero-ring tests. New theorem names are not marked formalized until the declarations are proved and coverage is reviewed under the repository's existing axiom audit.
+
+\paragraph{Hypothesis audit.}
+The categorical equivalence and forms construction use only a commutative base ring. Finite-dimensional vector spaces over a field enter in the unchanged arrangement incidence and symmetric-algebra smoothness proofs. The geometric theorem adds no field-characteristic assumption. Smoothness of both ambient and divisor is used for the local de Rham residue/comparison theorems; regularity of the equation gives the correct codimension, localization injectivity and the Tor-independent square. Positive integer inverses enter only through the old integration and pole-comparison arguments, and are supplied by characteristic zero in the instance. Separatedness is not used by the transport, the affine de Rham instance, or the sheaf construction: it is useful for the standard Betti domain and for a future finite-affine-cover hypercohomology construction. Finite type enters automatically on the affine objects through the existing smooth-algebra category, and in those standard realization domains; it is not a new condition on every object of the all-smooth interface. Neither connectedness nor integrality nor existence of rational points is assumed for a geometric pair. Hyperplanes still form a finite split arrangement over $k$, exactly as before.
+
+\section{Source audit and API status}
+
+The repository was inspected at the specified commit, including its architecture and regression inventories, the actual \planned{SmoothAlg}/pair definitions, all \planned{OrdinaryTheory} fields and their docstrings, the bridge records and constructor, the logarithm and deletion APIs, the coordinate-ring/complement/deletion/small-target constructions, the projective homogeneous-localization and \Proj comparison, the public presentation and de Rham corollaries, the de Rham instance and maps, the worked-regression modules, and the book's parser and status handling. This matters for the following concrete choices:
+\begin{itemize}
+\item The old geometry interface was already replaced in the implementation by concrete rings and certified pairs. The new layer builds concrete scheme objects and adapters rather than reinstating unproved geometry fields.
+\item The actual twisted algebra is $B\otimes_k H^*$, with coefficients on the left. The new instance follows this order.
+\item The old residue/Gysin signs are given by explicit representative formulas; there is no generic library connecting-map convention to overwrite them.
+\item The existing projective \Spec comparison is already implemented. Its upgrade needs the base-$k$ compatibility certificate and public wrappers, not another projective-complement proof.
+\item The empty projective arrangement has an old homogeneous-localization ring that must not be used as its geometric complement in general. The new open is defined even for empty $P$, while the existing structure theorem and affine comparison keep $P\ne\varnothing$.
+\item Actual old source files retain many stronger algebraic lemmas than the field-valued instance requires. ``Internal affine-local layer'' does not discard those lemmas or their generality.
+\end{itemize}
+
+The following existing Mathlib entry points were verified by reading source at the exact pinned revision. They are starting points for the proposed adapters; this is not a claim that the proposed adapter signatures have been checked.
+\small
+\begin{longtable}{p{.48\textwidth}p{.45\textwidth}}
+\toprule Verified existing name or module & Use and limitation\\\midrule\endhead
+\planned{GammaSpecAdjunction} (module); \(\Gamma\)\planned{Spec.adjunction} & In namespace \planned{AlgebraicGeometry}, \planned{Scheme.}\(\Gamma\)\planned{.rightOp} is left adjoint to \planned{Scheme.Spec}. Opposites must be retained.\\
+\planned{AlgebraicGeometry.Spec.homEquivAlgHom} & Bijection between scheme maps over \Spec of the base and algebra homomorphisms.\\
+\planned{AlgebraicGeometry.Scheme.isoSpec}, \planned{Scheme.isoSpec_hom_naturality}, \planned{Scheme.isoSpec_inv_naturality} & Canonical affine isomorphism $X\simeq\Spec\G(X)$ and its naturality.\\
+\planned{AlgebraicGeometry.AffineScheme}, \planned{IsAffine}, \planned{Scheme.asOver}, \planned{Scheme.Hom.asOver} & Existing geometric categories and over-base wrappers. The proposed smooth full subcategory still needs to be packaged.\\
+\planned{AlgebraicGeometry.Smooth}, \planned{Scheme.Hom.smooth_appLE} & Smoothness is an affine-local ring-homomorphism property; composition and base-change instances are in \planned{Morphisms/Smooth}.\\
+\planned{AlgebraicGeometry.AffineSpace} & Indexed affine space exists; the coordinate-free symmetric-algebra model is the wrapper constructed here.\\
+\planned{AlgebraicGeometry.tilde.functor}, \planned{tilde.isoTop}, \planned{tildeEquiv} & Associated module sheaves, their global sections and the equivalence with quasi-coherent modules on a spectrum. This is not a higher-cohomology vanishing theorem.\\
+\planned{Scheme.Modules}, \planned{IdealSheaf/Subscheme} (module) & Existing sheaves of modules and closed-subscheme infrastructure. The relative differential sheaves and the principal-pair record above remain new work.\\
+\planned{AlgebraicGeometry.Scheme.ellAdicSheaf}, \planned{Scheme.EllAdicCohomology} & The pinned file defines groups and the empty-scheme case. It does not supply the products, twist grading, purity and all fields of an ordinary theory.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+Any exact name not listed as source-verified is a proposal or an unverified convenience name. In particular there is no claim of a verified \planned{Variety}, coordinate-free affine-space object, effective-Cartier-divisor structure, relative de Rham sheaf complex, affine acyclicity theorem, or all-scheme de Rham realization under the names suggested here. Reuse an existing API if it is found during implementation, but require the comparison theorems and signs stated above regardless of the chosen packaging.
+
+\paragraph{Reproducible source locations.}
+Repository sources and the two old blueprints are at
+\url{https://github.com/adamtopaz/OrlikSolomon/tree/44a0c98}.
+The design/status checks particularly use
+\url{https://github.com/adamtopaz/OrlikSolomon/blob/44a0c98/docs/ARCHITECTURE.md},
+\url{https://github.com/adamtopaz/OrlikSolomon/blob/44a0c98/OrlikSolomon/Cohomology/Axioms.lean},
+\url{https://github.com/adamtopaz/OrlikSolomon/blob/44a0c98/OrlikSolomon/Geometry/ProjectiveScheme.lean}, and
+\url{https://github.com/adamtopaz/OrlikSolomon/blob/44a0c98/OrlikSolomonBook/Generalized.lean}.
+Mathlib API inspection used the files under
+\url{https://github.com/leanprover-community/mathlib4/tree/6db5db0d2279846cc8fb25901bd53221d37a77d8/Mathlib/AlgebraicGeometry}.
+These links document the source audit. The mathematical arguments and the explicitly cited older blueprint theorems, rather than the links, supply the proofs in this document.
+
+\end{document}
