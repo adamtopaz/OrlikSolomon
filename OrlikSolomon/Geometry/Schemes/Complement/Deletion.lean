@@ -155,16 +155,19 @@ variable (P : DivisorPair D) {X Z U : D.Obj} (eX : X ≅ P.ambient) (eZ : Z ≅ 
   (hf : Associated (eX.hom.hom.left.appTop P.eqn) f)
 
 include hi hf in
+/-- The closed certificate of a transported pair. -/
 lemma isClosedImmersion_and_ker_eq_ofIso :
     IsClosedImmersion i.hom.left ∧ i.hom.left.ker = principalIdealSheaf f :=
   isClosedImmersion_and_ker_eq_of_iso (isoLeft eX) (isoLeft eZ) P.ker_i
     (congrArg (fun g ↦ g.hom.left) hi) hf
 
 include hj in
+/-- The open map of a transported pair is an open immersion. -/
 lemma isOpenImmersion_ofIso : IsOpenImmersion j.hom.left :=
   isOpenImmersion_of_iso (isoLeft eX) (isoLeft eU) (congrArg (fun g ↦ g.hom.left) hj)
 
 include hj hf in
+/-- The open map of a transported pair has image the basic open of the equation. -/
 lemma opensRange_eq_ofIso :
     letI := P.isOpenImmersion_ofIso eX eU j hj
     j.hom.left.opensRange = X.obj.left.basicOpen f :=
@@ -173,6 +176,7 @@ lemma opensRange_eq_ofIso :
     (congrArg (fun g ↦ g.hom.left) hj) hf
 
 include hf in
+/-- The equation of a transported pair is regular. -/
 lemma isRegularSection_ofIso : IsRegularSection f := by
   refine IsRegularSection.of_associated hf.symm (.of_isIso eX.inv.hom.left ?_)
   rw [← SmoothDomain.appTop_comp_apply, Iso.inv_hom_id, SmoothDomain.appTop_id_apply]
@@ -337,35 +341,44 @@ end Restriction
 
 /-! ### The deletion pair -/
 
+namespace SmoothDomain
+
+variable {k : Type u} [Field k] {V : Type u} [AddCommGroup V] [Module k V] [FiniteDimensional k V]
+variable (D : SmoothDomain k) (𝒜 : Arrangement k V) {H : AffineSubspace k V}
+
+/-- The closed immersion `U_𝒜'' → U_𝒜'`, in a domain.
+
+Blueprint: `thm:geo-deletion`. -/
+def complementRestriction (hH : IsHyperplane H) :
+    D.complement (𝒜.restriction H) ⟶ D.complement (𝒜.deletion H) :=
+  ObjectProperty.homMk (Geometric.complementRestriction 𝒜 hH)
+
+@[simp] lemma complementRestriction_hom (hH : IsHyperplane H) :
+    (D.complementRestriction 𝒜 hH).hom = Geometric.complementRestriction 𝒜 hH := rfl
+
+end SmoothDomain
+
 namespace DivisorPair
 
 open Arrangement
 
 variable {k : Type u} [Field k] {V : Type u} [AddCommGroup V] [Module k V] [FiniteDimensional k V]
-variable (D : SmoothDomain k) (𝒜 : Arrangement k V) {H : AffineSubspace k V} {f g : V →ᵃ[k] k}
+variable (D : SmoothDomain k) {𝒜 : Arrangement k V} {H : AffineSubspace k V} {f g : V →ᵃ[k] k}
 
-/-- The closed immersion `U_𝒜'' → U_𝒜'`, in a domain. -/
-def _root_.OrlikSolomon.Geometric.SmoothDomain.complementRestriction (hH : IsHyperplane H) :
-    D.complement (𝒜.restriction H) ⟶ D.complement (𝒜.deletion H) :=
-  ObjectProperty.homMk (Geometric.complementRestriction 𝒜 hH)
-
-@[simp] lemma _root_.OrlikSolomon.Geometric.SmoothDomain.complementRestriction_hom
-    (hH : IsHyperplane H) :
-    (D.complementRestriction 𝒜 hH).hom = Geometric.complementRestriction 𝒜 hH := rfl
-
-variable {𝒜}
-
+/-- The closed square of the deletion pair with `Spec` of the existing one. -/
 lemma deletionPair_hi (hH : H ∈ 𝒜) (hf : IsEquation f H) :
     D.complementRestriction 𝒜 (𝒜.isHyperplane hH) ≫ (D.complementIsoSpec (𝒜.deletion H)).hom =
       (D.complementIsoSpec (𝒜.restriction H)).hom ≫
         (spec D (OrlikSolomon.DivisorPair.deletionPair 𝒜 hH hf)).i :=
   D.complementMap_comp_complementIsoSpec_hom _ _
 
+/-- The open square of the deletion pair with `Spec` of the existing one. -/
 lemma deletionPair_hj (hH : H ∈ 𝒜) (hf : IsEquation f H) :
     D.complementInclusion (𝒜.deletion_le H) ≫ (D.complementIsoSpec (𝒜.deletion H)).hom =
       (D.complementIsoSpec 𝒜).hom ≫ (spec D (OrlikSolomon.DivisorPair.deletionPair 𝒜 hH hf)).j :=
   D.complementInclusion_comp_complementIsoSpec_hom _
 
+/-- The equation of the deletion pair is the transported equation of the existing one. -/
 lemma deletionPair_hf (hH : H ∈ 𝒜) (hf : IsEquation f H) :
     Associated ((D.complementIsoSpec (𝒜.deletion H)).hom.hom.left.appTop
         (spec D (OrlikSolomon.DivisorPair.deletionPair 𝒜 hH hf)).eqn)
@@ -433,8 +446,8 @@ def deletionPairIsoSpec :
     (deletionPairIsoSpec D hH hf).hom.compl = (D.complementIsoSpec 𝒜).hom := rfl
 
 /-- The deletion pairs of two equations of `H` are isomorphic by the identities of their schemes:
-the multiplier is the nonzero constant relating the equations (`coe_complementUnit_smul`). So a
-theory's residue and Gysin maps on the deletion pair do not depend on the equation.
+the multiplier is the nonzero constant relating the equations (`IsEquation.exists_coord_eq_mul`).
+So a theory's residue and Gysin maps on the deletion pair do not depend on the equation.
 
 Blueprint: `thm:geo-deletion`. -/
 def deletionPairIso (hg : IsEquation g H) : deletionPair D 𝒜 hH hf ≅ deletionPair D 𝒜 hH hg :=

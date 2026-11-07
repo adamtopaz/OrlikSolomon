@@ -225,6 +225,7 @@ instance : IsOpenImmersion (specMap (CommAlgCat.ofHom (toComplementRing 𝒜))).
   isOpenImmersion_specMap_of_isLocalization (CommRingCat.ofHom (toComplementRing 𝒜).toRingHom) _
     (isLocalizationAway_toComplementRing 𝒜)
 
+/-- `U_𝒜` and `Spec O(U_𝒜)` have the same image in `𝔸_V`. -/
 lemma range_complementOpens_ι :
     Set.range (complementOpens 𝒜).ι =
       Set.range (specMap (CommAlgCat.ofHom (toComplementRing 𝒜))).left := by
