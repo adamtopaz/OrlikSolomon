@@ -38,7 +38,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Geometry/ProjectiveArrangement` | `def:projective`, the incidence part of `lem:decone` |
 | `Geometry/ProjectiveRing`      | the ring `O(U_P)` of `def:projective` |
 | `Geometry/Projective`          | `lem:decone`, the objects of `SmoothAlg k` and the cone and decone part of `lem:geometry-adapter` |
-| `Geometry/ProjectiveScheme`    | `O(U_P)` as the complement in Mathlib's `Proj` |
+| `Geometry/ProjectiveScheme`    | `O(U_P)` as the complement in Mathlib's `Proj`, its independence of equations, and the intersection of charts in `def:geo-projective` |
 | `Cohomology/Axioms`            | `def:cohomology` |
 | `Cohomology/BridgeData/Basic`   | degreewise products, coefficients and pullbacks for `lem:standard-bridge` |
 | `Cohomology/BridgeData/Supports` | degreewise localization with supports and oriented purity for `lem:standard-bridge` |
@@ -303,9 +303,9 @@ three rings. State results for every equation of `H`.
   modules that import Mathlib's schemes. `Geometry/ProjectiveScheme` alone added about 250 Mathlib
   modules to the closure of the root and of the book, about 11%. It is a leaf for
   the algebraic development: the proof of the structure theorems, the algebra, the combinatorics and
-  the algebraic de Rham instance may not import it, so they stay free of schemes. The planned scheme
-  layer of milestone M6 is the exception: `Geometry/Schemes/Projective` and the modules built on it
-  may import it. See "The geometric refactor" below.
+  the algebraic de Rham instance may not import it, so they stay free of schemes. The scheme layer of
+  milestone M6 is the exception: `Geometry/Schemes/Projective` imports it, and so may the modules
+  built on that. See "The geometric refactor" below.
 
 ### Projective structure maps
 
@@ -966,11 +966,13 @@ It makes cohomology a contravariant functor on a category of smooth `k`-schemes,
 complements the actual open subschemes of `Spec Sym(V*)` and `Proj Sym(W*)`, and reuses every proved
 algebraic result through the equivalence between smooth algebras and smooth affine schemes. It adds
 no field to the axioms, keeps the hypotheses of both structure theorems, and changes no conclusion.
-Stage G0 (#107, #108) is formalized: `def:geo-domain`, `thm:geo-affine-duality`,
+Stage G0 (#107, #108) is formalized to the extent indicated below: `def:geo-domain`, `thm:geo-affine-duality`,
 `lem:geo-affine-pairs`, `lem:geo-products` and `thm:geo-units`, described in "Schemes, domains and
 affine duality" below, and `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-cartesian` and
-`thm:geo-pair-duality`, described in "Principal pairs" below. The other declaration names are
-proposals, as with the other blueprints.
+`thm:geo-pair-duality`, described in "Principal pairs" below. The Cartesian node remains partial:
+its Tor-sheaf and conormal comparisons are not stated. So are `def:geo-projective` and, except for
+its affine sides, `thm:geo-projective-geometry` (#112), described in "Projective complements on
+schemes". The other declaration names are proposals, as with the other blueprints.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1143,6 +1145,43 @@ the Gysin and residue maps.
   `globalSections`, `globalSectionsMap` and `globalSectionsFunctor` shadow the object-level names, so
   write `Geometric.spec` and so on there.
 
+### Projective complements on schemes
+
+These are the conventions of `Geometry/Schemes/Projective` (#112).
+
+- **The objects.** `projectiveSpace k W` is `Proj Sym(W*)` over `S`, with the structure map
+  `projToSpec` through Mathlib's `Proj.toSpecZero`. `projectiveComplement P` is the open subscheme
+  `complementOpen P` of it, for every `P`, and is not an object of any domain in general. It is the
+  intersection of the charts `D₊(ℓ)` of all equations (`complementOpen_eq_iInf`), which depend only
+  on the kernel (`basicOpen_coord_eq_of_ker_eq`), and for empty `P` its open immersion is an
+  isomorphism (`isIso_projectiveComplementι`). `ℙ(W)` is smooth for finite-dimensional `W`
+  (`smooth_projectiveSpace_hom`), so `U_P` is smooth for every `P`, and empty when `W = 0`.
+- **The comparison `s_P`.** `projectiveComplementIsoSpec P` is `complementOpenIso P` with the
+  certificate `complementOpenIso_hom_specMap` that it is over `S`, for `[Nonempty P]` and any `W`.
+  Its target is `spec (CommAlgCat.of k P.ComplementRing)`. It does not depend on the equations
+  chosen inside `complementOpenIso` (`projectiveComplementIsoSpec_inv_left_comp_ι`, from
+  `complementι_eq_awayι_of_ker_eq`). `formProduct` is `@[implicit_reducible]` so that the chart of
+  `complementOpen P` and the ring of `awayEquiv` agree at implicit transparency.
+- **In a domain.** `D.projectiveComplement P` needs `[FiniteDimensional k W] [Nonempty P]` and no
+  proof. `D.projectiveComplementIsoSpec P` has target exactly
+  `D.spec (SmoothAlg.projectiveComplement P)`, the object at which a geometric theory restricts to
+  the algebraic one, so the projective structure theorem on `U_P` is the existing one composed with
+  pullback along it. The domain maps are `ObjectProperty.isoMk` and `homMk` of the maps over `S`,
+  and their lemmas are transferred with `ObjectProperty.hom_ext`.
+- **The cone and the decone.** `V_P` and `U_{decone P}` are, for now, the spectra of the existing
+  rings `P.cone.ComplementRing` and `(P.decone ℓ₀).ComplementRing`. With
+  `Geometry/Schemes/Complement` (#111) they become the open subschemes by composing with `s_𝒜`. The projection
+  `coneProjection P : V_P → U_P` is `Spec` of `toCone` followed by `s_P⁻¹`, with no choice; the
+  square with `SmoothAlg.projectiveToCone` is
+  `SmoothDomain.coneToProjectiveComplement_comp_projectiveComplementIsoSpec_hom`.
+  `coneIsoProdGm hℓ₀` has first coordinate `coneProjection P` and second coordinate `ℓ₀`.
+- **Functions.** `projectiveRatio hℓ hℓ'` is the unit `ℓ / ℓ'` of `Γ(U_P)`, the pullback along `s_P`
+  of `ratioUnit`, and `specUnit u` is the unit of `Spec A` given by `u : Aˣ`. Lemmas about functions
+  in a domain are equations of global sections, such as `SmoothDomain.coe_projectiveRatio`, and not
+  of units: `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)` agree only at implicit
+  transparency, so `Units.map` and products across them do not elaborate. Get a unit equation with
+  `Units.ext`.
+
 ### Modules
 
 The paths are the blueprint's proposals, and each row is one of #107–#118. A PR that splits a row
@@ -1182,9 +1221,8 @@ independent, and the geometric bridge #110 needs only #109. Stage G3 (#113, #114
 Stage G4 (#115) is independent of G0–G3, stage G5 (#116) needs G1, G3 and G4, and stage G6 (#117)
 needs G0 and G4. Parts of #118 land with the modules they test.
 
-The chapter `OrlikSolomonBook/Geometric.lean` presents all 42 nodes as planned, and its opening says
-that none is formalized. When nodes land, update that opening, the paragraph "A planned third part"
+The chapter `OrlikSolomonBook/Geometric.lean` presents its 42 nodes, and its opening lists the ones
+that are formalized. When nodes land, update that opening, the paragraph "A planned third part"
 on the first page, the row in `Organization`, the sentence on the status page, the pointers in
-`Geometry`, `Axioms` and `Projective`, and the line in `README.md`. In particular, `Projective` says
-that no proof module imports `Geometry/ProjectiveScheme`, which stops being true with #112. The
-build does not check this prose.
+`Geometry`, `Axioms` and `Projective`, and the line in `README.md`. The build does not check this
+prose.
