@@ -52,11 +52,14 @@ attribute [local instance] strongEpi_of_epi
 
 variable {k : Type u} [CommRing k] (T : TopCat.{u})
 
-local instance : MonoidalClosed (TopCat.Sheaf (ModuleCat.{u} k) T) :=
+/-- Sheaves of base modules form a closed monoidal category. -/
+private local instance sheafModulesMonoidalClosed :
+    MonoidalClosed (TopCat.Sheaf (ModuleCat.{u} k) T) :=
   Monoidal.Reflective.monoidalClosed
     (sheafificationAdjunction (_root_.Opens.grothendieckTopology T) (ModuleCat k))
 
-local instance :
+/-- Forgetting the sheaf condition carries the right-adjoint lax monoidal structure. -/
+private local instance sheafModulesForgetLaxMonoidal :
     (sheafToPresheaf (_root_.Opens.grothendieckTopology T) (ModuleCat.{u} k)).LaxMonoidal :=
   (sheafificationAdjunction (_root_.Opens.grothendieckTopology T)
     (ModuleCat k)).rightAdjointLaxMonoidal
