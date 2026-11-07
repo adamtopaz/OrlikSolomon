@@ -25,6 +25,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Algebra/ExteriorWords`        | `lem:exterior-words`, `lem:boundary-expansion` |
 | `Algebra/ExteriorBoundary`     | the exterior-algebra operator and signed Leibniz rule of `lem:central-boundary` |
 | `Algebra/Exact`                | `lem:basis-ses`, `lem:comparison` |
+| `Algebra/ComplexReduction`     | cocycle and primitive reduction through a contractible quotient, for arbitrary-shaped complexes and square-zero total operators; `lem:dr-filtration-reduction` |
 | `Algebra/SymmetricGrading`     | the degree grading of `O(W)`, used by `def:projective` |
 | `Geometry/Hyperplane`          | hyperplanes and equations of `def:arrangement`, `lem:equations` |
 | `Geometry/Chart`               | identifying `H` with `H.direction` in `def:deletion`, the incidence part of `lem:restriction-geometry` for one hyperplane |
@@ -97,6 +98,16 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Log`                   | `logComplex`, `shiftedComplex`, `logResidueShortExact` of `thm:dr-residue-sequence`, and `DivisorPair.isSmoothPrincipalPair`; the module to import |
 | `DeRham/Maps/Gysin`            | `def:dr-gysin`, `lem:dr-exactness` and `thm:dr-projection` for `H^•(L)`: `LogCohomology.residue`, `gysin`, its explicit formulas, exactness and the shifts |
 | `DeRham/Maps/Naturality`       | `thm:dr-log-naturality`, and `thm:dr-naturality` for `H^•(L)`: `IsPairHom`, `logMap`, `logResidueShortComplexMap`, `gysin_map`, `DivisorPair.Hom.isPairHom` and associated equations |
+| `DeRham/Pole/Cartan`           | `lem:dr-cartan`: contraction, Lie derivative and localization |
+| `DeRham/Pole/Euler`            | `lem:dr-euler`: actual Euler contraction, the quotient `L/fL` and its homogeneous pieces |
+| `DeRham/Pole/Filtration`       | `def:dr-pole-filtration`: increasing, exhaustive pole stages and their differential |
+| `DeRham/Pole/Complex`          | pole stages and their inclusions as complexes of `k`-modules |
+| `DeRham/Pole/Quotient`         | `lem:dr-pole-quotient`: the successive quotient and its actual differential |
+| `DeRham/Pole/Contraction`      | `thm:dr-pole-contraction`: the explicit contracting operator and its degree |
+| `DeRham/Pole/Reduction`        | finite cocycle and primitive reduction for `thm:dr-comparison` |
+| `DeRham/Pole/Comparison`       | `thm:dr-comparison`: bijectivity of the canonical map and its algebra equivalence |
+| `DeRham/Pole/Degree`           | natural and integer degree equivalences, preservation, reflection and certificate independence |
+| `DeRham/Pole`                 | global logarithmic comparison; the module to import |
 | `DeRham/PrincipalQuotient`     | `lem:dr-quotient`, for any surjection of algebras with principal kernel |
 | `DeRham/SmoothPair/Koszul`    | `lem:dr-modf-koszul`: wedge exactness modulo a smooth principal divisor in every degree |
 | `DeRham/SmoothPair/Projective` | `lem:dr-projective`: projectivity in every form degree, regular scalar action and injectivity into localization |
@@ -112,6 +123,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/DeRhamLocalization` | nilpotent, zero and unit equations; a conormal map that is not injective over `ZMod 2` |
 | `Examples/DeRhamLog`         | signs of the projection formulas; unit, zero-algebra, disconnected and divisor-pair consumers of `DeRham/Log` |
 | `Examples/DeRhamMaps`        | signs of the residue and Gysin maps; the empty divisor, divisor-pair consumers, and the morphism that is not flat, with its proof |
+| `Examples/DeRhamPole`        | logarithmic comparison with zero coefficients, unit equations and a disconnected rational smooth pair |
 | `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
 | `Examples/Degenerate`        | coefficient cohomology of empty complements and nonunique zero-ring basis sizes |
 | `Examples/Exterior`          | full exterior algebras for singletons and coordinate arrangements |
@@ -557,9 +569,10 @@ The namespace is `OrlikSolomon.DeRham`. Exterior calculus, the dg algebra and it
 its cohomology algebra, polynomial-form decomposition and homotopy invariance, forms on
 localizations and principal quotients, projectivity and regular scalar action in every form degree,
 injectivity into localization, conormal splitting, global and localized normal derivations, wedge
-exactness modulo the divisor, logarithmic forms with their residue sequence, the Gysin map, the long
-exact sequence for `H^•(L)`, naturality of all of these, and the Laurent-twisted functor with the
-fields preceding Gysin and residue exist; the other parts below remain planned.
+exactness modulo the divisor, logarithmic forms with their residue sequence, global logarithmic
+comparison, the Gysin map, the long exact sequence for `H^•(L)`, naturality of all of these, and
+the Laurent-twisted functor with the fields preceding Gysin and residue exist; the residue on
+`H^•(T)`, the remaining fields and the final instance remain planned.
 The table groups modules by issues #72–#83. The conormal and normal-derivation results need only
 Mathlib's Kähler differentials and formal-smoothness lifts. Normalizing a derivation on
 `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge exactness uses exterior
@@ -736,6 +749,41 @@ included, without finite presentation or smoothness of a quotient.
   `IsPairHom.closed_eq` and `IsPairHom.compl_eq`. `IsPairHom.of_associated_id` is how a statement
   becomes one about associated equations.
 
+### Pole order and logarithmic comparison
+
+`DeRham/Pole/Cartan` defines contraction by a derivation, its Lie derivative, and their extension
+to arbitrary localizations. `Pole/Euler` restricts contraction by `E = f v` to logarithmic forms
+and descends it to the actual `A`-module quotient `V = L / f L`. Normality is the precise
+congruence `v(f) = 1 + f h`; it gives `dJ + Jd = 0` and `WJ + JW = id` on `V`. Smoothness is not
+needed for these operator identities. `logQuotientPower` is the image of the homogeneous
+logarithmic piece, with typed restrictions of `d`, `J`, and `W`.
+
+`Pole/Filtration` defines actual submodules of localized forms: `poleForms m = f⁻ᵐ L` and
+`poleFiltration m n = f⁻ᵐ Lⁿ`. Pole stages increase and exhaust total forms and each exterior
+degree; `Pole/Complex` packages their restricted differentials and inclusions as complexes and
+chain maps. The filtration and its quotient identifications require neither regularity nor
+smoothness, because denominator clearing happens in the localized module itself.
+`Pole/Quotient` uses successor indexing: `PoleQuotient m = F_(m+1) / F_m`. Multiplication by
+`f⁻⁽ᵐ⁺¹⁾` gives `poleQuotientEquiv : V ≃ₗ[A] PoleQuotient m`, preserving homogeneous pieces.
+`poleQuotientProjection` is the canonical surjection from the upper stage to `V`, with kernel
+the preceding stage, and intertwines `d` with `poleQuotientDifferential = d̄ − (m+1) W`.
+
+`Pole/Contraction` uses only `IsUnit (m+1 : k)` and a normal derivation to construct the actual
+operator `−(m+1)⁻¹ J`; its homotopy identity is proved on `V` and on the actual pole quotient,
+with degree lowering and degree-zero vanishing. `Algebra/ComplexReduction` is independent of
+forms and proves both cocycle and primitive reduction for arbitrary short exact sequences of
+complexes over any ring, plus a total-module formulation for a square-zero differential.
+`Pole/Reduction` applies that formulation and finite induction on a pole bound.
+`Pole/Comparison` proves bijectivity of the inclusion-induced total cohomology map and packages
+it as `logToLocalizationEquiv`. Its forward map is canonical; the normal derivation occurs only
+in the proof of bijectivity. Positive integers need only be units in `k`, so neither a field nor
+a nonzero coefficient ring is assumed. A smooth principal pair supplies the normal derivation.
+
+`Pole/Degree` proves preservation and reflection of the natural and integer gradings and gives
+`logToLocalizationDegreeEquiv` and `logToLocalizationGradingEquiv`. Their forward and inverse
+formulas identify the canonical map in each degree. The full algebra equivalence is independent
+of the coefficient-unit proofs and the chosen closed-divisor presentation or certificate.
+
 ### Cohomology
 
 - **Total cohomology comes first, and its degrees are submodules of it.** `Cohomology k A` is one
@@ -833,10 +881,11 @@ The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each no
 names the exterior calculus, dg algebra, cohomology algebra, polynomial homotopy, forms on
 localizations and quotients, projectivity and regularity of forms, injectivity into localization,
 conormal splitting, normal derivations, modulo-divisor wedge exactness, logarithmic forms with
-their residue sequence, the Gysin map and naturality, and the Laurent-twisted functor with the first
-fields of the structure as formalized, and lists what remains. The first page, `Organization` and the
-chapter on the axioms say the instance is in progress. No nonzero value of `OrdinaryTheory` has been
-constructed. The build does not check that prose, so keep it current as nodes land. The PR
+their residue sequence, global logarithmic comparison, the Gysin map and naturality, and the
+Laurent-twisted functor with the first fields of the structure as formalized, and lists what remains.
+The first page, `Organization` and the chapter on the axioms say the instance is in progress.
+No nonzero value of `OrdinaryTheory` has been constructed. The build does not check that prose,
+so keep it current as nodes land. The PR
 that proves `thm:dr-instance` must update the sentences saying that no nonzero value
 of the structure has been constructed: on the first page, in the chapter on the axioms, on the
 status page and in `README.md`.
