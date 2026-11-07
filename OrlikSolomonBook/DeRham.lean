@@ -19,8 +19,8 @@ htmlSplit := .never
 *The de Rham instance is being formalized.*
 This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
 The exterior calculus and the de Rham dg algebra of an arbitrary algebra, including its differential, are formalized, together with its forms on a localization and on a principal quotient.
-The conormal splitting, global and localized normal derivations, and wedge exactness modulo the divisor are also formalized.
-Higher-form projectivity, regular-element injectivity and injectivity into localization remain planned, as do the cohomology and comparison arguments and the final instance.
+Projectivity in every form degree, injectivity of regular scalar multiplication and of restriction into localization, conormal splitting, global and localized normal derivations, and wedge exactness modulo the divisor are also formalized.
+The cohomology and comparison arguments and the final instance remain planned.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
@@ -218,7 +218,7 @@ In this section $`f` is a non-zero-divisor of $`A`, and both $`A` and $`S=A/(f)`
 No connectedness is assumed and the ring may be zero: the structure quantifies over disconnected algebras and the zero algebra, and over pairs whose equation is a unit.
 The results here supply the global derivation of {ref "de-rham-strategy"}[the strategy].
 
-:::node "lem:dr-projective"
+:::node "lem:dr-projective" (decl := Algebra.FormallySmooth.projective_kaehlerDifferential) (decl := OrlikSolomon.DeRham.projective_exteriorPower) (decl := OrlikSolomon.DeRham.isSMulRegular_forms) (decl := OrlikSolomon.DeRham.Forms.injective_mapPower_of_isLocalizationAway)
 If $`A` is formally smooth over $`k`, then $`\Omega_A^1` and every $`\Omega_A^n` are projective $`A`-modules.
 If $`f` is a non-zero-divisor, then multiplication by $`f` is injective on each $`\Omega_A^n`, and $`\Omega_A^n\to\Omega_{A_f}^n` is injective.
 :::
