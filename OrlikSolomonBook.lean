@@ -429,7 +429,8 @@ The main theorem does not depend on it: the dependence runs the other way.
 *A planned third part.*
 The third blueprint plans to restate both theorems for cohomology theories defined on smooth schemes, with the complements as actual open subschemes of affine and projective space, so that a theory on all smooth schemes would apply to them directly.
 It would reuse every proved algebraic result through the equivalence between smooth algebras and smooth affine schemes, and transport the de Rham instance to smooth affine schemes.
-None of it is formalized yet, so its statements are not theorems of the library.
+Only its foundations are formalized so far: admissible domains of smooth schemes, the equivalence between smooth algebras and smooth affine schemes, zero schemes and basic opens, products with the affine line and the multiplicative group, and units as maps to the multiplicative group.
+Its statements about cohomology are not theorems of the library.
 {ref "geometric"}[Its chapter] presents the plan, and its nodes are counted separately above.
 Nothing on this page depends on it: the dependence runs the other way.
 
