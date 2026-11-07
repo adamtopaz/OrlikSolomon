@@ -18,7 +18,8 @@ htmlSplit := .never
 
 *Only the foundations of this chapter are formalized.*
 It presents the plan in the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
-Of its 42 nodes, five are formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains] and the four nodes of {ref "geo-affine"}[affine duality], namely the equivalence between smooth algebras and smooth affine schemes, zero schemes and basic opens, products with the affine line and the multiplicative group, and units as maps to the multiplicative group.
+Of its 42 nodes, nine are formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], namely the equivalence between smooth algebras and smooth affine schemes, zero schemes and basic opens, products with the affine line and the multiplicative group, and units as maps to the multiplicative group, and the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs].
+One of those, {bp "thm:geo-cartesian"}[], is formalized only in part, as its box says.
 None of them mentions cohomology, and no structure theorem on schemes is formalized.
 Every other box below is marked as planned, and for those the blueprint's proposed names under `OrlikSolomon.Geometric` do not exist yet, so this chapter does not list them.
 The statements and arguments in the planned boxes are the blueprint's, and no machine has checked them.
@@ -136,6 +137,9 @@ Neither affineness, nor smoothness, nor a rational point is needed.
 :::
 
 # Principal smooth divisor pairs
+%%%
+tag := "geo-pairs"
+%%%
 
 The localization axioms need a divisor together with an equation.
 The plan keeps the existing choice: a pair has a global regular function $`f` on its ambient scheme, which cuts out a smooth closed subscheme $`D` with open complement $`U`.
@@ -158,7 +162,7 @@ The condition on morphisms, that the pulled-back equation is a unit multiple of 
 That is the transversality needed for oriented divisor purity, and it does not require the ambient map to be flat.
 {bp "prop:geo-nonflat"}[] tests this with a morphism that is not flat.
 
-:::node "def:geo-divisor-pair"
+:::node "def:geo-divisor-pair" (decl := OrlikSolomon.Geometric.DivisorPair) (decl := OrlikSolomon.Geometric.DivisorPair.eqnUnit) (decl := OrlikSolomon.Geometric.DivisorPair.closedLift) (decl := OrlikSolomon.Geometric.DivisorPair.complLift) (decl := OrlikSolomon.Geometric.DivisorPair.isEmpty_closed_of_isUnit) (decl := OrlikSolomon.Geometric.DivisorPair.isIso_j_of_isUnit) (decl := OrlikSolomon.Geometric.DivisorPair.standardPair) (decl := OrlikSolomon.Geometric.isRegularSection_prodCoord) (decl := OrlikSolomon.Geometric.ker_zeroSection_left) (decl := OrlikSolomon.Geometric.opensRange_whiskerLeft_gmToAffineLine_left)
 A _principal smooth divisor pair_ in $`\mathcal{D}` consists of objects $`X`, $`D` and $`U` of $`\mathcal{D}`, morphisms $`i:D\to X` and $`j:U\to X`, and $`f\in\Gamma(X,\mathcal{O}_X)`, such that
  * multiplication by $`f` on $`\mathcal{O}_X` is a monomorphism,
  * $`i` identifies $`D` with the closed subscheme $`Z_X(f)`, and
@@ -168,14 +172,14 @@ Smoothness of the three schemes is their membership in $`\mathcal{D}`.
 A unit $`f` and an empty ambient scheme are allowed.
 :::
 
-:::node "def:geo-pair-hom"
+:::node "def:geo-pair-hom" (decl := OrlikSolomon.Geometric.DivisorPair.Hom) (decl := OrlikSolomon.Geometric.DivisorPair.instCategory) (decl := OrlikSolomon.Geometric.DivisorPair.Hom.exists_unit_mul) (decl := OrlikSolomon.Geometric.DivisorPair.hom_ext) (decl := OrlikSolomon.Geometric.DivisorPair.homOfAmbient) (decl := OrlikSolomon.Geometric.DivisorPair.standardPairMap) (decl := OrlikSolomon.Geometric.DivisorPair.toStandard)
 A morphism $`g:P\to Q` of pairs consists of morphisms $`g_X:X_P\to X_Q`, $`g_D:D_P\to D_Q` and $`g_U:U_P\to U_Q` such that
 $$`g_X\,i_P=i_Q\,g_D,\qquad g_X\,j_P=j_Q\,g_U,\qquad g_X^*f_Q=u\,f_P\quad\text{for some }u\in\Gamma(X_P,\mathcal{O})^\times.`
 Only the existence of the multiplier $`u` is required, and it is not part of the data.
 Identities and composition are those of schemes, and $`g_D` and $`g_U` are determined by $`g_X`.
 :::
 
-:::node "thm:geo-cartesian"
+:::node "thm:geo-cartesian" (decl := OrlikSolomon.Geometric.DivisorPair.associated_iff_ker_pullback_fst) (decl := OrlikSolomon.Geometric.DivisorPair.associated_iff_isPullback) (decl := OrlikSolomon.Geometric.associated_iff_principalIdealSheaf_eq) (decl := OrlikSolomon.Geometric.ker_pullback_fst_of_ker_eq) (decl := OrlikSolomon.Geometric.DivisorPair.Hom.isPullback_closed) (decl := OrlikSolomon.Geometric.DivisorPair.Hom.isPullback_compl) (decl := OrlikSolomon.Geometric.DivisorPair.Hom.isRegularSection_appTop) (remaining := "Tor-independence is formalized only as the regularity of the pulled-back equation, which keeps the pulled-back resolution of the divisor exact, and not as a statement about Tor sheaves. The conormal isomorphism of line bundles is not formalized: Mathlib has no conormal sheaf of a closed immersion, and its content is the unit multiplier of Hom.exists_unit_mul.")
 Let $`P` and $`Q` be pairs and $`g_X:X_P\to X_Q`.
 The condition $`g_X^*f_Q=u\,f_P` for some unit $`u` holds if and only if
 $$`D_P\simeq X_P\times_{X_Q}D_Q`
@@ -186,7 +190,7 @@ Flatness of the ambient map is not required.
 This compares subschemes: equality of the underlying closed sets would not suffice, as the doubled point of {bp "prop:geo-exclusions"}[] shows.
 :::
 
-:::node "thm:geo-pair-duality"
+:::node "thm:geo-pair-duality" (decl := OrlikSolomon.Geometric.affinePairEquivalence) (decl := OrlikSolomon.Geometric.DivisorPair.spec) (decl := OrlikSolomon.Geometric.DivisorPair.specFunctor) (decl := OrlikSolomon.Geometric.DivisorPair.globalSections) (decl := OrlikSolomon.Geometric.DivisorPair.globalSectionsFunctor) (decl := OrlikSolomon.Geometric.DivisorPair.coe_spec_eqnUnit) (decl := OrlikSolomon.Geometric.DivisorPair.coe_globalSections_eqnUnit) (decl := OrlikSolomon.Geometric.DivisorPair.specStandardPairIso) (decl := OrlikSolomon.Geometric.DivisorPair.withEqnIso) (decl := OrlikSolomon.Geometric.DivisorPair.toAff) (decl := OrlikSolomon.Geometric.DivisorPair.isAffine_closed) (decl := OrlikSolomon.Geometric.DivisorPair.isAffine_compl)
 Geometric pairs whose ambient scheme is affine are anti-equivalent to the existing algebraic pairs {name OrlikSolomon.DivisorPair}`DivisorPair` `k`.
 The equivalence preserves the two immersions, the equation and its unit on the open part, the standard pairs and changes of equation, and it reverses the direction of morphisms.
 :::
