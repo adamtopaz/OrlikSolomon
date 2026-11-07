@@ -312,7 +312,9 @@ private theorem productCohomologyMap_bijective (ε : B →ₐ[k] k) :
       apply Cohomology.mk_congr
       simp [x, Forms.map_smul, Forms.map_map, productSection]
 
-private def productCohomologyEquivOfAugmentation (ε : B →ₐ[k] k) :
+/-- Cohomology of a product with an augmented algebra splits into the cohomology of its two
+components. The two closed idempotents give the inverse, over every commutative base ring. -/
+@[no_expose] def productCohomologyEquivOfAugmentation (ε : B →ₐ[k] k) :
     Cohomology k (k × B) ≃ₐ[k] Cohomology k k × Cohomology k B :=
   AlgEquiv.ofBijective productCohomologyMap (productCohomologyMap_bijective ε)
 
@@ -337,7 +339,8 @@ private theorem productCohomologyEquivOfAugmentation_symm (ε : B →ₐ[k] k)
   · change c₂ = Cohomology.map (AlgHom.snd k k B) _
     simp [productFirstClass, productSecondClass, Cohomology.map_map, productSection]
 
-private theorem productCohomologyEquivOfAugmentation_mem_degree (ε : B →ₐ[k] k) (n : ℕ)
+/-- The product splitting preserves and reflects every cohomological degree on both components. -/
+theorem productCohomologyEquivOfAugmentation_mem_degree (ε : B →ₐ[k] k) (n : ℕ)
     (c : Cohomology k (k × B)) :
     c ∈ Cohomology.degree k (k × B) n ↔
       (productCohomologyEquivOfAugmentation ε c).1 ∈ Cohomology.degree k k n ∧
