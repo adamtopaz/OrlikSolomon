@@ -19,8 +19,9 @@ htmlSplit := .never
 *The de Rham instance is being formalized.*
 This chapter follows the project's [second blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex).
 The exterior calculus and the de Rham dg algebra of an arbitrary algebra, including its differential and cohomology algebra, are formalized, together with forms on localizations and principal quotients.
+The polynomial decomposition of forms and the integration homotopy are formalized as well, including the cohomology equivalence whose inverse is induced by evaluation at zero.
 Projectivity in every form degree, injectivity of regular scalar multiplication and of restriction into localization, conormal splitting, global and localized normal derivations, and wedge exactness modulo the divisor are also formalized.
-Polynomial homotopy invariance, the comparison arguments and the final instance remain planned.
+The comparison arguments and the final instance remain planned.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem, which does not depend on them.
@@ -199,13 +200,13 @@ The library builds the total algebra first, as the quotient of the closed forms 
 This section supplies the affine-line axiom.
 It contains the first use of rational scalars, and it uses no smoothness.
 
-:::node "lem:dr-polynomial-splitting"
+:::node "lem:dr-polynomial-splitting" (decl := OrlikSolomon.DeRham.coefficientDerivative_single) (decl := OrlikSolomon.DeRham.coefficientDerivative_coeff) (decl := OrlikSolomon.DeRham.polynomialCoefficientD_single) (decl := OrlikSolomon.DeRham.polynomialFormDecomposition) (decl := OrlikSolomon.DeRham.polynomialFormDecomposition_symm_apply) (decl := OrlikSolomon.DeRham.polynomialPowerDecomposition) (decl := OrlikSolomon.DeRham.polynomialPowerDecomposition_coe) (decl := OrlikSolomon.DeRham.polynomialFormDecomposition_fst_mem) (decl := OrlikSolomon.DeRham.polynomialFormDecomposition_snd_mem) (decl := OrlikSolomon.DeRham.polynomialFormDecomposition_snd_eq_zero) (decl := OrlikSolomon.DeRham.polynomialFormInclusion_single) (decl := OrlikSolomon.DeRham.polynomialFormDecomposition_d)
 For every $`A`, with new variable $`z`, each form on $`A[z]` decomposes uniquely as $`\omega=\alpha(z)+dz\wedge\beta(z)` with $`\alpha\in\Omega_A^n[z]` and $`\beta\in\Omega_A^{n-1}[z]`, where polynomials with coefficients in a module are finite sums.
 The differential is
 $$`d\omega=d_A\alpha+dz\wedge(\partial_z\alpha-d_A\beta).`
 :::
 
-:::node "thm:dr-homotopy"
+:::node "thm:dr-homotopy" (decl := OrlikSolomon.DeRham.integrationScalar) (decl := OrlikSolomon.DeRham.mul_integrationScalar) (decl := OrlikSolomon.DeRham.polynomialEvaluationAtZero) (decl := OrlikSolomon.DeRham.coefficientIntegral) (decl := OrlikSolomon.DeRham.coefficientIntegral_single) (decl := OrlikSolomon.DeRham.coefficientIntegral_coeff_zero) (decl := OrlikSolomon.DeRham.coefficientIntegral_coeff_succ) (decl := OrlikSolomon.DeRham.coefficientDerivative_coefficientIntegral) (decl := OrlikSolomon.DeRham.coefficientIntegral_coefficientDerivative) (decl := OrlikSolomon.DeRham.mapCoefficients_coefficientIntegral) (decl := OrlikSolomon.DeRham.polynomialHomotopy) (decl := OrlikSolomon.DeRham.polynomialHomotopy_components) (decl := OrlikSolomon.DeRham.polynomialHomotopy_identity) (decl := OrlikSolomon.DeRham.polynomialHomotopy_mem_exteriorPower) (decl := OrlikSolomon.DeRham.polynomialHomotopy_eq_zero) (decl := OrlikSolomon.DeRham.polynomialCohomologyEquiv) (decl := OrlikSolomon.DeRham.polynomialCohomologyEquiv_apply) (decl := OrlikSolomon.DeRham.polynomialCohomologyEquiv_symm_apply) (decl := OrlikSolomon.DeRham.polynomialCohomologyEquiv_mem_degree_iff) (decl := OrlikSolomon.DeRham.bijective_cohomologyMap_C)
 Suppose every positive integer is invertible in $`k`.
 For every commutative $`k`-algebra $`A`, the inclusion $`A\to A[z]` is a cohomology isomorphism, with inverse induced by evaluation at $`z=0`.
 A chain homotopy between the identity and evaluation followed by inclusion is
