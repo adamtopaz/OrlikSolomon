@@ -28,7 +28,8 @@ Blueprint: `thm:geo-log-sheaves`.
 
 @[expose] public section
 noncomputable section
-open CategoryTheory Opposite AlgebraicGeometry
+open CategoryTheory CategoryTheory.Limits CategoryTheory.Preadditive
+open Opposite AlgebraicGeometry
 open OrlikSolomon.DeRham
 universe u
 namespace OrlikSolomon.Geometric.DeRham
@@ -190,5 +191,292 @@ lemma formsSheafPullback_epi (P : DivisorPair D) (n : ℕ) :
   exact ConcreteCategory.congr_hom
     (NatTrans.congr_app (congrArg (fun f => f.hom) hgh) (op U.1)) y
 
+
+/-- The section-ring comparison takes a restricted global function to its pullback to the open
+subscheme.
+-/
+lemma openSectionAlgebraEquiv_restrictTop
+    (X : Over (Spec (CommRingCat.of k))) (U : X.left.Opens) (a : Γ(X.left, ⊤)) :
+    openSectionAlgebraEquiv X U (sectionRestriction k X U.leTop a) = U.ι.appTop a := by
+  have h : X.left.presheaf.map U.leTop.op ≫ U.topIso.inv = U.ι.appTop := by
+    change X.left.presheaf.map U.leTop.op ≫
+      X.left.presheaf.map (eqToHom U.ι_image_top).op = _
+    rw [← CategoryTheory.Functor.map_comp]
+    rfl
+  exact ConcreteCategory.congr_hom h a
+
+/-- The restricted geometric equation unit is the equation unit of the algebraic affine
+neighborhood.
+-/
+lemma affineNeighborhood_eqnUnit (P : DivisorPair D)
+    (V : P.ambient.obj.left.affineOpens) :
+    Units.map (openSectionAlgebraEquiv P.compl.obj (P.j.hom.left ⁻¹ᵁ V.1)).toMonoidHom
+      (Units.map (sectionRestriction k P.compl.obj
+        (P.j.hom.left ⁻¹ᵁ V.1).leTop).toMonoidHom
+          (show (sectionAlgebra k P.compl.obj ⊤)ˣ from P.eqnUnit)) =
+      (affineNeighborhoodAlgebraicPair P V).eqnUnit := by
+  apply Units.ext
+  change openSectionAlgebraEquiv P.compl.obj (P.j.hom.left ⁻¹ᵁ V.1)
+    (sectionRestriction k P.compl.obj (P.j.hom.left ⁻¹ᵁ V.1).leTop
+      (P.eqnUnit : Γ(P.compl.obj.left, ⊤))) = _
+  rw [openSectionAlgebraEquiv_restrictTop]
+  change (P.j.hom.left ⁻¹ᵁ V.1).ι.appTop (P.eqnUnit : Γ(P.compl.obj.left, ⊤)) =
+    (P.j.hom.left ∣_ V.1).appTop (V.1.ι.appTop P.eqn)
+  rw [P.coe_eqnUnit]
+  have h := congrArg (fun g => g.appTop) (morphismRestrict_ι P.j.hom.left V.1)
+  simp only [Scheme.Hom.comp_appTop] at h
+  exact (ConcreteCategory.congr_hom h P.eqn).symm
+
+/-- The algebraic normal-form kernel criterion transports through compatible algebra
+equivalences.
+-/
+lemma normalForm_kernel_of_equiv (Q : OrlikSolomon.DivisorPair k)
+    {A B C : Type u} [CommRing A] [CommRing B] [CommRing C]
+    [Algebra k A] [Algebra k B] [Algebra k C]
+    (j : A →ₐ[k] B) (i : A →ₐ[k] C) (v : Bˣ)
+    (eA : A ≃ₐ[k] Q.ambient) (eB : B ≃ₐ[k] Q.compl) (eC : C ≃ₐ[k] Q.closed)
+    (hj : eB.toAlgHom.comp j = (SmoothAlg.algHom Q.j).comp eA.toAlgHom)
+    (hi : eC.toAlgHom.comp i = (SmoothAlg.algHom Q.i).comp eA.toAlgHom)
+    (hu : Units.map eB.toAlgHom.toMonoidHom v = Q.eqnUnit)
+    {ω η : Forms k A} (h : Forms.map j ω + dlog k v * Forms.map j η = 0) :
+    Forms.map i η = 0 := by
+  have hQ : logMk k Q.eqn Q.compl
+      (Forms.map eA.toAlgHom ω, Forms.map eA.toAlgHom η) = 0 := by
+    apply Subtype.ext
+    change Forms.map (SmoothAlg.algHom Q.j) (Forms.map eA.toAlgHom ω) +
+      theta k Q.eqn Q.compl * Forms.map (SmoothAlg.algHom Q.j) (Forms.map eA.toAlgHom η) = 0
+    change Units.map (eB.toAlgHom : B →* Q.compl) v = Q.eqnUnit at hu
+    have hh := congrArg (Forms.map eB.toAlgHom) h
+    rw [map_add, map_mul, Forms.map_dlog, map_zero, Forms.map_map, Forms.map_map, hj, hu] at hh
+    rw [Q.theta_eq_dlog_eqnUnit, Forms.map_map, Forms.map_map]
+    exact hh
+  have hz := Q.isSmoothPrincipalPair.map_eq_zero_of_logMk_eq_zero Q.compl hQ
+  apply (Forms.mapEquiv eC).injective
+  change Forms.map eC.toAlgHom (Forms.map i η) = Forms.map eC.toAlgHom 0
+  rw [Forms.map_map, hi, map_zero]
+  simpa only [Forms.map_map] using hz
+
+/-- A vanishing normal form on an affine neighborhood has its logarithmic coefficient vanishing
+on the divisor.
+-/
+lemma affineNeighborhood_normalForm_kernel (P : DivisorPair D)
+    (V : P.ambient.obj.left.affineOpens)
+    {ω η : Forms k (sectionAlgebra k P.ambient.obj V.1)}
+    (h : Forms.map (sectionPullback P.j.hom V.1) ω +
+      dlog k (Units.map (sectionRestriction k P.compl.obj
+        (P.j.hom.left ⁻¹ᵁ V.1).leTop).toMonoidHom
+          (show (sectionAlgebra k P.compl.obj ⊤)ˣ from P.eqnUnit)) *
+      Forms.map (sectionPullback P.j.hom V.1) η = 0) :
+    Forms.map (sectionPullback P.i.hom V.1) η = 0 := by
+  exact normalForm_kernel_of_equiv (affineNeighborhoodAlgebraicPair P V)
+    (sectionPullback P.j.hom V.1) (sectionPullback P.i.hom V.1) _
+    (openSectionAlgebraEquiv P.ambient.obj V.1)
+    (openSectionAlgebraEquiv P.compl.obj (P.j.hom.left ⁻¹ᵁ V.1))
+    (openSectionAlgebraEquiv P.closed.obj (P.i.hom.left ⁻¹ᵁ V.1))
+    (openSectionAlgebraEquiv_comp P.j.hom V.1)
+    (openSectionAlgebraEquiv_comp P.i.hom V.1)
+    (affineNeighborhood_eqnUnit P V) h
+
+/-- Pullback on an individual open, with its target expressed as sections on the actual inverse
+image.
+-/
+def formsSheafPullbackAt {X Y : Over (Spec (CommRingCat.of k))}
+    (g : X ⟶ Y) (U : Y.left.Opens) (n : ℕ) :
+    (formsSheaf k Y n).obj.obj (op U) →ₗ[k]
+      (formsSheaf k X n).obj.obj (op (g.left ⁻¹ᵁ U)) :=
+  ((formsSheafPullback g n).hom.app (op U)).hom
+
+/-- Left exterior multiplication by the logarithmic form of a unit, in a fixed degree. -/
+def leftDlogPower {A : Type u} [CommRing A] [Algebra k A] (v : Aˣ) (n : ℕ)
+    (a : ⋀[A]^n Ω[A⁄k]) : ⋀[A]^(n + 1) Ω[A⁄k] :=
+  ⟨dlog k v * a.val, by simpa only [Nat.add_comm 1 n] using
+    SetLike.mul_mem_graded (dlog_mem_exteriorPower_one k _) a.property⟩
+
+/-- Affine-open evaluation commutes with pullback whenever the inverse-image open is affine. -/
+lemma affineOpenFormsComparison_pull {X Y : Over (Spec (CommRingCat.of k))}
+    (g : X ⟶ Y) (U : Y.left.Opens) (hU : IsAffineOpen U)
+    (hV : IsAffineOpen (g.left ⁻¹ᵁ U)) (n : ℕ)
+    (a : ⋀[sectionAlgebra k Y U]^n Ω[sectionAlgebra k Y U⁄k]) :
+    formsSheafPullbackAt g U n (affineOpenFormsComparison Y U hU n a) =
+      affineOpenFormsComparison X _ hV n (Forms.mapPower (sectionPullback g U) n a) :=
+  formsSheafPullback_unit_apply g n (op U) a
+
+/-- Affine-open evaluation identifies logarithmic multiplication with left multiplication by the
+restricted unit.
+-/
+lemma thetaWedgeSheaf_affineOpenFormsComparison
+    (X : Over (Spec (CommRingCat.of k))) (U : X.left.Opens) (hU : IsAffineOpen U)
+    (v : (sectionAlgebra k X ⊤)ˣ) (n : ℕ)
+    (a : ⋀[sectionAlgebra k X U]^n Ω[sectionAlgebra k X U⁄k]) :
+    (thetaWedgeSheaf X v n).hom.app (op U) (affineOpenFormsComparison X U hU n a) =
+      affineOpenFormsComparison X U hU (n + 1)
+        (leftDlogPower (Units.map (sectionRestriction k X U.leTop).toMonoidHom v) n a) :=
+  thetaWedgeSheaf_unit X v n (op U) a
+
+/-- A sheaf normal-form relation on an affine open forces its logarithmic coefficient to vanish
+on the divisor.
+-/
+lemma affineOpen_normalForm_kernel (P : DivisorPair D)
+    (V : P.ambient.obj.left.affineOpens) (n : ℕ)
+    (ω : (formsSheaf k P.ambient.obj (n + 1)).obj.obj (op V.1))
+    (η : (formsSheaf k P.ambient.obj n).obj.obj (op V.1))
+    (h : formsSheafPullbackAt P.j.hom V.1 (n + 1) ω +
+      (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op (P.j.hom.left ⁻¹ᵁ V.1))
+        (formsSheafPullbackAt P.j.hom V.1 n η) = 0) :
+    formsSheafPullbackAt P.i.hom V.1 n η = 0 := by
+  have hJ : IsAffineOpen (P.j.hom.left ⁻¹ᵁ V.1) :=
+    inferInstanceAs (IsAffine (affineNeighborhoodPair P V).compl.obj.left)
+  have hI : IsAffineOpen (P.i.hom.left ⁻¹ᵁ V.1) :=
+    inferInstanceAs (IsAffine (affineNeighborhoodPair P V).closed.obj.left)
+  obtain ⟨a, rfl⟩ := (affineOpenFormsComparison P.ambient.obj V.1 V.2 (n + 1)).surjective ω
+  obtain ⟨b, rfl⟩ := (affineOpenFormsComparison P.ambient.obj V.1 V.2 n).surjective η
+  let c := leftDlogPower (Units.map (sectionRestriction k P.compl.obj
+    (P.j.hom.left ⁻¹ᵁ V.1).leTop).toMonoidHom
+    (show (sectionAlgebra k P.compl.obj ⊤)ˣ from P.eqnUnit)) n
+    (Forms.mapPower (sectionPullback P.j.hom V.1) n b)
+  have h₁ := affineOpenFormsComparison_pull P.j.hom V.1 V.2 hJ (n + 1) a
+  have h₂ := affineOpenFormsComparison_pull P.j.hom V.1 V.2 hJ n b
+  have ht := thetaWedgeSheaf_affineOpenFormsComparison P.compl.obj
+    (P.j.hom.left ⁻¹ᵁ V.1) hJ P.eqnUnit n
+    (Forms.mapPower (sectionPullback P.j.hom V.1) n b)
+  change (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op (P.j.hom.left ⁻¹ᵁ V.1))
+    (affineOpenFormsComparison P.compl.obj _ hJ n
+      (Forms.mapPower (sectionPullback P.j.hom V.1) n b)) =
+        affineOpenFormsComparison P.compl.obj _ hJ (n + 1) c at ht
+  have hθ := (congrArg
+    ((thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op (P.j.hom.left ⁻¹ᵁ V.1))) h₂).trans ht
+  have hzsheaf := (congrArg₂ (· + ·) h₁ hθ).symm.trans h
+  have hz : Forms.mapPower (sectionPullback P.j.hom V.1) (n + 1) a + c = 0 :=
+    (affineOpenFormsComparison P.compl.obj _ hJ (n + 1)).injective
+      (((affineOpenFormsComparison P.compl.obj _ hJ (n + 1)).map_add _ _).trans
+        (hzsheaf.trans (affineOpenFormsComparison P.compl.obj _ hJ (n + 1)).map_zero.symm))
+  have hb : Forms.mapPower (sectionPullback P.i.hom V.1) n b = 0 :=
+    Subtype.ext (affineNeighborhood_normalForm_kernel P V (congrArg Subtype.val hz))
+  exact (affineOpenFormsComparison_pull P.i.hom V.1 V.2 hI n b).trans
+    ((congrArg (affineOpenFormsComparison P.closed.obj _ hI n) hb).trans
+      (affineOpenFormsComparison P.closed.obj _ hI n).map_zero)
+
+
+/-- The divisor restriction of the logarithmic coefficient annihilates the kernel of the normal-
+form epimorphism.
+-/
+lemma logMkSheaf_kernel_snd_pull (P : DivisorPair D) (n : ℕ) :
+    kernel.ι (logMkSheaf P n) ≫ biprod.snd ≫ formsSheafPullback P.i.hom n = 0 := by
+  have hzero : kernel.ι (logMkSheaf P n) ≫ logNormalFormSheaf P n = 0 := by
+    rw [← logMkSheaf_comp_logToOpenSheaf, ← Category.assoc, kernel.condition, zero_comp]
+  have hnormal :
+      (kernel.ι (logMkSheaf P n) ≫ biprod.fst) ≫ formsSheafPullback P.j.hom (n + 1) +
+        (kernel.ι (logMkSheaf P n) ≫ biprod.snd) ≫ formsSheafPullback P.j.hom n ≫
+          (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).map
+            (thetaWedgeSheaf P.compl.obj P.eqnUnit n) = 0 := by
+    simpa only [logNormalFormSheaf, biprod.desc_eq, Preadditive.comp_add, Category.assoc]
+      using hzero
+  apply ObjectProperty.hom_ext
+  apply TopCat.Sheaf.hom_ext _ _ (B := fun V : P.ambient.obj.left.affineOpens => V.1)
+    (by simpa only [Subtype.range_coe_subtype, Set.ofPred_mem_eq] using
+      P.ambient.obj.left.isBasis_affineOpens)
+  intro V
+  ext x
+  let ω := ((kernel.ι (logMkSheaf P n) ≫ biprod.fst).hom.app (op V.1)) x
+  let η := ((kernel.ι (logMkSheaf P n) ≫ biprod.snd).hom.app (op V.1)) x
+  have hh := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) hnormal) (op V.1)) x
+  change formsSheafPullbackAt P.j.hom V.1 (n + 1) ω +
+    (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op (P.j.hom.left ⁻¹ᵁ V.1))
+      (formsSheafPullbackAt P.j.hom V.1 n η) = 0 at hh
+  exact affineOpen_normalForm_kernel P V n ω η hh
+
+section ResidueMap
+
+variable (P : DivisorPair D)
+
+/-- Differentiating a regular-plus-left-theta normal form negates the differential of its
+logarithmic coefficient. -/
+@[reassoc] theorem logNormalFormSheaf_d (n : ℕ) :
+    logNormalFormSheaf P n ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).map
+          (formsSheafD k P.compl.obj (n + 1)) =
+      biprod.map (formsSheafD k P.ambient.obj (n + 1)) (-(formsSheafD k P.ambient.obj n)) ≫
+        logNormalFormSheaf P (n + 1) := by
+  apply biprod.hom_ext'
+  · simpa only [Category.assoc, inl_logNormalFormSheaf_assoc, biprod.inl_map_assoc,
+      inl_logNormalFormSheaf] using formsSheafPullback_d P.j.hom (n + 1)
+  · simp only [inr_logNormalFormSheaf_assoc, biprod.inr_map_assoc,
+      inr_logNormalFormSheaf, neg_comp]
+    rw [← Functor.map_comp, thetaWedgeSheaf_d, Functor.map_neg, Functor.map_comp, comp_neg]
+    rw [← Category.assoc, formsSheafPullback_d]
+    simp only [Category.assoc]
+
+/-- The local normal-form epimorphism commutes with the signed differential. -/
+@[reassoc] theorem logMkSheaf_d (n : ℕ) :
+    logMkSheaf P n ≫ logSheafD P (n + 1) =
+      biprod.map (formsSheafD k P.ambient.obj (n + 1)) (-(formsSheafD k P.ambient.obj n)) ≫
+        logMkSheaf P (n + 1) := by
+  apply (cancel_mono (logToOpenSheaf P (n + 1 + 1))).1
+  rw [Category.assoc, logSheafD_comp_logToOpenSheaf,
+    ← Category.assoc, logMkSheaf_comp_logToOpenSheaf, Category.assoc,
+    logMkSheaf_comp_logToOpenSheaf]
+  exact logNormalFormSheaf_d P n
+
+/-- Residue of logarithmic sheaf forms in degree `n + 1`: a local normal form
+`ω + θ ∧ η` maps to the restriction of `η` to the divisor. The proven kernel criterion makes
+this independent of the normal form, and descent along the sheaf epimorphism glues the result.
+
+Blueprint: `thm:geo-log-sheaves`. -/
+def logResidueSheaf (n : ℕ) :
+    logSheaf P (n + 1) ⟶ closedFormsSheaf P n :=
+  Abelian.epiDesc (logMkSheaf P n) (biprod.snd ≫ formsSheafPullback P.i.hom n)
+    (logMkSheaf_kernel_snd_pull P n)
+
+/-- The residue on a local normal form is its logarithmic coefficient restricted to the divisor. -/
+@[reassoc (attr := simp)] theorem logMkSheaf_residue (n : ℕ) :
+    logMkSheaf P n ≫ logResidueSheaf P n = biprod.snd ≫ formsSheafPullback P.i.hom n :=
+  Abelian.comp_epiDesc _ _ _
+
+/-- A regular sheaf form has zero residue. -/
+@[reassoc (attr := simp)] theorem regularToLogSheaf_residue (n : ℕ) :
+    regularToLogSheaf P (n + 1) ≫ logResidueSheaf P n = 0 := by
+  rw [← inl_logMkSheaf, Category.assoc, logMkSheaf_residue,
+    biprod.inl_snd_assoc, zero_comp]
+
+/-- The sheaf residue map is an epimorphism. This does not assert surjectivity on arbitrary
+global sections. -/
+instance logResidueSheaf_epi (n : ℕ) :
+    Epi (logResidueSheaf P n) := by
+  have := formsSheafPullback_epi P n
+  have : Epi (logMkSheaf P n ≫ logResidueSheaf P n) := by
+    rw [logMkSheaf_residue]
+    infer_instance
+  exact epi_of_epi (logMkSheaf P n) _
+
+/-- Residue anticommutes with the de Rham differential. This is the chain-map convention
+for the divisor shift with differential `-d`.
+
+Blueprint: `thm:geo-log-sheaves`. -/
+@[reassoc] theorem logResidueSheaf_d (n : ℕ) :
+    logSheafD P (n + 1) ≫ logResidueSheaf P (n + 1) =
+      -(logResidueSheaf P n ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) P.i.hom.left.base).map
+          (formsSheafD k P.closed.obj n)) := by
+  apply (cancel_epi (logMkSheaf P n)).1
+  calc
+    _ = biprod.map (formsSheafD k P.ambient.obj (n + 1)) (-(formsSheafD k P.ambient.obj n)) ≫
+        biprod.snd ≫ formsSheafPullback P.i.hom (n + 1) := by
+      rw [← Category.assoc, logMkSheaf_d, Category.assoc, logMkSheaf_residue]
+    _ = -(biprod.snd ≫ formsSheafD k P.ambient.obj n ≫
+        formsSheafPullback P.i.hom (n + 1)) := by
+      simp only [biprod.map_snd_assoc, comp_neg, neg_comp]
+    _ = -(biprod.snd ≫ formsSheafPullback P.i.hom n ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) P.i.hom.left.base).map
+          (formsSheafD k P.closed.obj n)) := by
+      rw [formsSheafPullback_d]
+    _ = _ := by
+      simpa only [comp_neg, Category.assoc] using
+        (congrArg (fun f ↦ -(f ≫
+          (TopCat.Sheaf.pushforward (ModuleCat k) P.i.hom.left.base).map
+            (formsSheafD k P.closed.obj n))) (logMkSheaf_residue P n)).symm
+
+
+end ResidueMap
 
 end OrlikSolomon.Geometric.DeRham
