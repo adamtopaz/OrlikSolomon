@@ -17,6 +17,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Grading/Basic`                | `def:grading`, `lem:extraction` |
 | `Grading/Diagonal`             | the diagonal `⨁ 𝒜 (q, q)` of a bigrading, and homogeneous bases, for `cor:ordinary` and `thm:betti` |
 | `Grading/DirectSum`            | external direct sums in `lem:standard-bridge` |
+| `Grading/Laurent`              | the weight grading `ℬ w = R T^w` of `R[T;T⁻¹]`, for `def:dr-twisted-functor`, and evaluation at `T = 1` |
 | `Grading/LinearImage`          | image decompositions for homogeneous module quotients |
 | `Grading/Restriction`          | inherited internal gradings on homogeneous submodules and subalgebras |
 | `Grading/TensorProduct`        | product gradings, transport and the weighted tensor grading of `lem:os-basic` |
@@ -87,6 +88,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Homotopy/Integration` | coefficientwise differentiation and integration over a ring in which positive integers are units |
 | `DeRham/Homotopy/Differential` | the differential matrix in `lem:dr-polynomial-splitting` |
 | `DeRham/Homotopy`             | the explicit integration homotopy and canonical cohomology equivalence of `thm:dr-homotopy`; the module to import |
+| `DeRham/Instance/Twisted`      | `def:dr-twisted-functor` on the algebra `TwistedCohomology k A = k[T;T⁻¹] ⊗[k] H^•`, for any `k`-algebra: the `(p, w)` grading, the point, affine-line invariance, and the removal of powers of `T` for `cor:dr-affine` |
+| `DeRham/Instance/Basic`        | the functor of `def:dr-twisted-functor` on `SmoothAlg k`, and every field of `lem:dr-ordinary-basic` |
 | `DeRham/Localization`          | `lem:dr-localization`, for any `IsLocalization`; `dlog`, and the extension of derivations |
 | `DeRham/Log/Basic`             | `def:dr-log`, `lem:dr-log-dga`: `theta`, `logForms`, `logPower`, `logMk`, the differential and the ideal `f L^•`; no smoothness |
 | `DeRham/Log/Cohomology`        | `LogCohomology`, its grading, and the algebra maps `H^•(A) → H^•(L) → H^•(T)`, for `thm:dr-comparison` and `lem:dr-exactness`; no smoothness |
@@ -103,6 +106,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/DeRhamCohomology`    | exact forms are not an ideal of all forms, `X²` in characteristic two, the point over `ℤ` and `ZMod 2`, the zero algebra |
 | `Examples/DeRhamComplex`     | `d` is not linear over the algebra, characteristic two and the zero algebra |
 | `Examples/DeRhamHomotopy`     | rational dual numbers, zero coefficients, homotopy normalization and failure of the integration hypothesis in characteristic two |
+| `Examples/DeRhamInstance`     | the fields of `lem:dr-ordinary-basic` fit the structure; consumers of the theory; signs by cohomological degree, the zero algebra and characteristic two |
 | `Examples/DeRhamLocalization` | nilpotent, zero and unit equations; a conormal map that is not injective over `ZMod 2` |
 | `Examples/DeRhamLog`         | signs of the projection formulas; unit, zero-algebra, disconnected and divisor-pair consumers of `DeRham/Log` |
 | `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
@@ -550,8 +554,8 @@ The namespace is `OrlikSolomon.DeRham`. Exterior calculus, the dg algebra and it
 its cohomology algebra, polynomial-form decomposition and homotopy invariance, forms on
 localizations and principal quotients, projectivity and regular scalar action in every form degree,
 injectivity into localization, conormal splitting, global and localized normal derivations, wedge
-exactness modulo the divisor, and logarithmic forms with their residue sequence exist; the other
-parts below remain planned.
+exactness modulo the divisor, logarithmic forms with their residue sequence, and the Laurent-twisted
+functor with the fields preceding Gysin and residue exist; the other parts below remain planned.
 The table groups modules by issues #72–#83. The conormal and normal-derivation results need only
 Mathlib's Kähler differentials and formal-smoothness lifts. Normalizing a derivation on
 `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge exactness uses exterior
@@ -570,7 +574,8 @@ contraction; neither requires the de Rham differential.
 | `DeRham/Log`                 | `def:dr-log`, `lem:dr-log-dga`, `lem:dr-regularity`, `def:dr-residue`, `thm:dr-residue-sequence`, `lem:dr-form-projection` |
 | `DeRham/Pole`                | `lem:dr-cartan`, `lem:dr-euler`, `def:dr-pole-filtration`, `lem:dr-pole-quotient`, `thm:dr-pole-contraction`, `lem:dr-filtration-reduction`, `thm:dr-comparison` |
 | `DeRham/Maps`                | `def:dr-gysin`, `lem:dr-exactness`, `thm:dr-projection`, `thm:dr-log-naturality`, `thm:dr-naturality` |
-| `DeRham/Instance`            | `def:dr-twisted-functor`, `lem:dr-ordinary-basic`, `def:dr-twisted-maps`, `thm:dr-ordinary-localization`, `thm:dr-instance` |
+| `DeRham/Instance/Twisted`, `DeRham/Instance/Basic` | `def:dr-twisted-functor`, `lem:dr-ordinary-basic` |
+| `DeRham/Instance`            | `def:dr-twisted-maps`, `thm:dr-ordinary-localization`, `thm:dr-instance` |
 | `DeRham/Corollaries`         | `lem:dr-tau`, `cor:dr-affine`, `cor:dr-projective` |
 | `Examples/DeRham`, `Examples/DeRhamSmoothPair` | `prop:dr-gm-example`, `prop:dr-unit-example`, `prop:dr-product-example`, `prop:dr-zero-example`, `prop:dr-crossing-example`, `prop:dr-morphism-examples`, `prop:dr-torus-example`, `prop:dr-characteristic-p` |
 
@@ -734,12 +739,7 @@ included, without finite presentation or smoothness of a quotient.
 - **Chain homotopies.** `map_eq_map_of_homotopy` takes an additive operator `K` on total forms with
   `φ_* - ψ_* = d K + K d`, for `thm:dr-homotopy`. `lem:dr-filtration-reduction` is an argument about
   submodules of forms and their quotients, and it needs nothing from this module.
-- **For the instance.** The value of the functor should be `B ⊗[k] Cohomology k A`, with `B` on the
-  **left**, which departs from the order the blueprint writes: Mathlib's `B`-algebra structure on a
-  tensor product is on the left factor. The bigrading is then
-  `coarsenGrading (tensorProductGrading ℬ (Cohomology.grading k A)) swap`, for
-  `swap : (w, p) ↦ (p, w)`, and its instances exist. This, its sign, the functor laws and the point
-  field were checked in a scratch file, and they are for `DeRham/Instance` to state.
+- **For the instance.** See "The Laurent-twisted theory" below.
 - **The cohomology of the logarithmic forms** is `LogCohomology k f T`, in `DeRham/Log/Cohomology`.
   It is not generic in a dg subalgebra, since a shared layer would wrap every lemma above for one
   other use. It is built the same way: `logCycles k f T` is the subalgebra `L ⊓ cycles k T`,
@@ -769,11 +769,44 @@ preservation and reflection of the grading. `bijective_cohomologyMap_C` is the i
 polynomial axiom of the instance. The rational dual-number and zero-ring regressions require no
 smoothness of the coefficient algebra.
 
+### The Laurent-twisted theory
+
+- **The coefficient is on the left.** `TwistedCohomology k A` is `k[T;T⁻¹] ⊗[k] Cohomology k A`, a
+  reducible abbreviation, for any `k`-algebra `A`. This departs from the order the blueprint writes:
+  Mathlib's `B`-algebra structure on a tensor product is on the left factor. The `k`-algebra structure
+  is `Algebra.TensorProduct.leftAlgebra`, and there is no competing one, since `R ≠ B`:
+  `Examples/DeRhamInstance` tests the forms that fail at `R = B`.
+- **The bigrading is `(p, w)`.** `TwistedCohomology.grading k A` is
+  `coarsenGrading (tensorProductGrading ℬ (Cohomology.grading k A)) swap`, for
+  `swap : (w, p) ↦ (p, w)`. Do not look through it: `mem_grading_iff` says that the piece `(p, w)`
+  consists of the `T w ⊗ₜ c` with `c ∈ H^p`, with no sum and no span, and `T_tmul_inj` says that `c`
+  is unique. The sign `isGradedCommutative_grading` is by `Prod.fst`, the cohomological degree.
+- **`evalOne` forgets the weight.** `evalOne k A` is the `k`-algebra map sending `T` to `1`, so
+  `evalOne (T w ⊗ₜ c) = c`. On a homogeneous `x` it recovers `c`: `T_tmul_evalOne_of_mem_grading`.
+  `gradingEquiv` and `degreeEquiv` are the resulting identifications of `H^p` and `H^n` with a piece.
+  `diagonal k A` is the `k`-algebra map `x ↦ T^q x` on `H^q`, which is the blueprint's inverse in
+  `cor:dr-affine`, and `diagonalEquiv k A` is `H^• ≃ₐ[k] ⨁ q : ℕ, C(A)_{q, q}`, with its target in
+  the form of `OrdinaryTheory.diagonalEquiv`. Its inverse is `evalOne`, by
+  `diagonalEquiv_symm_apply`.
+- **Computing through the functor.** `twistedCohomologyFunctor k` is a `def`, like objects and pairs.
+  So `(twistedCohomologyFunctor k).obj A` is `TwistedCohomology k A` only at default transparency, and
+  a value `T` of the structure with `T.C` this functor must stay a `def` too: with an `abbrev`, the
+  generic lemmas about `T.C` stop firing, for the reason in "Objects and pairs are `def`s". So `rw` and
+  `simp` do not see the tensor product in `T.C.obj A`: they cannot rewrite with a lemma about
+  `TwistedCohomology` there, and they leave a goal with identical sides of different types. State and
+  prove computations on `TwistedCohomology k A`, and pass between the two once, with `exact` or
+  `change`. The maps `T.C.map f (b ⊗ₜ c)` and membership in `T.grading A i` are `rfl`-compatible with
+  `TwistedCohomology.map` and `TwistedCohomology.grading`. `Examples/DeRhamInstance` has
+  `RemainingFields.theory`, which fills the structure with these fields and the remaining ones as
+  arguments, and builds the equivalence of `cor:dr-affine` on it. A value of the structure can also
+  add typed wrappers, as the deletion pair does, if this becomes frequent.
+
 The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Its opening
 names the exterior calculus, dg algebra, cohomology algebra, polynomial homotopy, forms on
 localizations and quotients, projectivity and regularity of forms, injectivity into localization,
-conormal splitting, normal derivations, modulo-divisor wedge exactness, and logarithmic forms with
-their residue sequence as formalized, and lists what remains. The first page, `Organization` and the
+conormal splitting, normal derivations, modulo-divisor wedge exactness, logarithmic forms with
+their residue sequence, and the Laurent-twisted functor with the first fields of the structure as
+formalized, and lists what remains. The first page, `Organization` and the
 chapter on the axioms say the instance is in progress. No nonzero value of `OrdinaryTheory` has been
 constructed. The build does not check that prose, so keep it current as nodes land. The PR
 that proves `thm:dr-instance` must update the sentences saying that no nonzero value
