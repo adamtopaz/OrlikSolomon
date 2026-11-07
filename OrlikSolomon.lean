@@ -14,6 +14,7 @@ public import OrlikSolomon.Cohomology.BridgeData.Supports
 public import OrlikSolomon.Cohomology.Deletion
 public import OrlikSolomon.Cohomology.DeletionPair
 public import OrlikSolomon.Cohomology.Geometric.Axioms
+public import OrlikSolomon.Cohomology.Geometric.Logarithms
 public import OrlikSolomon.Cohomology.Geometric.Transport
 public import OrlikSolomon.Cohomology.Logarithms
 public import OrlikSolomon.Combinatorics.AlternatingSum
