@@ -5,7 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import OrlikSolomon.Cohomology.Bridge
+public import OrlikSolomon.Cohomology.Geometric.Bridge
 public import OrlikSolomon.Examples.Sanity
 
 /-!
@@ -20,7 +20,13 @@ The same-ring component tests first construct the component maps with separate a
 `R` and `B`, then specialize to `R = B = PUnit`. This fixes the recorded scalar structures
 before identifying the rings, as required for explicit `OverR` component consumers.
 
-Blueprint: `lem:standard-bridge` and the zero-coefficient-ring regression.
+The last section checks, for abstract inputs, that plain `simp` closes the component formulas
+of pullback and Gysin, for both the algebraic and the geometric bridge. Each formula equates
+elements of the carrier of the constructed theory, while its right side is an element of the
+direct sum; `simp` can close such a goal only because the constructions are
+`@[implicit_reducible]` (issue #132).
+
+Blueprint: `lem:standard-bridge`, `thm:geo-bridge` and the zero-coefficient-ring regression.
 -/
 
 @[expose] public section
@@ -154,5 +160,95 @@ private theorem sameRingPullback (k : Type u) [CommRing k] {A E : SmoothAlg k}
   intro D x
   rfl
 
+/-! ### `simp` on the component formulas
+
+Without `@[implicit_reducible]` on the bridge constructions, `simp` rewrote each left side below
+and then left a goal whose two sides were identical: the carrier of the constructed theory was
+not the direct sum at implicit transparency, so `eq_self` did not apply. -/
+
+section SimpNormalForm
+
+variable {k : Type u} [CommRing k] {R : Type v} [CommRing R]
+  {B : Type w} [CommRing B] [Algebra R B]
+  {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ]
+
+section Algebraic
+
+variable (D : DegreewiseTheory.{u, v, w, z} k ℬ) (S : SupportsAndPurity.{u, v, w, z, t} D)
+
+example {A A' : SmoothAlg k} (f : A ⟶ A') (i : ℤ × ℤ) (x : D.H A i) :
+    (ofSupportsAndPurity D S).C.map f (D.incl A i x) = D.incl A' i (D.map f i x) := by
+  simp only [ofSupportsAndPurity_map_incl]
+
+example {A A' : SmoothAlg k} (f : A ⟶ A') (i : ℤ × ℤ) (x : D.H A i) :
+    (ofSupportsAndPurity D S).C.map f (D.incl A i x) = D.incl A' i (D.map f i x) := by
+  simp
+
+example (P : DivisorPair k) (i : ℤ × ℤ) (x : D.H P.closed i) :
+    (ofSupportsAndPurity D S).gysin P (D.incl P.closed i x) =
+      D.incl P.ambient (i + (2, 1)) (S.forget P (i + (2, 1)) (S.purity P i x)) := by
+  simp only [ofSupportsAndPurity_gysin_incl]
+
+example (P : DivisorPair k) (i : ℤ × ℤ) (x : D.H P.closed i) :
+    (ofSupportsAndPurity D S).gysin P (D.incl P.closed i x) =
+      D.incl P.ambient (i + (2, 1)) (S.forget P (i + (2, 1)) (S.purity P i x)) := by
+  simp
+
+/- `map_add` applies to sums of summands. -/
+example {A A' : SmoothAlg k} (f : A ⟶ A') (i j : ℤ × ℤ) (x : D.H A i) (y : D.H A j) :
+    (ofSupportsAndPurity D S).C.map f (D.incl A i x + D.incl A j y) =
+      D.incl A' i (D.map f i x) + D.incl A' j (D.map f j y) := by
+  simp
+
+/- Gysin after pullback. -/
+example {P Q : DivisorPair k} (g : P ⟶ Q) (i : ℤ × ℤ) (x : D.H P.closed i) :
+    (ofSupportsAndPurity D S).gysin Q
+        ((ofSupportsAndPurity D S).C.map g.closed (D.incl P.closed i x)) =
+      D.incl Q.ambient (i + (2, 1))
+        (S.forget Q (i + (2, 1)) (S.purity Q i (D.map g.closed i x))) := by
+  simp
+
+end Algebraic
+
+section Geometric
+
+variable {D : Geometric.SmoothDomain k} (E : Geometric.DegreewiseTheory.{u, v, w, z} D ℬ)
+  (S : Geometric.SupportsAndPurity.{u, v, w, z, t} E)
+
+example {X Y : D.Obj} (f : X ⟶ Y) (i : ℤ × ℤ) (x : E.H Y i) :
+    (Geometric.ofSupportsAndPurity E S).pull f (E.incl Y i x) = E.incl X i (E.pull f i x) := by
+  simp only [Geometric.ofSupportsAndPurity_pull_incl]
+
+example {X Y : D.Obj} (f : X ⟶ Y) (i : ℤ × ℤ) (x : E.H Y i) :
+    (Geometric.ofSupportsAndPurity E S).pull f (E.incl Y i x) = E.incl X i (E.pull f i x) := by
+  simp
+
+example (P : Geometric.DivisorPair D) (i : ℤ × ℤ) (x : E.H P.closed i) :
+    (Geometric.ofSupportsAndPurity E S).gysin P (E.incl P.closed i x) =
+      E.incl P.ambient (i + (2, 1)) (S.forget P (i + (2, 1)) (S.purity P i x)) := by
+  simp only [Geometric.ofSupportsAndPurity_gysin_incl]
+
+example (P : Geometric.DivisorPair D) (i : ℤ × ℤ) (x : E.H P.closed i) :
+    (Geometric.ofSupportsAndPurity E S).gysin P (E.incl P.closed i x) =
+      E.incl P.ambient (i + (2, 1)) (S.forget P (i + (2, 1)) (S.purity P i x)) := by
+  simp
+
+/- `map_add` applies to sums of summands. -/
+example {X Y : D.Obj} (f : X ⟶ Y) (i j : ℤ × ℤ) (x : E.H Y i) (y : E.H Y j) :
+    (Geometric.ofSupportsAndPurity E S).pull f (E.incl Y i x + E.incl Y j y) =
+      E.incl X i (E.pull f i x) + E.incl X j (E.pull f j y) := by
+  simp
+
+/- Gysin after pullback, which is contravariant. -/
+example {P Q : Geometric.DivisorPair D} (g : P ⟶ Q) (i : ℤ × ℤ) (x : E.H Q.closed i) :
+    (Geometric.ofSupportsAndPurity E S).gysin P
+        ((Geometric.ofSupportsAndPurity E S).pull g.closed (E.incl Q.closed i x)) =
+      E.incl P.ambient (i + (2, 1))
+        (S.forget P (i + (2, 1)) (S.purity P i (E.pull g.closed i x))) := by
+  simp
+
+end Geometric
+
+end SimpNormalForm
 
 end OrlikSolomon.Sanity

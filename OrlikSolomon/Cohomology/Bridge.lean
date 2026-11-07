@@ -45,6 +45,7 @@ purity, transverse naturality and the boundary projection formula gives an ordin
 The total cohomology is the direct sum over all cohomological degrees and twists, and the
 three total exactness statements are proved from the degreewise localization sequence.
 Blueprint: `lem:standard-bridge`. -/
+@[implicit_reducible]
 def ofSupportsAndPurity (D : DegreewiseTheory.{u, v, w, z} k ℬ)
     (S : SupportsAndPurity.{u, v, w, z, t} D) : OrdinaryTheory.{u, v, w, z} k ℬ where
   bijective_algebraMap_gradeZero := D.bijective_algebraMap_gradeZero

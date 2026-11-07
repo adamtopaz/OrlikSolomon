@@ -129,6 +129,7 @@ variable {k : Type u} [CommRing k] {R : Type v} [CommRing R]
   (D : DegreewiseTheory.{u, v, w, z} k ℬ)
 
 /-- The category-independent degreewise data underlying the algebraic bridge. -/
+@[implicit_reducible]
 def toCore :
     CategoricalDegreewiseTheory (SmoothAlg k) (point k) polynomial polynomialC ℬ where
   H := D.H
@@ -283,6 +284,7 @@ lemma bijective_mapTotal_polynomialC (A : SmoothAlg k) :
   D.toCore.bijective_mapTotal_line A
 
 /-- The total cohomology functor, constructed from degreewise groups and pullbacks. -/
+@[implicit_reducible]
 def functor : SmoothAlg k ⥤ AlgCat.{z} B :=
   D.toCore.functor
 
