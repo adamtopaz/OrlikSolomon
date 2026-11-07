@@ -134,6 +134,44 @@ def zeroSupportsAndPurity {k : Type u} [CommRing k] (D : SmoothDomain k) :
   purity_mul _ _ _ _ _ := Sigma.ext (by abel_nf) (heq_of_eq (Subsingleton.elim _ _))
   boundary_mul _ _ _ _ _ := Sigma.ext (by abel_nf) (heq_of_eq (Subsingleton.elim _ _))
 
+/-- Restricting the geometric zero model commutes with forming the ordinary theory. -/
+example {k : Type u} [CommRing k] {D₁ D₂ : SmoothDomain k} (h : D₁ ≤ D₂) :
+    (ofSupportsAndPurity (zeroDegreewiseTheory.{u, v, w, z} D₂)
+      (zeroSupportsAndPurity.{u, v, w, z, t} D₂)).restrict h =
+        ofSupportsAndPurity ((zeroDegreewiseTheory.{u, v, w, z} D₂).restrict h)
+          ((zeroSupportsAndPurity.{u, v, w, z, t} D₂).restrict h) := by
+  rw [ofSupportsAndPurity_restrict]
+
+/-- The restricted model's pullback formula closes with the public simp lemma alone. -/
+example {k : Type u} [CommRing k] {D₁ D₂ : SmoothDomain k} (h : D₁ ≤ D₂)
+    {X Y : D₁.Obj} (f : X ⟶ Y) (i : ℤ × ℤ)
+    (x : ((zeroDegreewiseTheory.{u, v, w, z} D₂).restrict h).H Y i) :
+    (ofSupportsAndPurity ((zeroDegreewiseTheory.{u, v, w, z} D₂).restrict h)
+      ((zeroSupportsAndPurity.{u, v, w, z, t} D₂).restrict h)).pull f
+        (((zeroDegreewiseTheory.{u, v, w, z} D₂).restrict h).incl Y i x) =
+      ((zeroDegreewiseTheory.{u, v, w, z} D₂).restrict h).incl X i
+        (((zeroDegreewiseTheory.{u, v, w, z} D₂).restrict h).pull f i x) := by
+  simp only [ofSupportsAndPurity_pull_incl]
+
+/-- Evaluation on spectra commutes with the bridge for the same realizable zero model. -/
+example {k : Type u} [CommRing k] (D : SmoothDomain k) :
+    (ofSupportsAndPurity (zeroDegreewiseTheory.{u, v, w, z} D)
+      (zeroSupportsAndPurity.{u, v, w, z, t} D)).toAlgebraic =
+        OrlikSolomon.ofSupportsAndPurity (zeroDegreewiseTheory.{u, v, w, z} D).toAlgebraic
+          (zeroSupportsAndPurity.{u, v, w, z, t} D).toAlgebraic := by
+  rw [ofSupportsAndPurity_toAlgebraic]
+
+/-- Affine evaluation retains the algebraic bridge's homogeneous pullback simplification. -/
+example {k : Type u} [CommRing k] (D : SmoothDomain k) {A A' : SmoothAlg k}
+    (f : A ⟶ A') (i : ℤ × ℤ)
+    (x : (zeroDegreewiseTheory.{u, v, w, z} D).toAlgebraic.H A i) :
+    (OrlikSolomon.ofSupportsAndPurity (zeroDegreewiseTheory.{u, v, w, z} D).toAlgebraic
+      (zeroSupportsAndPurity.{u, v, w, z, t} D).toAlgebraic).C.map f
+        ((zeroDegreewiseTheory.{u, v, w, z} D).toAlgebraic.incl A i x) =
+      (zeroDegreewiseTheory.{u, v, w, z} D).toAlgebraic.incl A' i
+        ((zeroDegreewiseTheory.{u, v, w, z} D).toAlgebraic.map f i x) := by
+  simp only [OrlikSolomon.ofSupportsAndPurity_map_incl]
+
 private def frozenPullComponent {k : Type u} [CommRing k] {D : SmoothDomain k}
     {R : Type v} [CommRing R] {B : Type w} [CommRing B] [Algebra R B]
     {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ]

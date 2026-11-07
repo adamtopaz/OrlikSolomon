@@ -152,7 +152,9 @@ theorem ofSupportsAndPurity_exact_residue_gysin (P : DivisorPair k) {i j l : ℤ
       (gysinDegreewiseOfSupportsAndPurity D S P j l) :=
   S.toCore.exact_residueDegreewise_gysinDegreewise P hij hjl
 
--- Preserve the original public equation lemmas, independently of which proofs unfold these maps.
+-- Preserve the original equation lemmas' definitional-equality metadata after the bridge
+-- refactor. The `.eq_1` names are generated equations for the two definitions above;
+-- `[backward_defeq]` records their definitional nature without adding simp rules.
 attribute [backward_defeq] gysinDegreewiseOfSupportsAndPurity.eq_1
   residueDegreewiseOfSupportsAndPurity.eq_1
 
