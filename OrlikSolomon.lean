@@ -39,6 +39,8 @@ public import OrlikSolomon.DeRham.Homotopy.Degree
 public import OrlikSolomon.DeRham.Homotopy.Differential
 public import OrlikSolomon.DeRham.Homotopy.Integration
 public import OrlikSolomon.DeRham.Homotopy.Polynomial
+public import OrlikSolomon.DeRham.Instance.Basic
+public import OrlikSolomon.DeRham.Instance.Twisted
 public import OrlikSolomon.DeRham.Localization
 public import OrlikSolomon.DeRham.Log
 public import OrlikSolomon.DeRham.Log.Basic
@@ -57,6 +59,7 @@ public import OrlikSolomon.Examples.CoordinatePolynomials
 public import OrlikSolomon.Examples.DeRhamCohomology
 public import OrlikSolomon.Examples.DeRhamComplex
 public import OrlikSolomon.Examples.DeRhamHomotopy
+public import OrlikSolomon.Examples.DeRhamInstance
 public import OrlikSolomon.Examples.DeRhamLocalization
 public import OrlikSolomon.Examples.DeRhamLog
 public import OrlikSolomon.Examples.DeRhamMaps
@@ -87,6 +90,7 @@ public import OrlikSolomon.Geometry.SmoothAlg
 public import OrlikSolomon.Grading.Basic
 public import OrlikSolomon.Grading.Diagonal
 public import OrlikSolomon.Grading.DirectSum
+public import OrlikSolomon.Grading.Laurent
 public import OrlikSolomon.Grading.LinearImage
 public import OrlikSolomon.Grading.Restriction
 public import OrlikSolomon.Grading.TensorProduct
