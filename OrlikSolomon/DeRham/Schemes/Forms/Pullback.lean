@@ -19,6 +19,7 @@ commute with the differential without any flatness hypothesis.
 * `formsPresheafPullback` and `formsSheafPullback`: pullback before and after sheafification.
 * `formsSheafPullback_unit`: agreement on forms represented by presheaf sections.
 * `formsSheafPullback_d`: compatibility with the relative de Rham differential.
+* `formsSheafInverseImage`: the equivalent map from the inverse-image sheaf.
 
 The base ring is arbitrary, and neither scheme is required to be smooth or affine.
 
@@ -120,5 +121,30 @@ theorem formsSheafPullback_d (g : X ⟶ Y) (n : ℕ) :
   rw [hu, hd, hd, hu]
   exact congrArg ((formsSheafUnit k X (n + 1)).app (op (g.left ⁻¹ᵁ U.unop)))
     (ConcreteCategory.congr_hom (NatTrans.congr_app (formsPresheafPullback_d g n) U) x)
+
+/-- Pullback of relative forms in the inverse-image formulation, as a map of sheaves of
+`k`-modules. It is adjoint to `formsSheafPullback`, and needs no flatness hypothesis. -/
+def formsSheafInverseImage (g : X ⟶ Y) (n : ℕ) :
+    (TopCat.Sheaf.pullback (ModuleCat k) g.left.base).obj (formsSheaf k Y n) ⟶
+      formsSheaf k X n :=
+  ((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) g.left.base).homEquiv _ _).symm
+    (formsSheafPullback g n)
+
+/-- The inverse-image and pushforward formulations of form pullback are adjoint. -/
+@[simp] theorem formsSheafInverseImage_adjunction (g : X ⟶ Y) (n : ℕ) :
+    (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) g.left.base).homEquiv _ _
+      (formsSheafInverseImage g n) = formsSheafPullback g n :=
+  Equiv.apply_symm_apply _ _
+
+/-- Inverse-image pullback commutes with the relative de Rham differential. -/
+theorem formsSheafInverseImage_d (g : X ⟶ Y) (n : ℕ) :
+    formsSheafInverseImage g n ≫ formsSheafD k X n =
+      (TopCat.Sheaf.pullback (ModuleCat k) g.left.base).map (formsSheafD k Y n) ≫
+        formsSheafInverseImage g (n + 1) := by
+  apply ((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k)
+    g.left.base).homEquiv _ _).injective
+  rw [Adjunction.homEquiv_naturality_right, Adjunction.homEquiv_naturality_left,
+    formsSheafInverseImage_adjunction, formsSheafInverseImage_adjunction]
+  exact formsSheafPullback_d g n
 
 end OrlikSolomon.Geometric.DeRham
