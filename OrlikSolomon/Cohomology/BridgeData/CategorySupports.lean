@@ -499,7 +499,6 @@ def residue (P : Pair) : D.Total (J.compl.obj P) →ₗ[B] D.Total (J.closed.obj
   map_add' := map_add _
   map_smul' := S.residueR_smul P
 
-
 /-- On a homogeneous summand, Gysin is degreewise purity followed by forgetting supports. -/
 @[simp]
 lemma gysin_incl (P : Pair) (i : ℤ × ℤ) (x : D.H (J.closed.obj P) i) :

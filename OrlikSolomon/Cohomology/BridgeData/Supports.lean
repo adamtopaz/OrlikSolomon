@@ -359,13 +359,12 @@ lemma residueR_smul (P : DivisorPair k) (b : B) (x : D.Total P.compl) :
   S.toCore.residueR_smul P b x
 
 /-- The Gysin map, bundled as a `B`-linear map. -/
-def gysin (P : DivisorPair k) : D.Total P.closed →ₗ[B] D.Total P.ambient:=
+def gysin (P : DivisorPair k) : D.Total P.closed →ₗ[B] D.Total P.ambient :=
   S.toCore.gysin P
 
 /-- The residue map, bundled as a `B`-linear map. -/
-def residue (P : DivisorPair k) : D.Total P.compl →ₗ[B] D.Total P.closed:=
+def residue (P : DivisorPair k) : D.Total P.compl →ₗ[B] D.Total P.closed :=
   S.toCore.residue P
-
 
 -- Retain the equations exported by the original implementation, even though the proof wrappers
 -- no longer cause the equation compiler to generate them as a side effect of simplification.

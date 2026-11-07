@@ -199,7 +199,7 @@ lemma restrict_H {D₁ : SmoothDomain k} (h : D₁ ≤ D) (X : D₁.Obj) (i : �
 @[simp]
 lemma restrict_pull {D₁ : SmoothDomain k} (h : D₁ ≤ D) {X Y : D₁.Obj}
     (f : X ⟶ Y) (i : ℤ × ℤ) (x : (E.restrict h).H Y i) :
-    (E.restrict h).pull f i x = E.pull ((ObjectProperty.ιOfLE h).map f) i x := rfl
+    dsimp% (E.restrict h).pull f i x = E.pull ((ObjectProperty.ιOfLE h).map f) i x := rfl
 
 /-- Evaluation on spectra supplies the old degreewise algebraic inputs. The point and line
 conditions use the canonical scheme isomorphisms, with no user-supplied affine comparison. -/
@@ -243,7 +243,7 @@ lemma toAlgebraic_H (A : SmoothAlg k) (i : ℤ × ℤ) :
 @[simp]
 lemma toAlgebraic_map {A A' : SmoothAlg k} (f : A ⟶ A') (i : ℤ × ℤ)
     (x : E.toAlgebraic.H A i) :
-    E.toAlgebraic.map f i x = E.pull (D.specFunctor.map f).unop i x := rfl
+    dsimp% E.toAlgebraic.map f i x = E.pull (D.specFunctor.map f).unop i x := rfl
 
 end DegreewiseTheory
 

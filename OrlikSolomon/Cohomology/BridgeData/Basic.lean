@@ -151,7 +151,6 @@ def toCore :
   eq_zero_point := D.eq_zero_point
   bijective_map_line := D.bijective_map_polynomialC
 
-
 /-- Total cohomology, as the external direct sum over cohomological degree and twist. -/
 abbrev Total (A : SmoothAlg k) := ⨁ i, D.H A i
 
@@ -284,7 +283,7 @@ lemma bijective_mapTotal_polynomialC (A : SmoothAlg k) :
   D.toCore.bijective_mapTotal_line A
 
 /-- The total cohomology functor, constructed from degreewise groups and pullbacks. -/
-def functor : SmoothAlg k ⥤ AlgCat.{z} B:=
+def functor : SmoothAlg k ⥤ AlgCat.{z} B :=
   D.toCore.functor
 
 end DegreewiseTheory
