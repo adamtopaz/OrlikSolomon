@@ -1496,9 +1496,9 @@ geometric declarations; write the existing ones with `OrlikSolomon.DeRham.`. A f
 
 ### Logarithmic forms on schemes
 
-The `DeRham/Schemes/Log` umbrella and its `Basic`, `Algebra`, `AffineImage`, `Affine`, `Residue`,
-`Comparison` and `Naturality` files use `OrlikSolomon.Geometric.DeRham` and depend on G0, forms sheaves and the
-existing algebraic log/pole APIs, independently of arrangements and the OS presentation.
+The `DeRham/Schemes/Log` umbrella and the modules listed below use
+`OrlikSolomon.Geometric.DeRham` and depend on G0, forms sheaves and the existing algebraic
+log/pole APIs, independently of arrangements and the OS presentation.
 `logSheaf P n` is the categorical image of the regular-plus-left-theta map into `j_*Ω_U^n`.
 Its public inclusion and affine comparison hide the image construction. Sections of a sheaf
 image are identified with the corresponding module image only through the affine
@@ -1557,14 +1557,18 @@ into other files updates this table.
 | `DeRham/Schemes/Instance` | `thm:geo-dr-instance`: `ordinaryTheory`, `twistedClass`, the twisted Gysin and residue, `logClass_eq` | #116 |
 | `DeRham/Schemes/Corollaries` | `cor:geo-dr-arrangements`: `affineEquiv`, `projectiveEquiv` and their API | #116 |
 | `DeRham/Schemes/Forms/Associated` | structure-sheaf-linear associated-module comparison and distinguished-open fraction formulas, extending `thm:geo-forms-comparison` | #117 |
-| `DeRham/Schemes/Log`, the module to import | `thm:geo-log-sheaves`: umbrella for the seven files below | #117 |
+| `DeRham/Schemes/Log`, the module to import | `thm:geo-log-sheaves`: umbrella for the files below | #117 |
 | `DeRham/Schemes/Log/Basic` | the global theta section, regular-plus-left-theta map, its image sheaf, complex and signed closed shift | #117 |
 | `DeRham/Schemes/Log/Algebra` | wedge products and dg algebra identities on the logarithmic image sheaves, descended from local normal forms and characterized by the actual complement inclusion | #117 |
 | `DeRham/Schemes/Log/AffineImage` | exact associated-module image comparison on spectra and transport of logarithmic images along pair isomorphisms | #117 |
 | `DeRham/Schemes/Log/Affine` | affine-neighborhood pairs, associated-module image comparison and affine cochain isomorphisms | #117 |
-| `DeRham/Schemes/Log/Residue` | residue descent, signs, sheaf short exactness and comparison of the affine residue short complex | #117 |
+| `DeRham/Schemes/Log/RestrictionImage` | exact image transport for open restrictions, retaining regular, theta and differential compatibility | #117 |
+| `DeRham/Schemes/Log/Restriction` | restriction to affine neighborhoods, their global logarithmic and open-form complexes, and the inclusion comparison | #117 |
+| `DeRham/Schemes/Log/Residue` | residue descent, signs and the short exact sequence of sheaf complexes | #117 |
+| `DeRham/Schemes/Log/ResidueAffine` | comparison of the affine residue short complex and its representatives with the algebraic sequence | #117 |
 | `DeRham/Schemes/Log/Comparison` | stalkwise quasi-isomorphism from the old pole theorem | #117 |
-| `DeRham/Schemes/Log/Naturality` | transverse maps, unit changes of equation and right form projection | #117 |
+| `DeRham/Schemes/Log/Projection` | the form-level right projection identity, with logarithmic factor on the left and no sign | #117 |
+| `DeRham/Schemes/Log/Naturality` | transverse maps and unit changes of equation | #117 |
 | `Examples/Geometric` | `prop:geo-finite-field`, `prop:geo-degenerate`, `prop:geo-exclusions`, `prop:geo-nonflat`, `prop:geo-nonaffine`, `prop:geo-affine-regressions`, and the blueprint's acceptance consumers | #118 |
 
 `Geometry/Schemes/ModuleGluing` is generic and uses the namespace `OrlikSolomon.Geometric`.

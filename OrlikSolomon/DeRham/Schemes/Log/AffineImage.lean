@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Adam Topaz, Codex
 -/
 module
+
 public import OrlikSolomon.Geometry.Schemes.ModuleGluing
 public import Mathlib.Topology.Sheaves.Abelian
 public import Mathlib.Algebra.Category.ModuleCat.AB
@@ -15,6 +16,7 @@ public import OrlikSolomon.DeRham.Schemes.GlobalSections
 public import OrlikSolomon.DeRham.Schemes.Forms.Associated
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Duality
 public import Mathlib.CategoryTheory.Sites.Equivalence
+
 /-!
 # Associated sheaves of affine logarithmic forms
 
@@ -36,7 +38,8 @@ namespace OrlikSolomon.Geometric.DeRham
 open OrlikSolomon.DeRham
 variable {k : Type u} [CommRing k] {A : CommRingCat.{u}} [Algebra k A]
 /-- The associated module sheaf on an affine spectrum, regarded as a sheaf of base modules. -/
-abbrev affineAssociatedSheafFunctor : ModuleCat.{u} A ⥤
+@[implicit_reducible]
+def affineAssociatedSheafFunctor : ModuleCat.{u} A ⥤
     TopCat.Sheaf (ModuleCat.{u} k) (Spec A) :=
   tilde.functor A ⋙ modulesSpecToSheaf ⋙
     sheafCompose _ (ModuleCat.restrictScalars (algebraMap k A))
@@ -93,8 +96,6 @@ private instance associatedBase_additive :
   unfold affineAssociatedSheafFunctor
   infer_instance
 
-
-
 private instance affineAssociatedSectionModule (M : ModuleCat A) (U : (Spec A).Opens) :
     Module A (((affineAssociatedSheafFunctor (k := k)).obj M).obj.obj (op U)) :=
   inferInstanceAs (Module A ((modulesSpecToSheaf.obj (tilde M)).obj.obj (op U)))
@@ -109,7 +110,6 @@ private lemma affineAssociatedSection_res (M : ModuleCat A) {U V : (Spec A).Open
     (((affineAssociatedSheafFunctor (k := k)).obj M).obj.map i.op)
       (affineAssociatedSection M V x) = affineAssociatedSection M U x :=
   ConcreteCategory.congr_hom (tilde.toOpen_res M V U i) x
-
 
 /-- Associated module maps preserve the canonical algebraic sections. -/
 lemma affineAssociatedSection_map {M N : ModuleCat A} (f : M ⟶ N)
@@ -222,7 +222,6 @@ local notation "AP" => (CommRingCat.of P.ambient)
 local notation "FA" => (affineAssociatedSheafFunctor (k := k) (A := AP))
 local notation "PG" => (Geometric.DivisorPair.spec (SmoothDomain.aff k) P)
 
-
 private lemma specSectionMap_top_apply (a : P.ambient) :
     specSectionMap (k := k) (A := P.ambient) ⊤ a =
       (Scheme.ΓSpecIso AP).inv a := by
@@ -283,7 +282,6 @@ private def specRegularIso (n : ℕ) :
       formsSheaf k (PG).ambient.obj n :=
   (specFormsSheafAssociatedBaseIso (k := k) (A := AP) n).symm
 
-
 private lemma specRegularIso_section (n : ℕ) (U : (Spec AP).Opens)
     (x : ⋀[P.ambient]^n Ω[P.ambient⁄k]) :
     (specRegularIso P n).hom.hom.app (op U)
@@ -292,13 +290,11 @@ private lemma specRegularIso_section (n : ℕ) (U : (Spec AP).Opens)
           (Forms.mapPower (specSectionMap U) n x) :=
   specFormsSheafAssociatedBaseIso_inv_unit n U x
 
-
 /-- Affine pushforward identifies complement forms with the associated restricted module. -/
 @[no_expose] def specOpenFormsAssociatedIso (n : ℕ) :
     (FA).obj (ModuleCat.of AP (⋀[P.compl]^n Ω[P.compl⁄k])) ≅ openFormsSheaf (PG) n :=
   (specFormsSheafPushforwardAssociatedBaseIso (A := AP) (B := CommRingCat.of P.compl)
     (SmoothAlg.algHom P.j) n).symm
-
 
 /-- The affine complement comparison sends a global algebraic representative to its form section. -/
 lemma specOpenFormsAssociatedIso_hom_section (n : ℕ)
@@ -345,7 +341,6 @@ private def specNormalSourceIso (n : ℕ) :
   have : PreservesBinaryBiproducts FA := preservesBinaryBiproducts_of_preservesBiproducts FA
   exact (FA).mapBiprod _ _ ≪≫
     biprod.mapIso (specRegularIso P (n + 1)) (specRegularIso P n)
-
 
 private lemma specNormalSourceIso_inl (n : ℕ) :
     (FA).map (biprod.inl : ModuleCat.of AP (⋀[P.ambient]^(n + 1) Ω[P.ambient⁄k]) ⟶
@@ -784,6 +779,5 @@ lemma pairLogSheafIso_hom_comp (e : P ≅ Q)
   cases n with
   | zero => exact pairLogZeroIso_hom_comp e
   | succ n => exact pairLogSuccIso_hom_comp e hunit n
-
 
 end OrlikSolomon.Geometric.DeRham
