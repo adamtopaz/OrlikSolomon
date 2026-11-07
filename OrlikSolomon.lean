@@ -152,6 +152,11 @@ public import OrlikSolomon.Presentation.CokernelData.Basic
 public import OrlikSolomon.Presentation.CokernelData.Words
 public import OrlikSolomon.Presentation.CokernelGrading
 public import OrlikSolomon.Presentation.Generators
+public import OrlikSolomon.Presentation.Geometric
+public import OrlikSolomon.Presentation.Geometric.Affine
+public import OrlikSolomon.Presentation.Geometric.Ordinary
+public import OrlikSolomon.Presentation.Geometric.Projective
+public import OrlikSolomon.Presentation.Geometric.Transport
 public import OrlikSolomon.Presentation.Grading
 public import OrlikSolomon.Presentation.Ordinary
 public import OrlikSolomon.Presentation.Projective
