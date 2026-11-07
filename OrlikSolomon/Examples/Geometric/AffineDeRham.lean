@@ -120,10 +120,11 @@ section NamedSchemes
 variable (k)
 
 /-- The actual punctured affine line `Spec k[x,x⁻¹]`. -/
-abbrev gmScheme : (SmoothDomain.aff k).Obj := (SmoothDomain.aff k).spec (SmoothAlg.gm k)
+@[instance_reducible] def gmScheme : (SmoothDomain.aff k).Obj :=
+  (SmoothDomain.aff k).spec (SmoothAlg.gm k)
 
 /-- The actual two-torus `Spec k[x,x⁻¹,y,y⁻¹]`. -/
-abbrev torusScheme : (SmoothDomain.aff k).Obj :=
+@[instance_reducible] def torusScheme : (SmoothDomain.aff k).Obj :=
   (SmoothDomain.aff k).spec (SmoothAlg.laurent (SmoothAlg.gm k))
 
 /-- The logarithmic coordinate form `dx/x` as a global sheaf one-form on the punctured line. -/
@@ -199,6 +200,7 @@ def gmCohomologyEquiv : (k × k) ≃ₗ[k] Geometric.DeRham.Cohomology (gmScheme
   change specCohomologyEquiv _ (OrlikSolomon.DeRham.Examples.gmCohomologyEquiv k (a, b)) = _
   rw [OrlikSolomon.DeRham.Examples.gmCohomologyEquiv_apply, map_add, map_mul,
     AlgEquiv.commutes, AlgEquiv.commutes, ← gmClass_eq]
+  rfl
 
 omit [CharZero k] in
 /-- The logarithmic class on the punctured line squares to zero. -/
@@ -214,6 +216,8 @@ theorem gmClass_mul_self : gmClass k * gmClass k = 0 := by
 omit [CharZero k] in
 /-- The punctured-line generator has cohomological degree one. -/
 theorem gmClass_mem_degree : gmClass k ∈ Geometric.DeRham.Cohomology.degree (gmScheme k) 1 := by
+  change gmClass k ∈ Geometric.DeRham.Cohomology.degree
+    ((SmoothDomain.aff k).spec (SmoothAlg.gm k)) 1
   rw [gmClass_eq, specCohomologyEquiv_mem_degree_iff]
   exact dlogClass_mem_degree _
 
@@ -221,8 +225,11 @@ theorem gmClass_mem_degree : gmClass k ∈ Geometric.DeRham.Cohomology.degree (g
 theorem gmCohomologyEquiv_mem_degree_iff (n : ℕ) (a b : k) :
     gmCohomologyEquiv k (a, b) ∈ Geometric.DeRham.Cohomology.degree (gmScheme k) n ↔
       ((n : ℤ) = 0 ∨ a = 0) ∧ ((n : ℤ) = 1 ∨ b = 0) := by
-  rw [gmCohomologyEquiv, LinearEquiv.trans_apply, AlgEquiv.toLinearEquiv_apply,
-    specCohomologyEquiv_mem_degree_iff, ← OrlikSolomon.DeRham.Cohomology.grading_natCast]
+  change specCohomologyEquiv (SmoothAlg.gm k)
+    (OrlikSolomon.DeRham.Examples.gmCohomologyEquiv k (a, b)) ∈
+      Geometric.DeRham.Cohomology.degree ((SmoothDomain.aff k).spec (SmoothAlg.gm k)) n ↔ _
+  rw [specCohomologyEquiv_mem_degree_iff,
+    ← OrlikSolomon.DeRham.Cohomology.grading_natCast]
   exact OrlikSolomon.DeRham.Examples.gmCohomologyEquiv_mem_grading_iff k n a b
 
 /-- The punctured line has no cohomology above degree one. -/
@@ -230,11 +237,12 @@ theorem gm_eq_zero_of_mem_degree_succ_succ (n : ℕ)
     {c : Geometric.DeRham.Cohomology (gmScheme k)}
     (hc : c ∈ Geometric.DeRham.Cohomology.degree (gmScheme k) (n + 2)) : c = 0 := by
   obtain ⟨x, rfl⟩ := (specCohomologyEquiv (SmoothAlg.gm k)).surjective c
-  rw [specCohomologyEquiv_mem_degree_iff] at hc
-  rw [OrlikSolomon.DeRham.Examples.gm_eq_zero_of_mem_degree_succ_succ k n hc, map_zero]
+  have hx := (specCohomologyEquiv_mem_degree_iff (SmoothAlg.gm k) (n + 2) x).1 hc
+  exact (congrArg (specCohomologyEquiv (SmoothAlg.gm k))
+    (OrlikSolomon.DeRham.Examples.gm_eq_zero_of_mem_degree_succ_succ k n hx)).trans (map_zero _)
 
 /-- The actual geometric pair `(𝔸¹, {0}, 𝔾ₘ)`, obtained by affine duality. -/
-abbrev gmPair : Geometric.DivisorPair (SmoothDomain.aff k) :=
+@[implicit_reducible] def gmPair : Geometric.DivisorPair (SmoothDomain.aff k) :=
   Geometric.DivisorPair.spec _ (OrlikSolomon.DivisorPair.standardPair (SmoothAlg.point k))
 
 /-- The residue of the actual global-form generator on the punctured line is one. -/
@@ -269,6 +277,7 @@ theorem torusCohomologyEquiv_apply (a b c e : k) :
     (OrlikSolomon.DeRham.Examples.torusCohomologyEquiv k ((a, b), (c, e))) = _
   rw [OrlikSolomon.DeRham.Examples.torusCohomologyEquiv_apply]
   simp only [map_add, map_smul, map_mul, AlgEquiv.commutes, ← torusX_eq, ← torusY_eq]
+  rfl
 
 omit [CharZero k] in
 /-- The first logarithmic coordinate generator squares to zero. -/
@@ -299,8 +308,12 @@ theorem torusCohomologyEquiv_mem_degree_iff (n : ℕ) (a b c e : k) :
         Geometric.DeRham.Cohomology.degree (torusScheme k) n ↔
       ((n : ℤ) = 0 ∨ a = 0) ∧ ((n : ℤ) = 1 ∨ b = 0) ∧
         ((n : ℤ) = 1 ∨ c = 0) ∧ ((n : ℤ) = 2 ∨ e = 0) := by
-  rw [torusCohomologyEquiv, LinearEquiv.trans_apply, AlgEquiv.toLinearEquiv_apply,
-    specCohomologyEquiv_mem_degree_iff, ← OrlikSolomon.DeRham.Cohomology.grading_natCast]
+  change specCohomologyEquiv (SmoothAlg.laurent (SmoothAlg.gm k))
+    (OrlikSolomon.DeRham.Examples.torusCohomologyEquiv k ((a, b), (c, e))) ∈
+      Geometric.DeRham.Cohomology.degree
+        ((SmoothDomain.aff k).spec (SmoothAlg.laurent (SmoothAlg.gm k))) n ↔ _
+  rw [specCohomologyEquiv_mem_degree_iff,
+    ← OrlikSolomon.DeRham.Cohomology.grading_natCast]
   exact OrlikSolomon.DeRham.Examples.torusCohomologyEquiv_mem_grading_iff k n a b c e
 
 /-- The two-torus has no cohomology above degree two. -/
@@ -309,15 +322,18 @@ theorem torus_eq_zero_of_mem_degree_succ_succ_succ (n : ℕ)
     (hc : c ∈ Geometric.DeRham.Cohomology.degree (torusScheme k) (n + 3)) : c = 0 := by
   obtain ⟨x, rfl⟩ :=
     (specCohomologyEquiv (SmoothAlg.laurent (SmoothAlg.gm k))).surjective c
-  rw [specCohomologyEquiv_mem_degree_iff] at hc
-  rw [OrlikSolomon.DeRham.Examples.torus_eq_zero_of_mem_degree_succ_succ_succ k n hc, map_zero]
+  have hx := (specCohomologyEquiv_mem_degree_iff
+    (SmoothAlg.laurent (SmoothAlg.gm k)) (n + 3) x).1 hc
+  exact (congrArg (specCohomologyEquiv (SmoothAlg.laurent (SmoothAlg.gm k)))
+    (OrlikSolomon.DeRham.Examples.torus_eq_zero_of_mem_degree_succ_succ_succ k n hx)).trans
+      (map_zero _)
 
 /-- The pair with ambient `𝔾ₘ_x × 𝔸¹_y`, closed divisor `y = 0`, and the fixed ordered torus. -/
-abbrev torusYPair : Geometric.DivisorPair (SmoothDomain.aff k) :=
+@[implicit_reducible] def torusYPair : Geometric.DivisorPair (SmoothDomain.aff k) :=
   Geometric.DivisorPair.spec _ (OrlikSolomon.DivisorPair.standardPair (SmoothAlg.gm k))
 
 /-- The pair with ambient `𝔸¹_x × 𝔾ₘ_y` and divisor `x = 0`, using the same ordered torus. -/
-abbrev torusXPair : Geometric.DivisorPair (SmoothDomain.aff k) :=
+@[implicit_reducible] def torusXPair : Geometric.DivisorPair (SmoothDomain.aff k) :=
   Geometric.DivisorPair.spec _ (OrlikSolomon.DeRham.Examples.torusXPair k)
 
 /-- The ambient of the `y`-pair is the actual product `𝔾ₘ_x × 𝔸¹_y`. -/
@@ -386,7 +402,7 @@ section PositiveCharacteristic
 variable (k : Type u) [CommRing k]
 
 /-- The actual affine line, presented as the spectrum of its polynomial algebra. -/
-abbrev affineLineScheme : (SmoothDomain.aff k).Obj :=
+@[instance_reducible] def affineLineScheme : (SmoothDomain.aff k).Obj :=
   (SmoothDomain.aff k).spec (SmoothAlg.polynomial (SmoothAlg.point k))
 
 /-- This spectrum model is the library's actual affine line. -/
