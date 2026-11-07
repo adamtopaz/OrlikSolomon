@@ -26,6 +26,8 @@ and this comparison is compatible with every map of complements of the existing 
 * `Geometric.complementIsoSpec 𝒜`: the comparison `s_𝒜 : U_𝒜 ≅ Spec O(U_𝒜)` over `𝔸_V`.
 * `Geometric.complementUnit 𝒜 f hf`: the restriction `f̃|_{U_𝒜}` of the function of an affine
   function whose zero locus is covered by `𝒜`, as a global unit on `U_𝒜`.
+* `Geometric.complementHom F`: the morphism of complements of a map `F` of the existing coordinate
+  rings, `Spec F` under the comparisons.
 * `Geometric.complementMap`, `Geometric.complementInclusion`, `Geometric.complementIso`: the maps of
   complements given by an affine map, by a sub-arrangement and by an affine equivalence.
 * `SmoothDomain.complement D 𝒜`, `SmoothDomain.complementIsoSpec D 𝒜`: `U_𝒜` as an object of any
@@ -50,7 +52,8 @@ and this comparison is compatible with every map of complements of the existing 
 
 ## Implementation notes
 
-The maps of complements are defined through `s_𝒜` and characterized by their composite with `j_𝒜`
+The maps of complements are `complementHom` of the existing ring maps, so one set of naturality
+lemmas for `s` serves all of them, and they are characterized by their composite with `j_𝒜`
 (`complementMap_comp_complementι`), which determines them. Lemmas on functions in a domain are
 stated as equations of global sections, not of units, because `Γ((D.spec A).obj.left, ⊤)` and
 `Γ((spec A.obj).left, ⊤)` agree only at implicit transparency; recover unit equations with
@@ -262,6 +265,18 @@ lemma complementIsoSpec_inv_comp_complementι :
       specMap (CommAlgCat.ofHom (toComplementRing 𝒜)) := by
   rw [Iso.inv_comp_eq, complementIsoSpec_hom_comp]
 
+instance : Mono (specMap (CommAlgCat.ofHom (toComplementRing 𝒜))) :=
+  Over.mono_of_mono_left _
+
+/-- `s_𝒜` is the only isomorphism `U_𝒜 ≅ Spec O(U_𝒜)` over `𝔸_V`, since `Spec O(U_𝒜) → 𝔸_V` is a
+monomorphism. In particular it does not depend on a choice of equations.
+
+Blueprint: `thm:geo-complement-spec`. -/
+lemma eq_complementIsoSpec (e : complement 𝒜 ≅ spec (CommAlgCat.of k 𝒜.ComplementRing))
+    (he : e.hom ≫ specMap (CommAlgCat.ofHom (toComplementRing 𝒜)) = complementι 𝒜) :
+    e = complementIsoSpec 𝒜 :=
+  Iso.ext ((cancel_mono _).1 (he.trans (complementIsoSpec_hom_comp 𝒜).symm))
+
 /-- The complement is affine.
 
 Blueprint: `thm:geo-complement-spec`. -/
@@ -340,6 +355,52 @@ end Comparison
 
 /-! ### Maps of complements -/
 
+section Hom
+
+variable {𝒜 : Arrangement k V} {ℬ : Arrangement k W}
+
+/-- The morphism `U_𝒜 → U_ℬ` of a map `F : O(U_ℬ) → O(U_𝒜)` of the existing coordinate rings:
+`Spec F` under the comparisons `s`. Every map of complements below is of this form, and maps that
+are not affine, such as the normalized slice of `thm:geo-small-targets`, are built this way from
+their ring maps.
+
+Blueprint: `thm:geo-complement-spec`. -/
+def complementHom (F : ℬ.ComplementRing →ₐ[k] 𝒜.ComplementRing) : complement 𝒜 ⟶ complement ℬ :=
+  (complementIsoSpec 𝒜).hom ≫ specMap (CommAlgCat.ofHom F) ≫ (complementIsoSpec ℬ).inv
+
+variable (F : ℬ.ComplementRing →ₐ[k] 𝒜.ComplementRing)
+
+/-- Under the comparisons, `complementHom F` is `Spec F`. -/
+@[reassoc (attr := simp)]
+lemma complementHom_comp_complementIsoSpec_hom :
+    complementHom F ≫ (complementIsoSpec ℬ).hom =
+      (complementIsoSpec 𝒜).hom ≫ specMap (CommAlgCat.ofHom F) := by
+  simp [complementHom]
+
+/-- The composite of `complementHom F` with `j_ℬ` is `Spec` of `O(W) → O(U_ℬ) → O(U_𝒜)`. -/
+@[reassoc]
+lemma complementHom_comp_complementι :
+    complementHom F ≫ complementι ℬ =
+      (complementIsoSpec 𝒜).hom ≫
+        specMap (CommAlgCat.ofHom (F.comp (ComplementRing.toComplementRing ℬ))) := by
+  rw [← complementIsoSpec_hom_comp ℬ, complementHom_comp_complementIsoSpec_hom_assoc,
+    ← specMap_comp]
+  rfl
+
+/-- `complementHom F` pulls back the restriction of a function `x` on `𝔸_W` to the function on
+`U_𝒜` of `F x` under `s_𝒜`. -/
+lemma complementHom_appTop (x : CoordinateRing k W) :
+    (complementHom F).left.appTop
+        ((complementι ℬ).left.appTop ((Scheme.ΓSpecIso (.of (CoordinateRing k W))).inv x)) =
+      (complementIsoSpec 𝒜).hom.left.appTop
+        ((Scheme.ΓSpecIso (.of 𝒜.ComplementRing)).inv (F (algebraMap _ _ x))) := by
+  rw [← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop, ← Over.comp_left,
+    complementHom_comp_complementι, Over.comp_left, Scheme.Hom.comp_appTop, CommRingCat.comp_apply,
+    specMap_left_appTop_ΓSpecIso_inv]
+  rfl
+
+end Hom
+
 section Maps
 
 variable {𝒜 : Arrangement k V} {ℬ : Arrangement k W} {𝒞 : Arrangement k U} {f : V →ᵃ[k] k}
@@ -353,8 +414,7 @@ complements have `k`-points.
 Blueprint: `thm:geo-complement-spec`. -/
 def complementMap (φ : W →ᵃ[k] V) (𝒜 : Arrangement k V) (ℬ : Arrangement k W)
     (h : ∀ K ∈ 𝒜, ℬ.Covers (K.comap φ)) : complement ℬ ⟶ complement 𝒜 :=
-  (complementIsoSpec ℬ).hom ≫ specMap (CommAlgCat.ofHom (ComplementRing.map φ 𝒜 ℬ h)) ≫
-    (complementIsoSpec 𝒜).inv
+  complementHom (ComplementRing.map φ 𝒜 ℬ h)
 
 variable (φ : W →ᵃ[k] V) (h : ∀ K ∈ 𝒜, ℬ.Covers (K.comap φ))
 
@@ -365,8 +425,8 @@ Blueprint: `thm:geo-complement-spec`. -/
 @[reassoc (attr := simp)]
 lemma complementMap_comp_complementIsoSpec_hom :
     complementMap φ 𝒜 ℬ h ≫ (complementIsoSpec 𝒜).hom =
-      (complementIsoSpec ℬ).hom ≫ specMap (CommAlgCat.ofHom (ComplementRing.map φ 𝒜 ℬ h)) := by
-  simp [complementMap]
+      (complementIsoSpec ℬ).hom ≫ specMap (CommAlgCat.ofHom (ComplementRing.map φ 𝒜 ℬ h)) :=
+  complementHom_comp_complementIsoSpec_hom _
 
 /-- The square of a map of complements into the affine spaces: `j_𝒜 ∘ (U_ℬ → U_𝒜) = 𝔸_φ ∘ j_ℬ`.
 
@@ -419,8 +479,7 @@ and it commutes with the immersions into `𝔸_V` (`complementInclusion_comp_com
 
 Blueprint: `thm:geo-complement-spec`. -/
 def complementInclusion : complement ℬ ⟶ complement 𝒜 :=
-  (complementIsoSpec ℬ).hom ≫ specMap (CommAlgCat.ofHom (ComplementRing.inclusion h)) ≫
-    (complementIsoSpec 𝒜).inv
+  complementHom (ComplementRing.inclusion h)
 
 /-- `s` is natural for inclusions of arrangements.
 
@@ -428,8 +487,8 @@ Blueprint: `thm:geo-complement-spec`. -/
 @[reassoc (attr := simp)]
 lemma complementInclusion_comp_complementIsoSpec_hom :
     complementInclusion h ≫ (complementIsoSpec 𝒜).hom =
-      (complementIsoSpec ℬ).hom ≫ specMap (CommAlgCat.ofHom (ComplementRing.inclusion h)) := by
-  simp [complementInclusion]
+      (complementIsoSpec ℬ).hom ≫ specMap (CommAlgCat.ofHom (ComplementRing.inclusion h)) :=
+  complementHom_comp_complementIsoSpec_hom _
 
 /-- The inclusion `U_ℬ → U_𝒜` commutes with the open immersions into `𝔸_V`.
 
