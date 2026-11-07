@@ -9,6 +9,7 @@ public import OrlikSolomon.DeRham.Cohomology
 public import OrlikSolomon.DeRham.Log.Cohomology
 public import OrlikSolomon.DeRham.Instance.Twisted
 public import OrlikSolomon.DeRham.Pole.Euler
+public import OrlikSolomon.Geometry.SmoothAlg
 public import Mathlib.Algebra.Polynomial.Laurent
 public import Mathlib.Algebra.CharP.Basic
 
@@ -146,14 +147,6 @@ private theorem algebraMapInv_contraction_d {A : Type*} [CommRing A] [Algebra k 
     | nil => simp [word, Algebra.smul_def]
     | cons b l => simp [word_cons, map_mul, algebraMapInv_diff]
   | add x y hx hy => simp only [map_add, hx, hy]
-
--- Mathlib gives the polynomial-to-Laurent algebra but not this coefficient tower instance.
--- Pin its canonical compatibility locally; no alternative scalar actions are introduced.
-local instance : IsScalarTower k k[X] k[T;T⁻¹] :=
-  IsScalarTower.of_algebraMap_eq fun a => by
-    simp only [LaurentPolynomial.algebraMap_eq_toLaurent, Polynomial.algebraMap_apply,
-      Polynomial.toLaurent_C]
-    rfl
 
 private def characteristicEuler : Derivation k k[T;T⁻¹] k[T;T⁻¹] :=
   logEulerDerivation k (X : k[X]) k[T;T⁻¹] derivative'

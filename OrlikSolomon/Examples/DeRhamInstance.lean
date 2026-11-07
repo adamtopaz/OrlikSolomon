@@ -19,7 +19,7 @@ The first part checks the instance itself, `OrlikSolomon.DeRham.ordinaryTheory k
 `thm:dr-instance`: it is not a zero theory, since its point, its residue and its class `τ` are
 nonzero, and it exists over `ℚ`.
 
-The second part checks what the corollaries of `DeRham/Corollaries` will need, on the instance
+The second part checks the inputs and computations used by `DeRham/Corollaries`, on the instance
 itself. Generic lemmas about a value of `OrdinaryTheory` fire on it under `simp`. A homogeneous
 class is `twistedClass w c`, the classes `logClass` among them, and the structure computes on it.
 The forms that fail at `R = B` have no competing `k`-algebra structure here. It builds the

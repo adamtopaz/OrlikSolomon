@@ -5,9 +5,8 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import OrlikSolomon.DeRham.Corollaries
 public import OrlikSolomon.Cohomology.Logarithms
-public import OrlikSolomon.Examples.DeRhamMaps
+public import OrlikSolomon.DeRham.Corollaries
 
 /-!
 # Punctured-line and two-torus calculations
@@ -22,8 +21,8 @@ coefficient variable gives the untwisted calculations without a Künneth assumpt
 * `torusCohomologyEquiv`, `torusCohomologyEquiv_apply` and its degree criterion: the ordered
   basis `1, θx, θy, θxθy` of the two-torus, in degrees `0, 1, 1, 2`.
 * `torusX_mul_self`, `torusY_mul_self` and `torus_anticommute`: its exterior multiplication.
-* `torusResidueX_top` and `torus_residue_inner_mul_outer`: the opposite residue signs on
-  the same ordered top class, using the actual coordinate interchange for the first map.
+* `torusXPair`, `torusXPair_residue_top` and `torus_residue_inner_mul_outer`: the actual
+  divisor pairs give opposite residue signs on the same ordered top class.
 
 Blueprint: `prop:dr-gm-example`, `prop:dr-torus-example`.
 -/
@@ -45,6 +44,8 @@ private theorem laurentThetaClass_mem_degree (A : SmoothAlg k) :
     laurentThetaClass k A ∈ Cohomology.degree k (laurent A) 1 :=
   dlogClass_mem_degree _
 
+-- These wrappers type `evalOne` on the functor's semireducible objects, so that its algebra
+-- operations and maps are visible to rewriting without unfolding `ordinaryTheory`.
 private def forgetTwist (A : SmoothAlg k) :
     (ordinaryTheory k).C.obj A →ₐ[k] Cohomology k A := TwistedCohomology.evalOne k A
 
@@ -135,9 +136,15 @@ theorem residue_laurentCohomologyEquiv (A : SmoothAlg k) (b c : Cohomology k A) 
 
 /-- Point cohomology is the coefficient field. -/
 def pointCohomologyEquiv : k ≃ₐ[k] Cohomology k (point k) :=
-  AlgEquiv.ofBijective (Algebra.ofId k _) (Cohomology.bijective_algebraMap_point k)
+  (Cohomology.equivOfSurjective (k := k) (A := k) Function.surjective_id).symm
 
-/-- The punctured line has the basis `1, [dx/x]`. -/
+omit [CharZero k] in
+/-- Point cohomology identifies a scalar with its constant class. -/
+@[simp] theorem pointCohomologyEquiv_apply (a : k) :
+    pointCohomologyEquiv k a = algebraMap k _ a := (pointCohomologyEquiv k).commutes a
+
+/-- The punctured line has the basis `1, [dx/x]` on the actual `gm k` model.
+For the arrangement-complement model, see `exists_eq_smul_dlogClass_unitX`. -/
 def gmCohomologyEquiv : (k × k) ≃ₗ[k] Cohomology k (gm k) :=
   (LinearEquiv.prodCongr (pointCohomologyEquiv k).toLinearEquiv
     (pointCohomologyEquiv k).toLinearEquiv).trans (laurentCohomologyEquiv k (point k))
@@ -146,9 +153,10 @@ def gmCohomologyEquiv : (k × k) ≃ₗ[k] Cohomology k (gm k) :=
 @[simp] theorem gmCohomologyEquiv_apply (a b : k) :
     gmCohomologyEquiv k (a, b) = algebraMap k _ a +
       laurentThetaClass k (point k) * algebraMap k _ b := by
-  change Cohomology.map (algHom (laurentC (point k))) (algebraMap k _ a) +
+  change Cohomology.map (algHom (laurentC (point k))) (pointCohomologyEquiv k a) +
     laurentThetaClass k (point k) *
-      Cohomology.map (algHom (laurentC (point k))) (algebraMap k _ b) = _
+      Cohomology.map (algHom (laurentC (point k))) (pointCohomologyEquiv k b) = _
+  rw [pointCohomologyEquiv_apply, pointCohomologyEquiv_apply]
   rw [AlgHom.commutes, AlgHom.commutes]
 
 omit [CharZero k] in
@@ -172,8 +180,10 @@ private theorem point_algebraMap_mem_grading_iff (p : ℤ) (a : k) :
 theorem gmCohomologyEquiv_mem_grading_iff (p : ℤ) (a b : k) :
     gmCohomologyEquiv k (a, b) ∈ Cohomology.grading k (gm k) p ↔
       (p = 0 ∨ a = 0) ∧ (p = 1 ∨ b = 0) := by
-  change laurentCohomologyEquiv k (point k) (algebraMap k _ a, algebraMap k _ b) ∈ _ ↔ _
-  rw [laurentCohomologyEquiv_mem_grading_iff, point_algebraMap_mem_grading_iff,
+  change laurentCohomologyEquiv k (point k)
+    (pointCohomologyEquiv k a, pointCohomologyEquiv k b) ∈ Cohomology.grading k _ p ↔ _
+  rw [pointCohomologyEquiv_apply, pointCohomologyEquiv_apply,
+    laurentCohomologyEquiv_mem_grading_iff, point_algebraMap_mem_grading_iff,
     point_algebraMap_mem_grading_iff]
   simp only [sub_eq_zero]
 
@@ -196,7 +206,7 @@ theorem gm_eq_zero_of_mem_degree_succ_succ (n : ℕ) {c : Cohomology k (gm k)}
   exact (ordinaryTheory k).eq_zero_of_mem_grading_gm (by omega) (by omega)
     (twistedClass_mem_grading_natCast_iff.2 hc)
 
-/-- The outer and inner logarithmic coordinate classes of the two-torus. -/
+/-- The logarithmic class of the inner coefficient coordinate of the two-torus. -/
 def torusX : Cohomology k (laurent (gm k)) :=
   Cohomology.map (algHom (laurentC (gm k))) (laurentThetaClass k (point k))
 
@@ -344,6 +354,69 @@ theorem torusResidueX_top : torusResidueX k (torusX k * torusY k) =
       torusY k * torusX k := by rw [map_mul, torusSwap_map_X, torusSwap_map_Y]
   exact (congrArg (residue (standardPair (gm k)).compl (isUnit_natCast_add_one k)
     (standardPair (gm k)).isSmoothPrincipalPair) h).trans (torus_residue_outer_mul_inner k)
+
+private def torusSwapAlgEquiv :
+    (standardPair (gm k)).compl ≃ₐ[k] (standardPair (gm k)).compl :=
+  AddMonoidAlgebra.commAlgEquiv k
+
+/-- The divisor `x = 0` in `k[x,y,y⁻¹]`, with its open part identified with the same torus as
+`standardPair (gm k)` by interchanging the Laurent coordinates. -/
+def torusXPair : DivisorPair k :=
+  { standardPair (gm k) with
+    j := (standardPair (gm k)).j ≫ torusSwap k
+    isLocalization_j := by
+      have h := (IsLocalization.isLocalization_iff_of_ringEquiv
+        (M := Submonoid.powers (standardPair (gm k)).eqn)
+        (S := (standardPair (gm k)).compl) (P := (standardPair (gm k)).compl)
+        (torusSwapAlgEquiv k).toRingEquiv).mp inferInstance
+      exact h }
+
+omit [CharZero k] in
+private theorem torusSwap_comp_self :
+    torusSwap k ≫ torusSwap k = 𝟙 (laurent (gm k)) := by
+  apply ConcreteCategory.ext
+  apply AlgHom.ext
+  intro z
+  change (torusSwapAlgEquiv k) ((torusSwapAlgEquiv k) z) = z
+  have hs : (torusSwapAlgEquiv k).symm = torusSwapAlgEquiv k :=
+    AddMonoidAlgebra.symm_commAlgEquiv
+  simpa only [hs] using (torusSwapAlgEquiv k).symm_apply_apply z
+
+/-- The coordinate change is a morphism of the actual divisor pairs. -/
+def torusXPairHom : torusXPair k ⟶ standardPair (gm k) where
+  ambient := 𝟙 _
+  closed := 𝟙 _
+  compl := torusSwap k
+  i_comp := by simp [torusXPair]
+  j_comp := by
+    change (polynomialToLaurent (gm k) ≫ torusSwap k) ≫ torusSwap k =
+      𝟙 (polynomial (gm k)) ≫ polynomialToLaurent (gm k)
+    rw [Category.assoc, torusSwap_comp_self, Category.comp_id, Category.id_comp]
+  associated_eqn := by
+    change Associated (standardPair (gm k)).eqn (standardPair (gm k)).eqn
+    exact Associated.refl _
+
+/-- The actual residue of the coordinate-swapped pair is the transported `x`-residue. -/
+theorem residue_torusXPair (c : Cohomology k (laurent (gm k))) :
+    residue (torusXPair k).compl (isUnit_natCast_add_one k)
+      (torusXPair k).isSmoothPrincipalPair c = torusResidueX k c := by
+  have h := residue_map (isUnit_natCast_add_one k) (torusXPairHom k).isPairHom
+    (torusXPair k).isSmoothPrincipalPair (standardPair (gm k)).isSmoothPrincipalPair c
+  have hc : Cohomology.map (algHom (torusXPairHom k).closed)
+      (residue (torusXPair k).compl (isUnit_natCast_add_one k)
+        (torusXPair k).isSmoothPrincipalPair c) =
+      residue (torusXPair k).compl (isUnit_natCast_add_one k)
+        (torusXPair k).isSmoothPrincipalPair c := by
+    change Cohomology.map (AlgHom.id k _) _ = _
+    rw [Cohomology.map_id, AlgHom.id_apply]
+  exact (h.trans hc).symm
+
+/-- The actual residue along `x = 0` takes the fixed ordered torus top class to `θy`. -/
+theorem torusXPair_residue_top :
+    residue (torusXPair k).compl (isUnit_natCast_add_one k)
+      (torusXPair k).isSmoothPrincipalPair (torusX k * torusY k) =
+      laurentThetaClass k (point k) :=
+  (residue_torusXPair k _).trans (torusResidueX_top k)
 
 /-- The top exterior class on the two-torus is nonzero. -/
 theorem torus_top_ne_zero : torusX k * torusY k ≠ 0 := by

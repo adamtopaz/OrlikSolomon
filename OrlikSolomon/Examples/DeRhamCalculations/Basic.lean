@@ -6,7 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import Mathlib.Algebra.Polynomial.Laurent
-public import OrlikSolomon.DeRham.Instance
+public import OrlikSolomon.DeRham.Corollaries
 public import OrlikSolomon.Examples.DeRhamCalculations.Torus
 public import OrlikSolomon.Examples.DeRhamLog
 public import OrlikSolomon.Examples.DeRhamMaps
@@ -204,9 +204,9 @@ theorem productPolynomial_residue_theta (hUnits : ∀ n : ℕ, IsUnit (n + 1 : k
     residue (k × k[T;T⁻¹]) hUnits (productPolynomial_isSmoothPrincipalPair k)
       (Cohomology.mk (theta k (Sanity.productPolynomialEquation k) (k × k[T;T⁻¹]))
         (d_theta _ _ _)) = 1 := by
-  have h := residue_mk_add_theta_mul (T := k × k[T;T⁻¹]) hUnits
-    (productPolynomial_isSmoothPrincipalPair k) 0 1 (by simp [d_theta])
-  simpa using h
+  exact residue_dlogClass hUnits (productPolynomial_isSmoothPrincipalPair k)
+    (IsUnit.unit_spec (IsLocalization.Away.algebraMap_isUnit
+      (S := k × k[T;T⁻¹]) (Sanity.productPolynomialEquation k)))
 
 section Idempotent
 
@@ -399,27 +399,6 @@ private def productCoordinateUnit : (k × k[T;T⁻¹])ˣ where
       rw [← LaurentPolynomial.T_add]
       norm_num
 
-private theorem productTheta_fst :
-    Forms.map (AlgHom.fst k k k[T;T⁻¹])
-      (theta k (Sanity.productPolynomialEquation k) (k × k[T;T⁻¹])) = 0 := by
-  rw [theta_eq_dlog k (Sanity.productPolynomialEquation k) (k × k[T;T⁻¹])
-    (u := productCoordinateUnit k) (by
-    ext <;> simp [productCoordinateUnit, Sanity.productPolynomialEquation,
-      RingHom.algebraMap_toAlgebra]), Forms.map_dlog]
-  simp [productCoordinateUnit, dlog_apply]
-
-private theorem productTheta_snd :
-    Forms.map (AlgHom.snd k k k[T;T⁻¹])
-      (theta k (Sanity.productPolynomialEquation k) (k × k[T;T⁻¹])) =
-      theta k (X : k[X]) k[T;T⁻¹] := by
-  rw [theta_eq_dlog k (Sanity.productPolynomialEquation k) (k × k[T;T⁻¹])
-    (u := productCoordinateUnit k) (by
-    ext <;> simp [productCoordinateUnit, Sanity.productPolynomialEquation,
-      RingHom.algebraMap_toAlgebra]), Forms.map_dlog]
-  exact (theta_eq_dlog k (X : k[X]) k[T;T⁻¹]
-    (u := Units.map (AlgHom.snd k k k[T;T⁻¹]) (productCoordinateUnit k)) (by
-      simp [productCoordinateUnit])).symm
-
 /-- The logarithmic class is zero on the first component and `dX/X` on the second.
 Blueprint: `prop:dr-product-example`. -/
 theorem productLaurentCohomologyEquiv_theta :
@@ -427,9 +406,28 @@ theorem productLaurentCohomologyEquiv_theta :
       (Cohomology.mk (theta k (Sanity.productPolynomialEquation k) (k × k[T;T⁻¹]))
         (d_theta _ _ _)) =
       (0, Cohomology.mk (theta k (X : k[X]) k[T;T⁻¹]) (d_theta _ _ _)) := by
+  have hθ : Cohomology.mk
+      (theta k (Sanity.productPolynomialEquation k) (k × k[T;T⁻¹])) (d_theta _ _ _) =
+      dlogClass k (productCoordinateUnit k) :=
+    (Cohomology.mk_congr (theta_eq_dlog k _ _ (u := productCoordinateUnit k) (by
+      ext <;> simp [productCoordinateUnit, Sanity.productPolynomialEquation,
+        RingHom.algebraMap_toAlgebra])) _).trans (mk_dlog _ _)
+  rw [hθ]
   apply Prod.ext
-  · simp [productLaurentCohomologyEquiv_fst, Cohomology.map_mk, productTheta_fst]
-  · simp [productLaurentCohomologyEquiv_snd, Cohomology.map_mk, productTheta_snd]
+  · rw [productLaurentCohomologyEquiv_fst, map_dlogClass]
+    have hfst : Units.map (AlgHom.fst k k k[T;T⁻¹] : (k × k[T;T⁻¹]) →* k)
+        (productCoordinateUnit k) = 1 := by
+      ext
+      rfl
+    rw [hfst, dlogClass_one, map_zero]
+  · rw [productLaurentCohomologyEquiv_snd, map_dlogClass]
+    change dlogClass k (Units.map (AlgHom.snd k k k[T;T⁻¹]) (productCoordinateUnit k)) =
+      dlogClass k (IsLocalization.Away.algebraMap_isUnit (S := k[T;T⁻¹]) (X : k[X])).unit
+    apply congrArg (dlogClass k)
+    apply Units.ext
+    rw [IsUnit.unit_spec]
+    simp [productCoordinateUnit, LaurentPolynomial.algebraMap_eq_toLaurent,
+      Polynomial.toLaurent_X]
 
 private theorem point_mem_degree_iff (n : ℕ) (c : Cohomology k k) :
     c ∈ Cohomology.degree k k n ↔ n = 0 ∨ c = 0 := by
@@ -512,11 +510,13 @@ theorem productCohomologyEquiv_generator :
   rw [AlgEquiv.apply_symm_apply]
   rw [gmCohomologyEquiv_apply, map_zero, map_one, mul_one, zero_add]
   congr 1
-  apply Cohomology.mk_congr
-  exact (theta_eq_dlog k (Polynomial.X : Polynomial k) k[T;T⁻¹]
-    (u := SmoothAlg.laurentT (SmoothAlg.point k)) (by
-      rw [LaurentPolynomial.algebraMap_eq_toLaurent, Polynomial.toLaurent_X]
-      rfl)).symm
+  let u := (IsLocalization.Away.algebraMap_isUnit (S := k[T;T⁻¹]) (X : k[X])).unit
+  have hu : (SmoothAlg.laurentT (SmoothAlg.point k) : k[T;T⁻¹]ˣ) = u := by
+    apply Units.ext
+    rw [IsUnit.unit_spec]
+    rw [LaurentPolynomial.algebraMap_eq_toLaurent, Polynomial.toLaurent_X]
+    rfl
+  exact (congrArg (dlogClass k) hu).trans (mk_dlog u (d_theta _ _ _)).symm
 
 /-- Residue takes the normalized degree-one generator of the disconnected complement to one.
 Blueprint: `prop:dr-product-example`. -/
