@@ -39,10 +39,10 @@ public import OrlikSolomon.Examples.AffineLines
 public import OrlikSolomon.Examples.Bridge
 public import OrlikSolomon.Examples.Cokernel
 public import OrlikSolomon.Examples.CoordinatePolynomials
-public import OrlikSolomon.Examples.DeRhamSmoothPair
-public import OrlikSolomon.Examples.Degenerate
 public import OrlikSolomon.Examples.DeRhamCohomology
 public import OrlikSolomon.Examples.DeRhamComplex
+public import OrlikSolomon.Examples.DeRhamSmoothPair
+public import OrlikSolomon.Examples.Degenerate
 public import OrlikSolomon.Examples.Exterior
 public import OrlikSolomon.Examples.Moebius
 public import OrlikSolomon.Examples.Ordinary

@@ -532,8 +532,8 @@ declaration names are proposals, as with the first blueprint.
 
 The namespace is `OrlikSolomon.DeRham`. Exterior calculus, the dg algebra and its differential,
 its cohomology algebra, conormal splitting, global and localized normal derivations, and wedge
-exactness modulo the divisor exist; the other parts below remain planned. Each row of this table is one of issues
-#72–#83, in order. The conormal and normal-derivation results need only Mathlib's Kähler
+exactness modulo the divisor exist; the other parts below remain planned. Each row of this table
+is one of issues #72–#83, in order. The conormal and normal-derivation results need only Mathlib's Kähler
 differentials and formal-smoothness lifts. Normalizing a derivation on `A[v(f)⁻¹]` uses
 Mathlib's localization of Kähler differentials, and wedge exactness uses exterior contraction;
 neither requires the de Rham differential. All of `lem:dr-projective` remains in #77:
