@@ -89,15 +89,18 @@ def toAlgebraic : OrlikSolomon.OrdinaryTheory k ℬ where
   residue_map f := T.residue_map (DivisorPair.specMap D f)
   residue_mul_map P := T.residue_mul_map (DivisorPair.spec D P)
 
-@[simp] lemma toAlgebraic_map {A A' : SmoothAlg k} (f : A ⟶ A')
+@[simp] lemma toAlgebraic_grading (A : SmoothAlg k) (i : ℤ × ℤ) :
+    T.toAlgebraic.grading A i = T.grading (D.spec A) i := rfl
+
+lemma toAlgebraic_map {A A' : SmoothAlg k} (f : A ⟶ A')
     (x : T.toAlgebraic.C.obj A) :
     T.toAlgebraic.C.map f x = T.pull (D.specFunctor.map f).unop x := rfl
 
-@[simp] lemma toAlgebraic_gysin (P : OrlikSolomon.DivisorPair k)
+lemma toAlgebraic_gysin (P : OrlikSolomon.DivisorPair k)
     (x : T.toAlgebraic.C.obj P.closed) :
     T.toAlgebraic.gysin P x = T.gysin (DivisorPair.spec D P) x := rfl
 
-@[simp] lemma toAlgebraic_residue (P : OrlikSolomon.DivisorPair k)
+lemma toAlgebraic_residue (P : OrlikSolomon.DivisorPair k)
     (x : T.toAlgebraic.C.obj P.compl) :
     T.toAlgebraic.residue P x = T.residue (DivisorPair.spec D P) x := rfl
 
@@ -106,7 +109,7 @@ lemma toAlgebraic_standardResidue (A : SmoothAlg k)
     (x : T.obj (D.prodGm (D.spec A))) :
     T.toAlgebraic.stdResidue A (T.pull (D.specLaurentIso A).hom x) =
       T.standardResidue (D.spec A) x := by
-  have h := T.residue_map (DivisorPair.specStandardPairIso D A).hom x
+  have h := T.residue_pull (DivisorPair.specStandardPairIso D A).hom x
   change T.toAlgebraic.stdResidue A (T.pull (D.specLaurentIso A).hom x) =
     T.pull (𝟙 (D.spec A)) (T.standardResidue (D.spec A) x) at h
   simpa only [pull_id] using h
@@ -115,7 +118,7 @@ lemma toAlgebraic_standardResidue (A : SmoothAlg k)
 lemma toAlgebraic_standardGysin (A : SmoothAlg k) (x : T.obj (D.spec A)) :
     T.toAlgebraic.stdGysin A x =
       T.pull (D.specPolynomialIso A).hom (T.standardGysin (D.spec A) x) := by
-  have h := T.gysin_map (DivisorPair.specStandardPairIso D A).hom x
+  have h := T.gysin_pull (DivisorPair.specStandardPairIso D A).hom x
   change T.toAlgebraic.stdGysin A (T.pull (𝟙 (D.spec A)) x) =
     T.pull (D.specPolynomialIso A).hom (T.standardGysin (D.spec A) x) at h
   simpa only [pull_id] using h
@@ -232,6 +235,10 @@ def ofAlgebraic : OrdinaryTheory (SmoothDomain.aff k) ℬ where
   residue_map f := E.residue_map (DivisorPair.globalSectionsMap f)
   residue_mul_map P := E.residue_mul_map (DivisorPair.globalSections P)
 
+@[simp] lemma ofAlgebraic_grading (X : (SmoothDomain.aff k).Obj) (i : ℤ × ℤ) :
+    (ofAlgebraic E).grading X i =
+      E.grading ((affineGlobalSectionsFunctor k).obj (op X)) i := rfl
+
 @[simp] lemma ofAlgebraic_pull {X Y : (SmoothDomain.aff k).Obj} (f : X ⟶ Y)
     (x : (ofAlgebraic E).obj Y) :
     (ofAlgebraic E).pull f x = E.C.map ((affineGlobalSectionsFunctor k).map f.op) x := rfl
@@ -305,6 +312,12 @@ def affineEvaluationIso (X : (SmoothDomain.aff k).Obj) :
     D.spec ((affineGlobalSectionsFunctor k).obj (op X)) ≅
       (ObjectProperty.ιOfLE (SmoothDomain.aff_le D)).obj X :=
   ObjectProperty.isoMk _ (specGlobalSectionsIso X.obj)
+
+@[simp] lemma affineEvaluationIso_hom_hom (X : (SmoothDomain.aff k).Obj) :
+    (affineEvaluationIso (D := D) X).hom.hom = (specGlobalSectionsIso X.obj).hom := rfl
+
+@[simp] lemma affineEvaluationIso_inv_hom (X : (SmoothDomain.aff k).Obj) :
+    (affineEvaluationIso (D := D) X).inv.hom = (specGlobalSectionsIso X.obj).inv := rfl
 
 /-- The geometric round trip recovers precisely the affine restriction, by pullback along the
 canonical evaluation isomorphism. No value on a non-affine scheme is reconstructed.

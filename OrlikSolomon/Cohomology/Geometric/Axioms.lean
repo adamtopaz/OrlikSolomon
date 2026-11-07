@@ -129,6 +129,9 @@ instance objIsScalarTower (X : D.Obj) : IsScalarTower R B (T.obj X) := T.isScala
 /-- Contravariant pullback along a scheme morphism. -/
 def pull {X Y : D.Obj} (f : X ⟶ Y) : T.obj Y →ₐ[B] T.obj X := (T.C.map f.op).hom
 
+@[simp] lemma map_apply {X Y : D.Obj} (f : X ⟶ Y) (x : T.obj Y) :
+    T.C.map f.op x = T.pull f x := rfl
+
 @[simp] lemma pull_id (X : D.Obj) (x : T.obj X) : T.pull (𝟙 X) x = x := by
   change (T.C.map (𝟙 (op X))).hom x = x
   rw [T.C.map_id]
@@ -155,6 +158,39 @@ def pullIso {X Y : D.Obj} (e : X ≅ Y) : T.obj Y ≃ₐ[B] T.obj X where
 
 @[simp] lemma pullIso_apply {X Y : D.Obj} (e : X ≅ Y) (x : T.obj Y) :
     T.pullIso e x = T.pull e.hom x := rfl
+
+@[simp] lemma pullIso_symm_apply {X Y : D.Obj} (e : X ≅ Y) (x : T.obj X) :
+    (T.pullIso e).symm x = T.pull e.inv x := rfl
+
+/-- Homotopy invariance in the public pullback notation. -/
+lemma bijective_pull_prodAffineLineFst (X : D.Obj) :
+    Function.Bijective (T.pull (D.prodAffineLineFst X)) :=
+  T.bijective_pullback_affineLine X
+
+/-- The Gysin image is the kernel of open pullback. -/
+lemma exact_gysin_pull (P : DivisorPair D) :
+    Function.Exact (T.gysin P) (T.pull P.j) := T.exact_gysin_map P
+
+/-- The image of open pullback is the kernel of residue. -/
+lemma exact_pull_residue (P : DivisorPair D) :
+    Function.Exact (T.pull P.j) (T.residue P) := T.exact_map_residue P
+
+/-- Gysin commutes with transverse pullback, in the public pullback notation. -/
+lemma gysin_pull {P Q : DivisorPair D} (f : P ⟶ Q) (x : T.obj Q.closed) :
+    T.gysin P (T.pull f.closed x) = T.pull f.ambient (T.gysin Q x) :=
+  T.gysin_map f x
+
+/-- Residue commutes with transverse pullback, in the public pullback notation. -/
+lemma residue_pull {P Q : DivisorPair D} (f : P ⟶ Q) (x : T.obj Q.compl) :
+    T.residue P (T.pull f.compl x) = T.pull f.closed (T.residue Q x) :=
+  T.residue_map f x
+
+/-- The boundary projection formula with the degree-one factor first. -/
+lemma residue_mul_pull (P : DivisorPair D) {α : T.obj P.compl}
+    (hα : α ∈ T.grading P.compl (1, 1)) (β : T.obj P.ambient) :
+    T.residue P (α * T.pull P.j β) =
+      Mul.mul (α := T.obj P.closed) (T.residue P α) (T.pull P.i β) :=
+  T.residue_mul_map P hα β
 
 /-- Pullback by an isomorphism preserves and reflects the grading. -/
 lemma pullIso_mem_grading_iff {X Y : D.Obj} (e : X ≅ Y) {i : ℤ × ℤ} {x : T.obj Y} :
@@ -211,10 +247,10 @@ lemma residue_standardPair (X : D.Obj) :
 lemma gysin_standardPair (X : D.Obj) :
     T.gysin (DivisorPair.standardPair D X) = T.standardGysin X := rfl
 
-@[simp] lemma standardResidue_apply (X : D.Obj) (x : T.obj (D.prodGm X)) :
+lemma standardResidue_apply (X : D.Obj) (x : T.obj (D.prodGm X)) :
     T.standardResidue X x = T.residue (DivisorPair.standardPair D X) x := rfl
 
-@[simp] lemma standardGysin_apply (X : D.Obj) (x : T.obj X) :
+lemma standardGysin_apply (X : D.Obj) (x : T.obj X) :
     T.standardGysin X x = T.gysin (DivisorPair.standardPair D X) x := rfl
 
 lemma isHomogeneousOfShift_standardResidue (X : D.Obj) :
@@ -229,11 +265,11 @@ lemma isHomogeneousOfShift_standardGysin (X : D.Obj) :
 
 lemma exact_standardGysin_pull (X : D.Obj) :
     Function.Exact (T.standardGysin X) (T.pull (D.prodGmToProdAffineLine X)) :=
-  T.exact_gysin_map (DivisorPair.standardPair D X)
+  T.exact_gysin_pull (DivisorPair.standardPair D X)
 
 lemma exact_pull_standardResidue (X : D.Obj) :
     Function.Exact (T.pull (D.prodGmToProdAffineLine X)) (T.standardResidue X) :=
-  T.exact_map_residue (DivisorPair.standardPair D X)
+  T.exact_pull_residue (DivisorPair.standardPair D X)
 
 lemma exact_standardResidue_standardGysin (X : D.Obj) :
     Function.Exact (T.standardResidue X) (T.standardGysin X) :=
@@ -244,14 +280,14 @@ lemma standardResidue_mul_pull (X : D.Obj) {α : T.obj (D.prodGm X)}
     (hα : α ∈ T.grading (D.prodGm X) (1, 1)) (β : T.obj (D.prodAffineLine X)) :
     T.standardResidue X (α * T.pull (D.prodGmToProdAffineLine X) β) =
       T.standardResidue X α * T.pull (D.zeroSection X) β :=
-  T.residue_mul_map (DivisorPair.standardPair D X) hα β
+  T.residue_mul_pull (DivisorPair.standardPair D X) hα β
 
 /-- Exactness forces a divisor to have zero cohomology whenever open pullback is bijective. -/
 lemma subsingleton_closed_of_bijective (P : DivisorPair D)
     (hj : Function.Bijective (T.pull P.j)) : Subsingleton (T.obj P.closed) := by
-  have hr (x : T.obj P.compl) : T.residue P x = 0 := (T.exact_map_residue P x).2 (hj.2 x)
+  have hr (x : T.obj P.compl) : T.residue P x = 0 := (T.exact_pull_residue P x).2 (hj.2 x)
   have hg (x : T.obj P.closed) : T.gysin P x = 0 :=
-    hj.1 (by simpa [pull] using (T.exact_gysin_map P).apply_apply_eq_zero x)
+    hj.1 (by simpa only [map_zero] using (T.exact_gysin_pull P).apply_apply_eq_zero x)
   refine subsingleton_of_forall_eq 0 fun x ↦ ?_
   obtain ⟨y, rfl⟩ := (T.exact_residue_gysin P x).1 (hg x)
   exact hr y
@@ -284,6 +320,10 @@ def restrict {D₁ : SmoothDomain k} (h : D₁ ≤ D) : OrdinaryTheory D₁ ℬ 
   gysin_map f := T.gysin_map ((DivisorPair.functorOfLE h).map f)
   residue_map f := T.residue_map ((DivisorPair.functorOfLE h).map f)
   residue_mul_map P := T.residue_mul_map (DivisorPair.ofLE h P)
+
+@[simp] lemma restrict_grading {D₁ : SmoothDomain k} (h : D₁ ≤ D) (X : D₁.Obj)
+    (i : ℤ × ℤ) :
+    (T.restrict h).grading X i = T.grading ((ObjectProperty.ιOfLE h).obj X) i := rfl
 
 @[simp] lemma restrict_pull {D₁ : SmoothDomain k} (h : D₁ ≤ D) {X Y : D₁.Obj}
     (f : X ⟶ Y) (x : (T.restrict h).obj Y) :
