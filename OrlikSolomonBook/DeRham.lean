@@ -22,6 +22,7 @@ The exterior calculus and the de Rham dg algebra of an arbitrary algebra, includ
 The polynomial decomposition of forms and the integration homotopy are formalized as well, including the cohomology equivalence whose inverse is induced by evaluation at zero.
 Projectivity in every form degree, injectivity of regular scalar multiplication and of restriction into localization, conormal splitting, global and localized normal derivations, and wedge exactness modulo the divisor are also formalized, as are logarithmic forms and the residue sequence of a smooth divisor.
 Cartan calculus, the pole filtration, contraction of its positive quotients, and finite reduction to logarithmic cohomology are formalized.
+The Laurent-twisted functor and the fields of the structure of axioms that precede the Gysin and residue maps are formalized too.
 The cohomological residue and Gysin maps, and the final instance, remain planned.
 The library therefore still contains no nonzero value of the structure of axioms.
 Each box shows its own status and the Lean statements proved so far; a planned box remains a mathematical statement whose proof has not been formalized.
@@ -389,14 +390,14 @@ This section assembles the theory and instantiates the main theorem.
 The blueprint's checklist covers all 22 fields of the structure `OrdinaryTheory` and names the node that proves each one.
 No field may be weakened, and neither the comparison, nor exactness, nor affine-line invariance may become a hypothesis of the instance.
 
-:::node "def:dr-twisted-functor"
+:::node "def:dr-twisted-functor" (decl := OrlikSolomon.laurentGrading) (decl := OrlikSolomon.gradedAlgebraLaurentGrading) (decl := OrlikSolomon.mem_laurentGrading_iff) (decl := OrlikSolomon.DeRham.TwistedCohomology) (decl := OrlikSolomon.DeRham.TwistedCohomology.grading) (decl := OrlikSolomon.DeRham.TwistedCohomology.gradedAlgebraGrading) (decl := OrlikSolomon.DeRham.TwistedCohomology.mem_grading_iff) (decl := OrlikSolomon.DeRham.TwistedCohomology.grading_of_neg) (decl := OrlikSolomon.DeRham.TwistedCohomology.map) (decl := OrlikSolomon.DeRham.TwistedCohomology.map_tmul) (decl := OrlikSolomon.DeRham.twistedCohomologyFunctor) (decl := OrlikSolomon.DeRham.twistedCohomologyFunctor_map_tmul) (decl := OrlikSolomon.DeRham.instAlgebraObjTwistedCohomologyFunctor) (decl := OrlikSolomon.DeRham.instIsScalarTowerObjTwistedCohomologyFunctor)
 Let $`k` be a field of characteristic zero and $`B=k[t,t^{-1}]`.
 For each smooth $`k`-algebra, put $`C(A)=H^\bullet_{\mathrm{dR}}(A/k)\otimes_kB` with $`C(A)_{p,w}=H^p_{\mathrm{dR}}(A/k)t^w`, which is zero for $`p<0`, and put $`\mathcal{B}_w=k\,t^w`.
 A map $`\phi` acts by $`C(\phi)=H^\bullet(\phi_*)\otimes1`.
 The $`B`-algebra structure uses the coefficient factor, and the $`k`-algebra structure is its restriction.
 :::
 
-:::node "lem:dr-ordinary-basic"
+:::node "lem:dr-ordinary-basic" (decl := OrlikSolomon.bijective_algebraMap_laurentGrading_zero) (decl := OrlikSolomon.DeRham.TwistedCohomology.algebraMap_mem_grading) (decl := OrlikSolomon.DeRham.isHomogeneousOfShift_twistedCohomologyFunctor_map) (decl := OrlikSolomon.DeRham.TwistedCohomology.isGradedCommutative_grading) (decl := OrlikSolomon.DeRham.bijective_algebraMap_twistedCohomologyFunctor_point) (decl := OrlikSolomon.DeRham.TwistedCohomology.eq_zero_of_mem_grading_point) (decl := OrlikSolomon.DeRham.bijective_twistedCohomologyFunctor_map_polynomialC)
 This functor and grading satisfy every field of the structure that precedes the Gysin and residue maps.
 In particular the map $`B\to C(k)` is bijective, the point has no cohomology in nonzero cohomological degrees, and $`C(A)\to C(A[z])` is bijective for every smooth $`A`.
 :::
@@ -413,7 +414,7 @@ They satisfy $`\operatorname{im}g=\ker C(j)`, $`\operatorname{im}C(j)=\ker R` an
 Moreover $`R(\alpha\,C(j)\beta)=R(\alpha)\,C(i)\beta` for $`\alpha\in C(A_f)_{1,1}` and $`\beta\in C(A)`.
 :::
 
-:::node "thm:dr-instance"
+:::node "thm:dr-instance" (decl := OrlikSolomon.DeRham.nontrivial_coefficients) (decl := OrlikSolomon.DeRham.nontrivialObjPoint) (remaining := "The value of the structure, which needs the Gysin and residue maps and their fields")
 For every field $`k` of characteristic zero, this data defines a value of the structure `OrdinaryTheory`, with $`R=k` and $`B=k[t,t^{-1}]`.
 The coefficient ring and the cohomology of the point are nonzero.
 All fields hold for every smooth algebra and every divisor pair, without assuming anything about arrangements, connectedness or nonemptiness, or flatness of morphisms.
