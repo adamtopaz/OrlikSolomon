@@ -123,23 +123,9 @@ lemma toAlgebraic_standardGysin (A : SmoothAlg k) (x : T.obj (D.spec A)) :
 end OrdinaryTheory
 
 private def prodAffineLineIso {D : SmoothDomain k} {X Y : D.Obj} (e : X ≅ Y) :
-    D.prodAffineLine X ≅ D.prodAffineLine Y where
-  hom := D.prodAffineLineMap e.hom
-  inv := D.prodAffineLineMap e.inv
-  hom_inv_id := by
-    apply ObjectProperty.hom_ext
-    change (e.hom.hom ▷ affineLine k) ≫ (e.inv.hom ▷ affineLine k) = 𝟙 _
-    rw [← comp_whiskerRight]
-    change (e.hom ≫ e.inv).hom ▷ affineLine k = 𝟙 _
-    rw [e.hom_inv_id]
-    exact id_whiskerRight _ _
-  inv_hom_id := by
-    apply ObjectProperty.hom_ext
-    change (e.inv.hom ▷ affineLine k) ≫ (e.hom.hom ▷ affineLine k) = 𝟙 _
-    rw [← comp_whiskerRight]
-    change (e.inv ≫ e.hom).hom ▷ affineLine k = 𝟙 _
-    rw [e.inv_hom_id]
-    exact id_whiskerRight _ _
+    D.prodAffineLine X ≅ D.prodAffineLine Y :=
+  ObjectProperty.isoMk _
+    (whiskerRightIso ((ObjectProperty.ι D.property).mapIso e) (affineLine k))
 
 private def affinePolynomialSchemeIso (X : (SmoothDomain.aff k).Obj) :
     (SmoothDomain.aff k).spec
