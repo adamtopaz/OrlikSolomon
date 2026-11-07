@@ -1284,27 +1284,31 @@ every object of its domain, affine or not, and reuses the algebraic `Cohomology/
   `T.standardResidue D.point (T.pull (D.prodGmSnd D.point) T.tau) = 1`, proved by
   `toAlgebraic_standardResidue` and the naturality of the residue for
   `standardPairMap D.specPointIso.hom`; `eq_tau_of_mem_grading` is uniqueness.
-- **The class `[u]`.** `T.logClass u = T.pull (D.gmHom u) T.tau`, where `D.gmHom u : X ⟶ D.gm` is
-  `unitsEquivHomGm` in the domain. Pullback is `pull_logClass`, with `Units.map g.hom.left.appTop.hom`.
-  `[uv] = [u] + [v]` is pulled back from the old identity on `𝔾ₘ² = Spec k[s, s⁻¹][t, t⁻¹]` along the
-  map of `(u, v)` built with `specHomEquiv`; `[u]² = 0` is pulled back from `τ² = 0`; the class of a
-  constant `c ∈ kˣ` vanishes because its map factors through `D.point`
-  (`logClass_eq_zero_of_coe_eq_algebraMap`, stated with the function of the unit). The residue
-  formulas hold for every pair, by `residue_map` along `DivisorPair.toStandard`. Restriction to a
-  smaller domain does not change classes (`restrict_logClass`, by `rfl`).
+- **The class `[u]`.** `T.logClass u = T.pull (D.gmHom u) T.tau`, where `D.gmHom u : X ⟶ D.gm`
+  is `unitsEquivHomGm` in the domain. Pullback is `pull_logClass`, with
+  `Units.map g.hom.left.appTop.hom`. `[uv] = [u] + [v]` is pulled back from the old identity on
+  `𝔾ₘ² = Spec k[s, s⁻¹][t, t⁻¹]` along the map of `(u, v)` built with `specHomEquiv`;
+  `[u]² = 0` is pulled back from `τ² = 0`; the class of a constant `c ∈ kˣ` vanishes because its
+  map factors through `D.point` (`logClass_eq_zero_of_coe_eq_algebraMap`, stated with the function
+  of the unit). The residue formulas hold for every pair, by `residue_pull` along
+  `DivisorPair.toStandard`. Restriction to a smaller domain does not change classes
+  (`restrict_logClass`, by `rfl`).
 - **Comparisons.** `pull_toAlgebraic_logClass g u hv` computes `g^*` of the old class `[u]` of
   `T.toAlgebraic`, for any `g : X ⟶ D.spec A`, as the class of the unit `v` with
-  `(v : Γ(X)) = g^*(u)`. It is the lemma to compose with `s_𝒜` and `s_P` for the generator formulas
-  of the structure theorems. `ofAlgebraic_logClass` identifies the classes of `ofAlgebraic E` on an
-  affine `X` with the old classes of `E` on `Γ(X)`, through `algebraicRoundTripEquiv_logClass`.
-- **The product with `𝔾ₘ`.** The coordinate of `X ×_S 𝔾ₘ` is the unit `D.prodGmCoord X`, equal to
-  the equation of `standardPair D X` (`standardPair_eqnUnit`), and `[z] = T.logClass (D.prodGmCoord X)`.
-  `gmProductEquiv X : (C(X) × C(X)) ≃ₗ[B] C(X ×_S 𝔾ₘ)` is `@[no_expose]`, like the algebraic one,
-  and is described by `gmProductEquiv_apply`, `gmProductEquiv_symm_apply` (the section `z = 1` and
-  the standard residue), `gmProductEquiv_mem_grading_iff` and the naturality
-  `pull_prodGmMap_gmProductEquiv`. Its proof uses only the axioms for the standard pair of `X`.
-- **Simp normal form.** `standardResidue_apply` is a `simp` lemma of `Cohomology/Geometric/Axioms`,
-  so lemmas whose left side is a `standardResidue` are not `simp` lemmas.
+  `(v : Γ(X)) = g^*(u)`. It is the lemma to compose with `s_𝒜` and `s_P` for the generator
+  formulas of the structure theorems. Its hypothesis is an equation of global sections, because
+  `Units.map g.hom.left.appTop.hom (specUnit u)` does not elaborate across
+  `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)`. On `D.spec A` itself,
+  `toAlgebraic_logClass_eq` states it with `specUnit u`. `ofAlgebraic_logClass` identifies the
+  classes of `ofAlgebraic E` on an affine `X` with the old classes of `E` on `Γ(X)`, through
+  `algebraicRoundTripEquiv_logClass`.
+- **The product with `𝔾ₘ`.** The coordinate of `X ×_S 𝔾ₘ` is the unit `D.prodGmCoord X`, equal
+  to the equation of `standardPair D X` (`standardPair_eqnUnit`), and `[z]` is
+  `T.logClass (D.prodGmCoord X)`. `gmProductEquiv X : (C(X) × C(X)) ≃ₗ[B] C(X ×_S 𝔾ₘ)` is
+  `@[no_expose]`, like the algebraic one, and is described by `gmProductEquiv_apply`,
+  `gmProductEquiv_symm_apply` (the section `z = 1` and the standard residue),
+  `gmProductEquiv_mem_grading_iff` and the naturality `pull_prodGmMap_gmProductEquiv`. Its proof
+  uses only the axioms for the standard pair of `X`.
 
 ### Modules
 
