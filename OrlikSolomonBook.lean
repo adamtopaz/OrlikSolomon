@@ -429,9 +429,9 @@ The main theorem does not depend on it: the dependence runs the other way.
 *A planned third part.*
 The third blueprint plans to restate both theorems for cohomology theories defined on smooth schemes, with the complements as actual open subschemes of affine and projective space, so that a theory on all smooth schemes would apply to them directly.
 It would reuse every proved algebraic result through the equivalence between smooth algebras and smooth affine schemes, and transport the de Rham instance to smooth affine schemes.
-Its formalized foundations include: admissible domains of smooth schemes, the equivalence between smooth algebras and smooth affine schemes, zero schemes and basic opens, products with the affine line and the multiplicative group, units as maps to the multiplicative group, principal smooth divisor pairs with their affine duality, and projective space with projective arrangement complements as its open subschemes.
+Its formalized foundations include: admissible domains of smooth schemes, the equivalence between smooth algebras and smooth affine schemes, zero schemes and basic opens, products with the affine line and the multiplicative group, units as maps to the multiplicative group, principal smooth divisor pairs with their affine duality, affine space with arrangement complements, deletion pairs and relation targets as open subschemes, and projective space with projective arrangement complements as its open subschemes.
 The geometric cohomology structure and both affine transports are also formalized, with canonical graded comparisons commuting with Gysin and residue.
-Transporting the existing de Rham theory already gives a nonzero theory on smooth affine schemes; its interpretation through sheaf forms and the structure theorems on actual arrangement opens remain planned.
+Applying the affine transport to the existing de Rham theory gives a nonzero theory on smooth affine schemes; its interpretation through sheaf forms and the structure theorems on actual arrangement opens remain planned.
 {ref "geometric"}[Its chapter] presents the plan, and its nodes are counted separately above.
 Nothing on this page depends on it: the dependence runs the other way.
 

@@ -83,27 +83,6 @@ namespace OrlikSolomon.Geometric
 
 open ProjectiveArrangement ProjectiveArrangement.ComplementRing CoordinateRing
 
-/-! ### Units of spectra -/
-
-section SpecUnit
-
-variable {k : Type u} [CommRing k]
-
-/-- A unit `u` of a `k`-algebra `A`, as a global unit on `Spec A`. -/
-abbrev specUnit {A : CommAlgCat.{u} k} (u : Aˣ) : Γ((spec A).left, ⊤)ˣ :=
-  Units.map ((Scheme.ΓSpecIso (.of A)).inv.hom.toMonoidHom : A →* Γ((spec A).left, ⊤)) u
-
-lemma coe_specUnit {A : CommAlgCat.{u} k} (u : Aˣ) :
-    (specUnit u : Γ((spec A).left, ⊤)) = (Scheme.ΓSpecIso (.of A)).inv u :=
-  rfl
-
-/-- Pulling back a unit along `Spec φ` gives the unit of its image. -/
-lemma map_specMap_specUnit {A B : CommAlgCat.{u} k} (φ : A ⟶ B) (u : Aˣ) :
-    Units.map (specMap φ).left.appTop.hom (specUnit u) = specUnit (Units.map (φ.hom : A →* B) u) :=
-  Units.ext (specMap_left_appTop_ΓSpecIso_inv φ u)
-
-end SpecUnit
-
 variable {k : Type u} [Field k] {W : Type u} [AddCommGroup W] [Module k W]
 
 /-! ### Projective space -/
@@ -116,9 +95,10 @@ def projToSpec : Proj (symmetricGrading k (Dual k W)) ⟶ Spec (.of k) :=
     Spec.map (CommRingCat.ofHom (algebraMap k (symmetricGrading k (Dual k W) 0)))
 
 variable (k W) in
-/-- The projective space `ℙ(W) = Proj Sym(W*)` of lines in `W`, with the grading of `Sym(W*)` by
-degree, as a scheme over `S = Spec k`. In a basis of `W*` it is `Proj k[x_i]`
-(`projIsoMvPolynomial`).
+/-- The projective space `ℙ(W) = Proj Sym(W*)`, with the grading of `Sym(W*)` by degree, as a scheme
+over `S = Spec k`. It is defined for every `W`; reading it as the space of lines in `W` uses the
+identification of `W` with its double dual, so it assumes that `W` is finite-dimensional. In a basis
+of `W*` it is `Proj k[x_i]` (`projIsoMvPolynomial`).
 
 Blueprint: `def:geo-projective`. -/
 @[implicit_reducible]
