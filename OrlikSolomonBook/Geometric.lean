@@ -284,7 +284,8 @@ Deletion becomes a statement about schemes: the complement of the restriction is
 
 *Projective complements.*
 For a finite set $`\mathcal{P}` of hyperplanes, $`U_{\mathcal{P}}` is the open subscheme of $`\operatorname{Proj}\operatorname{Sym}(W^*)` on which no equation of $`\mathcal{P}` vanishes.
-It makes sense for empty $`\mathcal{P}`, where it is all of projective space, but it is affine only for nonempty $`\mathcal{P}`, and only then is it compared with the spectrum of the existing ring.
+It makes sense for empty $`\mathcal{P}`, where it is all of projective space.
+That it is affine, and its comparison with the spectrum of the existing ring, are asserted only for nonempty $`\mathcal{P}`.
 That comparison is the existing {name OrlikSolomon.ProjectiveArrangement.complementOpenIso}`complementOpenIso`, which {ref "projective"}[the projective chapter] describes, and the plan upgrades it with a certificate that it is a morphism over $`k`, instead of proving it again.
 
 :::node "def:geo-affine-space"
