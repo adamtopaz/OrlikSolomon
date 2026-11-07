@@ -400,7 +400,6 @@ theorem specFormsSheafUnit_top_isIso (n : ℕ) :
   rw [he] at h
   exact h
 
-
 /-- Relative form sheaves on a spectrum are the associated sheaves of the old global form modules,
 after forgetting scalar actions. This isomorphism uses the existing sheafified carriers.
 Blueprint: `def:geo-forms-sheaf`. -/
@@ -525,7 +524,6 @@ lemma affineFormsComparison_pull (g : X ⟶ Y) (n : ℕ)
     (formsSheafPullback g n).hom.app (op ⊤) (affineFormsComparison Y n x) =
       affineFormsComparison X n (Forms.mapPower (sectionPullbackTop g) n x) :=
   formsSheafPullback_unit_apply g n (op ⊤) x
-
 
 /-- The affine comparison intertwines the typed global pullback maps. -/
 @[simp] lemma affineFormsComparison_pullTop {X Y : Over (Spec (CommRingCat.of k))}

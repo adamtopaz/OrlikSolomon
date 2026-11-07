@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Adam Topaz, Codex
 -/
 module
+
 public import OrlikSolomon.DeRham.Schemes.Forms.Presheaf
 public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.Algebra.Category.ModuleCat.FilteredColimits
@@ -30,6 +31,8 @@ natural structure-sheaf actions. The differential remains only `k`-linear.
 * `formsSheafMul_assoc`, `formsSheafMul_comm`, `formsSheafMul_leibniz`: the dg algebra identities.
 * `formsSheafZeroIso`: degree zero is the usual structure sheaf, preserving multiplication and one.
 * `formsComplex`: the de Rham complex indexed by integers and zero in negative degrees.
+* `formsComplexNat_X`, `formsComplexNat_d`, `formsComplexXIso` and `formsComplex_d`: the
+  public comparisons of complex terms and differentials with the sheaves of forms.
 
 These constructions require only a commutative base ring. No smoothness, affineness,
 separatedness or nonemptiness assumption is used.
@@ -56,7 +59,8 @@ def formsModulePresheaf (n : ℕ) : X.left.PresheafOfModules := by
   exact PresheafOfModules.ofPresheaf F fun {U V} i r x =>
     Forms.mapPower_smul (sectionRestriction k X i.unop) n r x
 
-/-- The sheafification of relative forms in the category of `k`-modules. -/
+/-- The sheafification of relative forms in the category of `k`-modules.
+Blueprint: `def:geo-forms-sheaf`. -/
 def formsSheaf (n : ℕ) : TopCat.Sheaf (ModuleCat k) X.left :=
   (presheafToSheaf (_root_.Opens.grothendieckTopology X.left) (ModuleCat k)).obj
     (formsPresheaf k X n)
@@ -89,7 +93,8 @@ private instance formsModuleUnit_locallySurjective (n : ℕ) :
     (CategoryTheory.toSheafify (_root_.Opens.grothendieckTopology X.left)
       (formsPresheaf k X n)) a
 
-/-- The natural structure-sheaf module on the additive sheaf underlying `formsSheaf`. -/
+/-- The natural structure-sheaf module on the additive sheaf underlying `formsSheaf`.
+Blueprint: `def:geo-forms-sheaf`. -/
 @[no_expose] def formsModuleSheaf (n : ℕ) : X.left.Modules :=
   PresheafOfModules.sheafify (A := formsAdditiveSheaf k X n)
     (𝟙 X.left.ringCatSheaf.obj) (formsModuleUnit k X n)
@@ -162,7 +167,8 @@ theorem formsModuleSheaf_presheaf_inv_app (n : ℕ) (U : X.left.Opens)
       (formsModuleSheafBaseIso k X n U).inv a := by
   rfl
 
-/-- The sheaf differential, obtained from the existing algebraic differential. -/
+/-- The sheaf differential, obtained from the existing algebraic differential.
+Blueprint: `def:geo-forms-sheaf`. -/
 def formsSheafD (n : ℕ) : formsSheaf k X n ⟶ formsSheaf k X (n + 1) :=
   (presheafToSheaf (_root_.Opens.grothendieckTopology X.left) (ModuleCat k)).map
     (formsPresheafD k X n)
@@ -626,13 +632,55 @@ theorem formsSheafWedge_zero_eq_smul (n : ℕ) (U : X.left.Opens)
   rw [Algebra.smul_def]
   exact (Algebra.commutes (sectionRestriction k X f r) b'.val).symm
 
-/-- The relative de Rham complex in nonnegative degrees. -/
+/-- The relative de Rham complex in nonnegative degrees. Blueprint: `def:geo-forms-sheaf`. -/
 def formsComplexNat : CochainComplex (TopCat.Sheaf (ModuleCat k) X.left) ℕ :=
   CochainComplex.of (formsSheaf k X) (formsSheafD k X) (formsSheafD_comp k X)
 
-/-- The relative de Rham complex, extended by zero in negative degrees. -/
+/-- The nonnegative de Rham complex has the sheaf of forms as its term in each degree. -/
+@[simp] theorem formsComplexNat_X (n : ℕ) :
+    (formsComplexNat k X).X n = formsSheaf k X n := rfl
+
+/-- The differential of the nonnegative complex is the sheaf differential. -/
+@[simp] theorem formsComplexNat_d (n : ℕ) :
+    (formsComplexNat k X).d n (n + 1) = formsSheafD k X n :=
+  CochainComplex.of_d _ _ n
+
+/-- The relative de Rham complex, extended by zero in negative degrees.
+Blueprint: `def:geo-forms-sheaf`. -/
 def formsComplex : CochainComplex (TopCat.Sheaf (ModuleCat k) X.left) ℤ :=
   (formsComplexNat k X).extend ComplexShape.embeddingUpNat
+
+/-- In a nonnegative degree, the extended complex has the original sheaf of forms. -/
+def formsComplexXIso (n : ℕ) :
+    (formsComplex k X).X (n : ℤ) ≅ formsSheaf k X n :=
+  (formsComplexNat k X).extendXIso ComplexShape.embeddingUpNat (i := n) rfl
+
+/-- The nonnegative differentials of the extended complex are the sheaf differentials,
+through the canonical term isomorphisms. -/
+theorem formsComplex_d (n : ℕ) :
+    (formsComplex k X).d (n : ℤ) ((n : ℤ) + 1) =
+      (formsComplexXIso k X n).hom ≫ formsSheafD k X n ≫
+        (formsComplexXIso k X (n + 1)).inv := by
+  have h := (formsComplexNat k X).extend_d_eq ComplexShape.embeddingUpNat
+    (i := n) (j := n + 1) (i' := (n : ℤ)) (j' := ((n : ℤ) + 1)) rfl (by simp)
+  rw [formsComplexNat_d] at h
+  exact h
+
+/-- The canonical nonnegative term comparisons commute with the differential. -/
+@[reassoc (attr := simp)] theorem formsComplex_d_XIso_hom (n : ℕ) :
+    (formsComplex k X).d (n : ℤ) ((n : ℤ) + 1) ≫
+        (formsComplexXIso k X (n + 1)).hom =
+      (formsComplexXIso k X n).hom ≫ formsSheafD k X n := by
+  rw [formsComplex_d]
+  simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
+
+/-- The inverse nonnegative term comparisons commute with the differential. -/
+@[reassoc (attr := simp)] theorem formsComplexXIso_inv_d (n : ℕ) :
+    (formsComplexXIso k X n).inv ≫
+        (formsComplex k X).d (n : ℤ) ((n : ℤ) + 1) =
+      formsSheafD k X n ≫ (formsComplexXIso k X (n + 1)).inv := by
+  rw [formsComplex_d]
+  simp only [Iso.inv_hom_id_assoc]
 
 instance formsComplex_isStrictlyGE : (formsComplex k X).IsStrictlyGE 0 := by
   dsimp only [formsComplex]

@@ -459,7 +459,9 @@ Sheafifying the existing differential and wedge product makes $`\Omega^\bullet_{
 Its differential is a map of sheaves of $`k`-modules, and in general not of $`\mathcal{O}_X`-modules.
 The retained module action agrees with multiplication by a degree-zero function, by {name OrlikSolomon.Geometric.DeRham.formsSheafWedge_zero_eq_smul}`formsSheafWedge_zero_eq_smul`.
 
-On an affine open $`\operatorname{Spec}A`, sheafification does not change the value: by {bp "lem:dr-localization"}[] and {bp "lem:geo-module-gluing"}[], the sheaf there is the one associated with $`\Omega^n_{A/k}`.
+On a spectrum $`X=\operatorname{Spec}A`, the sheafification map is an isomorphism on distinguished opens, and the underlying additive sheaf agrees with the one associated with $`\Omega^n_{A/k}`.
+Global evaluation is an isomorphism for every affine $`X`.
+Evaluation on an affine open in an arbitrary ambient scheme remains for {bp "thm:geo-log-sheaves"}[] (#117).
 :::
 
 :::node "thm:geo-forms-comparison" (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_d) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_wedge) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_one) (decl := OrlikSolomon.Geometric.DeRham.affineFormsComparison_pull) (decl := OrlikSolomon.Geometric.DeRham.formsSheafPullback_id) (decl := OrlikSolomon.Geometric.DeRham.formsSheafPullback_comp) (decl := OrlikSolomon.Geometric.DeRham.formsSheafPullback_mul) (decl := OrlikSolomon.Geometric.DeRham.formsComplexNatInverseImage) (decl := OrlikSolomon.Geometric.DeRham.formsModuleSheafInverseImage) (decl := OrlikSolomon.Geometric.DeRham.formsModuleSheafInverseImage_adjunction_app)

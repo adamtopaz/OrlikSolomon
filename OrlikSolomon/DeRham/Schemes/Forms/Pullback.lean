@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Adam Topaz, Codex
 -/
 module
+
 public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
 public import Mathlib.Topology.Sheaves.Functors
 public import Mathlib.CategoryTheory.Sites.PreservesLocallyBijective
@@ -145,7 +146,9 @@ theorem formsPresheafPullback_d (g : X ⟶ Y) (n : ℕ) :
       formsPresheafD k Y n ≫ formsPresheafPullback g (n + 1) := by
   ext U x
   exact (Forms.mapPower_powerD (sectionPullback g U.unop) n x).symm
-/-- Pullback of sheaf forms, expressed by its adjoint map into the pushforward. -/
+
+/-- Pullback of sheaf forms, expressed by its adjoint map into the pushforward.
+Blueprint: `thm:geo-forms-comparison`. -/
 def formsSheafPullback (g : X ⟶ Y) (n : ℕ) : formsSheaf k Y n ⟶
     (TopCat.Sheaf.pushforward (ModuleCat k) g.left.base).obj (formsSheaf k X n) where
   hom := sheafifyLift (_root_.Opens.grothendieckTopology Y.left)
@@ -451,7 +454,8 @@ def formsComplexNatPullback (g : X ⟶ Y) : formsComplexNat k Y ⟶
     ((TopCat.Sheaf.pushforward (ModuleCat k) g.left.base).mapHomologicalComplex (.up ℕ)).obj
       (formsComplexNat k X) :=
   CochainComplex.ofHom (fun n ↦ formsSheafPullback g n) (fun n ↦ by
-    simpa only [Functor.mapHomologicalComplex_obj_d, formsComplexNat, CochainComplex.of_d]
+    simpa only [Functor.mapHomologicalComplex_obj_d, Functor.mapHomologicalComplex_obj_X,
+      formsComplexNat_X, formsComplexNat_d]
       using formsSheafPullback_d g n)
 
 /-- The component of complex pullback is the original sheaf pullback in that degree. -/
@@ -488,7 +492,8 @@ def formsComplexNatInverseImage (g : X ⟶ Y) :
     ((TopCat.Sheaf.pullback (ModuleCat k) g.left.base).mapHomologicalComplex (.up ℕ)).obj
       (formsComplexNat k Y) ⟶ formsComplexNat k X :=
   CochainComplex.ofHom (fun n ↦ formsSheafInverseImage g n) (fun n ↦ by
-    simpa only [Functor.mapHomologicalComplex_obj_d, formsComplexNat, CochainComplex.of_d]
+    simpa only [Functor.mapHomologicalComplex_obj_d, Functor.mapHomologicalComplex_obj_X,
+      formsComplexNat_X, formsComplexNat_d]
       using formsSheafInverseImage_d g n)
 
 /-- In each degree, inverse-image complex pullback is the original sheaf inverse-image map. -/

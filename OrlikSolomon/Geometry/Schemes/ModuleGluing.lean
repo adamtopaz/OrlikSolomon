@@ -79,7 +79,8 @@ instance tilde_preservesHomology (R : CommRingCat.{u}) :
     (tilde.functor R).PreservesHomology :=
   Functor.preservesHomology_of_preservesMonos_and_cokernels (tilde.functor R)
 
-/-- Exact module sequences give exact sequences of associated sheaves. -/
+/-- Exact module sequences give exact sequences of associated sheaves.
+Blueprint: `lem:geo-module-gluing`. -/
 theorem tilde_map_exact (S : ShortComplex (ModuleCat R)) (hS : S.Exact) :
     (S.map (tilde.functor R)).Exact := hS.map _
 end OrlikSolomon.Geometric
