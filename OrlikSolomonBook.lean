@@ -431,6 +431,7 @@ The third blueprint plans to restate both theorems for cohomology theories defin
 It would reuse every proved algebraic result through the equivalence between smooth algebras and smooth affine schemes, and transport the de Rham instance to smooth affine schemes.
 Its formalized foundations include: admissible domains of smooth schemes, the equivalence between smooth algebras and smooth affine schemes, zero schemes and basic opens, products with the affine line and the multiplicative group, units as maps to the multiplicative group, principal smooth divisor pairs with their affine duality, affine space with arrangement complements, deletion pairs and relation targets as open subschemes, and projective space with projective arrangement complements as its open subschemes.
 The geometric cohomology structure and both affine transports are also formalized, with canonical graded comparisons commuting with Gysin and residue.
+So are the logarithmic classes of global units and the decomposition of the cohomology of a product with the multiplicative group, on every object of a domain, affine or not.
 Applying the affine transport to the existing de Rham theory gives a nonzero theory on smooth affine schemes; its interpretation through sheaf forms and the structure theorems on actual arrangement opens remain planned.
 {ref "geometric"}[Its chapter] presents the plan, and its nodes are counted separately above.
 Nothing on this page depends on it: the dependence runs the other way.
