@@ -118,6 +118,7 @@ public import OrlikSolomon.Geometry.Schemes.Complement.AffineSpace
 public import OrlikSolomon.Geometry.Schemes.Complement.Basic
 public import OrlikSolomon.Geometry.Schemes.Complement.Deletion
 public import OrlikSolomon.Geometry.Schemes.Complement.Targets
+public import OrlikSolomon.Geometry.Schemes.Decone
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Basic
 public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Certificates

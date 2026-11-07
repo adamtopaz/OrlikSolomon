@@ -23,7 +23,7 @@ into the certificates of an algebraic `OrlikSolomon.DivisorPair` on affine schem
   is a unit.
 * `ker_pullback_fst_of_ker_eq`, `opensRange_pullback_fst_of_opensRange_eq`: base change along any
   `g : Y ⟶ X` cuts out the zero scheme and the basic open of `g^* f`.
-* `isClosedImmersion_and_ker_eq_of_mono`, `isOpenImmersion_and_opensRange_eq_of_mono`: a
+* `isClosedImmersion_and_ker_eq_of_mono`, `isOpenImmersion_of_mono`, `opensRange_eq_of_mono`: a
   monomorphism with the universal property of the zero scheme, or of the basic open, carries the
   certificate.
 * `associated_iff_principalIdealSheaf_eq`: for a regular `b`, `a 𝒪_X = b 𝒪_X` exactly when `a` is

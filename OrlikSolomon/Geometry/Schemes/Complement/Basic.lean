@@ -313,6 +313,17 @@ lemma complementIsoSpec_hom_appTop_algebraMap (x : CoordinateRing k V) :
     CommRingCat.comp_apply, specMap_left_appTop_ΓSpecIso_inv]
   rfl
 
+/-- Pulling back along `s_𝒜⁻¹` the restriction of a function on `𝔸_V` gives its image in `O(U_𝒜)`.
+
+Blueprint: `thm:geo-complement-spec`. -/
+lemma complementIsoSpec_inv_appTop_complementι_appTop (x : CoordinateRing k V) :
+    (complementIsoSpec 𝒜).inv.left.appTop
+        ((complementι 𝒜).left.appTop ((Scheme.ΓSpecIso (.of (CoordinateRing k V))).inv x)) =
+      (Scheme.ΓSpecIso (.of 𝒜.ComplementRing)).inv (algebraMap _ _ x) := by
+  rw [← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop, ← Over.comp_left,
+    complementIsoSpec_inv_comp_complementι, specMap_left_appTop_ΓSpecIso_inv]
+  rfl
+
 /-- Under `s_𝒜`, the image in `O(U_𝒜)` of an affine function is the restriction of its function.
 
 Blueprint: `thm:geo-complement-spec`. -/
