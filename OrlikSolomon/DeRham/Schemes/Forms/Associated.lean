@@ -25,6 +25,8 @@ algebraic form module. Its formulas retain the usual representatives and localiz
   the comparison on representatives and fractions, typed at the actual additive section carriers.
 * `specFormsModuleSheafPushforwardAssociatedIso`: affine pushforward as the associated sheaf of
   the same form module with scalars restricted along the ring map.
+* `specFormsSheafAssociatedBaseIso`: the comparison as sheaves of base-ring modules, with
+  representative formulas on every open.
 
 The base ring and algebra are arbitrary commutative rings; no smoothness, finite generation,
 flatness or nonzero-ring hypothesis is required. There are no geometric-domain imports.
@@ -38,6 +40,8 @@ open CategoryTheory Opposite AlgebraicGeometry
 open OrlikSolomon.DeRham
 universe u
 namespace OrlikSolomon.Geometric.DeRham
+
+section Spectrum
 
 variable {k A : Type u} [CommRing k] [CommRing A] [Algebra k A]
 local notation "XS" => (Over.mk (Spec.map (CommRingCat.ofHom (algebraMap k A))))
@@ -406,5 +410,121 @@ No flatness, smoothness or finite-generation assumption is required. -/
       ((Scheme.Modules.pushforward (Spec.map (CommRingCat.ofHom φ))).obj
         (formsModuleSheaf k (Over.mk
           (Spec.map (CommRingCat.ofHom (algebraMap k B)))) n)).fromTildeΓ).symm
+
+end Spectrum
+
+section Base
+
+variable {k : Type u} [CommRing k] {A : CommRingCat.{u}} [Algebra k A]
+local notation "XS" => (Over.mk (Spec.map (CommRingCat.ofHom (algebraMap k A))))
+
+/-- The direct base-ring form sheaf agrees with the base restriction of its structure-sheaf
+module. The scalar actions agree by functoriality of regular functions over the base. -/
+private def specFormsModuleSheafBaseIso (n : ℕ) :
+    formsSheaf k XS n ≅
+      (sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+        (ModuleCat.restrictScalars (algebraMap k A))).obj
+          (modulesSpecToSheaf.obj (formsModuleSheaf k XS n)) := by
+  refine (fullyFaithfulSheafToPresheaf _ _).preimageIso ?_
+  refine NatIso.ofComponents (fun U => ?_) ?_
+  · let e := formsModuleSheafBaseIso k XS n U.unop
+    let N : ModuleCat k := ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+        (ModuleCat.restrictScalars (algebraMap k A))).obj
+          (modulesSpecToSheaf.obj (formsModuleSheaf k XS n))).obj.obj U
+    refine LinearEquiv.toModuleIso (m₂ := N.isModule)
+      (X₁ := (formsSheaf k XS n).obj.obj U)
+      (X₂ := ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+        (ModuleCat.restrictScalars (algebraMap k A))).obj
+          (modulesSpecToSheaf.obj (formsModuleSheaf k XS n))).obj.obj U)
+      { toFun := e.inv
+        invFun := e.hom
+        left_inv := e.inv_hom_id_apply
+        right_inv := e.hom_inv_id_apply
+        map_add' := map_add _
+        map_smul' r a := ?_ }
+    change e.inv (r • a) =
+      ((Spec A).presheaf.map U.unop.leTop.op
+        ((Scheme.ΓSpecIso A).inv (algebraMap k A r))) • e.inv a
+    rw [e.inv.hom.map_smul]
+    change (show Γ(Spec A, U.unop) from
+      algebraMap k (sectionAlgebra k XS U.unop) r) • e.inv a =
+      ((Spec A).presheaf.map U.unop.leTop.op ((Scheme.ΓSpecIso A).inv (algebraMap k A r))) • e.inv a
+    exact congrArg (fun s : Γ(Spec A, U.unop) => s • e.inv a)
+      ((specSectionMap (k := k) U.unop).commutes r).symm
+  · intro U V i
+    apply ModuleCat.hom_ext
+    apply LinearMap.ext
+    intro a
+    change (formsModuleSheafBaseIso k XS n V.unop).inv
+      ((formsSheaf k XS n).obj.map i a) =
+      (formsModuleSheaf k XS n).presheaf.map i
+        ((formsModuleSheafBaseIso k XS n U.unop).inv a)
+    have h := ConcreteCategory.congr_hom
+      ((eqToHom (formsModuleSheaf_presheaf k XS n).symm).naturality i) a
+    exact (formsModuleSheaf_presheaf_inv_app k XS n V.unop _).symm.trans
+      (h.trans (congrArg (fun z => (formsModuleSheaf k XS n).presheaf.map i z)
+        (formsModuleSheaf_presheaf_inv_app k XS n U.unop a)))
+
+/-- Relative forms on a spectrum agree, as sheaves of base-ring modules, with the associated
+sheaf of algebraic forms with scalars restricted from the algebra to the base.
+
+Blueprint: `def:geo-forms-sheaf`, `thm:geo-forms-comparison`. -/
+@[no_expose] def specFormsSheafAssociatedBaseIso (n : ℕ) :
+    formsSheaf k XS n ≅
+      (sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+        (ModuleCat.restrictScalars (algebraMap k A))).obj
+          (modulesSpecToSheaf.obj (tilde (ModuleCat.of A (⋀[A]^n Ω[A⁄k])))) :=
+  specFormsModuleSheafBaseIso n ≪≫
+    (modulesSpecToSheaf ⋙ sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+      (ModuleCat.restrictScalars (algebraMap k A))).mapIso
+        (specFormsModuleSheafAssociatedIso (k := k) (A := A) n)
+
+/-- A canonical algebraic form as a section of the base-ring version of its associated sheaf.
+The target is the actual base-linear sheaf carrier, for ordinary additive rewriting. -/
+def specFormsAssociatedBaseSection (n : ℕ) (U : (Spec A).Opens) :
+    (⋀[A]^n Ω[A⁄k]) →+
+      ((sheafCompose (_root_.Opens.grothendieckTopology (Spec A))
+        (ModuleCat.restrictScalars (algebraMap k A))).obj
+          (modulesSpecToSheaf.obj (tilde (ModuleCat.of A (⋀[A]^n Ω[A⁄k]))))).obj.obj (op U) :=
+  (tilde.toOpen (ModuleCat.of A (⋀[A]^n Ω[A⁄k])) U).hom.toAddMonoidHom
+
+/-- The base-linear associated-sheaf comparison preserves canonical algebraic representatives
+on every open of the spectrum. -/
+lemma specFormsSheafAssociatedBaseIso_unit (n : ℕ) (U : (Spec A).Opens) (x : ⋀[A]^n Ω[A⁄k]) :
+    (specFormsSheafAssociatedBaseIso (k := k) (A := A) n).hom.hom.app (op U)
+      ((formsSheafUnit k XS n).app (op U) (Forms.mapPower (specSectionMap U) n x)) =
+        specFormsAssociatedBaseSection (k := k) n U x := by
+  change (specFormsModuleSheafAssociatedIso (k := k) (A := A) n).hom.app U
+    ((formsModuleSheafBaseIso k XS n U).inv
+      ((formsSheafUnit k XS n).app (op U) (Forms.mapPower (specSectionMap U) n x))) = _
+  let a := Forms.mapPower (specSectionMap U) n x
+  let e := formsModuleSheafBaseIso k XS n U
+  have he : e.inv ((formsSheafUnit k XS n).app (op U) a) =
+      (formsModuleSheafUnit k XS n).app (op U) a :=
+    (congrArg (fun z => e.inv z) (formsModuleSheafUnit_compare XS n U a)).symm.trans
+      (e.hom_inv_id_apply _)
+  exact (congrArg (fun z =>
+    (specFormsModuleSheafAssociatedIso (k := k) (A := A) n).hom.app U z) he).trans
+      (specFormsModuleSheafAssociatedIso_unit n U x)
+
+/-- The typed base-linear associated section agrees with Mathlib's localization map. -/
+lemma tilde_toOpen_eq_specFormsAssociatedBaseSection (n : ℕ) (U : (Spec A).Opens)
+    (x : ⋀[A]^n Ω[A⁄k]) :
+    dsimp% tilde.toOpen (ModuleCat.of A (⋀[A]^n Ω[A⁄k])) U x =
+      specFormsAssociatedBaseSection (k := k) n U x := rfl
+
+/-- The inverse base-linear comparison takes a canonical associated section to its represented
+form in the original sheaf. -/
+lemma specFormsSheafAssociatedBaseIso_inv_unit (n : ℕ) (U : (Spec A).Opens)
+    (x : ⋀[A]^n Ω[A⁄k]) :
+    (specFormsSheafAssociatedBaseIso (k := k) (A := A) n).inv.hom.app (op U)
+      (specFormsAssociatedBaseSection (k := k) n U x) =
+        (formsSheafUnit k XS n).app (op U) (Forms.mapPower (specSectionMap U) n x) := by
+  let e := ((sheafToPresheaf _ _).mapIso
+    (specFormsSheafAssociatedBaseIso (k := k) (A := A) n)).app (op U)
+  apply (ConcreteCategory.bijective_of_isIso e.hom).1
+  exact (e.inv_hom_id_apply _).trans (specFormsSheafAssociatedBaseIso_unit n U x).symm
+
+end Base
 
 end OrlikSolomon.Geometric.DeRham
