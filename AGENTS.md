@@ -13,6 +13,8 @@ Read these before working:
   structure theorem.
 - `blueprint/de_rham_instance_blueprint.tex`: authoritative for mathematics of the de Rham
   instance, milestone M5.
+- `blueprint/geometric_refactor_blueprint.tex`: authoritative for the move to schemes,
+  milestone M6.
 - `docs/ARCHITECTURE.md`: authoritative for Lean design, names and module layout. The
   blueprint says its own Lean names and signatures are only proposals.
 
