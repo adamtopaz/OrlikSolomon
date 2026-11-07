@@ -1,13 +1,14 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
 public import OrlikSolomon.Cohomology.Geometric.Logarithms
 public import OrlikSolomon.DeRham.Corollaries
 public import OrlikSolomon.DeRham.Schemes.Affine
+public import OrlikSolomon.DeRham.Schemes.Log.ResidueAffine
 
 /-!
 # The de Rham instance on smooth affine schemes
@@ -46,10 +47,11 @@ The hypotheses `[Field k] [CharZero k]` enter only through the algebraic instanc
 to invert positive integers for integration and pole reduction. No smoothness, connectedness,
 flatness or nonemptiness hypothesis is added.
 
-The blueprint also compares the Gysin and residue maps with those of the global sections of the
-sheaf logarithmic sequence of `thm:geo-log-sheaves`. That theorem is #117, and this file does not
-state the comparison: here `G_dR` and `r_dR` are the maps of the algebraic logarithmic sequence of
-`Γ(X, 𝒪_X)`, on which the blueprint's proof reduces the comparison.
+The affine comparison `affineLogResidueShortComplexIso` identifies these maps with those of
+the actual global sheaf logarithmic sequence of `thm:geo-log-sheaves`. On arbitrary global
+logarithmic sections, `residue_globalClass` gives `r[λ] = [ρ λ]`, while
+`gysin_globalClass_of_logResidue_eq` gives `G[γ] = [dλ]` when `ρ λ = γ` and `dλ` is regular.
+The representative is positive `dλ`, and the conclusions use `globalClass` of actual sheaf forms.
 
 ## Blueprint
 
@@ -68,6 +70,71 @@ open OrlikSolomon.DeRham
 universe u
 
 namespace OrlikSolomon.Geometric.DeRham
+
+section SheafRepresentatives
+
+variable {k : Type u} [CommRing k] {D : SmoothDomain k}
+
+/-- The actual complement inclusion of a closed logarithmic section is closed. -/
+lemma formsSheafD_logToOpenTop_eq_zero (P : DivisorPair D) {n : ℕ}
+    {l : (logSheaf P n).obj.obj (op ⊤)}
+    (hl : (logSheafD P n).hom.app (op ⊤) l = 0) :
+    (formsSheafD k P.compl.obj n).hom.app (op ⊤) (logToOpenTop P n l) = 0 := by
+  have h := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom)
+      (logSheafD_comp_logToOpenSheaf P n)) (op ⊤)) l
+  change logToOpenTop P (n + 1) ((logSheafD P n).hom.app (op ⊤) l) =
+    (formsSheafD k P.compl.obj n).hom.app (op ⊤) (logToOpenTop P n l) at h
+  exact h.symm.trans (by rw [hl, map_zero])
+
+/-- The residue of a closed global logarithmic section is closed. -/
+lemma formsSheafD_logResidueSheafTop_eq_zero (P : DivisorPair D) {n : ℕ}
+    {l : (logSheaf P (n + 1)).obj.obj (op ⊤)}
+    (hl : (logSheafD P (n + 1)).hom.app (op ⊤) l = 0) :
+    (formsSheafD k P.closed.obj n).hom.app (op ⊤) (logResidueSheafTop P n l) = 0 := by
+  have h := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) (logResidueSheaf_d P n)) (op ⊤)) l
+  change logResidueSheafTop P (n + 1) ((logSheafD P (n + 1)).hom.app (op ⊤) l) =
+    -((formsSheafD k P.closed.obj n).hom.app (op ⊤) (logResidueSheafTop P n l)) at h
+  rw [hl, map_zero] at h
+  exact neg_eq_zero.mp h.symm
+
+/-- A regular form representing the differential of a global logarithmic section is closed. -/
+lemma formsSheafD_eq_zero_of_regularToLogTop_eq_logSheafD (P : DivisorPair D) {n : ℕ}
+    {l : (logSheaf P n).obj.obj (op ⊤)}
+    {ω : (formsSheaf k P.ambient.obj (n + 1)).obj.obj (op ⊤)}
+    (hω : regularToLogTop P (n + 1) ω = (logSheafD P n).hom.app (op ⊤) l) :
+    (formsSheafD k P.ambient.obj (n + 1)).hom.app (op ⊤) ω = 0 := by
+  have : Mono (regularToLogSheaf P (n + 1 + 1)).hom :=
+    (sheafToPresheaf (_root_.Opens.grothendieckTopology P.ambient.obj.left)
+      (ModuleCat k)).map_mono _
+  have : Mono ((regularToLogSheaf P (n + 1 + 1)).hom.app (op ⊤)) :=
+    ((evaluation _ _).obj (op ⊤)).map_mono _
+  apply (ModuleCat.mono_iff_injective ((regularToLogSheaf P (n + 1 + 1)).hom.app (op ⊤))).1
+    inferInstance
+  have h := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) (regularToLogSheaf_d P (n + 1))) (op ⊤)) ω
+  change (logSheafD P (n + 1)).hom.app (op ⊤) (regularToLogTop P (n + 1) ω) =
+    (regularToLogSheaf P (n + 1 + 1)).hom.app (op ⊤)
+      ((formsSheafD k P.ambient.obj (n + 1)).hom.app (op ⊤) ω) at h
+  rw [hω] at h
+  have hdd := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) (logSheafD_comp P n)) (op ⊤)) l
+  change (logSheafD P (n + 1)).hom.app (op ⊤)
+    ((logSheafD P n).hom.app (op ⊤) l) = 0 at hdd
+  simpa only [map_zero] using h.symm.trans hdd
+
+private lemma globalFormsEquiv_symm_logToOpenTop (P : DivisorPair (SmoothDomain.aff k)) (n : ℕ)
+    (l : (logSheaf P n).obj.obj (op ⊤)) :
+    (globalFormsEquiv P.compl.obj n).symm (logToOpenTop P n l) =
+      logPowerToPower k P.globalSections.eqn P.globalSections.compl n
+        ((affineLogComparison P n).symm l) := by
+  apply (globalFormsEquiv P.compl.obj n).injective
+  rw [LinearEquiv.apply_symm_apply]
+  simpa only [LinearEquiv.apply_symm_apply] using
+    affineLogComparison_toOpen P n ((affineLogComparison P n).symm l)
+
+end SheafRepresentatives
 
 variable (k : Type u) [Field k] [CharZero k]
 
@@ -354,6 +421,62 @@ theorem gysin_mk_of_logResidue_eq {γ : Forms k (DivisorPair.globalSections P).c
         (OrlikSolomon.DeRham.d_eq_zero_of_ofRegular_eq_logD
           (DivisorPair.globalSections P).isSmoothPrincipalPair hω) :=
   OrlikSolomon.DeRham.gysin_mk_of_logResidue_eq _ hγ hx hω
+
+/-- **Residue on actual global sheaf representatives.** For a closed logarithmic section,
+the residue of the class of its complement inclusion is the class of its sheaf residue.
+
+Blueprint: `thm:geo-dr-instance`, using `thm:geo-log-sheaves`. -/
+theorem residue_globalClass (n : ℕ)
+    (l : (logSheaf P (n + 1)).obj.obj (op ⊤))
+    (hl : (logSheafD P (n + 1)).hom.app (op ⊤) l = 0) :
+    residue P (globalClass P.compl.obj (n + 1) (logToOpenTop P (n + 1) l)
+      (formsSheafD_logToOpenTop_eq_zero P hl)) =
+      globalClass P.closed.obj n (logResidueSheafTop P n l)
+        (formsSheafD_logResidueSheafTop_eq_zero P hl) := by
+  let x := (affineLogComparison P (n + 1)).symm l
+  have hx : (x : Forms k P.globalSections.compl) ∈
+      logForms k P.globalSections.eqn P.globalSections.compl :=
+    logPower_le_logForms k P.globalSections.eqn P.globalSections.compl (n + 1) x.property
+  have hd : d k (x : Forms k P.globalSections.compl) = 0 :=
+    congrArg Subtype.val ((affineLogComparison_global_closed_iff P (n + 1) l).1 hl)
+  have hold := residue_mk_of_mem_logForms P hx hd
+  unfold globalClass
+  refine (congrArg (residue P) (OrlikSolomon.DeRham.Cohomology.mk_congr
+    (congrArg Subtype.val (globalFormsEquiv_symm_logToOpenTop P (n + 1) l)) _)).trans
+      (hold.trans ?_)
+  exact OrlikSolomon.DeRham.Cohomology.mk_congr
+    (congrArg Subtype.val (affineLogComparison_residue_symm P n l).symm) _
+
+omit [CharZero k] in
+/-- **Gysin on actual global sheaf representatives.** Given a closed divisor form `γ`, any
+global logarithmic lift `l` with residue `γ` and regular differential `ω` gives `G[γ] = [ω]`.
+Thus the Gysin representative is `+d(l)`. The regular differential is automatically closed.
+
+Blueprint: `thm:geo-dr-instance`, using `thm:geo-log-sheaves`. -/
+theorem gysin_globalClass_of_logResidue_eq (n : ℕ)
+    (γ : (formsSheaf k P.closed.obj n).obj.obj (op ⊤))
+    (hγ : (formsSheafD k P.closed.obj n).hom.app (op ⊤) γ = 0)
+    (l : (logSheaf P (n + 1)).obj.obj (op ⊤))
+    (hρ : logResidueSheafTop P n l = γ)
+    (ω : (formsSheaf k P.ambient.obj (n + 1 + 1)).obj.obj (op ⊤))
+    (hω : regularToLogTop P (n + 1 + 1) ω = (logSheafD P (n + 1)).hom.app (op ⊤) l) :
+    gysin P (globalClass P.closed.obj n γ hγ) =
+      globalClass P.ambient.obj (n + 1 + 1) ω
+        (formsSheafD_eq_zero_of_regularToLogTop_eq_logSheafD P hω) := by
+  obtain ⟨hr, hd⟩ := (affineLogComparison_global_gysin_representative_iff P n l γ ω).1 ⟨hρ, hω⟩
+  let x := (affineLogComparison P (n + 1)).symm l
+  have hx : logResidue P.globalSections.compl P.globalSections.isSmoothPrincipalPair
+      (logPowerToLogForms k P.globalSections.eqn P.globalSections.compl (n + 1) x) =
+      ((globalFormsEquiv P.closed.obj n).symm γ : Forms k P.globalSections.closed) :=
+    congrArg Subtype.val hr
+  have hreg : ofRegular k P.globalSections.eqn P.globalSections.compl
+      ((globalFormsEquiv P.ambient.obj (n + 1 + 1)).symm ω : Forms k P.globalSections.ambient) =
+      logD k P.globalSections.eqn P.globalSections.compl
+        (logPowerToLogForms k P.globalSections.eqn P.globalSections.compl (n + 1) x) := by
+    apply Subtype.ext
+    exact congrArg (fun z : logPower k P.globalSections.eqn P.globalSections.compl
+      (n + 1 + 1) => (z : Forms k P.globalSections.compl)) hd
+  exact gysin_mk_of_logResidue_eq P (d_globalFormsEquiv_symm_eq_zero hγ) hx hreg
 
 end Pairs
 

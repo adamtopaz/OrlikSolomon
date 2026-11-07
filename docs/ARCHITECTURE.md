@@ -988,10 +988,10 @@ is partly formalized, by the comparison `transportAffineDevelopment` and its law
 about every old statement is not one Lean statement. Stage G4 (#115), `lem:geo-module-gluing`,
 `def:geo-forms-sheaf` and `thm:geo-forms-comparison`, is formalized as described in "Relative
 forms as sheaves". Stage G5 (#116) is formalized as described in "The de Rham instance on affine
-schemes": `def:geo-dr-cohomology` and `cor:geo-dr-arrangements`, and `thm:geo-dr-instance` partly,
-since the comparison of its Gysin and residue maps with the global sections of the sheaf
-logarithmic sequence needs `thm:geo-log-sheaves` (#117). The other declaration names remain
-proposals.
+schemes": `def:geo-dr-cohomology`, `cor:geo-dr-arrangements` and `thm:geo-dr-instance`.
+Stage G6 (#117), `thm:geo-log-sheaves`, proves the logarithmic sheaf sequence and local comparison,
+including agreement of the instance's Gysin and residue maps on global sheaf representatives.
+The worked geometric regressions of #118 remain planned.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1507,6 +1507,34 @@ geometric declarations; write the existing ones with `OrlikSolomon.DeRham.`. A f
   longer matches, because `(ordinaryTheory k).obj X` is `TwistedCohomology k _` only at default
   transparency.
 
+### Logarithmic forms on schemes
+
+The `DeRham/Schemes/Log` umbrella and the modules listed below use
+`OrlikSolomon.Geometric.DeRham` and depend on G0, forms sheaves and the existing algebraic
+log/pole APIs, independently of arrangements and the OS presentation.
+`logSheaf P n` is the categorical image of the regular-plus-left-theta map into `j_*Ω_U^n`.
+Its public inclusion and affine comparison hide the image construction. Sections of a sheaf
+image are identified with the corresponding module image only through the affine
+associated-module proof.
+
+`logComplexNat` uses the base-linear differential. `shiftedClosedComplexNat` has zero degree
+zero, `i_*Ω_D^n` in degree `n + 1`, and differential `-d`. Residue is normalized by
+`ρ(ω + θ ∧ η) = i^*η`, satisfies `ρd = -dρ`, and satisfies the right projection formula without
+a sign. The residue sequence works over a commutative base ring.
+
+`affineLogComparison`, `affineLogComplexIso` and `affineLogResidueShortComplexIso` identify the
+affine global sequence and its three arrows with the existing algebraic sequence. Their
+representative formulas identify the old algebraic logarithmic sequence with the actual affine
+global sheaf sequence. In `Schemes/Instance`, `residue_globalClass` and
+`gysin_globalClass_of_logResidue_eq` identify its residue and Gysin on these sheaf representatives.
+Gysin retains the representative convention
+`[γ] ↦ [dλ]`; a generic connecting-map convention is not assumed.
+
+Positive-integer inverses enter only in `Comparison`, where `logSheafComparison` proves that
+inclusion into the ordinary direct-image de Rham complex is a quasi-isomorphism on stalks. Neither this result
+nor the sheaf short exact sequence is passed through underived global sections on a
+non-affine scheme.
+
 ### Modules
 
 The paths are the blueprint's proposals, and each row is one of #107–#118. A PR that splits a row
@@ -1543,12 +1571,24 @@ into other files updates this table.
 | `DeRham/Schemes/Affine` | `def:geo-dr-cohomology`: `Cohomology`, `globalFormsHomologyIso`, `globalClass` and the direct sum | #116 |
 | `DeRham/Schemes/Instance` | `thm:geo-dr-instance`: `ordinaryTheory`, `twistedClass`, the twisted Gysin and residue, `logClass_eq` | #116 |
 | `DeRham/Schemes/Corollaries` | `cor:geo-dr-arrangements`: `affineEquiv`, `projectiveEquiv` and their API | #116 |
-| `DeRham/Schemes/Log` | `thm:geo-log-sheaves` | #117 |
+| `DeRham/Schemes/Forms/Associated` | structure-sheaf-linear associated-module comparison and distinguished-open fraction formulas, extending `thm:geo-forms-comparison` | #117 |
+| `DeRham/Schemes/Log`, the module to import | `thm:geo-log-sheaves`: umbrella for the files below | #117 |
+| `DeRham/Schemes/Log/Basic` | the global theta section, regular-plus-left-theta map, its image sheaf, complex and signed closed shift | #117 |
+| `DeRham/Schemes/Log/Algebra` | wedge products and dg algebra identities on the logarithmic image sheaves, descended from local normal forms and characterized by the actual complement inclusion | #117 |
+| `DeRham/Schemes/Log/AffineImage` | exact associated-module image comparison on spectra and transport of logarithmic images along pair isomorphisms | #117 |
+| `DeRham/Schemes/Log/Affine` | affine-neighborhood pairs, associated-module image comparison and affine cochain isomorphisms | #117 |
+| `DeRham/Schemes/Log/RestrictionImage` | exact image transport for open restrictions, retaining regular, theta and differential compatibility | #117 |
+| `DeRham/Schemes/Log/Restriction` | restriction to affine neighborhoods, their global logarithmic and open-form complexes, and the inclusion comparison | #117 |
+| `DeRham/Schemes/Log/Residue` | residue descent, signs and the short exact sequence of sheaf complexes | #117 |
+| `DeRham/Schemes/Log/ResidueAffine` | comparison of the affine residue short complex and its representatives with the algebraic sequence | #117 |
+| `DeRham/Schemes/Log/Comparison` | stalkwise quasi-isomorphism from the old pole theorem | #117 |
+| `DeRham/Schemes/Log/Projection` | the form-level right projection identity, with logarithmic factor on the left and no sign | #117 |
+| `DeRham/Schemes/Log/Naturality` | transverse maps and unit changes of equation | #117 |
 | `Examples/Geometric` | `prop:geo-finite-field`, `prop:geo-degenerate`, `prop:geo-exclusions`, `prop:geo-nonflat`, `prop:geo-nonaffine`, `prop:geo-affine-regressions`, and the blueprint's acceptance consumers | #118 |
 
-`Geometry/Schemes/ModuleGluing` is generic and uses the namespace `OrlikSolomon.Geometric`. Only
-`DeRham/Schemes/Forms` with its four submodules and the four `DeRham/Schemes` modules of #116 use
-`OrlikSolomon.Geometric.DeRham`.
+`Geometry/Schemes/ModuleGluing` is generic and uses the namespace `OrlikSolomon.Geometric`.
+`DeRham/Schemes/Forms`, `DeRham/Schemes/Log` and their submodules, together with the four
+`DeRham/Schemes` modules of #116, use `OrlikSolomon.Geometric.DeRham`.
 
 `Presentation/Geometric` is a facade: the blueprint's acceptance test is a consumer that imports
 only it and states both theorems for a theory on all smooth schemes. The blueprint's stages fix the

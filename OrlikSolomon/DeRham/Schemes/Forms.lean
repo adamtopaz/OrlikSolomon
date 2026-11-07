@@ -6,6 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.DeRham.Schemes.Forms.Affine
+public import OrlikSolomon.DeRham.Schemes.Forms.Associated
 public import OrlikSolomon.DeRham.Schemes.Forms.Presheaf
 public import OrlikSolomon.DeRham.Schemes.Forms.Pullback
 public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
@@ -27,6 +28,8 @@ Affine evaluation identifies global sheaf forms with the existing algebraic form
 * `OrlikSolomon.Geometric.DeRham.formsSheafPullback`: pullback along arbitrary maps over the base.
 * `OrlikSolomon.Geometric.DeRham.affineFormsComparison`: the degreewise affine comparison,
   preserving the differential, wedge products and pullback.
+* `OrlikSolomon.Geometric.DeRham.specFormsModuleSheafAssociatedIso`: the structure-sheaf-linear
+  associated-module comparison on spectra, with canonical representative and fraction formulas.
 * `OrlikSolomon.Geometric.tilde_map_exact`: exactness of associated module sheaves, reusing
   Mathlib's existing tilde construction.
 
