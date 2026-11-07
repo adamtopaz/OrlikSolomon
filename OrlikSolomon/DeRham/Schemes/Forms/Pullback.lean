@@ -24,6 +24,8 @@ commute with the differential without any flatness hypothesis.
 * `formsModuleSheafPullback` and `formsModuleSheafInverseImage`: the structure-sheaf-linear
   pushforward and inverse-image formulations on the same additive carriers.
 * `formsSheafPullback_isIso`: pullback along an isomorphism is invertible.
+* `formsComplexNatPullback` and `formsComplexNatInverseImage`: the corresponding maps of
+  nonnegative de Rham complexes, with component and functoriality formulas.
 
 The base ring is arbitrary, and neither scheme is required to be smooth or affine.
 
@@ -443,5 +445,54 @@ theorem formsSheafInverseImage_d (g : X ⟶ Y) (n : ℕ) :
   rw [Adjunction.homEquiv_naturality_right, Adjunction.homEquiv_naturality_left,
     formsSheafInverseImage_adjunction, formsSheafInverseImage_adjunction]
   exact formsSheafPullback_d g n
+
+/-- Pullback on the nonnegative de Rham complexes, in the pushforward formulation. -/
+def formsComplexNatPullback (g : X ⟶ Y) : formsComplexNat k Y ⟶
+    ((TopCat.Sheaf.pushforward (ModuleCat k) g.left.base).mapHomologicalComplex (.up ℕ)).obj
+      (formsComplexNat k X) :=
+  CochainComplex.ofHom (fun n ↦ formsSheafPullback g n) (fun n ↦ by
+    simpa only [Functor.mapHomologicalComplex_obj_d, formsComplexNat, CochainComplex.of_d]
+      using formsSheafPullback_d g n)
+
+/-- The component of complex pullback is the original sheaf pullback in that degree. -/
+@[simp] theorem formsComplexNatPullback_f (g : X ⟶ Y) (n : ℕ) :
+    (formsComplexNatPullback g).f n = formsSheafPullback g n := rfl
+
+/-- Pullback by the identity is the identity on the nonnegative de Rham complex. -/
+@[simp] theorem formsComplexNatPullback_id : formsComplexNatPullback (𝟙 X) =
+    𝟙 (formsComplexNat k X) := by
+  apply HomologicalComplex.hom_ext
+  intro n
+  exact formsSheafPullback_id (k := k) (X := X) n
+
+/-- Pullback of nonnegative de Rham complexes is contravariantly compatible with composition. -/
+theorem formsComplexNatPullback_comp {Z : Over (Spec (CommRingCat.of k))}
+    (f : X ⟶ Y) (g : Y ⟶ Z) :
+    formsComplexNatPullback (f ≫ g) = formsComplexNatPullback g ≫
+      ((TopCat.Sheaf.pushforward (ModuleCat k) g.left.base).mapHomologicalComplex (.up ℕ)).map
+        (formsComplexNatPullback f) := by
+  apply HomologicalComplex.hom_ext
+  intro n
+  exact formsSheafPullback_comp f g n
+
+/-- An isomorphism of schemes induces an isomorphism of nonnegative de Rham complexes. -/
+instance formsComplexNatPullback_isIso (g : X ⟶ Y) [IsIso g] :
+    IsIso (formsComplexNatPullback g) := by
+  have (n : ℕ) : IsIso ((formsComplexNatPullback g).f n) := by
+    change IsIso (formsSheafPullback g n)
+    infer_instance
+  exact HomologicalComplex.Hom.isIso_of_components _
+
+/-- The base-linear inverse-image formulation of pullback on nonnegative de Rham complexes. -/
+def formsComplexNatInverseImage (g : X ⟶ Y) :
+    ((TopCat.Sheaf.pullback (ModuleCat k) g.left.base).mapHomologicalComplex (.up ℕ)).obj
+      (formsComplexNat k Y) ⟶ formsComplexNat k X :=
+  CochainComplex.ofHom (fun n ↦ formsSheafInverseImage g n) (fun n ↦ by
+    simpa only [Functor.mapHomologicalComplex_obj_d, formsComplexNat, CochainComplex.of_d]
+      using formsSheafInverseImage_d g n)
+
+/-- In each degree, inverse-image complex pullback is the original sheaf inverse-image map. -/
+@[simp] theorem formsComplexNatInverseImage_f (g : X ⟶ Y) (n : ℕ) :
+    (formsComplexNatInverseImage g).f n = formsSheafInverseImage g n := rfl
 
 end OrlikSolomon.Geometric.DeRham
