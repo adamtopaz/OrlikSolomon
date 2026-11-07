@@ -131,9 +131,10 @@ map `O(Y) ⟶ O(X)` induces the pullback `C(Y) → C(X)` along `X → Y`.
 **Values in Lean.** For every field `k` of characteristic zero, `DeRham.ordinaryTheory k` in
 `DeRham/Instance` is a value of this structure: algebraic de Rham cohomology, with `R = k` and
 `B = k[t, t⁻¹]`. Its coefficient ring and its cohomology of the point are nonzero, so the axioms
-have a nonzero model in Lean. The other values constructed in Lean are the zero theories in
-`Examples/Sanity` and `Examples/Bridge`, which test the zero-ring edge case rather than the
-substantive axioms. The standard bridge constructs a theory from supplied degreewise inputs.
+have a nonzero model in Lean, and `DeRham/Corollaries` instantiates the main theorems at it. The
+other values constructed in Lean are the zero theories in `Examples/Sanity` and `Examples/Bridge`,
+which test the zero-ring edge case rather than the substantive axioms. The standard bridge
+constructs a theory from supplied degreewise inputs.
 
 **Check against singular cohomology, by hand.** Every field was checked by hand against complex
 singular cohomology, and the comments on the fields record the outcome. This is a mathematical

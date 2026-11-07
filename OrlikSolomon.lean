@@ -29,6 +29,7 @@ public import OrlikSolomon.DeRham.Complex.Forms
 public import OrlikSolomon.DeRham.Complex.Functoriality
 public import OrlikSolomon.DeRham.Complex.Polynomial
 public import OrlikSolomon.DeRham.Complex.Presentation
+public import OrlikSolomon.DeRham.Corollaries
 public import OrlikSolomon.DeRham.Exterior
 public import OrlikSolomon.DeRham.Exterior.BaseChange
 public import OrlikSolomon.DeRham.Exterior.Basic
@@ -72,6 +73,7 @@ public import OrlikSolomon.Examples.Cokernel
 public import OrlikSolomon.Examples.CoordinatePolynomials
 public import OrlikSolomon.Examples.DeRhamCohomology
 public import OrlikSolomon.Examples.DeRhamComplex
+public import OrlikSolomon.Examples.DeRhamCorollaries
 public import OrlikSolomon.Examples.DeRhamHomotopy
 public import OrlikSolomon.Examples.DeRhamInstance
 public import OrlikSolomon.Examples.DeRhamLocalization
