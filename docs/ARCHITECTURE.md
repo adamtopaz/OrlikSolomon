@@ -1477,7 +1477,8 @@ geometric declarations; write the existing ones with `OrlikSolomon.DeRham.`. A f
   pair `DivisorPair.globalSections P`, the maps of its global logarithmic sequence
   (`residue_mk_add_theta_mul`, `gysin_mk_of_logResidue_eq`). Their statements name the algebraic
   pair's components, not `globalSections P.ambient.obj`, since the algebra instance
-  `P.ambient → P.compl` of an algebraic pair is only found on those. `logClass_eq` is
+  `P.ambient → P.compl` of an algebraic pair is only found on those: instance search retrieves it
+  by its key `DivisorPair.ambient`, which no transparency setting changes (#128). `logClass_eq` is
   `[u]_T = t ⊗ [du/u]`, from `ofAlgebraic_logClass` and `ordinaryTheory_logClass`; like the existing
   lemma it is not `simp`.
 - **The corollaries.** `affineEquiv 𝒜 : OSAlgebra k 𝒜 ≃ₐ[k] Cohomology ((aff k).complement 𝒜)` and
@@ -1485,9 +1486,13 @@ geometric declarations; write the existing ones with `OrlikSolomon.DeRham.`. A f
   inverse of `TwistedCohomology.diagonalEquiv`, as in `DeRham/Corollaries`, with the same API.
   `affineEquiv_eq_map` and `projectiveEquiv_eq_map` identify them with the existing corollaries
   for the coordinate rings, through `ofAlgebraic_affineEquiv` and `ofAlgebraic_projectiveEquiv`.
-  State `evalOne` with the explicit algebra `globalSections X.obj`, as `affineEquiv_apply` does:
-  with `_` it elaborates to `(affineGlobalSectionsFunctor k).obj (op X)`, and `rw` with
-  `evalOne_logClass` no longer matches.
+  To remove the powers of `t` from a class of the instance, use `untwist X`, which is
+  `TwistedCohomology.evalOne k (globalSections X.obj)` typed on `(ordinaryTheory k).obj X`, with
+  `untwist_twistedClass`, `untwist_logClass` and `untwist_pull`; or state `evalOne` with the
+  explicit algebra `globalSections X.obj`, as `affineEquiv_apply` does. With `_`, the algebra
+  elaborates to `(affineGlobalSectionsFunctor k).obj (op X)`, and `rw` with `evalOne_logClass` no
+  longer matches, because `(ordinaryTheory k).obj X` is `TwistedCohomology k _` only at default
+  transparency.
 
 ### Modules
 
