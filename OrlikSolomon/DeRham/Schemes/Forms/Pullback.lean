@@ -6,6 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
+public import Mathlib.CategoryTheory.Adjunction.CompositionIso
 public import Mathlib.Topology.Sheaves.Functors
 public import Mathlib.CategoryTheory.Sites.PreservesLocallyBijective
 /-!
@@ -22,6 +23,10 @@ commute with the differential without any flatness hypothesis.
 * `formsSheafPullback_unit`: agreement on forms represented by presheaf sections.
 * `formsSheafPullback_d`: compatibility with the relative de Rham differential.
 * `formsSheafInverseImage`: the equivalent map from the inverse-image sheaf of base modules.
+* `sheafPullbackId`, `sheafPullbackComp`: canonical coherence isomorphisms for inverse images.
+* `formsSheafInverseImage_id`, `formsSheafInverseImage_comp`: inverse-image functoriality.
+* `formsSheafInverseImage_wedge`: wedge compatibility on sections represented by
+  the adjunction unit.
 * `formsModuleSheafPullback` and `formsModuleSheafInverseImage`: the structure-sheaf-linear
   pushforward and inverse-image formulations on the same additive carriers.
 * `formsSheafPullback_isIso`: pullback along an isomorphism is invertible.
@@ -438,6 +443,149 @@ def formsSheafInverseImage (g : X ⟶ Y) (n : ℕ) :
       (formsSheafInverseImage g n) = formsSheafPullback g n :=
   Equiv.apply_symm_apply _ _
 
+section PullbackCoherence
+
+variable {C D E : Type*} [Category* C] [Category* D] [Category* E]
+
+private theorem homEquiv_pullbackId {F : C ⥤ C} (adj : F ⊣ 𝟭 C) (A : C) :
+    adj.homEquiv _ _ ((adj.leftAdjointIdIso (Iso.refl _)).hom.app A) = 𝟙 A := by
+  rw [Adjunction.leftAdjointIdIso_hom_app]
+  dsimp only [Iso.refl_inv, NatTrans.id_app, Functor.id_obj]
+  rw [CategoryTheory.Functor.map_id, Category.id_comp, ← Adjunction.homEquiv_symm_id]
+  exact Equiv.apply_symm_apply _ _
+
+private theorem homEquiv_pullbackComp {F : C ⥤ D} {G : D ⥤ C} {H : D ⥤ E}
+    {I : E ⥤ D} {J : C ⥤ E} (adj₁ : F ⊣ G) (adj₂ : H ⊣ I) (adj₃ : J ⊣ I ⋙ G)
+    (A : C) :
+    (adj₁.comp adj₂).homEquiv _ _
+      ((adj₁.leftAdjointCompIso adj₂ adj₃ (Iso.refl _)).hom.app A) =
+        adj₃.unit.app A := by
+  rw [Adjunction.leftAdjointCompIso_hom_app]
+  simp only [Iso.refl_inv, NatTrans.id_app, CategoryTheory.Functor.map_id, Category.id_comp]
+  rw [← Adjunction.comp_counit_app]
+  change (adj₁.comp adj₂).homEquiv _ _
+    ((F ⋙ H).map (adj₃.unit.app A) ≫ (adj₁.comp adj₂).counit.app (J.obj A)) = _
+  rw [Adjunction.homEquiv_naturality_left, ← Adjunction.homEquiv_symm_id]
+  dsimp only [Functor.comp_obj, Functor.id_obj]
+  rw [Equiv.apply_symm_apply, Category.comp_id]
+
+end PullbackCoherence
+
+/-- The inverse-image functor on module-valued sheaves for the identity map is canonically
+isomorphic to the identity functor, by the identity adjunction. -/
+def sheafPullbackId (R : Type u) [Ring R] (T : TopCat.{u}) :
+    TopCat.Sheaf.pullback (ModuleCat.{u} R) (𝟙 T) ≅ 𝟭 _ :=
+  (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{u} R) (𝟙 T)).leftAdjointIdIso
+    (Iso.refl _)
+
+/-- Successive inverse images of module-valued sheaves are canonically isomorphic to the
+inverse image for the composite map, by composition of the pullback-pushforward adjunctions. -/
+def sheafPullbackComp (R : Type u) [Ring R] {T₁ T₂ T₃ : TopCat.{u}}
+    (f : T₁ ⟶ T₂) (g : T₂ ⟶ T₃) :
+    TopCat.Sheaf.pullback (ModuleCat.{u} R) g ⋙
+      TopCat.Sheaf.pullback (ModuleCat.{u} R) f ≅
+        TopCat.Sheaf.pullback (ModuleCat.{u} R) (f ≫ g) :=
+  Adjunction.leftAdjointCompIso
+    (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{u} R) g)
+    (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{u} R) f)
+    (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{u} R) (f ≫ g))
+    (Iso.refl _)
+
+/-- Composing inverse image with the identity on the source agrees with the right unitor. -/
+theorem sheafPullbackComp_id_comp (R : Type u) [Ring R] {T₁ T₂ : TopCat.{u}}
+    (f : T₁ ⟶ T₂) :
+    sheafPullbackComp R (𝟙 T₁) f =
+      Functor.isoWhiskerLeft (TopCat.Sheaf.pullback (ModuleCat.{u} R) f)
+        (sheafPullbackId R T₁) ≪≫ Functor.rightUnitor _ := by
+  exact Adjunction.leftAdjointCompIso_comp_id _ _ _ _ (by ext; rfl)
+
+/-- Composing inverse image with the identity on the target agrees with the left unitor. -/
+theorem sheafPullbackComp_comp_id (R : Type u) [Ring R] {T₁ T₂ : TopCat.{u}}
+    (f : T₁ ⟶ T₂) :
+    sheafPullbackComp R f (𝟙 T₂) =
+      Functor.isoWhiskerRight (sheafPullbackId R T₂)
+        (TopCat.Sheaf.pullback (ModuleCat.{u} R) f) ≪≫ Functor.leftUnitor _ := by
+  exact Adjunction.leftAdjointCompIso_id_comp _ _ _ _ (by ext; rfl)
+
+/-- The two canonical comparisons for three successive inverse images agree under the
+functor associator. -/
+theorem sheafPullbackComp_assoc (R : Type u) [Ring R] {T₁ T₂ T₃ T₄ : TopCat.{u}}
+    (f : T₁ ⟶ T₂) (g : T₂ ⟶ T₃) (h : T₃ ⟶ T₄) :
+    Functor.isoWhiskerLeft (TopCat.Sheaf.pullback (ModuleCat.{u} R) h)
+        (sheafPullbackComp R f g) ≪≫ sheafPullbackComp R (f ≫ g) h =
+      (Functor.associator _ _ _).symm ≪≫
+        Functor.isoWhiskerRight (sheafPullbackComp R g h)
+          (TopCat.Sheaf.pullback (ModuleCat.{u} R) f) ≪≫ sheafPullbackComp R f (g ≫ h) := by
+  exact Adjunction.leftAdjointCompIso_assoc _ _ _ _ _ _ _ _ _ _ (by ext; rfl)
+
+/-- Pullback of forms by the identity agrees with the canonical inverse-image identity
+isomorphism. -/
+@[simp] theorem formsSheafInverseImage_id (n : ℕ) :
+    formsSheafInverseImage (𝟙 X) n =
+      (sheafPullbackId k X.left).hom.app (formsSheaf k X n) := by
+  apply ((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k)
+    (Over.Hom.left (𝟙 X)).base).homEquiv _ _).injective
+  rw [formsSheafInverseImage_adjunction, formsSheafPullback_id]
+  exact (homEquiv_pullbackId _ _).symm
+
+-- Scheme composition and composition of the underlying continuous maps have the same
+-- carriers; allow the adjunction lemmas to identify their displayed source types.
+set_option backward.isDefEq.respectTransparency.types false in
+/-- Inverse-image pullback of forms is contravariantly functorial under the canonical
+composition isomorphism, without any flatness hypothesis. -/
+theorem formsSheafInverseImage_comp {Z : Over (Spec (CommRingCat.of k))}
+    (f : X ⟶ Y) (g : Y ⟶ Z) (n : ℕ) :
+    (sheafPullbackComp k f.left.base g.left.base).hom.app (formsSheaf k Z n) ≫
+        formsSheafInverseImage (f ≫ g) n =
+      (TopCat.Sheaf.pullback (ModuleCat k) f.left.base).map
+        (formsSheafInverseImage g n) ≫ formsSheafInverseImage f n := by
+  apply (((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) g.left.base).comp
+    (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) f.left.base)).homEquiv
+    _ _).injective
+  rw [Adjunction.homEquiv_naturality_right]
+  conv_rhs => rw [Adjunction.comp_homEquiv]
+  dsimp only [Equiv.trans_apply]
+  rw [Adjunction.homEquiv_naturality_left, formsSheafInverseImage_adjunction,
+    Adjunction.homEquiv_naturality_right, formsSheafInverseImage_adjunction,
+    ← formsSheafPullback_comp]
+  rw [show (((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) g.left.base).comp
+      (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) f.left.base)).homEquiv _ _
+      ((sheafPullbackComp k f.left.base g.left.base).hom.app (formsSheaf k Z n))) =
+        (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) (f ≫ g).left.base).unit.app
+          (formsSheaf k Z n) from homEquiv_pullbackComp _ _ _ _]
+  exact formsSheafInverseImage_adjunction (f ≫ g) n
+
+/-- On a section represented by the adjunction unit, inverse-image pullback acts by the
+original pullback on that open. -/
+@[simp] theorem formsSheafInverseImage_unit_app (g : X ⟶ Y) (n : ℕ)
+    (U : Y.left.Opensᵒᵖ) (a : (formsSheaf k Y n).obj.obj U) :
+    dsimp% (formsSheafInverseImage g n).hom.app (op (g.left ⁻¹ᵁ U.unop))
+        (((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) g.left.base).unit.app
+          (formsSheaf k Y n)).hom.app U a) =
+      (formsSheafPullback g n).hom.app U a := by
+  have h := formsSheafInverseImage_adjunction g n
+  rw [Adjunction.homEquiv_apply] at h
+  exact ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun h => h.hom) h) U) a
+
+/-- Inverse-image pullback preserves wedge products on sections represented by the
+adjunction unit. Both sides are sections on the same inverse-image open. -/
+theorem formsSheafInverseImage_wedge (g : X ⟶ Y) (p q : ℕ)
+    (U : Y.left.Opensᵒᵖ) (a : (formsSheaf k Y p).obj.obj U)
+    (b : (formsSheaf k Y q).obj.obj U) :
+    dsimp% (formsSheafInverseImage g (p + q)).hom.app (op (g.left ⁻¹ᵁ U.unop))
+        (((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) g.left.base).unit.app
+          (formsSheaf k Y (p + q))).hom.app U (formsSheafWedge k Y p q U a b)) =
+      formsSheafWedge k X p q (op (g.left ⁻¹ᵁ U.unop))
+        ((formsSheafInverseImage g p).hom.app (op (g.left ⁻¹ᵁ U.unop))
+          (((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) g.left.base).unit.app
+            (formsSheaf k Y p)).hom.app U a))
+        ((formsSheafInverseImage g q).hom.app (op (g.left ⁻¹ᵁ U.unop))
+          (((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) g.left.base).unit.app
+            (formsSheaf k Y q)).hom.app U b)) := by
+  simp only [formsSheafInverseImage_unit_app]
+  exact formsSheafPullback_wedge g p q U a b
+
 /-- Inverse-image pullback commutes with the relative de Rham differential. -/
 theorem formsSheafInverseImage_d (g : X ⟶ Y) (n : ℕ) :
     formsSheafInverseImage g n ≫ formsSheafD k X n =
@@ -499,6 +647,37 @@ def formsComplexNatInverseImage (g : X ⟶ Y) :
 /-- In each degree, inverse-image complex pullback is the original sheaf inverse-image map. -/
 @[simp] theorem formsComplexNatInverseImage_f (g : X ⟶ Y) (n : ℕ) :
     (formsComplexNatInverseImage g).f n = formsSheafInverseImage g n := rfl
+
+set_option backward.isDefEq.respectTransparency.types false in
+/-- Inverse-image pullback by the identity on the de Rham complex agrees with the canonical
+identity comparison induced from the sheaf pullback functor. -/
+@[simp] theorem formsComplexNatInverseImage_id :
+    formsComplexNatInverseImage (𝟙 X) =
+      ((NatIso.mapHomologicalComplex (sheafPullbackId k X.left) (.up ℕ)) ≪≫
+        CategoryTheory.Functor.mapHomologicalComplexIdIso _ (.up ℕ)).hom.app
+          (formsComplexNat k X) := by
+  apply HomologicalComplex.hom_ext
+  intro n
+  simpa only [formsComplexNatInverseImage_f, Iso.trans_hom, NatTrans.comp_app,
+    HomologicalComplex.comp_f, Functor.mapHomologicalComplex_obj_X, formsComplexNat_X,
+    NatIso.mapHomologicalComplex_hom_app_f, Functor.id_obj,
+    CategoryTheory.Functor.mapHomologicalComplexIdIso_hom_app_f]
+    using (formsSheafInverseImage_id (k := k) (X := X) n).trans
+      (Category.comp_id _).symm
+
+set_option backward.isDefEq.respectTransparency.types false in
+/-- Inverse-image pullback of de Rham complexes is functorial under the canonical
+composition comparison induced from sheaf pullback. -/
+theorem formsComplexNatInverseImage_comp {Z : Over (Spec (CommRingCat.of k))}
+    (f : X ⟶ Y) (g : Y ⟶ Z) :
+    (CategoryTheory.Functor.mapHomologicalComplexCompIso
+      (sheafPullbackComp k f.left.base g.left.base) (.up ℕ)).hom.app
+        (formsComplexNat k Z) ≫ formsComplexNatInverseImage (f ≫ g) =
+      ((TopCat.Sheaf.pullback (ModuleCat k) f.left.base).mapHomologicalComplex (.up ℕ)).map
+        (formsComplexNatInverseImage g) ≫ formsComplexNatInverseImage f := by
+  apply HomologicalComplex.hom_ext
+  intro n
+  simpa using formsSheafInverseImage_comp f g n
 
 /-- Pullback of global functions, typed at the displayed top opens. -/
 def sectionPullbackTop (g : X ⟶ Y) : sectionAlgebra k Y ⊤ →ₐ[k] sectionAlgebra k X ⊤ :=
