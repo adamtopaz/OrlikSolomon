@@ -120,14 +120,21 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/Bridge`             | zero degreewise inputs, the standard bridge and same-ring components |
 | `Examples/CoordinatePolynomials` | the coordinate-arrangement polynomial regression |
 | `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
+| `Examples/DeRham`             | umbrella for the de Rham worked regressions and excluded cases; the module to import |
+| `Examples/DeRhamCalculations` | umbrella for the worked de Rham cohomology calculations |
+| `Examples/DeRhamCalculations/Basic` | unit and zero algebras and the disconnected complement with its idempotent cohomology splitting |
+| `Examples/DeRhamCalculations/Torus` | the punctured-line and two-torus calculations, exterior products, and the opposite signs of the two residues |
+| `Examples/DeRhamCharacteristic` | actual characteristic-`p` failures of affine-line invariance and logarithmic comparison, with nonzero polynomial and Laurent classes |
 | `Examples/DeRhamCohomology`    | exact forms are not an ideal of all forms, `X²` in characteristic two, the point over `ℤ` and `ZMod 2`, the zero algebra |
 | `Examples/DeRhamComplex`     | `d` is not linear over the algebra, characteristic two and the zero algebra |
 | `Examples/DeRhamCorollaries` | the de Rham corollaries for one point and two rational points of `𝔸¹` and two points of `ℙ¹`: values on generators, nonvanishing, independence, a zero product and dimensions |
+| `Examples/DeRhamCrossing`     | the nonsmooth crossing divisor, a regular logarithmic wedge with nonzero proposed residue, and the resulting contradiction between presentations |
 | `Examples/DeRhamHomotopy`     | rational dual numbers, zero coefficients, homotopy normalization and failure of the integration hypothesis in characteristic two |
 | `Examples/DeRhamInstance`     | the instance is not a zero theory: its point, its residue and `τ` are nonzero; consumers of the instance; signs by cohomological degree, the zero algebra and characteristic two |
 | `Examples/DeRhamLocalization` | nilpotent, zero and unit equations; a conormal map that is not injective over `ZMod 2` |
 | `Examples/DeRhamLog`         | signs of the projection formulas; unit, zero-algebra, disconnected and divisor-pair consumers of `DeRham/Log` |
 | `Examples/DeRhamMaps`        | signs of the residue and Gysin maps; the empty divisor, divisor-pair consumers, and the morphism that is not flat, with its proof |
+| `Examples/DeRhamMorphisms`    | the flat unit change, genuinely nonflat naturality, and the excluded squaring map with residue two |
 | `Examples/DeRhamPole`        | logarithmic comparison with zero coefficients, unit equations and a disconnected rational smooth pair |
 | `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
 | `Examples/Degenerate`        | coefficient cohomology of empty complements and nonunique zero-ring basis sizes |
@@ -577,8 +584,8 @@ injectivity into localization, conormal splitting, global and localized normal d
 exactness modulo the divisor, logarithmic forms with their residue sequence, global logarithmic
 comparison, the residue and Gysin maps with their long exact sequence, projection formula and
 naturality, the Laurent-twisted functor, the instance `ordinaryTheory k` with all 22 fields,
-`lem:dr-tau` and the two corollaries `cor:dr-affine` and `cor:dr-projective` exist. Some of the
-worked regressions remain planned.
+`lem:dr-tau` and the two corollaries `cor:dr-affine` and `cor:dr-projective` exist. All eight
+worked regression nodes are formalized.
 The table groups modules by issues #72–#83. The conormal and normal-derivation results need only
 Mathlib's Kähler differentials and formal-smoothness lifts. Normalizing a derivation on
 `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge exactness uses exterior
@@ -928,8 +935,8 @@ smoothness of the coefficient algebra.
   the instance. `evalOne_logClass` is the `simp` form used to remove `t`.
 
 The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Its opening
-says that the instance and the two corollaries are formalized, names what they rest on, and says
-that some of the worked regressions remain. The first page, `Organization`, the chapter on the
+says that the instance, the two corollaries and all eight worked regressions are formalized, and
+names what they rest on. The first page, `Organization`, the chapter on the
 axioms, the status page and `README.md` describe the resulting state: one nonzero value of
 `OrdinaryTheory` is constructed, the de Rham instance for fields of characteristic zero; the affine
 and projective theorems hold unconditionally for algebraic de Rham cohomology over such fields, as

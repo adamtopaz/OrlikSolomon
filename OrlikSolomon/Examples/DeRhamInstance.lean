@@ -19,7 +19,7 @@ The first part checks the instance itself, `OrlikSolomon.DeRham.ordinaryTheory k
 `thm:dr-instance`: it is not a zero theory, since its point, its residue and its class `τ` are
 nonzero, and it exists over `ℚ`.
 
-The second part checks what the corollaries of `DeRham/Corollaries` will need, on the instance
+The second part checks the inputs and computations used by `DeRham/Corollaries`, on the instance
 itself. Generic lemmas about a value of `OrdinaryTheory` fire on it under `simp`. A homogeneous
 class is `twistedClass w c`, the classes `logClass` among them, and the structure computes on it.
 The forms that fail at `R = B` have no competing `k`-algebra structure here. It builds the
@@ -145,7 +145,7 @@ example {p w : ℤ} {x : (ordinaryTheory k).C.obj A} (hx : x ∈ (ordinaryTheory
   mem_grading_ordinaryTheory_iff.1 hx
 
 /-- A logarithmic class in the instance has bidegree `(1, 1)`, so it is `c T` for a class `c` of
-degree one. `lem:dr-tau` will identify `c` with the de Rham logarithmic class. -/
+degree one. `ordinaryTheory_logClass` identifies `c` with the de Rham logarithmic class. -/
 theorem exists_logClass_eq (u : Aˣ) :
     ∃ c ∈ Cohomology.degree k A 1, twistedClass 1 c = (ordinaryTheory k).logClass u := by
   obtain ⟨c, hc, hcu⟩ :=
@@ -203,7 +203,7 @@ theorem osCohomologyEquiv_apply (x : OSAlgebra k 𝒜) :
     congrArg (TwistedCohomology.evalOne k _) ((ordinaryTheory k).coeAlgHom_diagonalEquiv x)
 
 /-- On a generator, the equivalence is the logarithm of an equation, with the power of `T` removed.
-`lem:dr-tau` will identify this value with the class `[df_H / f_H]`. -/
+`ordinaryTheory_logClass` identifies this value with the class `[df_H / f_H]`. -/
 theorem osCohomologyEquiv_generator (H : 𝒜) :
     osCohomologyEquiv 𝒜 (OSAlgebra.generator k 𝒜 H) =
       TwistedCohomology.evalOne k _ ((ordinaryTheory k).logClass (equationUnit 𝒜 H)) := by

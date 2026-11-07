@@ -422,7 +422,7 @@ The status lines at the top of this page count two blueprints separately.
 The second constructs a value of the structure of axioms: algebraic de Rham cohomology over a field of characteristic zero.
 That value is formalized, so the axioms have a nonzero model in Lean.
 So are the forms of the two theorems with no hypothetical cohomology theory in them, which instantiate the theorems at this value and identify the generators with the classes of the forms $`df/f`, as stated above.
-{ref "de-rham"}[Its chapter] presents the construction and the worked regressions that remain.
+{ref "de-rham"}[Its chapter] presents the construction and the worked regressions.
 The main theorem does not depend on it: the dependence runs the other way.
 
 {include 1 OrlikSolomonBook.Organization}
