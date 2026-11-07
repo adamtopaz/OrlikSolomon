@@ -37,9 +37,10 @@ a standard pair. So no statement here needs `X` to be affine.
 * `def:geo-log`: `tau_mem_grading`, `standardResidue_pull_prodGmSnd_tau`, `eq_tau_of_mem_grading`,
   `existsUnique_tau`, `logClass_mem_grading`.
 * `thm:geo-log-laws`: `pull_logClass`, `logClass_eq_zero_of_coe_eq_algebraMap`,
-  `logClass_mul_self`, `logClass_mul`, `logClass_inv`, `residue_logClass_eqnUnit` and
-  `residue_logClass_eqnUnit_mul`, for every pair. The comparison with the old classes under affine
-  duality is `pull_toAlgebraic_logClass` and `toAlgebraic_logClass`, for `T.toAlgebraic`, and
+  `logClass_eq_of_coe_eq_algebraMap_mul`, `logClass_mul_self`, `logClass_mul`, `logClass_inv`,
+  `residue_logClass_eqnUnit` and `residue_logClass_eqnUnit_mul`, for every pair. The comparison with
+  the old classes under affine duality is `pull_toAlgebraic_logClass`,
+  `pull_toAlgebraic_logClass_eq` and `toAlgebraic_logClass`, for `T.toAlgebraic`, and
   `ofAlgebraic_logClass`, for the transport of an algebraic theory.
 * `thm:geo-gm-product`: `gmProductEquiv`, with `gmProductEquiv_apply`, `gmProductEquiv_symm_apply`,
   its degrees in `gmProductEquiv_mem_grading_iff` and its naturality in
@@ -62,8 +63,13 @@ in degree one. No rational point of any scheme is used.
 
 **For consumers.** To compute a class pulled back along a comparison `g : X ⟶ Spec A`, such as the
 comparison of an arrangement complement with the spectrum of its coordinate ring, use
-`pull_toAlgebraic_logClass`, whose hypothesis is an equation of global sections. Equations of
-functions are stated as equations of global sections; recover equations of units with `Units.ext`.
+`pull_toAlgebraic_logClass_eq`, whose right side is the class of the unit
+`Units.map g.hom.left.appTop.hom (specUnit u)`, or `pull_toAlgebraic_logClass`, whose hypothesis is
+an equation of global sections. The unit form elaborates because the objects of a domain unfold
+at instance transparency (see `Geometry/Schemes/Basic`). The object `X` of
+`T.logClass u` is implicit and cannot be recovered from a unit typed on `X.obj`, such as
+`complementUnit 𝒜 f hf : Γ((complement 𝒜).left, ⊤)ˣ`: when the expected type does not fix it,
+write `T.logClass (X := D.complement 𝒜) u`.
 -/
 
 @[expose] public section
@@ -357,6 +363,16 @@ theorem pull_toAlgebraic_logClass {X : D.Obj} {A : SmoothAlg.{u} k} (g : X ⟶ D
     ← pull_comp, ← pull_comp, Category.assoc,
     SmoothDomain.comp_specFunctor_map_gmHom_comp_specGmIso_hom g u hv, logClass]
 
+/-- **Compatibility with the old logarithms**, as an equation of units: for a map `g : X ⟶ Spec A`
+and a unit `u` of the smooth algebra `A`, the pullback of the old class `[u]` of `T.toAlgebraic` is
+the class of the pullback along `g` of the global unit `specUnit u` of `Spec A`.
+Blueprint: `thm:geo-log-laws`. -/
+theorem pull_toAlgebraic_logClass_eq {X : D.Obj} {A : SmoothAlg.{u} k} (g : X ⟶ D.spec A)
+    (u : Aˣ) :
+    T.pull g (T.toAlgebraic.logClass u) =
+      T.logClass (Units.map g.hom.left.appTop.hom (specUnit (A := A.obj) u)) :=
+  T.pull_toAlgebraic_logClass g u rfl
+
 /-- On `Spec A`, the old class `[u]` of `T.toAlgebraic` is the class of the global unit given by
 `u`. Blueprint: `thm:geo-log-laws`. -/
 theorem toAlgebraic_logClass {A : SmoothAlg.{u} k} (u : Aˣ) {v : Γ((D.spec A).obj.left, ⊤)ˣ}
@@ -500,6 +516,21 @@ theorem logClass_eq_zero_of_coe_eq_algebraMap {X : D.Obj} {u : Γ(X.obj.left, �
     T.logClass (X := X)
       (Units.map (algebraMap k (globalSections X.obj) : k →* globalSections X.obj) c) = 0 :=
   T.logClass_eq_zero_of_coe_eq_algebraMap c rfl
+
+/-- Multiplying a global unit by a constant `c ∈ kˣ` does not change its logarithmic class. -/
+theorem logClass_units_map_algebraMap_mul {X : D.Obj} (c : kˣ) (u : Γ(X.obj.left, ⊤)ˣ) :
+    T.logClass (Units.map (algebraMap k (globalSections X.obj) : k →* globalSections X.obj) c * u) =
+      T.logClass u := by
+  rw [logClass_mul, logClass_units_map_algebraMap, zero_add]
+
+/-- Two global units whose functions differ by a constant factor `c ∈ kˣ`, `u = c v` in
+`Γ(X, 𝒪_X)`, have the same logarithmic class. For instance, the restrictions of two equations of
+one hyperplane differ by such a constant. Blueprint: `thm:geo-log-laws`. -/
+theorem logClass_eq_of_coe_eq_algebraMap_mul {X : D.Obj} {u v : Γ(X.obj.left, ⊤)ˣ} (c : kˣ)
+    (h : (u : Γ(X.obj.left, ⊤)) = algebraMap k (globalSections X.obj) c * v) :
+    T.logClass u = T.logClass v := by
+  rw [show u = Units.map (algebraMap k (globalSections X.obj) : k →* globalSections X.obj) c * v
+    from Units.ext h, logClass_units_map_algebraMap_mul]
 
 end Multiplicativity
 

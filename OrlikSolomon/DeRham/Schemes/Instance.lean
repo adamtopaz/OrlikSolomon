@@ -29,14 +29,18 @@ result in terms of the de Rham cohomology `Cohomology X` of `DeRham/Schemes/Affi
   (`gysin_mk_of_logResidue_eq`);
 * the coefficients and the value at `S` are nonzero (`nontrivial_coefficients`,
   `nontrivialObjPoint`);
-* `[u]_T = t ⊗ [du/u]` (`logClass_eq`).
+* `[u]_T = t ⊗ [du/u]` (`logClass_eq`), and `[du/u]` after removing the power of `t`
+  (`untwist_logClass`).
 
 ## Implementation notes
 
 As for the algebraic instance, `ordinaryTheory k` is a `def`, so that the generic lemmas about a
 geometric theory `T` fire on it. Its value `(ordinaryTheory k).obj X` is
 `TwistedCohomology k Γ(X, 𝒪_X)` only at default transparency, so compute with
-`twistedClass w c`, the class `t^w ⊗ c` typed in `(ordinaryTheory k).obj X`.
+`twistedClass w c`, the class `t^w ⊗ c` typed in `(ordinaryTheory k).obj X`, and remove the powers
+of `t` with `untwist X`, which is `TwistedCohomology.evalOne` typed on the same value. Written as
+`TwistedCohomology.evalOne k _`, the algebra elaborates to `(affineGlobalSectionsFunctor k).obj
+(op X)`, and the lemmas stated with `globalSections X.obj` no longer match.
 
 The hypotheses `[Field k] [CharZero k]` enter only through the algebraic instance, which uses them
 to invert positive integers for integration and pole reduction. No smoothness, connectedness,
@@ -209,6 +213,28 @@ theorem evalOne_pull (f : X ⟶ Y) (y : (ordinaryTheory k).obj Y) :
       Cohomology.pull f (TwistedCohomology.evalOne k (globalSections Y.obj) y) :=
   TwistedCohomology.evalOne_map _ y
 
+variable (X) in
+/-- Removing the powers of `t`: the `k`-algebra map
+`C(X) = k[t, t⁻¹] ⊗[k] H^•_dR(X/k) → H^•_dR(X/k)`, `t^w ⊗ c ↦ c`. It is
+`TwistedCohomology.evalOne k (globalSections X.obj)` (`untwist_apply`), typed on the value
+`(ordinaryTheory k).obj X` of the instance, so that `rw` and `simp` work with it without the
+algebra being written. -/
+def untwist : (ordinaryTheory k).obj X →ₐ[k] Cohomology X :=
+  TwistedCohomology.evalOne k (globalSections X.obj)
+
+lemma untwist_apply (x : (ordinaryTheory k).obj X) :
+    untwist X x = TwistedCohomology.evalOne k (globalSections X.obj) x :=
+  rfl
+
+@[simp]
+theorem untwist_twistedClass (w : ℤ) (c : Cohomology X) : untwist X (twistedClass w c) = c :=
+  evalOne_twistedClass w c
+
+/-- Removing the powers of `t` commutes with pullback. -/
+theorem untwist_pull (f : X ⟶ Y) (y : (ordinaryTheory k).obj Y) :
+    untwist X ((ordinaryTheory k).pull f y) = Cohomology.pull f (untwist Y y) :=
+  evalOne_pull f y
+
 /-- Weights add and de Rham classes multiply. -/
 @[simp]
 theorem twistedClass_mul_twistedClass (w v : ℤ) (c c' : Cohomology X) :
@@ -350,5 +376,11 @@ theorem evalOne_logClass (u : Γ(X.obj.left, ⊤)ˣ) :
     TwistedCohomology.evalOne k (globalSections X.obj) ((ordinaryTheory k).logClass u) =
       dlogClass k (A := globalSections X.obj) u := by
   rw [logClass_eq, evalOne_twistedClass]
+
+/-- Removing the power of `t` from the logarithmic class of `u` gives `[du/u]`. -/
+@[simp]
+theorem untwist_logClass (u : Γ(X.obj.left, ⊤)ˣ) :
+    untwist X ((ordinaryTheory k).logClass u) = dlogClass k (A := globalSections X.obj) u :=
+  evalOne_logClass u
 
 end OrlikSolomon.Geometric.DeRham
