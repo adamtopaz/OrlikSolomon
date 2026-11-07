@@ -46,7 +46,8 @@ structure CovariantPairDiagram (C : Type u) [Category.{c} C]
 /-- Degreewise localization with supports and oriented purity for a family of pair diagrams.
 The supported group is `H_D^{p,w}(X)`, the connecting map raises `p` by one, and purity raises the
 bidegree by `(2,1)`. Products and their compatibilities use sigma equalities whenever the written
-degrees differ by associativity or commutativity. Blueprint: `lem:standard-bridge`.
+degrees differ by associativity or commutativity.
+Blueprint: `lem:standard-bridge`, `thm:geo-bridge`.
 
 The projection identities are supplied for arbitrary homogeneous factors. This is the standard
 full homogeneous projection formula allowed by the blueprint. Only the specialization with the
