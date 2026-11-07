@@ -974,7 +974,9 @@ its Tor-sheaf and conormal comparisons are not stated. `def:geo-projective` and,
 affine sides, `thm:geo-projective-geometry` (#112) are also formalized, as described in "Projective
 complements on schemes". Stage G1 (#109) is formalized: `def:geo-theory`, `lem:geo-restriction`,
 `lem:geo-empty`, `thm:geo-to-algebraic` and `thm:geo-from-algebraic`, described in "Geometric
-cohomology and affine transport" below. The other declaration names remain proposals.
+cohomology and affine transport" below. The logarithms of stage G3 (#113) are formalized:
+`def:geo-log`, `thm:geo-log-laws` and `thm:geo-gm-product`, described in "Geometric logarithms"
+below. The other declaration names remain proposals.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1211,6 +1213,41 @@ for every empty scheme from the algebraic empty-divisor consequence of exactness
 therefore has zero Gysin and residue. No empty-scheme axiom is added. Transport of the existing
 nonzero de Rham theory is already a geometric theory on affines; identifying it with the cohomology
 of global sheaf forms remains #116.
+
+### Geometric logarithms
+
+`Cohomology/Geometric/Logarithms` (#113) constructs logarithmic classes for a geometric theory on
+every object of its domain, affine or not, and reuses the algebraic `Cohomology/Logarithms` through
+`toAlgebraic` rather than reproving it.
+
+- **The class `τ`.** `T.tau` lives on `D.gm`, which is the same scheme as
+  `D.spec (SmoothAlg.gm k)`, where `T.toAlgebraic` has its class; `SmoothDomain.specGmIso` is the
+  identity between them, and `T.tau` is the pullback of `T.toAlgebraic.tau` along it. The standard
+  pair of the base has open part `S ×_S 𝔾ₘ`, so the normalization reads
+  `T.standardResidue D.point (T.pull (D.prodGmSnd D.point) T.tau) = 1`, proved by
+  `toAlgebraic_standardResidue` and the naturality of the residue for
+  `standardPairMap D.specPointIso.hom`; `eq_tau_of_mem_grading` is uniqueness.
+- **The class `[u]`.** `T.logClass u = T.pull (D.gmHom u) T.tau`, where `D.gmHom u : X ⟶ D.gm` is
+  `unitsEquivHomGm` in the domain. Pullback is `pull_logClass`, with `Units.map g.hom.left.appTop.hom`.
+  `[uv] = [u] + [v]` is pulled back from the old identity on `𝔾ₘ² = Spec k[s, s⁻¹][t, t⁻¹]` along the
+  map of `(u, v)` built with `specHomEquiv`; `[u]² = 0` is pulled back from `τ² = 0`; the class of a
+  constant `c ∈ kˣ` vanishes because its map factors through `D.point`
+  (`logClass_eq_zero_of_coe_eq_algebraMap`, stated with the function of the unit). The residue
+  formulas hold for every pair, by `residue_map` along `DivisorPair.toStandard`. Restriction to a
+  smaller domain does not change classes (`restrict_logClass`, by `rfl`).
+- **Comparisons.** `pull_toAlgebraic_logClass g u hv` computes `g^*` of the old class `[u]` of
+  `T.toAlgebraic`, for any `g : X ⟶ D.spec A`, as the class of the unit `v` with
+  `(v : Γ(X)) = g^*(u)`. It is the lemma to compose with `s_𝒜` and `s_P` for the generator formulas
+  of the structure theorems. `ofAlgebraic_logClass` identifies the classes of `ofAlgebraic E` on an
+  affine `X` with the old classes of `E` on `Γ(X)`, through `algebraicRoundTripEquiv_logClass`.
+- **The product with `𝔾ₘ`.** The coordinate of `X ×_S 𝔾ₘ` is the unit `D.prodGmCoord X`, equal to
+  the equation of `standardPair D X` (`standardPair_eqnUnit`), and `[z] = T.logClass (D.prodGmCoord X)`.
+  `gmProductEquiv X : (C(X) × C(X)) ≃ₗ[B] C(X ×_S 𝔾ₘ)` is `@[no_expose]`, like the algebraic one,
+  and is described by `gmProductEquiv_apply`, `gmProductEquiv_symm_apply` (the section `z = 1` and
+  the standard residue), `gmProductEquiv_mem_grading_iff` and the naturality
+  `pull_prodGmMap_gmProductEquiv`. Its proof uses only the axioms for the standard pair of `X`.
+- **Simp normal form.** `standardResidue_apply` is a `simp` lemma of `Cohomology/Geometric/Axioms`,
+  so lemmas whose left side is a `standardResidue` are not `simp` lemmas.
 
 ### Modules
 

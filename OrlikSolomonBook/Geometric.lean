@@ -16,11 +16,12 @@ file := "geometric"
 htmlSplit := .never
 %%%
 
-*The foundations, geometric axioms and affine transports are formalized, together with the projective complements.*
+*The foundations, geometric axioms, affine transports and logarithmic classes are formalized, together with the projective complements.*
 It presents the plan in the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
-Of its 42 nodes, fourteen are formalized and two partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the two nodes on {bp "def:geo-projective"}[projective space and its complements], and the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports].
+Of its 42 nodes, seventeen are formalized and two partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the two nodes on {bp "def:geo-projective"}[projective space and its complements], the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports], and the three nodes on {bp "def:geo-log"}[logarithmic classes and the product with $`\mathbb{G}_m`].
 The two partial nodes are {bp "thm:geo-cartesian"}[], whose Tor-sheaf and conormal statements remain, and {bp "thm:geo-projective-geometry"}[], whose affine sides still use spectra of the existing rings rather than the planned open subschemes.
 The geometric theory has exactly the old 22 fields, and its affine transports preserve the grading, coefficient maps, pullbacks, Gysin and residue, with both triangle identities.
+The logarithmic class of a global unit and the decomposition of the cohomology of $`X\times_S\mathbb{G}_m` hold on every object of the domain, affine or not.
 The structure theorems on actual arrangement opens and the de Rham realization through sheaf forms remain planned.
 Every other box below is marked as planned, and for those the blueprint's proposed names under `OrlikSolomon.Geometric` do not exist yet, so this chapter does not list them.
 The statements and arguments in the planned boxes are the blueprint's, and no machine has checked them.
@@ -356,32 +357,35 @@ On $`V_{\mathcal{P}}` one has $`\ell_i=\ell_0\,q^*(\ell_i/\ell_0)`, and the rati
 
 # Logarithms and the geometric structure theorems
 
-The logarithmic class of a unit would be defined on every object of the domain, affine or not.
+The logarithmic class of a unit is defined on every object of the domain, affine or not.
 The class $`\tau` on $`\mathbb{G}_m` is transported from the existing one, and for a unit $`u` of the global functions on $`X`, the class $`[u]` is the pullback of $`\tau` along the morphism $`\widehat{u}:X\to\mathbb{G}_m` that $`u` defines.
-Its identities follow by pulling back the existing identities on the affine schemes $`\mathbb{G}_m` and $`\mathbb{G}_m^2`.
+Its identities $`[u]^2=0` and $`[uv]=[u]+[v]` are pulled back from the existing identities on the affine schemes $`\mathbb{G}_m` and $`\mathbb{G}_m^2`.
 In particular $`[u]^2=0` comes from $`\tau^2=0`, and not from graded commutativity, which would require dividing by $`2`.
+The class of a constant vanishes because its morphism to $`\mathbb{G}_m` factors through the base, and the residue formulas come from the morphism of a pair to the standard pair of the base given by its equation.
+The decomposition of the cohomology of $`X\times_S\mathbb{G}_m` is proved directly from the axioms for the standard pair of $`X`, so it holds for objects that are not affine.
+None of this uses a rational point.
 
-The structure theorems are then the existing ones composed with the comparisons:
+The planned structure theorems are the existing ones composed with the comparisons:
 $$`\Phi^{\mathrm{geo}}_{\mathcal{A}}=s_{\mathcal{A}}^*\circ\Phi^{T_{\mathrm{alg}}}_{\mathcal{A}},`
 and the same with $`s_{\mathcal{P}}` in the projective case.
 They hold for a theory on every admissible domain, because the complements are smooth and affine and therefore belong to every domain.
 The arguments about arrangements are not rerun: the existing inductions and calculations of relations are used as theorems, and no conclusion becomes an axiom.
 
-:::node "def:geo-log"
+:::node "def:geo-log" (decl := OrlikSolomon.Geometric.OrdinaryTheory.tau) (decl := OrlikSolomon.Geometric.OrdinaryTheory.tau_mem_grading) (decl := OrlikSolomon.Geometric.OrdinaryTheory.standardResidue_pull_prodGmSnd_tau) (decl := OrlikSolomon.Geometric.OrdinaryTheory.existsUnique_tau) (decl := OrlikSolomon.Geometric.SmoothDomain.gmHom) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_mem_grading)
 For a geometric theory $`T`, let $`\tau\in C(\mathbb{G}_m)_{1,1}` be the transport of the class of {bp "lem:gm"}[], the unique class with residue $`1` in the standard pair.
 For a unit $`u\in\Gamma(X,\mathcal{O}_X)^\times`, put
 $$`[u]_T=\widehat{u}^*\tau\in C(X)_{1,1}.`
 This applies to every object of the domain, including schemes that are not affine, and it involves no choice.
 :::
 
-:::node "thm:geo-log-laws"
+:::node "thm:geo-log-laws" (decl := OrlikSolomon.Geometric.OrdinaryTheory.pull_logClass) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_eq_zero_of_coe_eq_algebraMap) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_mul_self) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_mul) (decl := OrlikSolomon.Geometric.OrdinaryTheory.logClass_inv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.residue_logClass_eqnUnit) (decl := OrlikSolomon.Geometric.OrdinaryTheory.residue_logClass_eqnUnit_mul) (decl := OrlikSolomon.Geometric.OrdinaryTheory.pull_toAlgebraic_logClass) (decl := OrlikSolomon.Geometric.OrdinaryTheory.ofAlgebraic_logClass)
 For a morphism $`g:X'\to X`, units $`u` and $`v` on $`X`, and $`c\in k^\times`,
 $$`g^*[u]=[g^*u],\qquad[c]=0,\qquad[u]^2=0,\qquad[uv]=[u]+[v],\qquad[u^{-1}]=-[u].`
 For every pair with equation $`f`, one has $`r_P([f|_U])=1` and $`r_P([f|_U]\,j^*\beta)=i^*\beta`.
 On affine schemes these classes and identities agree with the existing ones under affine duality.
 :::
 
-:::node "thm:geo-gm-product"
+:::node "thm:geo-gm-product" (decl := OrlikSolomon.Geometric.OrdinaryTheory.gmProductEquiv) (decl := OrlikSolomon.Geometric.OrdinaryTheory.gmProductEquiv_apply) (decl := OrlikSolomon.Geometric.OrdinaryTheory.gmProductEquiv_symm_apply) (decl := OrlikSolomon.Geometric.OrdinaryTheory.gmProductEquiv_mem_grading_iff) (decl := OrlikSolomon.Geometric.OrdinaryTheory.pull_prodGmMap_gmProductEquiv)
 For every $`X` in the domain, the standard pair gives an isomorphism of graded $`B`-modules, natural in $`X`,
 $$`C(X)\oplus C(X)[(1,1)]\xrightarrow{\ \sim\ }C(X\times_S\mathbb{G}_m),\qquad(a,b)\longmapsto\pi^*a+[z]\,\pi^*b,`
 where the second summand is shifted by $`(1,1)`.
