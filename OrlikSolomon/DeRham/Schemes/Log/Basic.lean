@@ -546,4 +546,121 @@ def logSheafImageIso (n : ℕ) : image (logNormalFormSheaf P n) ≅ logSheaf P (
     exact image.isoStrongEpiMono_inv_comp_mono (logMkSheaf P n)
       (logToOpenSheaf P (n + 1)) (logMkSheaf_comp_logToOpenSheaf P n)
 
+section PairTransport
+
+private theorem formsSheafPullback_congr {X Y : Over (Spec (CommRingCat.of k))} (f g : X ⟶ Y)
+    (h : f = g) (n : ℕ) :
+    formsSheafPullback f n ≫ eqToHom (congrArg
+      (fun t : X ⟶ Y => (TopCat.Sheaf.pushforward (ModuleCat k) t.left.base).obj
+        (formsSheaf k X n)) h) = formsSheafPullback g n := by
+  subst g
+  simp only [eqToHom_refl, Category.comp_id]
+
+variable {P Q : Geometric.DivisorPair D}
+private def pairOpenPushforwardIso (F : P ⟶ Q) :
+    TopCat.Sheaf.pushforward (ModuleCat k) F.compl.hom.left.base ⋙
+        TopCat.Sheaf.pushforward (ModuleCat k) Q.j.hom.left.base ≅
+      TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base ⋙
+        TopCat.Sheaf.pushforward (ModuleCat k) F.ambient.hom.left.base := by
+  apply eqToIso
+  exact congrArg (TopCat.Sheaf.pushforward (ModuleCat k))
+    (congrArg (fun f => f.hom.left.base) F.j_comp).symm
+
+/-- Pullback of complement forms along a transverse map of geometric pairs, as a map on the
+ambient schemes. The square of open immersions supplies the target comparison. -/
+@[no_expose] def openFormsPullback (F : P ⟶ Q) (n : ℕ) :
+    openFormsSheaf Q n ⟶
+      (TopCat.Sheaf.pushforward (ModuleCat k) F.ambient.hom.left.base).obj (openFormsSheaf P n) :=
+  (TopCat.Sheaf.pushforward (ModuleCat k) Q.j.hom.left.base).map
+    (formsSheafPullback F.compl.hom n) ≫
+      (pairOpenPushforwardIso F).hom.app (formsSheaf k P.compl.obj n)
+
+/-- Regular-form pullback commutes with the complement square of a morphism of pairs. -/
+@[reassoc] theorem regularPullback_openFormsPullback (F : P ⟶ Q) (n : ℕ) :
+    formsSheafPullback Q.j.hom n ≫ openFormsPullback F n =
+      formsSheafPullback F.ambient.hom n ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) F.ambient.hom.left.base).map
+          (formsSheafPullback P.j.hom n) := by
+  dsimp only [openFormsPullback]
+  rw [← Category.assoc, ← formsSheafPullback_comp]
+  have h : F.compl.hom ≫ Q.j.hom = P.j.hom ≫ F.ambient.hom :=
+    (congrArg (fun f => f.hom) F.j_comp).symm
+  have hc : (pairOpenPushforwardIso F).hom.app (formsSheaf k P.compl.obj n) =
+      eqToHom (congrArg
+        (fun t : P.compl.obj ⟶ Q.ambient.obj =>
+          (TopCat.Sheaf.pushforward (ModuleCat k) t.left.base).obj
+            (formsSheaf k P.compl.obj n)) h) := by
+    dsimp only [pairOpenPushforwardIso, eqToIso]
+    exact eqToHom_app _ _
+  rw [hc]
+  exact (formsSheafPullback_congr _ _ h n).trans
+    (formsSheafPullback_comp P.j.hom F.ambient.hom n)
+
+private def pairComplOverFunctor (D : SmoothDomain k) :
+    Geometric.DivisorPair D ⥤ Over (Spec (CommRingCat.of k)) where
+  obj P := P.compl.obj
+  map F := F.compl.hom
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
+/-- Left multiplication by `df/f` on complement forms, as a map on the ambient scheme. -/
+def openThetaWedgeSheaf (P : Geometric.DivisorPair D) (n : ℕ) :
+    openFormsSheaf P n ⟶ openFormsSheaf P (n + 1) :=
+  (TopCat.Sheaf.pushforward (ModuleCat k) P.j.hom.left.base).map
+    (thetaWedgeSheaf P.compl.obj P.eqnUnit n)
+
+/-- Complement-form pullback commutes with multiplication by the logarithmic form when it
+preserves the specified equation unit exactly. -/
+@[reassoc] theorem openThetaWedgeSheaf_pullback (F : P ⟶ Q)
+    (hunit : Units.map (sectionPullbackTop F.compl.hom).toMonoidHom Q.eqnUnit = P.eqnUnit)
+    (n : ℕ) :
+    openThetaWedgeSheaf Q n ≫ openFormsPullback F (n + 1) =
+      openFormsPullback F n ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) F.ambient.hom.left.base).map
+          (openThetaWedgeSheaf P n) := by
+  have hθ := thetaWedgeSheaf_pullback F.compl.hom
+    (show (sectionAlgebra k Q.compl.obj ⊤)ˣ from Q.eqnUnit) n
+  rw [hunit] at hθ
+  dsimp only [openThetaWedgeSheaf, openFormsPullback]
+  rw [← Category.assoc, ← Functor.map_comp, hθ, Functor.map_comp, Category.assoc,
+    Category.assoc]
+  exact congrArg
+    (fun f ↦ (TopCat.Sheaf.pushforward (ModuleCat k) Q.j.hom.left.base).map
+      (formsSheafPullback F.compl.hom n) ≫ f)
+    ((pairOpenPushforwardIso F).hom.naturality
+      (thetaWedgeSheaf P.compl.obj P.eqnUnit n))
+
+/-- An isomorphism of pairs identifies complement forms on the ambient scheme with the direct
+image of the corresponding complement forms. -/
+@[no_expose] def pairOpenFormsIso (e : P ≅ Q) (n : ℕ) :
+    openFormsSheaf P n ≅
+      (TopCat.Sheaf.pushforward (ModuleCat k) e.inv.ambient.hom.left.base).obj
+        (openFormsSheaf Q n) := by
+  have : IsIso e.inv.compl.hom := (pairComplOverFunctor D).map_isIso e.inv
+  have : IsIso (openFormsPullback e.inv n) := by
+    dsimp only [openFormsPullback]
+    infer_instance
+  exact asIso (openFormsPullback e.inv n)
+
+/-- The complement-forms comparison commutes with regular-form restriction. -/
+@[reassoc] theorem pairOpenFormsIso_regular (e : P ≅ Q) (n : ℕ) :
+    formsSheafPullback e.inv.ambient.hom n ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) e.inv.ambient.hom.left.base).map
+          (formsSheafPullback Q.j.hom n) =
+      formsSheafPullback P.j.hom n ≫ (pairOpenFormsIso e n).hom :=
+  (regularPullback_openFormsPullback e.inv n).symm
+
+/-- The complement-forms comparison preserves the left logarithmic product for an exact
+equation-unit comparison. -/
+@[reassoc] theorem pairOpenFormsIso_theta (e : P ≅ Q)
+    (hunit : Units.map (sectionPullbackTop e.inv.compl.hom).toMonoidHom P.eqnUnit = Q.eqnUnit)
+    (n : ℕ) :
+    openThetaWedgeSheaf P n ≫ (pairOpenFormsIso e (n + 1)).hom =
+      (pairOpenFormsIso e n).hom ≫
+        (TopCat.Sheaf.pushforward (ModuleCat k) e.inv.ambient.hom.left.base).map
+          (openThetaWedgeSheaf Q n) :=
+  openThetaWedgeSheaf_pullback e.inv hunit n
+
+end PairTransport
+
 end OrlikSolomon.Geometric.DeRham
