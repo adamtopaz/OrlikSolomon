@@ -16,12 +16,12 @@ file := "geometric"
 htmlSplit := .never
 %%%
 
-*None of this chapter is formalized yet.*
+*Only the foundations of this chapter are formalized.*
 It presents the plan in the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
-No Lean declaration is attached to any of its 42 nodes, so every box below is marked as planned.
-The blueprint itself says that every new declaration in it is a proposal and that none has been elaborated in Lean.
-It proposes names under `OrlikSolomon.Geometric`, but none of them exists yet, so this chapter does not list them.
-The statements and arguments here are the blueprint's, and no machine has checked them.
+Of its 42 nodes, five are formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains] and the four nodes of {ref "geo-affine"}[affine duality], namely the equivalence between smooth algebras and smooth affine schemes, zero schemes and basic opens, products with the affine line and the multiplicative group, and units as maps to the multiplicative group.
+None of them mentions cohomology, and no structure theorem on schemes is formalized.
+Every other box below is marked as planned, and for those the blueprint's proposed names under `OrlikSolomon.Geometric` do not exist yet, so this chapter does not list them.
+The statements and arguments in the planned boxes are the blueprint's, and no machine has checked them.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem and of the de Rham instance.
 Neither of those depends on anything here: the plan is built on them, and the dependence runs the other way.
 
@@ -74,7 +74,7 @@ The arrangement theorems keep their hypotheses that $`k` is a field and that the
 The coefficient rings $`R` and $`B` are independent of $`k`, and may be zero.
 The projective theorem keeps the nonempty arrangement: the complement of the empty projective arrangement is projective space itself, which is usually not affine and has different cohomology.
 
-:::node "def:geo-domain"
+:::node "def:geo-domain" (decl := OrlikSolomon.Geometric.SmoothDomain) (decl := OrlikSolomon.Geometric.SmoothDomain.all) (decl := OrlikSolomon.Geometric.SmoothDomain.aff) (decl := OrlikSolomon.Geometric.SmoothDomain.sft) (decl := OrlikSolomon.Geometric.SmoothDomain.ofAffine) (decl := OrlikSolomon.Geometric.SmoothDomain.spec) (decl := OrlikSolomon.Geometric.SmoothDomain.prodAffineLine) (decl := OrlikSolomon.Geometric.SmoothDomain.prodGm) (decl := OrlikSolomon.Geometric.SmoothDomain.aff_le) (decl := OrlikSolomon.Geometric.SmoothDomain.le_all)
 Let $`S=\operatorname{Spec}k`, let $`\mathsf{Sm}_k` be the full subcategory of schemes over $`S` whose structure morphism is smooth, and let $`\mathsf{Sm}_k^{\mathrm{aff}}` be its full subcategory of affine schemes.
 An _admissible domain_ $`\mathcal{D}` is a full subcategory of $`\mathsf{Sm}_k`, closed under isomorphism, that contains every smooth affine $`k`-scheme and is closed under $`X\mapsto X\times_S\mathbb{A}^1_S` and $`X\mapsto X\times_S\mathbb{G}_m`.
 Its morphisms are all morphisms over $`S` between its objects, which need not be smooth, flat, dominant or of constant relative dimension.
@@ -84,6 +84,9 @@ The empty scheme is smooth and affine, so it lies in every domain, and no domain
 :::
 
 # Affine duality
+%%%
+tag := "geo-affine"
+%%%
 
 Everything rests on the classical anti-equivalence between smooth $`k`-algebras and smooth affine $`k`-schemes.
 The blueprint states it with every compatibility that the transport of the proof needs: over the base, for closed subschemes and basic opens, and for products with $`\mathbb{A}^1` and $`\mathbb{G}_m`.
@@ -92,11 +95,12 @@ These are uses of Mathlib's existing theory of $`\operatorname{Spec}`, global se
 Arrows reverse.
 An algebra map $`A\to A'` is a morphism of schemes $`\operatorname{Spec}A'\to\operatorname{Spec}A`, so pullback along a morphism of schemes is the value of the theory on a morphism of the opposite category.
 In Lean the value at $`X` is planned as `T.C.obj (op X)`, not `T.C.obj X`.
+The objects of a domain already form the category `D.Obj`, and `D.specFunctor` sends a smooth algebra `A` to `op (Spec A)` in its opposite, so a theory on $`\mathcal{D}` will be evaluated on algebras through it.
 
 One result here is not about affine schemes: units of global sections are the same as morphisms to $`\mathbb{G}_m`, for every scheme.
 This is what will let logarithmic classes be defined on objects of a domain that are not affine.
 
-:::node "thm:geo-affine-duality"
+:::node "thm:geo-affine-duality" (decl := OrlikSolomon.Geometric.smoothAffineEquivalence) (decl := OrlikSolomon.Geometric.globalSections) (decl := OrlikSolomon.Geometric.specHomEquiv) (decl := OrlikSolomon.Geometric.affineHomEquiv) (decl := OrlikSolomon.Geometric.globalSectionsSpecIso) (decl := OrlikSolomon.Geometric.specGlobalSectionsIso) (decl := OrlikSolomon.Geometric.globalSectionsSpecIso_naturality) (decl := OrlikSolomon.Geometric.specGlobalSectionsIso_naturality) (decl := OrlikSolomon.Geometric.specGlobalSectionsIso_hom_spec) (decl := OrlikSolomon.Geometric.globalSectionsMap_specGlobalSectionsIso_hom) (decl := OrlikSolomon.Geometric.smooth_hom_iff)
 Spectrum and global sections are inverse equivalences
 $$`\mathsf{SmoothAlg}_k\simeq(\mathsf{Sm}_k^{\mathrm{aff}})^{\mathrm{op}},\qquad A\longmapsto\operatorname{Spec}A,\qquad X\longmapsto\Gamma(X,\mathcal{O}_X).`
 For affine $`X` and $`Y` over $`S`, morphisms correspond as
@@ -105,7 +109,7 @@ The isomorphisms $`\eta_A:A\to\Gamma(\operatorname{Spec}A,\mathcal{O})` and $`\e
 This includes the zero ring, whose spectrum is the empty scheme.
 :::
 
-:::node "lem:geo-affine-pairs"
+:::node "lem:geo-affine-pairs" (decl := OrlikSolomon.Geometric.zeroScheme) (decl := OrlikSolomon.Geometric.zeroSchemeι) (decl := OrlikSolomon.Geometric.ker_zeroSchemeι) (decl := OrlikSolomon.Geometric.zeroSchemeIsoSpec) (decl := OrlikSolomon.Geometric.zeroSchemeIsoSpec_hom_comp) (decl := OrlikSolomon.Geometric.basicOpenIsoSpec) (decl := OrlikSolomon.Geometric.basicOpenIsoSpec_hom_comp) (decl := OrlikSolomon.Geometric.IsRegularSection) (decl := OrlikSolomon.Geometric.isRegularSection_iff) (decl := OrlikSolomon.Geometric.smooth_basicOpen) (decl := OrlikSolomon.Geometric.smooth_zeroScheme_iff)
 Let $`X` be affine over $`S`, let $`A=\Gamma(X,\mathcal{O}_X)`, and let $`f\in A`.
 Under $`\epsilon_X`, the closed subscheme $`Z_X(f)` cut out by $`f` is $`\operatorname{Spec}(A/(f))`, and the open subscheme $`X_f` on which $`f` is invertible is $`\operatorname{Spec}A_f`, compatibly with the immersions into $`X`.
 Multiplication by $`f` is injective on $`\mathcal{O}_X` if and only if it is injective on $`A`.
@@ -114,7 +118,7 @@ If $`X` is smooth, then $`X_f` is smooth, and $`Z_X(f)` is smooth exactly when $
 The comparisons need no condition on $`f`, so they cover units and the zero ring.
 :::
 
-:::node "lem:geo-products"
+:::node "lem:geo-products" (decl := OrlikSolomon.Geometric.affineLine) (decl := OrlikSolomon.Geometric.gm) (decl := OrlikSolomon.Geometric.specPolynomialIso) (decl := OrlikSolomon.Geometric.specLaurentIso) (decl := OrlikSolomon.Geometric.specPolynomialIso_hom_fst) (decl := OrlikSolomon.Geometric.specLaurentIso_hom_fst) (decl := OrlikSolomon.Geometric.specMap_polynomialAlgLift_zero_comp_specPolynomialIso_hom) (decl := OrlikSolomon.Geometric.specMap_laurentAlgLift_one_comp_specLaurentIso_hom) (decl := OrlikSolomon.Geometric.specMap_polynomialAlgToLaurent_comp_specPolynomialIso_hom) (decl := OrlikSolomon.Geometric.specMap_polynomialAlgMap_comp_specPolynomialIso_hom) (decl := OrlikSolomon.Geometric.specMap_laurentAlgMap_comp_specLaurentIso_hom) (decl := OrlikSolomon.Geometric.specPolynomialIso_hom_appTop_prodCoord) (decl := OrlikSolomon.Geometric.SmoothDomain.specPolynomialIso) (decl := OrlikSolomon.Geometric.SmoothDomain.specLaurentIso)
 Put $`\mathbb{A}^1_S=\operatorname{Spec}k[z]` and $`\mathbb{G}_m=\operatorname{Spec}k[z,z^{-1}]`.
 For $`X=\operatorname{Spec}A` there are natural isomorphisms over $`S`
 $$`\operatorname{Spec}A[z]\simeq X\times_S\mathbb{A}^1_S,\qquad\operatorname{Spec}A[z,z^{-1}]\simeq X\times_S\mathbb{G}_m,`
@@ -123,7 +127,7 @@ So the standard pair of the existing proof becomes
 $$`X\xrightarrow{\ z=0\ }X\times_S\mathbb{A}^1_S\xleftarrow{\ j\ }X\times_S\mathbb{G}_m.`
 :::
 
-:::node "thm:geo-units"
+:::node "thm:geo-units" (decl := OrlikSolomon.Geometric.unitsEquivHomGm) (decl := OrlikSolomon.Geometric.unitsEquivHomGm_comp) (decl := OrlikSolomon.Geometric.lift_unitsEquivHomGm_comp_mul) (decl := OrlikSolomon.Geometric.unitsEquivHomGm_comp_inv) (decl := OrlikSolomon.Geometric.toUnit_comp_one)
 For every scheme $`X` over $`S`, affine or not, there is a natural bijection
 $$`\Gamma(X,\mathcal{O}_X)^\times\simeq\operatorname{Hom}_S(X,\mathbb{G}_m),\qquad u\longmapsto\widehat{u},`
 under which multiplication, inverses and the unit $`1` correspond to the group structure of $`\mathbb{G}_m`.

@@ -299,8 +299,9 @@ three rings. State results for every equation of `H`.
   whose ring is `k`. For `W = 0`, `Proj Sym(W*)` is empty, so its ring is zero and not `k`.
 - Consumers use `SmoothAlg.coneIso`, `SmoothAlg.deconeIso` and `SmoothAlg.projectiveRatioUnit`. The
   formula `ℓ_i = t (ℓ_i / ℓ_0)` is `mapUnits_coneIso_hom_complementUnit`.
-- `Geometry/ProjectiveScheme` is at present the only module that imports Mathlib's schemes. It adds
-  about 250 Mathlib modules to the closure of the root and of the book, about 11%. It is a leaf for
+- `Geometry/ProjectiveScheme` and the scheme layer `Geometry/Schemes/` of milestone M6 are the only
+  modules that import Mathlib's schemes. `Geometry/ProjectiveScheme` alone added about 250 Mathlib
+  modules to the closure of the root and of the book, about 11%. It is a leaf for
   the algebraic development: the proof of the structure theorems, the algebra, the combinatorics and
   the algebraic de Rham instance may not import it, so they stay free of schemes. The planned scheme
   layer of milestone M6 is the exception: `Geometry/Schemes/Projective` and the modules built on it
@@ -965,7 +966,9 @@ It makes cohomology a contravariant functor on a category of smooth `k`-schemes,
 complements the actual open subschemes of `Spec Sym(V*)` and `Proj Sym(W*)`, and reuses every proved
 algebraic result through the equivalence between smooth algebras and smooth affine schemes. It adds
 no field to the axioms, keeps the hypotheses of both structure theorems, and changes no conclusion.
-No node is formalized yet. Its declaration names are proposals, as with the other blueprints.
+Stage G0's first half (#107) is formalized: `def:geo-domain`, `thm:geo-affine-duality`,
+`lem:geo-affine-pairs`, `lem:geo-products` and `thm:geo-units`, described in "Schemes, domains and
+affine duality" below. The other declaration names are proposals, as with the other blueprints.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1018,6 +1021,77 @@ so refer to the existing ones by their full names, as the blueprint's signatures
   left in `TwistedCohomology`. Prove one set of naturality lemmas for `s_𝒜` and `s_P` and use them,
   rather than rewriting through `Spec` and `Γ`.
 
+### Schemes, domains and affine duality
+
+These are the conventions of `Geometry/Schemes/`, on which every later stage builds.
+
+- **Schemes over the base.** `S = Spec k` is `Spec (.of k)` for a commutative ring `k : Type u`, with
+  no other hypothesis, and an `S`-scheme is an object of `Over (Spec (.of k))`. Products are Mathlib's
+  cartesian monoidal product `⊗` on `Over S`, which is `Limits.pullback`, with projections `fst` and
+  `snd`. `Geometric.spec A : Over S` is `Spec A` for a `k`-algebra `A`; it is Mathlib's `algSpec`
+  (`specFunctor_eq_algSpec`), restated so that its components unfold (next item). `specMap φ` is
+  `Spec` of a map of algebras, contravariant.
+- **Named objects are `@[implicit_reducible] def`s.** Lean now checks implicit arguments, including
+  the source and target objects of a morphism, at *implicit* transparency, while `simp` indexes and
+  matches explicit arguments at reducible transparency. A plain `def` such as `(spec A).left` is
+  not unfolded in the first check, so `rw` and `simp` fail on `g ≫ (spec A).hom` with the message
+  that the target "is not type-correct under the `implicit` transparency level"; an `abbrev` is
+  unfolded in the second, which is the old failure of `simp` indexing recorded under "Objects and
+  pairs are `def`s". `@[implicit_reducible]` is unfolded in the first and not in the second, so it
+  is the right annotation for objects and object-valued functors: `spec`, `globalSections`,
+  `affineLine`, `gm`, `SmoothDomain.ofAffine`, `SmoothDomain.spec`, `SmoothDomain.point`,
+  `SmoothDomain.prodAffineLine`, `SmoothDomain.prodGm`, `specFunctor`, `globalSectionsFunctor`,
+  `SmoothDomain.specFunctor` and `affineGlobalSectionsFunctor`. Mathlib marks `Over.mk`,
+  `ObjectProperty.homMk` and `ObjectProperty.lift` the same way. Mathlib's `algSpec` is marked too,
+  but its object passes through functors that are not, which is why `spec` restates it. Morphisms
+  are ordinary `def`s.
+- **Global sections are bundled.** `globalSections X : CommAlgCat k` is `Γ(X, 𝒪_X)` with the structure
+  map `k ≅ Γ(S) → Γ(X)`; its carrier is `Γ(X.left, ⊤)` at implicit transparency, so an element of one
+  is an element of the other. It is not an instance on `Γ(X.left, ⊤)`: Mathlib has an instance for
+  affine `X`, built through `X.isoSpec`, that agrees with it only propositionally. Pullback is
+  `globalSectionsMap g`, with `globalSectionsMap_apply`.
+- **Domains.** `SmoothDomain k` holds an `ObjectProperty` of `Over S` and the closure proofs of
+  `def:geo-domain`; `D.Obj` is its full subcategory, so morphisms are all `S`-morphisms, and
+  domains are ordered by inclusion, with `aff k ≤ D ≤ all k`. The canonical domains are `all`, `aff`
+  and `sft`; finite type is `QuasiCompact`, since smooth morphisms are locally of finite
+  presentation. Smooth affine schemes enter any domain through `D.ofAffine X`, whose membership is
+  found from the instances `[IsAffine X.left] [Smooth X.hom]`, and `D.spec A` for `A : SmoothAlg k`
+  needs no proof at all. The base is `D.point`, terminal, with `D.specPointIso` from `Spec k`.
+  `D.specFunctor : SmoothAlg k ⥤ D.Objᵒᵖ` is fully faithful; it is the functor through which
+  `toAlgebraic` evaluates a theory, so a geometric theory's `T.C.obj (op (D.spec A))` is the
+  algebraic theory's value at `A`.
+- **Affine duality.** `specHomEquiv X A : (X ⟶ spec A) ≃ (A ⟶ globalSections X)` holds for every
+  `S`-scheme `X`; it is built from `Scheme.toSpecΓ`, with explicit formulas
+  (`specHomEquiv_apply_apply`, `specHomEquiv_symm_left`), not from Mathlib's
+  `algΓAlgSpecAdjunction`, whose unit and counit come with no formulas. Use `hom_ext_spec` to
+  compare maps into `Spec A`. The equivalence `smoothAffineEquivalence k : SmoothAlg k ≌ (aff k).Objᵒᵖ`
+  has functor `(aff k).specFunctor`, unit `η⁻¹ = globalSectionsSpecIso` (from `ΓSpecIso`) and counit
+  `ε = specGlobalSectionsIso` (from `Scheme.isoSpec`), each with named naturality and triangle
+  lemmas. `affineHomEquiv` is pullback of global sections for an affine target.
+- **Zero schemes and basic opens.** `zeroScheme f` is the closed subscheme of Mathlib's ideal sheaf
+  `principalIdealSheaf f = ofIdealTop (Ideal.span {f})`, not the fiber product `X ×_{𝔸¹} 0`, because
+  Mathlib's closed subschemes are phrased through kernels (`Scheme.Hom.ker`,
+  `IsClosedImmersion.lift`, `IsClosedImmersion.isIso_lift`). So the certificate of a closed map in
+  `def:geo-divisor-pair` can be the proposition `IsClosedImmersion i ∧ i.ker = principalIdealSheaf f`,
+  translated on affine schemes by `ker_eq_principalIdealSheaf_iff`, and that of an open map
+  `IsOpenImmersion j ∧ j.opensRange = X.basicOpen f`, with Mathlib's `X.basicOpen f`. Regularity is
+  `IsRegularSection f`: multiplication by `f` is injective over every open (`isRegularSection_iff`
+  on affine schemes).
+- **Products, sections and units.** `affineLine k` and `gm k` are `spec` of `k[X]` and `k[T;T⁻¹]`;
+  `gm k` is a commutative group object through Mathlib's Hopf algebra on Laurent polynomials. Maps
+  to them are functions and units for every `S`-scheme (`homAffineLineEquiv`, and the group
+  isomorphism `unitsEquivHomGm`, inverse to pullback of `gmCoord`); compare maps into them with
+  `homAffineLineEquiv.injective` and `hom_ext_gm`. The comparisons `specPolynomialIso` and
+  `specLaurentIso` of `lem:geo-products` are built from these universal properties rather than from
+  pushouts of rings. They hold for every `A : CommAlgCat k`, with the algebras `polynomialAlg A` and
+  `laurentAlg A` and their maps `polynomialAlgC`, `polynomialAlgLift`, `laurentAlgLift`,
+  `polynomialAlgToLaurent`. `SmoothDomain.specPolynomialIso` and `specLaurentIso` specialize them to
+  `A : SmoothAlg k`, with every compatibility restated for the existing `polynomialC`,
+  `polynomialLift`, `laurentSection` and `polynomialToLaurent`, so that an algebraic axiom is the
+  conjugate of a geometric one (`SmoothDomain.specPolynomialIso_hom_prodAffineLineFst`). The
+  geometric standard pair is `zeroSection X`, `X ◁ gmToAffineLine k` and the coordinate `prodCoord X`,
+  for every `S`-scheme `X`.
+
 ### Modules
 
 The paths are the blueprint's proposals, and each row is one of #107–#118. A PR that splits a row
@@ -1025,7 +1099,11 @@ into other files updates this table.
 
 | Module under `OrlikSolomon/` | Blueprint labels | Issue |
 | ---------------------------- | ---------------- | ----- |
-| `Geometry/Schemes/Basic`, `Geometry/Schemes/AffineDuality` | `def:geo-domain`, `thm:geo-affine-duality`, `lem:geo-affine-pairs`, `lem:geo-products`, `thm:geo-units` | #107 |
+| `Geometry/Schemes/Basic` | `def:geo-domain`: `S`-schemes, `spec`, `globalSections`, `affineLine`, `gm`, `SmoothDomain` and its three canonical values | #107 |
+| `Geometry/Schemes/AffineDuality` | `thm:geo-affine-duality`: `specHomEquiv`, `η`, `ε`, the smoothness criterion and `smoothAffineEquivalence` | #107 |
+| `Geometry/Schemes/AffinePairs` | `lem:geo-affine-pairs`: zero schemes, basic opens and regular sections | #107 |
+| `Geometry/Schemes/Units` | `thm:geo-units`, and functions as maps to `𝔸¹` | #107 |
+| `Geometry/Schemes/Products` | `lem:geo-products`, and the geometric standard pair | #107 |
 | `Geometry/Schemes/PrincipalPair` | `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-cartesian`, `thm:geo-pair-duality` | #108 |
 | `Cohomology/Geometric/Axioms`, `Cohomology/Geometric/Transport` | `def:geo-theory`, `lem:geo-restriction`, `lem:geo-empty`, `thm:geo-to-algebraic`, `thm:geo-from-algebraic` | #109 |
 | `Cohomology/Geometric/Bridge` | `def:geo-supports`, `thm:geo-bridge` | #110 |

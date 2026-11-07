@@ -110,6 +110,11 @@ public import OrlikSolomon.Geometry.ProjectiveArrangement
 public import OrlikSolomon.Geometry.ProjectiveRing
 public import OrlikSolomon.Geometry.ProjectiveScheme
 public import OrlikSolomon.Geometry.RelationTargets
+public import OrlikSolomon.Geometry.Schemes.AffineDuality
+public import OrlikSolomon.Geometry.Schemes.AffinePairs
+public import OrlikSolomon.Geometry.Schemes.Basic
+public import OrlikSolomon.Geometry.Schemes.Products
+public import OrlikSolomon.Geometry.Schemes.Units
 public import OrlikSolomon.Geometry.SmoothAlg
 public import OrlikSolomon.Grading.Basic
 public import OrlikSolomon.Grading.Diagonal
