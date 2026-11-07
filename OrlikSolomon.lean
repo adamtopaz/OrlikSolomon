@@ -113,6 +113,11 @@ public import OrlikSolomon.Geometry.RelationTargets
 public import OrlikSolomon.Geometry.Schemes.AffineDuality
 public import OrlikSolomon.Geometry.Schemes.AffinePairs
 public import OrlikSolomon.Geometry.Schemes.Basic
+public import OrlikSolomon.Geometry.Schemes.PrincipalPair
+public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Basic
+public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Certificates
+public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Duality
+public import OrlikSolomon.Geometry.Schemes.PrincipalPair.Standard
 public import OrlikSolomon.Geometry.Schemes.Products
 public import OrlikSolomon.Geometry.Schemes.Projective
 public import OrlikSolomon.Geometry.Schemes.Units

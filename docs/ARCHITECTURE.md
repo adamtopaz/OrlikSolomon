@@ -966,11 +966,13 @@ It makes cohomology a contravariant functor on a category of smooth `k`-schemes,
 complements the actual open subschemes of `Spec Sym(V*)` and `Proj Sym(W*)`, and reuses every proved
 algebraic result through the equivalence between smooth algebras and smooth affine schemes. It adds
 no field to the axioms, keeps the hypotheses of both structure theorems, and changes no conclusion.
-Stage G0's first half (#107) is formalized: `def:geo-domain`, `thm:geo-affine-duality`,
+Stage G0 (#107, #108) is formalized to the extent indicated below: `def:geo-domain`, `thm:geo-affine-duality`,
 `lem:geo-affine-pairs`, `lem:geo-products` and `thm:geo-units`, described in "Schemes, domains and
-affine duality" below. So are `def:geo-projective` and, except for its affine sides,
-`thm:geo-projective-geometry` (#112), described in "Projective complements on schemes". The other
-declaration names are proposals, as with the other blueprints.
+affine duality" below, and `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-cartesian` and
+`thm:geo-pair-duality`, described in "Principal pairs" below. The Cartesian node remains partial:
+its Tor-sheaf and conormal comparisons are not stated. So are `def:geo-projective` and, except for
+its affine sides, `thm:geo-projective-geometry` (#112), described in "Projective complements on
+schemes". The other declaration names are proposals, as with the other blueprints.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1094,6 +1096,55 @@ These are the conventions of `Geometry/Schemes/`, on which every later stage bui
   geometric standard pair is `zeroSection X`, `X ◁ gmToAffineLine k` and the coordinate `prodCoord X`,
   for every `S`-scheme `X`.
 
+### Principal pairs
+
+These are the conventions of `Geometry/Schemes/PrincipalPair`, which the cohomological stages use for
+the Gysin and residue maps.
+
+- **The record.** `Geometric.DivisorPair D` has objects `ambient`, `closed`, `compl` of `D.Obj`,
+  maps `i : closed ⟶ ambient` and `j : compl ⟶ ambient`, an equation `eqn : Γ(ambient.obj.left, ⊤)`,
+  and the data-free certificates `isRegularSection_eqn`, `[IsClosedImmersion i.hom.left]` with
+  `ker_i : i.hom.left.ker = principalIdealSheaf eqn`, and `[IsOpenImmersion j.hom.left]` with
+  `opensRange_j : j.hom.left.opensRange = ambient.obj.left.basicOpen eqn`. The field names are those
+  of the algebraic `OrlikSolomon.DivisorPair`. The universal properties are `closedLift` and
+  `complLift`, and `eqnUnit` is the equation as a unit on `compl`. A unit equation is allowed: then
+  `closed` is empty (`isEmpty_closed_of_isUnit`) and `j` is an isomorphism (`isIso_j_of_isUnit`).
+- **Morphisms.** `g : P ⟶ Q` has `ambient`, `closed`, `compl` in the geometric direction, with
+  `i_comp : P.i ≫ g.ambient = g.closed ≫ Q.i`, `j_comp` likewise, and
+  `associated_eqn : Associated (g.ambient.hom.left.appTop Q.eqn) P.eqn`, which is literally the field
+  of the algebraic morphism `Γ(Q) ⟶ Γ(P)`; `Hom.exists_unit_mul` restates it as the blueprint's
+  `g^* f_Q = u f_P`. A morphism is determined by its ambient map (`hom_ext`), and `homOfAmbient`
+  builds one from a map of ambients. Pullback of functions along a composite is
+  `SmoothDomain.appTop_comp_apply`.
+- **Cartesian squares.** `associated_iff_ker_pullback_fst` and `associated_iff_isPullback` are
+  `thm:geo-cartesian`, through the scheme-level `associated_iff_principalIdealSheaf_eq` (local ratios
+  glue by regularity) and `ker_pullback_fst_of_ker_eq`. Every morphism has Cartesian squares
+  (`Hom.isPullback_closed`, `Hom.isPullback_compl`) and a regular pulled-back equation
+  (`Hom.isRegularSection_appTop`), which is the Tor-independence. Conormal sheaves are not formalized:
+  the conormal isomorphism of the blueprint is the unit of `Hom.exists_unit_mul`.
+- **Named pairs** are `@[implicit_reducible] def`s whose object equations (`standardPair_ambient`,
+  `spec_closed`, ...) are not `simp` lemmas, while those of their maps and equations are:
+  `withEqn` (a unit multiple of the equation, with `withEqnIso` given by identities), `ofLE` and
+  `functorOfLE` (a pair in a larger domain), `standardPair D X` (for every object `X`, affine or not,
+  with `standardPairMap`, `standardPairFunctor`), `spec D P` and `globalSections P`. The morphism
+  `toStandard P : P ⟶ standardPair D D.point` is `z ↦ f` with multiplier `1`, the geometric
+  `fromStandard`, with `toStandard_compl` the map of the unit `f|_U`.
+- **Duality.** `DivisorPair.specFunctor D : OrlikSolomon.DivisorPair k ⥤ (DivisorPair D)ᵒᵖ` sends a
+  pair to `spec D P` and `F` to `(specMap D F).op`, whose components are
+  `(D.specFunctor.map F.ambient).unop` and so on: a geometric theory on `D` evaluates algebraic pairs
+  and morphisms through it, and `spec_eq_ofLE` says the result does not depend on the domain. For a
+  pair in `aff k`, `globalSections P` has components `(affineGlobalSectionsFunctor k).obj (op _)` and
+  maps `(affineGlobalSectionsFunctor k).map P.i.op`; `globalSectionsFunctor k` is functorial. The
+  equivalence `affinePairEquivalence k : OrlikSolomon.DivisorPair k ≌ (DivisorPair (aff k))ᵒᵖ` has
+  unit `unitIso P` with components `(smoothAffineUnitIso k).hom.app _` and counit
+  `(counitIso Q).op` with components `((smoothAffineCounitIso k).hom.app (op _)).unop`, so the pair
+  isomorphisms needed by `thm:geo-from-algebraic` have the objectwise `η` and `ε` as components.
+  `specStandardPairIso D A` identifies `spec D (standardPair A)` with `standardPair D (D.spec A)`
+  through `D.specPolynomialIso A`, `𝟙` and `D.specLaurentIso A`. Inside
+  `namespace OrlikSolomon.Geometric.DivisorPair` the pair-level `spec`, `specMap`, `specFunctor`,
+  `globalSections`, `globalSectionsMap` and `globalSectionsFunctor` shadow the object-level names, so
+  write `Geometric.spec` and so on there.
+
 ### Projective complements on schemes
 
 These are the conventions of `Geometry/Schemes/Projective` (#112).
@@ -1143,7 +1194,11 @@ into other files updates this table.
 | `Geometry/Schemes/AffinePairs` | `lem:geo-affine-pairs`: zero schemes, basic opens and regular sections | #107 |
 | `Geometry/Schemes/Units` | `thm:geo-units`, and functions as maps to `𝔸¹` | #107 |
 | `Geometry/Schemes/Products` | `lem:geo-products`, and the geometric standard pair | #107 |
-| `Geometry/Schemes/PrincipalPair` | `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-cartesian`, `thm:geo-pair-duality` | #108 |
+| `Geometry/Schemes/PrincipalPair` | the module to import for the four files below | #108 |
+| `Geometry/Schemes/PrincipalPair/Certificates` | the certificates of a pair on any scheme: universal properties, base change, unit multiples, locality of regularity, and the translation to algebraic certificates on affine schemes and spectra | #108 |
+| `Geometry/Schemes/PrincipalPair/Basic` | `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-cartesian`: `DivisorPair`, its morphisms, `homOfAmbient`, `withEqn`, `ofLE` and the Cartesian squares | #108 |
+| `Geometry/Schemes/PrincipalPair/Standard` | the certificates of the geometric standard pair on every scheme, `standardPair`, its functoriality and `toStandard` | #108 |
+| `Geometry/Schemes/PrincipalPair/Duality` | `thm:geo-pair-duality`: `spec`, `globalSections`, `affinePairEquivalence` and `specStandardPairIso` | #108 |
 | `Cohomology/Geometric/Axioms`, `Cohomology/Geometric/Transport` | `def:geo-theory`, `lem:geo-restriction`, `lem:geo-empty`, `thm:geo-to-algebraic`, `thm:geo-from-algebraic` | #109 |
 | `Cohomology/Geometric/Bridge` | `def:geo-supports`, `thm:geo-bridge` | #110 |
 | `Geometry/Schemes/Complement` | `def:geo-affine-space`, `def:geo-complement`, `thm:geo-complement-spec`, `thm:geo-deletion`, `thm:geo-small-targets` | #111 |
