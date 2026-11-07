@@ -577,6 +577,15 @@ ambient schemes. The square of open immersions supplies the target comparison. -
     (formsSheafPullback F.compl.hom n) ≫
       (pairOpenPushforwardIso F).hom.app (formsSheaf k P.compl.obj n)
 
+/-- Complement-form pullback is ordinary pullback on the complement, transported through the
+commutative square of open immersions. -/
+lemma openFormsPullback_eq (F : P ⟶ Q) (n : ℕ) :
+    openFormsPullback F n =
+      (TopCat.Sheaf.pushforward (ModuleCat k) Q.j.hom.left.base).map
+        (formsSheafPullback F.compl.hom n) ≫
+          (pairOpenPushforwardIso F).hom.app (formsSheaf k P.compl.obj n) := by
+  rfl
+
 /-- Regular-form pullback commutes with the complement square of a morphism of pairs. -/
 @[reassoc] theorem regularPullback_openFormsPullback (F : P ⟶ Q) (n : ℕ) :
     formsSheafPullback Q.j.hom n ≫ openFormsPullback F n =
