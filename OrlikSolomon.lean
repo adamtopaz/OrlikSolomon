@@ -64,6 +64,10 @@ public import OrlikSolomon.DeRham.Pole.Filtration
 public import OrlikSolomon.DeRham.Pole.Quotient
 public import OrlikSolomon.DeRham.Pole.Reduction
 public import OrlikSolomon.DeRham.PrincipalQuotient
+public import OrlikSolomon.DeRham.Schemes.Forms
+public import OrlikSolomon.DeRham.Schemes.Forms.Presheaf
+public import OrlikSolomon.DeRham.Schemes.Forms.Pullback
+public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
 public import OrlikSolomon.DeRham.SmoothPair
 public import OrlikSolomon.DeRham.SmoothPair.Koszul
 public import OrlikSolomon.DeRham.SmoothPair.Projective
@@ -110,6 +114,7 @@ public import OrlikSolomon.Geometry.ProjectiveArrangement
 public import OrlikSolomon.Geometry.ProjectiveRing
 public import OrlikSolomon.Geometry.ProjectiveScheme
 public import OrlikSolomon.Geometry.RelationTargets
+public import OrlikSolomon.Geometry.Schemes.ModuleGluing
 public import OrlikSolomon.Geometry.SmoothAlg
 public import OrlikSolomon.Grading.Basic
 public import OrlikSolomon.Grading.Diagonal
