@@ -737,7 +737,10 @@ included, without finite presentation or smoothness of a quotient.
 - **Layers.** Everything in `DeRham/Maps/Gysin` and `DeRham/Maps/Naturality` is about `H^•(L)` and
   needs no comparison and no hypothesis on `k`: `LogCohomology.residue T h` is `H(ρ)`, and exactness
   has `LogCohomology.ofCohomology` in the place of `j_*`. `gysin` also needs no comparison, since its
-  target is `H^•(A)`.
+  target is `H^•(A)`. `DeRham/Maps` is the one file that uses `thm:dr-comparison`: `residue T hUnits h`
+  is `H(ρ)` after the inverse of `logToLocalizationEquiv`, and its public face is
+  `residue_toCohomology` and `residue_mk_of_mem_logForms`. Its proofs transport the statements about
+  `H^•(L)` along that equivalence, so no argument on forms is repeated there.
 - **Degrees.** The maps are on total cohomology, with the shifts `isHomogeneousOfShift_gysin` and
   `LogCohomology.isHomogeneousOfShift_residue` for `Cohomology.grading`, so that negative degrees need
   no case analysis. Exactness in a degree follows from total exactness by
@@ -784,33 +787,6 @@ a nonzero coefficient ring is assumed. A smooth principal pair supplies the norm
 `logToLocalizationDegreeEquiv` and `logToLocalizationGradingEquiv`. Their forward and inverse
 formulas identify the canonical map in each degree. The full algebra equivalence is independent
 of the coefficient-unit proofs and the chosen closed-divisor presentation or certificate.
-
-### The residue, the Gysin map and naturality
-
-- **On elements, with no connecting map.** `gysin T h` is defined by the blueprint's formula, as a
-  `k`-linear map on closed forms that descends, and `gysin_mk_of_logResidue_eq` is that formula:
-  `G[γ] = [dλ]` for `ρ λ = γ`, with `dλ` the image of a regular form. Exactness is three short proofs
-  on representatives. So Mathlib's connecting map for `logResidueShortExact`, which would need
-  `H^(n+1)(shiftedComplex k S) ≃ H^n(Ω_S)` and a lemma reconciling its sign, is not used anywhere.
-  `gysin_mk_of_map_eq` is `G[γ] = [-θ ∧ dη]`, and `gysin_mk_of_d_eq` is the same class without `T`.
-- **Layers.** Everything in `DeRham/Maps/Gysin` and `DeRham/Maps/Naturality` is about `H^•(L)` and
-  needs no comparison and no hypothesis on `k`: `LogCohomology.residue T h` is `H(ρ)`, and exactness
-  has `LogCohomology.ofCohomology` in the place of `j_*`. `gysin` also needs no comparison, since its
-  target is `H^•(A)`. `DeRham/Maps` is the one file that uses `thm:dr-comparison`: `residue T hUnits h`
-  is `H(ρ)` after the inverse of `logToLocalizationEquiv`, and its public face is
-  `residue_toCohomology` and `residue_mk_of_mem_logForms`. Its proofs transport the statements about
-  `H^•(L)` along that equivalence, so no argument on forms is repeated there.
-- **Degrees.** The maps are on total cohomology, with the shifts `isHomogeneousOfShift_gysin` and
-  `LogCohomology.isHomogeneousOfShift_residue` for `Cohomology.grading`, so that negative degrees need
-  no case analysis. Exactness in a degree follows from total exactness by
-  `IsHomogeneousOfShift.exact_iff_forall_mem`.
-- **Maps of pairs are one `Prop`.** `IsPairHom f π f' π' φ ψ χ` says that `φ`, `ψ` and `χ` commute with
-  the structure maps and that `φ f` is associated to `f'`. It does not require any pair to be smooth,
-  so that `logMap` and `IsPairHom.map_theta` make sense for any localization. No flatness appears, and
-  no exact sequence is tensored. `DivisorPair.Hom.isPairHom` is the case of a morphism of divisor
-  pairs, and `IsPairHom.of_associated` is the existence of `ψ` and `χ` for any `φ`, unique by
-  `IsPairHom.closed_eq` and `IsPairHom.compl_eq`. `IsPairHom.of_associated_id` is how a statement
-  becomes one about associated equations.
 
 ### Cohomology
 
