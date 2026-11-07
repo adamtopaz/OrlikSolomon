@@ -96,6 +96,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Log/Cohomology`        | `LogCohomology`, its grading, and the algebra maps `H^•(A) → H^•(L) → H^•(T)`, for `thm:dr-comparison` and `lem:dr-exactness`; no smoothness |
 | `DeRham/Log/Residue`           | `IsSmoothPrincipalPair`, `lem:dr-regularity`, `def:dr-residue`, `thm:dr-residue-sequence` on elements, `lem:dr-form-projection` |
 | `DeRham/Log`                   | `logComplex`, `shiftedComplex`, `logResidueShortExact` of `thm:dr-residue-sequence`, and `DivisorPair.isSmoothPrincipalPair`; the module to import |
+| `DeRham/Maps/Gysin`            | `def:dr-gysin`, `lem:dr-exactness` and `thm:dr-projection` for `H^•(L)`: `LogCohomology.residue`, `gysin`, its explicit formulas, exactness and the shifts |
+| `DeRham/Maps/Naturality`       | `thm:dr-log-naturality`, and `thm:dr-naturality` for `H^•(L)`: `IsPairHom`, `logMap`, `logResidueShortComplexMap`, `gysin_map`, `DivisorPair.Hom.isPairHom` and associated equations |
 | `DeRham/Pole/Cartan`           | `lem:dr-cartan`: contraction, Lie derivative and localization |
 | `DeRham/Pole/Euler`            | `lem:dr-euler`: actual Euler contraction, the quotient `L/fL` and its homogeneous pieces |
 | `DeRham/Pole/Filtration`       | `def:dr-pole-filtration`: increasing, exhaustive pole stages and their differential |
@@ -120,6 +122,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/DeRhamInstance`     | the fields of `lem:dr-ordinary-basic` fit the structure; consumers of the theory; signs by cohomological degree, the zero algebra and characteristic two |
 | `Examples/DeRhamLocalization` | nilpotent, zero and unit equations; a conormal map that is not injective over `ZMod 2` |
 | `Examples/DeRhamLog`         | signs of the projection formulas; unit, zero-algebra, disconnected and divisor-pair consumers of `DeRham/Log` |
+| `Examples/DeRhamMaps`        | signs of the residue and Gysin maps; the empty divisor, divisor-pair consumers, and the morphism that is not flat, with its proof |
 | `Examples/DeRhamPole`        | logarithmic comparison with zero coefficients, unit equations and a disconnected rational smooth pair |
 | `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
 | `Examples/Degenerate`        | coefficient cohomology of empty complements and nonunique zero-ring basis sizes |
@@ -567,8 +570,9 @@ its cohomology algebra, polynomial-form decomposition and homotopy invariance, f
 localizations and principal quotients, projectivity and regular scalar action in every form degree,
 injectivity into localization, conormal splitting, global and localized normal derivations, wedge
 exactness modulo the divisor, logarithmic forms with their residue sequence, global logarithmic
-comparison by finite pole reduction, and the Laurent-twisted functor with the fields preceding Gysin
-and residue exist; the cohomological residue/Gysin construction and the final instance remain planned.
+comparison, the Gysin map, the long exact sequence for `H^•(L)`, naturality of all of these, and
+the Laurent-twisted functor with the fields preceding Gysin and residue exist; the residue on
+`H^•(T)`, the remaining fields and the final instance remain planned.
 The table groups modules by issues #72–#83. The conormal and normal-derivation results need only
 Mathlib's Kähler differentials and formal-smoothness lifts. Normalizing a derivation on
 `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge exactness uses exterior
@@ -721,6 +725,30 @@ included, without finite presentation or smoothness of a quotient.
   `exact_powerToLog_logPowerResidue` and `logResidue_surjective`, which fix the sign of
   `def:dr-gysin` without reference to a library connecting map.
 
+### The residue, the Gysin map and naturality
+
+- **On elements, with no connecting map.** `gysin T h` is defined by the blueprint's formula, as a
+  `k`-linear map on closed forms that descends, and `gysin_mk_of_logResidue_eq` is that formula:
+  `G[γ] = [dλ]` for `ρ λ = γ`, with `dλ` the image of a regular form. Exactness is three short proofs
+  on representatives. So Mathlib's connecting map for `logResidueShortExact`, which would need
+  `H^(n+1)(shiftedComplex k S) ≃ H^n(Ω_S)` and a lemma reconciling its sign, is not used anywhere.
+  `gysin_mk_of_map_eq` is `G[γ] = [-θ ∧ dη]`, and `gysin_mk_of_d_eq` is the same class without `T`.
+- **Layers.** Everything in `DeRham/Maps/Gysin` and `DeRham/Maps/Naturality` is about `H^•(L)` and
+  needs no comparison and no hypothesis on `k`: `LogCohomology.residue T h` is `H(ρ)`, and exactness
+  has `LogCohomology.ofCohomology` in the place of `j_*`. `gysin` also needs no comparison, since its
+  target is `H^•(A)`.
+- **Degrees.** The maps are on total cohomology, with the shifts `isHomogeneousOfShift_gysin` and
+  `LogCohomology.isHomogeneousOfShift_residue` for `Cohomology.grading`, so that negative degrees need
+  no case analysis. Exactness in a degree follows from total exactness by
+  `IsHomogeneousOfShift.exact_iff_forall_mem`.
+- **Maps of pairs are one `Prop`.** `IsPairHom f π f' π' φ ψ χ` says that `φ`, `ψ` and `χ` commute with
+  the structure maps and that `φ f` is associated to `f'`. It does not require any pair to be smooth,
+  so that `logMap` and `IsPairHom.map_theta` make sense for any localization. No flatness appears, and
+  no exact sequence is tensored. `DivisorPair.Hom.isPairHom` is the case of a morphism of divisor
+  pairs, and `IsPairHom.of_associated` is the existence of `ψ` and `χ` for any `φ`, unique by
+  `IsPairHom.closed_eq` and `IsPairHom.compl_eq`. `IsPairHom.of_associated_id` is how a statement
+  becomes one about associated equations.
+
 ### Pole order and logarithmic comparison
 
 `DeRham/Pole/Cartan` defines contraction by a derivation, its Lie derivative, and their extension
@@ -853,10 +881,11 @@ The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each no
 names the exterior calculus, dg algebra, cohomology algebra, polynomial homotopy, forms on
 localizations and quotients, projectivity and regularity of forms, injectivity into localization,
 conormal splitting, normal derivations, modulo-divisor wedge exactness, logarithmic forms with
-their residue sequence, global logarithmic comparison, and the Laurent-twisted functor with the
-first fields of the structure as formalized, and lists what remains. The first page, `Organization`
-and the chapter on the axioms say the instance is in progress. No nonzero value of `OrdinaryTheory`
-has been constructed. The build does not check that prose, so keep it current as nodes land. The PR
+their residue sequence, global logarithmic comparison, the Gysin map and naturality, and the
+Laurent-twisted functor with the first fields of the structure as formalized, and lists what remains.
+The first page, `Organization` and the chapter on the axioms say the instance is in progress.
+No nonzero value of `OrdinaryTheory` has been constructed. The build does not check that prose,
+so keep it current as nodes land. The PR
 that proves `thm:dr-instance` must update the sentences saying that no nonzero value
 of the structure has been constructed: on the first page, in the chapter on the axioms, on the
 status page and in `README.md`.

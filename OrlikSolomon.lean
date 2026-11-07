@@ -47,6 +47,8 @@ public import OrlikSolomon.DeRham.Log
 public import OrlikSolomon.DeRham.Log.Basic
 public import OrlikSolomon.DeRham.Log.Cohomology
 public import OrlikSolomon.DeRham.Log.Residue
+public import OrlikSolomon.DeRham.Maps.Gysin
+public import OrlikSolomon.DeRham.Maps.Naturality
 public import OrlikSolomon.DeRham.Pole
 public import OrlikSolomon.DeRham.Pole.Cartan
 public import OrlikSolomon.DeRham.Pole.Comparison
@@ -71,6 +73,7 @@ public import OrlikSolomon.Examples.DeRhamHomotopy
 public import OrlikSolomon.Examples.DeRhamInstance
 public import OrlikSolomon.Examples.DeRhamLocalization
 public import OrlikSolomon.Examples.DeRhamLog
+public import OrlikSolomon.Examples.DeRhamMaps
 public import OrlikSolomon.Examples.DeRhamPole
 public import OrlikSolomon.Examples.DeRhamSmoothPair
 public import OrlikSolomon.Examples.Degenerate
