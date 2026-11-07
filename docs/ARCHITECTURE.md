@@ -1083,7 +1083,10 @@ These are the conventions of `Geometry/Schemes/`, on which every later stage bui
   isomorphism `unitsEquivHomGm`, inverse to pullback of `gmCoord`); compare maps into them with
   `homAffineLineEquiv.injective` and `hom_ext_gm`. The comparisons `specPolynomialIso` and
   `specLaurentIso` of `lem:geo-products` are built from these universal properties rather than from
-  pushouts of rings, and are stated for `A : SmoothAlg k` with the existing `polynomialC`,
+  pushouts of rings. They hold for every `A : CommAlgCat k`, with the algebras `polynomialAlg A` and
+  `laurentAlg A` and their maps `polynomialAlgC`, `polynomialAlgLift`, `laurentAlgLift`,
+  `polynomialAlgToLaurent`. `SmoothDomain.specPolynomialIso` and `specLaurentIso` specialize them to
+  `A : SmoothAlg k`, with every compatibility restated for the existing `polynomialC`,
   `polynomialLift`, `laurentSection` and `polynomialToLaurent`, so that an algebraic axiom is the
   conjugate of a geometric one (`SmoothDomain.specPolynomialIso_hom_prodAffineLineFst`). The
   geometric standard pair is `zeroSection X`, `X ◁ gmToAffineLine k` and the coordinate `prodCoord X`,
