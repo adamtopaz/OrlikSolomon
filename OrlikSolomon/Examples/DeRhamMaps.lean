@@ -5,15 +5,15 @@ Authors: Adam Topaz, Claude
 -/
 module
 
-public import OrlikSolomon.DeRham.Maps.Naturality
+public import OrlikSolomon.DeRham.Maps
 public import OrlikSolomon.Examples.DeRhamLog
 
 /-!
 # Regressions for the Gysin map, the logarithmic residue and naturality
 
-These check what is easy to get wrong about `DeRham/Maps/Gysin` and `DeRham/Maps/Naturality`: the
-signs, the empty divisor, the zero algebra, a map of pairs that is not flat, and that everything
-applies to divisor pairs and their morphisms directly.
+These check what is easy to get wrong about `DeRham/Maps`: the signs, the empty divisor, the zero
+algebra, a map of pairs that is not flat, and that everything applies to divisor pairs and their
+morphisms directly.
 
 ## Main results
 
@@ -24,6 +24,11 @@ applies to divisor pairs and their morphisms directly.
 * `OrlikSolomon.DeRham.Examples.gysin_mk_eq_neg_mk`: the sign in `G[γ] = [-θ ∧ dη]`.
 * `OrlikSolomon.DeRham.Examples.ofCohomology_bijective_of_subsingleton`: for an empty divisor, the
   exact sequence says that `H^•(A) → H^•(L)` is bijective.
+* `OrlikSolomon.DeRham.Examples.residue_mk_theta_localization` and
+  `OrlikSolomon.DeRham.Examples.mk_theta_notMem_range_map`: `r[θ] = 1`, so that `[θ]` does not come
+  from `A` when `H^•(S)` is nonzero.
+* `OrlikSolomon.DeRham.Examples.map_bijective_of_subsingleton`: for an empty divisor,
+  `H^•(A) → H^•(T)` is bijective.
 * `OrlikSolomon.DeRham.Examples.nonFlatHom`, with
   `OrlikSolomon.DeRham.Examples.not_flat_nonFlatAmbient`: the morphism
   `(k[z, v], z) → (k[x, y, y⁻¹], x)`, `z ↦ x y`, `v ↦ 0`, of `prop:dr-morphism-examples`, which is
@@ -84,6 +89,26 @@ theorem gysin_mk_eq_neg_mk (h : IsSmoothPrincipalPair f φ) {γ : Forms k S} (h�
   rw [Cohomology.mk_neg]
   exact gysin_mk_of_map_eq h hγ hη (by rw [map_neg, hω])
 
+variable (hUnits : ∀ n : ℕ, IsUnit (n + 1 : k))
+
+/-- `r[θ] = 1`.
+
+Blueprint: `lem:dr-exactness`, with `ω = 0` and `η = 1`. -/
+theorem residue_mk_theta_localization (h : IsSmoothPrincipalPair f φ) :
+    residue T hUnits h (Cohomology.mk θ (d_theta k f T)) = 1 := by
+  rw [residue_mk_of_mem_logForms hUnits h (theta_mem_logForms k f T), ← Cohomology.mk_one (by simp)]
+  exact Cohomology.mk_congr (logResidue_theta h) _
+
+include hUnits in
+/-- `[θ]` does not come from `A`, when the cohomology of `S` is nonzero, since its residue is one.
+
+Blueprint: `lem:dr-exactness`, exactness at `H^1(T)`. -/
+theorem mk_theta_notMem_range_map [Nontrivial (Cohomology k S)] (h : IsSmoothPrincipalPair f φ) :
+    Cohomology.mk θ (d_theta k f T) ∉ Set.range (Cohomology.map (IsScalarTower.toAlgHom k A T)) :=
+  fun hmem => one_ne_zero
+    ((residue_mk_theta_localization T hUnits h).symm.trans
+      ((exact_map_residue T hUnits h _).2 hmem))
+
 end Signs
 
 section Empty
@@ -101,6 +126,20 @@ theorem ofCohomology_bijective_of_subsingleton [Subsingleton S] (h : IsSmoothPri
   · obtain ⟨y, rfl⟩ := (exact_gysin_ofCohomology T h c).1 hc
     rw [Subsingleton.elim y 0, map_zero]
   · exact (LogCohomology.exact_ofCohomology_residue T h c).1 (Subsingleton.elim _ _)
+
+variable (hUnits : ∀ n : ℕ, IsUnit (n + 1 : k))
+
+include hUnits in
+/-- If the divisor is empty, in the sense that the closed part is zero, then the exact sequence says
+that `H^•(A) → H^•(T)` is bijective. The comparison is what makes this a statement about `T`.
+
+Blueprint: `prop:dr-unit-example`, `prop:dr-zero-example`. -/
+theorem map_bijective_of_subsingleton [Subsingleton S] (h : IsSmoothPrincipalPair f φ) :
+    Function.Bijective (Cohomology.map (IsScalarTower.toAlgHom k A T)) := by
+  refine ⟨(injective_iff_map_eq_zero _).2 fun c hc => ?_, fun c => ?_⟩
+  · obtain ⟨y, rfl⟩ := (exact_gysin_map T hUnits h c).1 hc
+    rw [Subsingleton.elim y 0, map_zero]
+  · exact (exact_map_residue T hUnits h c).1 (Subsingleton.elim _ _)
 
 end Empty
 
@@ -130,6 +169,36 @@ example (c : LogCohomology k P.eqn P.compl) :
       Cohomology.map (SmoothAlg.algHom F.closed)
         (LogCohomology.residue P.compl P.isSmoothPrincipalPair c) :=
   LogCohomology.residue_map F.isPairHom _ _ c
+
+variable (hUnits : ∀ n : ℕ, IsUnit (n + 1 : k))
+
+/-- The long exact sequence applies directly to a divisor pair, with `P.j` and with `P.compl` as the
+localization. -/
+example : Function.Exact (gysin P.compl P.isSmoothPrincipalPair)
+    (Cohomology.map (SmoothAlg.algHom P.j)) :=
+  exact_gysin_map P.compl hUnits _
+
+example : Function.Exact (Cohomology.map (SmoothAlg.algHom P.j))
+    (residue P.compl hUnits P.isSmoothPrincipalPair) :=
+  exact_map_residue P.compl hUnits _
+
+example : Function.Exact (residue P.compl hUnits P.isSmoothPrincipalPair)
+    (gysin P.compl P.isSmoothPrincipalPair) :=
+  exact_residue_gysin P.compl hUnits _
+
+/-- The projection formula for a divisor pair, in the shape of `residue_mul_map` of
+`OrdinaryTheory`. -/
+example (a : Cohomology k P.compl) (b : Cohomology k P.ambient) :
+    residue P.compl hUnits P.isSmoothPrincipalPair (a * Cohomology.map (SmoothAlg.algHom P.j) b) =
+      residue P.compl hUnits P.isSmoothPrincipalPair a * Cohomology.map (SmoothAlg.algHom P.i) b :=
+  residue_mul_map hUnits _ a b
+
+/-- The residue is natural for a morphism of divisor pairs. -/
+example (c : Cohomology k P.compl) :
+    residue Q.compl hUnits Q.isSmoothPrincipalPair (Cohomology.map (SmoothAlg.algHom F.compl) c) =
+      Cohomology.map (SmoothAlg.algHom F.closed)
+        (residue P.compl hUnits P.isSmoothPrincipalPair c) :=
+  residue_map hUnits F.isPairHom _ _ c
 
 end DivisorPair
 
@@ -214,6 +283,16 @@ example (c : Cohomology k (polynomial (point k))) :
         (gysin (standardPair (polynomial (point k))).compl (standardPair _).isSmoothPrincipalPair
           c) :=
   gysin_map (nonFlatHom k).isPairHom _ _ c
+
+/-- Naturality of the residue for the morphism that is not flat. -/
+example (hUnits : ∀ n : ℕ, IsUnit (n + 1 : k))
+    (c : Cohomology k (standardPair (polynomial (point k))).compl) :
+    residue (standardPair (laurent (point k))).compl hUnits (standardPair _).isSmoothPrincipalPair
+        (Cohomology.map (algHom (nonFlatHom k).compl) c) =
+      Cohomology.map (algHom (nonFlatHom k).closed)
+        (residue (standardPair (polynomial (point k))).compl hUnits
+          (standardPair _).isSmoothPrincipalPair c) :=
+  residue_map hUnits (nonFlatHom k).isPairHom _ _ c
 
 end NonFlat
 
