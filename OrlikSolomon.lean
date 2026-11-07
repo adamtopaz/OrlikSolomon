@@ -34,6 +34,9 @@ public import OrlikSolomon.DeRham.Exterior.Basic
 public import OrlikSolomon.DeRham.Exterior.Contraction
 public import OrlikSolomon.DeRham.Exterior.Quotient
 public import OrlikSolomon.DeRham.Localization
+public import OrlikSolomon.DeRham.Log
+public import OrlikSolomon.DeRham.Log.Basic
+public import OrlikSolomon.DeRham.Log.Residue
 public import OrlikSolomon.DeRham.PrincipalQuotient
 public import OrlikSolomon.DeRham.SmoothPair
 public import OrlikSolomon.DeRham.SmoothPair.Koszul
@@ -44,6 +47,7 @@ public import OrlikSolomon.Examples.CoordinatePolynomials
 public import OrlikSolomon.Examples.DeRhamCohomology
 public import OrlikSolomon.Examples.DeRhamComplex
 public import OrlikSolomon.Examples.DeRhamLocalization
+public import OrlikSolomon.Examples.DeRhamLog
 public import OrlikSolomon.Examples.DeRhamSmoothPair
 public import OrlikSolomon.Examples.Degenerate
 public import OrlikSolomon.Examples.Exterior

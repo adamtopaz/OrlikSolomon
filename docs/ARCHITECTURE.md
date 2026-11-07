@@ -82,6 +82,9 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Exterior/Quotient`     | the quotient formula in `lem:dr-exterior` |
 | `DeRham/Exterior`              | the kernel of `⋀_A^n M → ⋀_S^n M'` for surjections of rings and of modules, the form used by `lem:dr-presentation` and `lem:dr-quotient`; the module to import |
 | `DeRham/Localization`          | `lem:dr-localization`, for any `IsLocalization`; `dlog`, and the extension of derivations |
+| `DeRham/Log/Basic`             | `def:dr-log`, `lem:dr-log-dga`: `theta`, `logForms`, `logPower`, `logMk`, the differential and the ideal `f L^•`; no smoothness |
+| `DeRham/Log/Residue`           | `IsSmoothPrincipalPair`, `lem:dr-regularity`, `def:dr-residue`, `thm:dr-residue-sequence` on elements, `lem:dr-form-projection` |
+| `DeRham/Log`                   | `logComplex`, `shiftedComplex`, `logResidueShortExact` of `thm:dr-residue-sequence`, and `DivisorPair.isSmoothPrincipalPair`; the module to import |
 | `DeRham/PrincipalQuotient`     | `lem:dr-quotient`, for any surjection of algebras with principal kernel |
 | `DeRham/SmoothPair/Koszul`    | `lem:dr-modf-koszul`: wedge exactness modulo a smooth principal divisor in every degree |
 | `DeRham/SmoothPair`           | the conormal splitting of `lem:dr-conormal`, and the global and localized derivations of `lem:dr-normal-derivation` |
@@ -92,6 +95,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/DeRhamCohomology`    | exact forms are not an ideal of all forms, `X²` in characteristic two, the point over `ℤ` and `ZMod 2`, the zero algebra |
 | `Examples/DeRhamComplex`     | `d` is not linear over the algebra, characteristic two and the zero algebra |
 | `Examples/DeRhamLocalization` | nilpotent, zero and unit equations; a conormal map that is not injective over `ZMod 2` |
+| `Examples/DeRhamLog`         | signs of the projection formulas; unit, zero-algebra, disconnected and divisor-pair consumers of `DeRham/Log` |
 | `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
 | `Examples/Degenerate`        | coefficient cohomology of empty complements and nonunique zero-ring basis sizes |
 | `Examples/Exterior`          | full exterior algebras for singletons and coordinate arrangements |
@@ -535,8 +539,8 @@ declaration names are proposals, as with the first blueprint.
 
 The namespace is `OrlikSolomon.DeRham`. Exterior calculus, the dg algebra and its differential,
 its cohomology algebra, forms on localizations and principal quotients, conormal splitting, global
-and localized normal derivations, and wedge exactness modulo the divisor exist; the other parts
-below remain planned. Each row of this table is one of issues #72–#83, in order. The conormal and
+and localized normal derivations, wedge exactness modulo the divisor, and logarithmic forms with
+their residue sequence exist; the other parts below remain planned. Each row of this table is one of issues #72–#83, in order. The conormal and
 normal-derivation results need only Mathlib's Kähler differentials and formal-smoothness lifts.
 Normalizing a derivation on `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge
 exactness uses exterior contraction; neither requires the de Rham differential. All of
@@ -646,6 +650,36 @@ normalization to one only after localizing at `v(f)`.
   `exact_principalConormalMap` is deduced from `exact_conormalMap`. So `DeRham/PrincipalQuotient`
   imports `DeRham/SmoothPair`, which uses only Mathlib. `Examples/DeRhamLocalization` shows that the
   map need not be injective.
+
+### Logarithmic forms and the residue
+
+- **The hypotheses are one `Prop`.** `IsSmoothPrincipalPair f φ` bundles the regularity of `f`, the
+  surjectivity of `φ : A →ₐ[k] S`, `RingHom.ker φ = Ideal.span {f}` and the formal smoothness of `A`
+  and `S`. `DivisorPair.isSmoothPrincipalPair` is the case of a pair, and
+  `IsSmoothPrincipalPair.of_quotient` that of the literal quotient. The localization `T` stays an
+  instance of `IsLocalization.Away f T`. `DeRham/Log/Basic` does not need the hypotheses: logarithmic
+  forms and their dg algebra exist for any `f`.
+- **Regular forms are written as their images.** The blueprint identifies `Ω_A` with its image in
+  `Ω_T`. Here that image is `Forms.map (IsScalarTower.toAlgHom k A T)`, typed by `ofRegular` and
+  `powerToLog`, and `IsSmoothPrincipalPair.map_injective` justifies the identification.
+- **The total algebra is primary, again.** `logForms k f T` is an `A`-subalgebra of `Forms k T`, and
+  `logMk k f T (ω, η)` is its normal form `ω + θ ∧ η`, a surjective `A`-linear map. So
+  `obtain ⟨⟨ω, η⟩, rfl⟩ := logMk_surjective k f T x` starts a proof, and `logMk_mul_logMk`,
+  `logD_logMk` and `logResidue_logMk` compute. The module `logPower k f T n` is the blueprint's literal
+  sum, and `logPower_eq_inf` says that it is the part of `logForms` of degree `n`, which is where the
+  graded structure comes from. The form `θ` is `theta k f T`, and `theta_eq_dlog` compares it with
+  `dlog k u` for any unit that is the image of `f`.
+- **The residue.** `logResidue T h : logForms k f T →ₛₗ[φ] Forms k S` is defined on all logarithmic
+  forms, by descent along `logMk`, and `@[no_expose]`. Use `logResidue_logMk` and
+  `logResidue_eq_of_coe_eq`, which is independence of the decomposition. `logResidueₗ` is its
+  `k`-linear form, and `logPowerResidue T h n : L^(n+1) →ₗ[k] Ω_S^n` is its form typed by degree, with
+  no degree-zero version, since the target is zero there.
+- **The shift.** Complexes are indexed by `ℕ`, so `shiftedComplex k S` is `Ω_S^n` in degree `n + 1`
+  with differential `-d`, and `PUnit` in degree zero. This is the blueprint's `Ω_S^•[-1]`, whose
+  terms in negative degrees vanish. `logResidueShortExact` says the sequence is short exact, in
+  Mathlib's sense. It is not a substitute for the elementwise statements `logResidue_logD`,
+  `exact_powerToLog_logPowerResidue` and `logResidue_surjective`, which fix the sign of
+  `def:dr-gysin` without reference to a library connecting map.
 
 ### Cohomology
 
