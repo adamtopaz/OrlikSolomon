@@ -1033,10 +1033,14 @@ into other files updates this table.
 | `Geometry/Schemes/Projective` | `def:geo-projective`, `thm:geo-projective-geometry` | #112 |
 | `Cohomology/Geometric/Logarithms` | `def:geo-log`, `thm:geo-log-laws`, `thm:geo-gm-product` | #113 |
 | `Presentation/Geometric` | `thm:geo-affine`, `thm:geo-projective`, `thm:geo-transport-all` | #114 |
-| `DeRham/Schemes/Forms` | `lem:geo-module-gluing`, `def:geo-forms-sheaf`, `thm:geo-forms-comparison` | #115 |
+| `Geometry/Schemes/ModuleGluing` | `lem:geo-module-gluing`: exactness of associated module sheaves, for any modules, with no forms | #115 |
+| `DeRham/Schemes/Forms`, the module to import, over `DeRham/Schemes/Forms/Presheaf`, `DeRham/Schemes/Forms/Sheaf`, `DeRham/Schemes/Forms/Affine` and `DeRham/Schemes/Forms/Pullback` | `def:geo-forms-sheaf`, `thm:geo-forms-comparison` | #115 |
 | `DeRham/Schemes/Affine`, `DeRham/Schemes/Instance`, `DeRham/Schemes/Corollaries` | `def:geo-dr-cohomology`, `thm:geo-dr-instance`, `cor:geo-dr-arrangements` | #116 |
 | `DeRham/Schemes/Log` | `thm:geo-log-sheaves` | #117 |
 | `Examples/Geometric` | `prop:geo-finite-field`, `prop:geo-degenerate`, `prop:geo-exclusions`, `prop:geo-nonflat`, `prop:geo-nonaffine`, `prop:geo-affine-regressions`, and the blueprint's acceptance consumers | #118 |
+
+The modules of #115, `Geometry/Schemes/ModuleGluing` and `DeRham/Schemes/Forms` with its four
+submodules, use the namespace `OrlikSolomon.Geometric.DeRham`.
 
 `Presentation/Geometric` is a facade: the blueprint's acceptance test is a consumer that imports
 only it and states both theorems for a theory on all smooth schemes. The blueprint's stages fix the
