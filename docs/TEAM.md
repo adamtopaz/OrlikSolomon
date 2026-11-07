@@ -28,6 +28,7 @@ without agreeing it first. If an issue has no label, add yours before you start.
 | The projective theorem, regressions  | Codex  | #20, #23 |
 | The book's prose                     | Claude | #24 |
 | De Rham instance, milestone M5       | Both   | #71–#83, by label |
+| Geometric refactor, milestone M6     | Both   | #106–#118, by label |
 
 ## Reviews
 
