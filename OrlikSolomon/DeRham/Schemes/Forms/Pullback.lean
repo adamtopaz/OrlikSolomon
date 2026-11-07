@@ -501,7 +501,7 @@ def sectionPullbackTop (g : X ⟶ Y) : sectionAlgebra k Y ⊤ →ₐ[k] sectionA
 
 /-- Global function pullback is the pullback on the top open. -/
 @[simp] theorem sectionPullback_top_apply (g : X ⟶ Y) (r : sectionAlgebra k Y ⊤) :
-    sectionPullback g ⊤ r = sectionPullbackTop g r := rfl
+    dsimp% sectionPullback g ⊤ r = sectionPullbackTop g r := rfl
 
 @[simp] theorem sectionPullbackTop_id :
     sectionPullbackTop (𝟙 X) = AlgHom.id k (sectionAlgebra k X ⊤) := by
@@ -523,7 +523,7 @@ def formsSheafPullbackTop (g : X ⟶ Y) (n : ℕ) :
 /-- Pullback on the top open agrees with the typed global map. -/
 @[simp] theorem formsSheafPullback_app_top (g : X ⟶ Y) (n : ℕ)
     (x : (formsSheaf k Y n).obj.obj (op ⊤)) :
-    (formsSheafPullback g n).hom.app (op ⊤) x = formsSheafPullbackTop g n x := rfl
+    dsimp% (formsSheafPullback g n).hom.app (op ⊤) x = formsSheafPullbackTop g n x := rfl
 
 @[simp] theorem formsSheafPullbackTop_id (n : ℕ) :
     formsSheafPullbackTop (𝟙 X) n = LinearMap.id := by
