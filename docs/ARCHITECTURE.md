@@ -969,10 +969,13 @@ no field to the axioms, keeps the hypotheses of both structure theorems, and cha
 Stage G0 (#107, #108) is formalized to the extent indicated below: `def:geo-domain`, `thm:geo-affine-duality`,
 `lem:geo-affine-pairs`, `lem:geo-products` and `thm:geo-units`, described in "Schemes, domains and
 affine duality" below, and `def:geo-divisor-pair`, `def:geo-pair-hom`, `thm:geo-cartesian` and
-`thm:geo-pair-duality`, described in "Principal pairs" below. The Cartesian node remains partial:
-its Tor-sheaf and conormal comparisons are not stated. So are `def:geo-projective` and, except for
-its affine sides, `thm:geo-projective-geometry` (#112), described in "Projective complements on
-schemes". The other declaration names are proposals, as with the other blueprints.
+`thm:geo-pair-duality`, described in "Principal pairs" below. The Cartesian node remains partly
+formalized: its Tor-sheaf and conormal comparisons are not stated. Stage G2 is formalized:
+`def:geo-affine-space`, `def:geo-complement`, `thm:geo-complement-spec`, `thm:geo-deletion` and
+`thm:geo-small-targets` (#111), described in "Arrangement complements on schemes", and
+`def:geo-projective` and `thm:geo-projective-geometry` (#112, with its affine sides from #111),
+described in "Projective complements on schemes". The other declaration names are proposals, as
+with the other blueprints.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1145,6 +1148,58 @@ the Gysin and residue maps.
   `globalSections`, `globalSectionsMap` and `globalSectionsFunctor` shadow the object-level names, so
   write `Geometric.spec` and so on there.
 
+### Arrangement complements on schemes
+
+These are the conventions of `Geometry/Schemes/Complement` (#111), on which the geometric affine
+structure theorem builds.
+
+- **Affine space.** `affineSpace k V` is `spec (CommAlgCat.of k (CoordinateRing k V))` for every
+  `V`, smooth for finite-dimensional `V`. The function of an affine function is
+  `affineSpaceCoord f`, the morphism of an affine map is `affineSpaceMap k a`, `Spec` of
+  `CoordinateRing.pull a`, and maps into `𝔸_V` are compared with `hom_ext_affineSpace`. The
+  hyperplane scheme `hyperplaneScheme H` is `Spec` of the quotient by `hyperplaneIdeal H`, the ideal
+  of all equations, so it involves no choice; `ker_hyperplaneι` holds for every equation, and
+  `hyperplaneSchemeIso hH : 𝔸_{H.direction} ≅ 𝐇` turns the immersion into `𝔸_{chart H}`. A basis
+  enters only `affineSpaceIsoAffineSpace`, the comparison with Mathlib's `𝔸(ι; Spec k)`.
+- **The complement.** `complement 𝒜` is the open subscheme of `𝔸_V` on `complementOpens 𝒜`, the
+  intersection of the complements `hyperplaneComplement H` of the supports of the hyperplane
+  schemes, and `complementι 𝒜` is its open immersion. It is the basic open of every product of
+  equations (`complementOpens_eq_basicOpen`), and all of `𝔸_V` for the empty arrangement. It needs
+  no finite dimension; smoothness does. In a domain, `D.complement 𝒜` needs
+  `[FiniteDimensional k V]` and no hypothesis on `𝒜`.
+- **The comparison `s_𝒜`.** `complementIsoSpec 𝒜 : complement 𝒜 ≅ spec (CommAlgCat.of k 𝒜.ComplementRing)`
+  is over `𝔸_V` (`complementIsoSpec_hom_comp`) and is the only such isomorphism
+  (`eq_complementIsoSpec`), so it involves no equations. `D.complementIsoSpec 𝒜` has target
+  `D.spec (SmoothAlg.complement 𝒜)`, where a geometric theory restricts to the algebraic one: the
+  affine structure theorem on `U_𝒜` is the existing one composed with pullback along it. Its
+  generators correspond by `D.complementIsoSpec_hom_appTop_complementUnit`: the existing
+  `SmoothAlg.complementUnit 𝒜 f hf` is the restriction `Geometric.complementUnit 𝒜 f hf` of `f̃`, as
+  an equation of global sections.
+- **Maps of complements.** Each is `complementHom F` for a map `F` of the existing rings, that is,
+  `s_𝒜 ≫ Spec F ≫ s_ℬ⁻¹`, so one set of naturality lemmas serves them all
+  (`complementHom_comp_complementIsoSpec_hom`, `complementHom_comp_complementι`,
+  `complementHom_appTop`): `complementMap`, `complementInclusion`, `complementIso`,
+  `complementRestriction`, `affineImageMap` and `normalizedSliceMap`. The affine ones are
+  determined by their composite with `complementι` (`hom_ext_complement`,
+  `complementMap_comp_complementι`). Their domain forms are `ObjectProperty.homMk` and `isoMk`, and
+  their squares with `D.complementIsoSpec` are stated with `D.specFunctor.map` of the existing
+  `SmoothAlg` maps, such as `SmoothDomain.complementMap_comp_complementIsoSpec_hom`.
+- **The deletion pair.** `DivisorPair.deletionPair D 𝒜 hH hf` has objects `D.complement` of
+  `𝒜.deletion H`, `𝒜.restriction H` and `𝒜`, maps `D.complementRestriction` and
+  `D.complementInclusion`, and equation `f̃_H|_{U_𝒜'}`. Its certificates are transported from
+  `spec D` of the existing deletion pair along the comparisons by `DivisorPair.ofIso`, not proved
+  again. `deletionPairIsoSpec` is the isomorphism with `spec D (OrlikSolomon.DivisorPair.deletionPair
+  𝒜 hH hf)` whose components are `(D.complementIsoSpec _).hom`, so a theory's residue and Gysin maps
+  on the geometric pair are the existing ones by naturality along it, and `deletionPairIso` changes
+  the equation by identities. The certificates without a domain are `isRegularSection_deletion`,
+  `ker_complementRestriction` and `opensRange_complementInclusion_deletion`, and
+  `isPullback_complementRestriction` is the scheme-theoretic fiber product `U_𝒜' ×_{𝔸_V} 𝐇`.
+- **Names.** `Geometric.complement`, `complementUnit`, `complementMap`, `complementInclusion`,
+  `complementIso` and `complementRestriction` share their last component with `SmoothAlg`
+  declarations, so the scheme layer does not open `SmoothAlg`. `Geometric.complementι` clashes with
+  `ProjectiveArrangement.complementι` under `open ProjectiveArrangement`, which is why the cone and
+  decone composites are in `Geometry/Schemes/Decone` and not in `Geometry/Schemes/Projective`.
+
 ### Projective complements on schemes
 
 These are the conventions of `Geometry/Schemes/Projective` (#112).
@@ -1168,15 +1223,18 @@ These are the conventions of `Geometry/Schemes/Projective` (#112).
   the algebraic one, so the projective structure theorem on `U_P` is the existing one composed with
   pullback along it. The domain maps are `ObjectProperty.isoMk` and `homMk` of the maps over `S`,
   and their lemmas are transferred with `ObjectProperty.hom_ext`.
-- **The cone and the decone.** `V_P` and `U_{decone P}` are, for now, the spectra of the existing
-  rings `P.cone.ComplementRing` and `(P.decone ℓ₀).ComplementRing`. With
-  `Geometry/Schemes/Complement` (#111) they become the open subschemes by composing with `s_𝒜`. The projection
+- **The cone and the decone.** In `Geometry/Schemes/Projective`, `V_P` and `U_{decone P}` are the
+  spectra of the existing rings `P.cone.ComplementRing` and `(P.decone ℓ₀).ComplementRing`.
+  `Geometry/Schemes/Decone` composes them with `s_𝒜` to the actual complements:
+  `coneComplementProjection`, `coneComplementIsoProdGm` and `projectiveDeconeComplementIso`, with
+  their domain forms and squares with `s`. The projection
   `coneProjection P : V_P → U_P` is `Spec` of `toCone` followed by `s_P⁻¹`, with no choice; the
   square with `SmoothAlg.projectiveToCone` is
   `SmoothDomain.coneToProjectiveComplement_comp_projectiveComplementIsoSpec_hom`.
   `coneIsoProdGm hℓ₀` has first coordinate `coneProjection P` and second coordinate `ℓ₀`.
 - **Functions.** `projectiveRatio hℓ hℓ'` is the unit `ℓ / ℓ'` of `Γ(U_P)`, the pullback along `s_P`
-  of `ratioUnit`, and `specUnit u` is the unit of `Spec A` given by `u : Aˣ`. Lemmas about functions
+  of `ratioUnit`, and `specUnit u`, in `Geometry/Schemes/Units`, is the unit of `Spec A` given by
+  `u : Aˣ`. Lemmas about functions
   in a domain are equations of global sections, such as `SmoothDomain.coe_projectiveRatio`, and not
   of units: `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)` agree only at implicit
   transparency, so `Units.map` and products across them do not elaborate. Get a unit equation with
@@ -1201,8 +1259,13 @@ into other files updates this table.
 | `Geometry/Schemes/PrincipalPair/Duality` | `thm:geo-pair-duality`: `spec`, `globalSections`, `affinePairEquivalence` and `specStandardPairIso` | #108 |
 | `Cohomology/Geometric/Axioms`, `Cohomology/Geometric/Transport` | `def:geo-theory`, `lem:geo-restriction`, `lem:geo-empty`, `thm:geo-to-algebraic`, `thm:geo-from-algebraic` | #109 |
 | `Cohomology/Geometric/Bridge` | `def:geo-supports`, `thm:geo-bridge` | #110 |
-| `Geometry/Schemes/Complement` | `def:geo-affine-space`, `def:geo-complement`, `thm:geo-complement-spec`, `thm:geo-deletion`, `thm:geo-small-targets` | #111 |
+| `Geometry/Schemes/Complement` | the module to import for the four files below | #111 |
+| `Geometry/Schemes/Complement/AffineSpace` | `def:geo-affine-space`: `affineSpace`, `affineSpaceCoord`, `affineSpaceMap`, hyperplane schemes and the comparison with Mathlib's `AffineSpace` | #111 |
+| `Geometry/Schemes/Complement/Basic` | `def:geo-complement`, `thm:geo-complement-spec`: `complement`, `complementIsoSpec`, `complementHom` and the maps of complements | #111 |
+| `Geometry/Schemes/Complement/Deletion` | `thm:geo-deletion`: `DivisorPair.ofIso`, `DivisorPair.deletionPair` and the fiber product with `𝐇` | #111 |
+| `Geometry/Schemes/Complement/Targets` | `thm:geo-small-targets`: `affineImageMap`, `normalizedSliceMap` | #111 |
 | `Geometry/Schemes/Projective` | `def:geo-projective`, `thm:geo-projective-geometry` | #112 |
+| `Geometry/Schemes/Decone` | the affine sides of `thm:geo-projective-geometry`: the cone and the decone as actual complements | #111 |
 | `Cohomology/Geometric/Logarithms` | `def:geo-log`, `thm:geo-log-laws`, `thm:geo-gm-product` | #113 |
 | `Presentation/Geometric` | `thm:geo-affine`, `thm:geo-projective`, `thm:geo-transport-all` | #114 |
 | `Geometry/Schemes/ModuleGluing` | `lem:geo-module-gluing`: exactness of associated module sheaves, for any modules, with no forms | #115 |
