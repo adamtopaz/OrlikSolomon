@@ -36,7 +36,8 @@ boundary (`lem:central-boundary`) use, since the maps they descend are not multi
 * `OrlikSolomon.RelationQuotient.quotientLinearEquiv`: the underlying module is the quotient of
   `T` by the submodule `J(ℛ)`.
 * `OrlikSolomon.RelationQuotient.grading`, `OrlikSolomon.RelationQuotient.gradedAlgebra`: the
-  induced internal grading when the relators are homogeneous.
+  induced internal grading when the relators are homogeneous, and
+  `OrlikSolomon.RelationQuotient.gradedAlgebraOfIsHomogeneous` when only `J(ℛ)` is.
 
 ## Main results
 
@@ -46,6 +47,8 @@ boundary (`lem:central-boundary`) use, since the maps they descend are not multi
   to bound `J(ℛ)` it suffices to treat the contexts `a * r * b`, and even only those with `a` and
   `b` in fixed spanning sets of `T`.
 * `OrlikSolomon.relationSubmodule_isHomogeneous`: `J(ℛ)` is homogeneous if the relators are.
+* `OrlikSolomon.mem_relationSubmodule_coe_twoSidedIdeal`: a two-sided ideal, as a set of relators,
+  has `J(I) = I`.
 * `OrlikSolomon.RelationQuotient.liftAlgHomEquiv`, `OrlikSolomon.RelationQuotient.liftLinearEquiv`:
   the two universal properties, as equivalences.
 * `OrlikSolomon.RelationQuotient.decompose_mk`: homogeneous components in the quotient are computed
@@ -207,6 +210,13 @@ theorem mem_relationSubmodule_iff_mem_span {x : T} :
     | neg x _ hx => simpa using mul_mem_relationSubmodule_left (-1) hx
     | left_absorb a x _ hx => exact mul_mem_relationSubmodule_left a hx
     | right_absorb b x _ hx => exact mul_mem_relationSubmodule_right hx b
+
+/-- The relators of a two-sided ideal generate nothing new: `J(I)` has the elements of `I`. -/
+@[simp]
+theorem mem_relationSubmodule_coe_twoSidedIdeal (I : TwoSidedIdeal T) {x : T} :
+    x ∈ relationSubmodule S (I : Set T) ↔ x ∈ I := by
+  rw [mem_relationSubmodule_iff_mem_span]
+  exact ⟨fun h ↦ TwoSidedIdeal.span_le.2 subset_rfl h, fun h ↦ TwoSidedIdeal.subset_span h⟩
 
 /-- The elements of `J(ℛ)` do not depend on the scalars. -/
 theorem mem_relationSubmodule_iff (S S' : Type*) [CommSemiring S] [Algebra S T] [CommSemiring S']
@@ -608,10 +618,29 @@ private theorem coeLinearMap_decomposeAux (x : T) :
   | add x y hx hy => simp [hx, hy]
 
 private theorem relationSubmodule_le_ker_decomposeAux
-    (hℛ : ∀ r ∈ ℛ, SetLike.IsHomogeneousElem 𝒜 r) :
+    (hJ : (relationSubmodule R ℛ).IsHomogeneous 𝒜) :
     relationSubmodule R ℛ ≤ LinearMap.ker (decomposeAux ℛ 𝒜) := fun x hx ↦ by
   refine DFinsupp.ext fun i ↦ Subtype.ext ?_
-  exact (mk_eq_zero_iff R).2 (((relationSubmodule_isHomogeneous R hℛ).mem_iff 𝒜).1 hx i)
+  exact (mk_eq_zero_iff R).2 ((hJ.mem_iff 𝒜).1 hx i)
+
+variable (𝒜) in
+/-- If `J(ℛ)` is homogeneous, the quotient has the induced internal grading, even when the relators
+themselves are not homogeneous, as with a two-sided ideal used as its own set of relators. The
+pieces are `grading ℛ 𝒜`, and `decompose_mk` computes the decomposition.
+
+Blueprint: `lem:quotient-api`. -/
+@[no_expose, instance_reducible]
+def gradedAlgebraOfIsHomogeneous (hJ : (relationSubmodule R ℛ).IsHomogeneous 𝒜) :
+    GradedAlgebra (grading ℛ 𝒜) where
+  toDecomposition := .ofLinearMap _
+    (liftLinear (decomposeAux ℛ 𝒜) (relationSubmodule_le_ker_decomposeAux hJ))
+    (by
+      ext x
+      exact coeLinearMap_decomposeAux x)
+    (by
+      refine DirectSum.linearMap_ext R fun i ↦ LinearMap.ext ?_
+      rintro ⟨_, y, hy, rfl⟩
+      simpa using decomposeAux_of_mem hy)
 
 variable (𝒜) in
 /-- If the relators are homogeneous, the quotient has the induced internal grading. The pieces are
@@ -620,16 +649,8 @@ variable (𝒜) in
 Blueprint: `lem:quotient-api`. -/
 @[no_expose, instance_reducible]
 def gradedAlgebra (hℛ : ∀ r ∈ ℛ, SetLike.IsHomogeneousElem 𝒜 r) :
-    GradedAlgebra (grading ℛ 𝒜) where
-  toDecomposition := .ofLinearMap _
-    (liftLinear (decomposeAux ℛ 𝒜) (relationSubmodule_le_ker_decomposeAux hℛ))
-    (by
-      ext x
-      exact coeLinearMap_decomposeAux x)
-    (by
-      refine DirectSum.linearMap_ext R fun i ↦ LinearMap.ext ?_
-      rintro ⟨_, y, hy, rfl⟩
-      simpa using decomposeAux_of_mem hy)
+    GradedAlgebra (grading ℛ 𝒜) :=
+  gradedAlgebraOfIsHomogeneous 𝒜 (relationSubmodule_isHomogeneous R hℛ)
 
 end Grading
 
