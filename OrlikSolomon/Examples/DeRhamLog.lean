@@ -29,6 +29,8 @@ directly, and their signs are the ones `residue_mul_map` and `def:dr-gysin` need
 * `OrlikSolomon.DeRham.Examples.logResidue_theta_mul_diff` and
   `OrlikSolomon.DeRham.Examples.logResidue_diff_mul_theta`: `ρ(θ ∧ da) = d(a|_S)` and
   `ρ(da ∧ θ) = -d(a|_S)`, so the right projection formula has no sign and the left one does.
+* `OrlikSolomon.DeRham.Examples.mk_theta_mem_degree_one`: `θ` has a class in `H^1(L)`, and the
+  examples after it check `LogCohomology` on a divisor pair.
 -/
 
 @[expose] public section
@@ -64,6 +66,13 @@ theorem logResidue_diff_mul_theta (h : IsSmoothPrincipalPair f φ) (a : A) :
 theorem powerToLog_zero_bijective (h : IsSmoothPrincipalPair f φ) :
     Function.Bijective (powerToLog k f T 0) :=
   ⟨powerToLog_injective h 0, powerToLog_zero_surjective k f T⟩
+
+/-- `θ` is a closed logarithmic form of degree one, so it has a class in `H^1(L)`. -/
+theorem mk_theta_mem_degree_one :
+    LogCohomology.mk ⟨θ, theta_mem_logForms k f T⟩ (Subtype.ext (d_theta k f T)) ∈
+      LogCohomology.degree k f T 1 :=
+  LogCohomology.mk_mem_degree
+    (mem_logPower_iff.2 ⟨theta_mem_logForms k f T, theta_mem_exteriorPower_one k f T⟩) _
 
 end Signs
 
@@ -104,6 +113,21 @@ example [Algebra.FormallySmooth k A] [Algebra.FormallySmooth k S] [Subsingleton 
   letI := IsLocalization.away_of_isUnit_of_bijective A u.isUnit Function.bijective_id
   ofRegular_bijective A (isSmoothPrincipalPair_of_isUnit u.isUnit φ)
 
+/-- For a unit equation with `T = A`, all forms are logarithmic, so `H^•(L) → H^•(T)` is bijective
+with no hypothesis on `k`. Primitives in `L` are then no restriction.
+
+Blueprint: `prop:dr-unit-example`. -/
+example (u : Aˣ) :
+    letI := IsLocalization.away_of_isUnit_of_bijective A u.isUnit Function.bijective_id
+    Function.Bijective (LogCohomology.toCohomology k (u : A) A) := by
+  let := IsLocalization.away_of_isUnit_of_bijective A u.isUnit Function.bijective_id
+  have hmem (x : Forms k A) : x ∈ logForms k (u : A) A := ⟨x, 0, by
+    rw [show IsScalarTower.toAlgHom k A A = AlgHom.id k A from AlgHom.ext fun _ => rfl]
+    simp⟩
+  exact LogCohomology.bijective_toCohomology_of_forall
+    (fun x hx => ⟨⟨x, hmem x⟩, Subtype.ext hx, 0, by simp⟩)
+    (fun _ _ ⟨z, hz⟩ => ⟨⟨z, hmem z⟩, Subtype.ext hz⟩)
+
 end Unit
 
 section Zero
@@ -126,6 +150,12 @@ example {A T : Type u} [CommRing A] [Algebra k A] [Subsingleton A]
 /-- Logarithmic forms on the zero algebra vanish. -/
 example [Subsingleton A] (T : Type*) [CommRing T] [Algebra k T] [Algebra A T]
     [IsScalarTower k A T] [IsLocalization.Away f T] : Subsingleton (logForms k f T) :=
+  have : Subsingleton T := (algebraMap A T).codomain_trivial
+  inferInstance
+
+/-- The cohomology of logarithmic forms on the zero algebra vanishes. -/
+example [Subsingleton A] (T : Type*) [CommRing T] [Algebra k T] [Algebra A T]
+    [IsScalarTower k A T] [IsLocalization.Away f T] : Subsingleton (LogCohomology k f T) :=
   have : Subsingleton T := (algebraMap A T).codomain_trivial
   inferInstance
 
@@ -165,6 +195,13 @@ variable (P : DivisorPair k)
 /-- The residue sequence applies directly to a divisor pair, with no transport. -/
 example : (logResidueShortComplex P.compl P.isSmoothPrincipalPair).ShortExact :=
   logResidueShortExact P.compl P.isSmoothPrincipalPair
+
+/-- The maps `H^•(A) → H^•(L) → H^•(T)` apply directly to a divisor pair, and their composite is the
+map induced by `P.j`. -/
+example (c : Cohomology k P.ambient) :
+    LogCohomology.toCohomology k P.eqn P.compl (LogCohomology.ofCohomology k P.eqn P.compl c) =
+      Cohomology.map (SmoothAlg.algHom P.j) c :=
+  LogCohomology.toCohomology_ofCohomology c
 
 /-- The residue of `dlog k P.eqnUnit` on a divisor pair is one. -/
 example : logResidue P.compl P.isSmoothPrincipalPair
