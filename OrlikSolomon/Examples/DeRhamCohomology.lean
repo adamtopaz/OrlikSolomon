@@ -89,7 +89,7 @@ theorem not_surjective_map_C_of_charTwo :
 
 /-! ### Edge cases -/
 
-/-- The point fact holds over `ℤ`, where nothing is invertible. -/
+/-- The point fact holds over `ℤ`, where `2` is not invertible. -/
 example : Function.Bijective (algebraMap ℤ (Cohomology ℤ ℤ)) :=
   bijective_algebraMap_point ℤ
 

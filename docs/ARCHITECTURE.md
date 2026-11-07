@@ -81,6 +81,8 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Exterior/BaseChange`   | base change in `lem:dr-exterior`, for any `IsBaseChange`, including localizations |
 | `DeRham/Exterior/Quotient`     | the quotient formula in `lem:dr-exterior` |
 | `DeRham/Exterior`              | the kernel of `⋀_A^n M → ⋀_S^n M'` for surjections of rings and of modules, the form used by `lem:dr-presentation` and `lem:dr-quotient`; the module to import |
+| `DeRham/Localization`          | `lem:dr-localization`, for any `IsLocalization`; `dlog`, and the extension of derivations |
+| `DeRham/PrincipalQuotient`     | `lem:dr-quotient`, for any surjection of algebras with principal kernel |
 | `DeRham/SmoothPair/Koszul`    | `lem:dr-modf-koszul`: wedge exactness modulo a smooth principal divisor in every degree |
 | `DeRham/SmoothPair`           | the conormal splitting of `lem:dr-conormal`, and the global and localized derivations of `lem:dr-normal-derivation` |
 | `Examples/AffineLines`        | concurrent lines and the triangle, including the nonempty-intersection guard |
@@ -89,8 +91,9 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/Cokernel`            | a nonzero singleton cokernel, empty and duplicate traces, characteristic two and zero coefficients |
 | `Examples/DeRhamCohomology`    | exact forms are not an ideal of all forms, `X²` in characteristic two, the point over `ℤ` and `ZMod 2`, the zero algebra |
 | `Examples/DeRhamComplex`     | `d` is not linear over the algebra, characteristic two and the zero algebra |
-| `Examples/Degenerate`        | coefficient cohomology of empty complements and nonunique zero-ring basis sizes |
+| `Examples/DeRhamLocalization` | nilpotent, zero and unit equations; a conormal map that is not injective over `ZMod 2` |
 | `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
+| `Examples/Degenerate`        | coefficient cohomology of empty complements and nonunique zero-ring basis sizes |
 | `Examples/Exterior`          | full exterior algebras for singletons and coordinate arrangements |
 | `Examples/Ordinary`            | the structure theorem at `R = ℤ`, `ZMod 2`, two points over `F₂`, dimension zero, zero coefficients and `R = B` |
 | `Examples/Polynomials`         | polynomial regression examples |
@@ -531,20 +534,20 @@ field may be weakened, and no comparison or exactness statement may become a hyp
 declaration names are proposals, as with the first blueprint.
 
 The namespace is `OrlikSolomon.DeRham`. Exterior calculus, the dg algebra and its differential,
-its cohomology algebra, conormal splitting, global and localized normal derivations, and wedge
-exactness modulo the divisor exist; the other parts below remain planned. Each row of this table
-is one of issues #72–#83, in order. The conormal and normal-derivation results need only Mathlib's Kähler
-differentials and formal-smoothness lifts. Normalizing a derivation on `A[v(f)⁻¹]` uses
-Mathlib's localization of Kähler differentials, and wedge exactness uses exterior contraction;
-neither requires the de Rham differential. All of `lem:dr-projective` remains in #77:
-projectivity of every form degree, injectivity of multiplication by a regular element, and
-injectivity into localization.
+its cohomology algebra, forms on localizations and principal quotients, conormal splitting, global
+and localized normal derivations, and wedge exactness modulo the divisor exist; the other parts
+below remain planned. Each row of this table is one of issues #72–#83, in order. The conormal and
+normal-derivation results need only Mathlib's Kähler differentials and formal-smoothness lifts.
+Normalizing a derivation on `A[v(f)⁻¹]` uses Mathlib's localization of Kähler differentials, and wedge
+exactness uses exterior contraction; neither requires the de Rham differential. All of
+`lem:dr-projective` remains in #77: projectivity of every form degree, injectivity of multiplication
+by a regular element, and injectivity into localization.
 
 | Module under `OrlikSolomon/` | Blueprint labels |
 | ---------------------------- | ---------------- |
 | `DeRham/Exterior`            | `lem:dr-exterior`, `lem:dr-contraction` |
 | `DeRham/Complex`             | `def:dr-forms`, `lem:dr-polynomial-dga`, `lem:dr-presentation`, `def:dr-complex`, `thm:dr-dga` |
-| `DeRham/Localization`        | `lem:dr-localization`, `lem:dr-quotient` |
+| `DeRham/Localization`, `DeRham/PrincipalQuotient` | `lem:dr-localization`, `lem:dr-quotient` |
 | `DeRham/Cohomology`          | `def:dr-cohomology` |
 | `DeRham/Homotopy`            | `lem:dr-polynomial-splitting`, `thm:dr-homotopy` |
 | `DeRham/SmoothPair`          | `lem:dr-projective`, `lem:dr-conormal`, `lem:dr-normal-derivation`, `lem:dr-modf-koszul` |
@@ -614,6 +617,36 @@ The conormal splitting requires only formal smoothness of `A/(f)`;
 equations, the zero ring and disconnected algebras. The latter asserts `v(f) = 1 + f*h`, with
 normalization to one only after localizing at `v(f)`.
 
+### Forms on localizations and on quotients
+
+- **Certified pairs.** `DeRham/Localization` takes `[Algebra A T] [IsScalarTower k A T]` and
+  `[IsLocalization M T]`, or `[IsLocalization.Away f T]`, and never mentions `Localization`. For a
+  `DivisorPair`, these are instances of `P.ambient` and `P.compl`, and
+  `IsScalarTower.toAlgHom k P.ambient P.compl` is `algHom P.j` by `rfl`. `DeRham/PrincipalQuotient`
+  takes `φ : A →ₐ[k] S` with `Function.Surjective φ` and `RingHom.ker φ = Ideal.span {f}`, the shape
+  of `surjective_i` and `ker_i`.
+- **The identification is the predicate.** `Ω_A^n → Ω_T^n` is the `A`-linear map
+  `powerMap T (KaehlerDifferential.map k k A T) n`, the same as `Forms.mapPower` by
+  `Forms.mapPower_toAlgHom`. The primary statement is the instance that it is `IsLocalizedModule M`.
+  Prefer `IsLocalizedModule` and the consequences `Forms.map_eq_zero_iff_of_isLocalizationAway` and
+  `Forms.exists_eq_invSelf_pow_smul_map_of_mem`. `powerLocalizationEquiv`, whose source is Mathlib's
+  `LocalizedModule`, is the literal statement of the blueprint.
+- **The form `θ`.** `dlog k u` is `u⁻¹ • du` for a unit `u`, so for a divisor pair
+  `θ = dlog k P.eqnUnit`, and `dlog_eq_invSelf_smul` compares it with `invSelf`. `dlog_mul` and
+  `Forms.map_dlog` are the unit changes of `thm:dr-log-naturality`. `d_val_inv_pow_smul` and
+  `d_val_smul` are the formulas that `def:dr-pole-filtration` and `lem:dr-log-dga` use.
+- **The denominator.** `f Ω_A^n + df ∧ Ω_A^(n-1)` is `differentialIdealPower k (Ideal.span {f}) n`,
+  and `differentialIdealPower_span_singleton_zero` and `_succ` say so. There is no separate
+  definition. Its quotient is taken by the `A`-submodule itself, so that it is an `A`-module, and
+  `principalQuotientPowerEquiv` is `k`-linear and semilinear over `φ`.
+- **The conormal map.** `principalConormalMap k f` is the blueprint's map, with source `(f)/(f²)`
+  and no regularity of `f`. It is for the literal quotient `A ⧸ (f)`, like `conormalMap` of
+  `DeRham/SmoothPair`, whose source is `A ⧸ (f)` itself. `principalConormalMap_smul_self` and
+  `principalConormalMap_principalCotangentEquiv` relate the two, and
+  `exact_principalConormalMap` is deduced from `exact_conormalMap`. So `DeRham/PrincipalQuotient`
+  imports `DeRham/SmoothPair`, which uses only Mathlib. `Examples/DeRhamLocalization` shows that the
+  map need not be injective.
+
 ### Cohomology
 
 - **Total cohomology comes first, and its degrees are submodules of it.** `Cohomology k A` is one
@@ -660,8 +693,9 @@ normalization to one only after localizing at `v(f)`.
   `gradedAlgebraOfIsHomogeneous` give its grading, and `RelationQuotient.liftLinear` gives `H(ρ)`.
 
 The chapter `OrlikSolomonBook/DeRham.lean` records the current status of each node. Its opening
-names the exterior calculus, dg algebra, cohomology algebra, conormal splitting, normal derivations
-and modulo-divisor wedge exactness as formalized, and lists what remains. The first page, `Organization` and the
+names the exterior calculus, dg algebra, cohomology algebra, forms on localizations and quotients,
+conormal splitting, normal derivations and modulo-divisor wedge exactness as formalized, and lists
+what remains. The first page, `Organization` and the
 chapter on the axioms say the instance is in progress. No nonzero value of `OrdinaryTheory` has
 been constructed. The build does not check that prose, so keep it current as nodes land. The PR
 that proves `thm:dr-instance` must update the sentences saying that no nonzero value
