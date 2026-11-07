@@ -1,23 +1,24 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
 public import OrlikSolomon.DeRham.Exterior.BaseChange
 public import OrlikSolomon.DeRham.Exterior.Contraction
+public import OrlikSolomon.DeRham.Exterior.Projective
 public import OrlikSolomon.DeRham.Exterior.Quotient
 
 import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 
 /-!
-# Exterior powers: base change, quotients and contraction
+# Exterior powers: base change, quotients, contraction and projectivity
 
 This is the module to import for exterior algebra over an arbitrary commutative ring, with no
 division by two. It imports `DeRham/Exterior/Basic`, `DeRham/Exterior/Contraction`,
-`DeRham/Exterior/BaseChange` and `DeRham/Exterior/Quotient`, whose headers list their results, and
-it proves what combines a change of rings with a quotient.
+`DeRham/Exterior/BaseChange`, `DeRham/Exterior/Projective` and `DeRham/Exterior/Quotient`, whose
+headers list their results. The results below combine a change of rings with a quotient.
 
 ## Summary of the blueprint
 
