@@ -64,6 +64,14 @@ theorem unit_cohomologyMap_bijective :
   rw [← he]
   exact (Cohomology.mapEquiv (e.restrictScalars k)).bijective
 
+include u in
+/-- The Laurent-twisted pullback at a unit equation is also bijective, by tensoring the
+actual inverse on ordinary cohomology. No smoothness or characteristic hypothesis is needed.
+Blueprint: `prop:dr-unit-example`. -/
+theorem unit_twistedCohomologyMap_bijective :
+    Function.Bijective (TwistedCohomology.map (IsScalarTower.toAlgHom k A T)) :=
+  TwistedCohomology.bijective_map (unit_cohomologyMap_bijective u T)
+
 /-- Every form on the localization at a unit is logarithmic.
 Blueprint: `prop:dr-unit-example`. -/
 theorem unit_logForms_eq_top : logForms k (u : A) T = ⊤ := by
