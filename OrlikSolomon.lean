@@ -114,6 +114,7 @@ public import OrlikSolomon.Geometry.Schemes.AffineDuality
 public import OrlikSolomon.Geometry.Schemes.AffinePairs
 public import OrlikSolomon.Geometry.Schemes.Basic
 public import OrlikSolomon.Geometry.Schemes.Products
+public import OrlikSolomon.Geometry.Schemes.Projective
 public import OrlikSolomon.Geometry.Schemes.Units
 public import OrlikSolomon.Geometry.SmoothAlg
 public import OrlikSolomon.Grading.Basic

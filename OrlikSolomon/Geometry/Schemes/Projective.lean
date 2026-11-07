@@ -16,8 +16,8 @@ blueprint. For a vector space `W` over a field `k`, the projective space `ℙ(W)
 scheme over `S = Spec k`, and the complement `U_P` of a projective arrangement `P` is its open
 subscheme `complementOpen P`, the intersection of the charts `D₊(ℓ)` of the equations of the
 hyperplanes of `P`. For nonempty `P`, the existing `complementOpenIso` becomes the canonical
-comparison `s_P : U_P ≅ Spec O(U_P)` of `S`-schemes, so `U_P` is smooth and affine, and belongs to
-every admissible domain.
+comparison `s_P : U_P ≅ Spec O(U_P)` of `S`-schemes, so `U_P` is affine, and smooth for
+finite-dimensional `W`. It belongs to every admissible domain.
 
 ## Main definitions
 
@@ -28,37 +28,42 @@ every admissible domain.
   `s_P : U_P ≅ Spec O(U_P)` of `S`-schemes, whose underlying isomorphism is `complementOpenIso P`.
 * `Geometric.globalSectionsProjectiveComplementIso P`: `Γ(U_P, 𝒪) ≅ O(U_P)` as `k`-algebras.
 * `Geometric.projectiveRatio`: the ratio `ℓ / ℓ'` of two equations, a global unit on `U_P`.
+* `Geometric.coneProjection P`: the canonical projection `q : V_P → U_P`, from the spectrum `V_P` of
+  the coordinate ring of the complement of the cone. It is `Spec` of the inclusion `toCone` of the
+  fractions of degree zero, and involves no choice.
+* `Geometric.coneIsoProdGm`, `Geometric.projectiveDeconeIso`: for an equation `ℓ₀` of a hyperplane
+  of `P`, the isomorphisms `V_P ≅ U_P ×_S 𝔾ₘ` and `U_P ≅ U_{decone_{ℓ₀} P}`.
 * `SmoothDomain.projectiveComplement D P`: `U_P` as an object of any admissible domain `D`, for
-  nonempty `P` and finite-dimensional `W`, with `D.projectiveComplementIsoSpec P` the comparison
-  with `D.spec (SmoothAlg.projectiveComplement P)`.
-* `SmoothDomain.coneToProjectiveComplement D P`: the canonical projection `q : V_P → U_P`, from the
-  spectrum `V_P` of the coordinate ring of the complement of the cone. It is `Spec` of the
-  inclusion `projectiveToCone` of the fractions of degree zero.
-* `SmoothDomain.projectiveDeconeIso D hℓ₀`, `SmoothDomain.coneIsoProdGm D hℓ₀`: for an equation `ℓ₀`
-  of a hyperplane of `P`, the isomorphisms `U_P ≅ U_{decone_{ℓ₀} P}` and `V_P ≅ U_P ×_S 𝔾ₘ`.
+  nonempty `P` and finite-dimensional `W`, with the comparison `D.projectiveComplementIsoSpec P`
+  with `D.spec (SmoothAlg.projectiveComplement P)`, and the domain forms of the other maps.
 
 ## Main results
 
 * `projectiveComplementIsoSpec_inv_left_comp_ι`: `s_P` does not depend on a choice of equations.
-* `smooth_projectiveSpace_hom`, `isEmpty_projectiveSpace_left`: `ℙ(W)` is smooth over `S`, and it is
-  empty when `W = 0`. So `U_P` is smooth for every `P`, including the empty arrangement.
-* `coneIsoProdGm_hom_prodGmFst`, `coneIsoProdGm_hom_snd`: the first coordinate of `V_P ≅ U_P ×_S 𝔾ₘ`
-  is the canonical projection `q`, and the second is `ℓ₀`.
-* `map_coneToProjectiveComplement_projectiveRatio`: `ℓ = ℓ₀ q^*(ℓ / ℓ₀)` on `V_P`.
-* `map_projectiveDeconeIso_complementUnit`: the decone isomorphism identifies `ℓ / ℓ₀` with the
+* `smooth_projectiveSpace_hom`, `isEmpty_projectiveSpace_left`: `ℙ(W)` is smooth over `S` for
+  finite-dimensional `W`, and it is empty when `W = 0`. So `U_P` is smooth for every `P`.
+* `coneIsoProdGm_hom_fst`, `coneIsoProdGm_hom_snd_appTop_gmCoord`: the first coordinate of
+  `V_P ≅ U_P ×_S 𝔾ₘ` is the canonical projection `q`, and the second is `ℓ₀`.
+* `specUnit_coneUnit`: `ℓ = ℓ₀ q^*(ℓ / ℓ₀)` on `V_P`.
+* `projectiveDeconeIso_hom_appTop`: the decone isomorphism identifies `ℓ / ℓ₀` with the
   restriction of `ℓ` to the slice `ℓ₀ = 1`.
+* `SmoothDomain.coneToProjectiveComplement_comp_projectiveComplementIsoSpec_hom`,
+  `SmoothDomain.coe_projectiveRatio`: under `s_P`, the projection `q` is `Spec` of the existing
+  `projectiveToCone`, and the ratios are the existing `projectiveRatioUnit`.
 
 ## Implementation notes
 
 The complements `U_{decone_{ℓ₀} P}` and `V_P = U_{cone P}` of affine arrangements are the subject of
-`Geometry/Schemes/Complement` (#111), which does not exist yet. Here they are the spectra
-`D.spec (SmoothAlg.complement _)` of the existing coordinate rings, and the blueprint's isomorphisms
-are obtained by composing with that module's comparison `s_𝒜` once it lands.
+`Geometry/Schemes/Complement` (#111). Here they are the spectra of the existing coordinate rings,
+and the blueprint's isomorphisms are obtained by composing with that module's comparison `s_𝒜`.
 
-The structure theorem on `U_P` will be the existing one composed with pullback along
-`D.projectiveComplementIsoSpec P`; `map_projectiveComplementIsoSpec_ratioUnit` and
-`coneToProjectiveComplement_comp_projectiveComplementIsoSpec_hom` identify the existing ratio units
-and the existing `projectiveToCone` on the two sides of `s_P`.
+The constructions are made over `S` with the rings `CommAlgCat.of k P.ComplementRing`, for every
+`W`. In a domain they are wrapped with `ObjectProperty.isoMk` and stated with the objects of
+`SmoothAlg`, so that `D.projectiveComplementIsoSpec P` has target exactly
+`D.spec (SmoothAlg.projectiveComplement P)`, which is where an algebraic theory is evaluated. The
+domain lemmas about functions are stated as equations of global sections, not of units, because the
+types `Γ((D.spec A).obj.left, ⊤)` and `Γ((spec A.obj).left, ⊤)` agree only at implicit
+transparency.
 
 Named objects are `@[implicit_reducible] def`s and equations between objects are not `simp` lemmas,
 as explained in `Geometry/Schemes/Basic`. No `k`-point of any scheme is used.
@@ -77,6 +82,27 @@ universe u
 namespace OrlikSolomon.Geometric
 
 open ProjectiveArrangement ProjectiveArrangement.ComplementRing CoordinateRing
+
+/-! ### Units of spectra -/
+
+section SpecUnit
+
+variable {k : Type u} [CommRing k]
+
+/-- A unit `u` of a `k`-algebra `A`, as a global unit on `Spec A`. -/
+abbrev specUnit {A : CommAlgCat.{u} k} (u : Aˣ) : Γ((spec A).left, ⊤)ˣ :=
+  Units.map ((Scheme.ΓSpecIso (.of A)).inv.hom.toMonoidHom : A →* Γ((spec A).left, ⊤)) u
+
+lemma coe_specUnit {A : CommAlgCat.{u} k} (u : Aˣ) :
+    (specUnit u : Γ((spec A).left, ⊤)) = (Scheme.ΓSpecIso (.of A)).inv u :=
+  rfl
+
+/-- Pulling back a unit along `Spec φ` gives the unit of its image. -/
+lemma map_specMap_specUnit {A B : CommAlgCat.{u} k} (φ : A ⟶ B) (u : Aˣ) :
+    Units.map (specMap φ).left.appTop.hom (specUnit u) = specUnit (Units.map (φ.hom : A →* B) u) :=
+  Units.ext (specMap_left_appTop_ΓSpecIso_inv φ u)
+
+end SpecUnit
 
 variable {k : Type u} [Field k] {W : Type u} [AddCommGroup W] [Module k W]
 
@@ -134,7 +160,7 @@ lemma projectiveComplement_left : (projectiveComplement P).left = (complementOpe
   rfl
 
 lemma projectiveComplement_hom :
-    (projectiveComplement P).hom = (complementOpen P).ι ≫ (projectiveSpace k W).hom :=
+    (projectiveComplement P).hom = (complementOpen P).ι ≫ projToSpec k W :=
   rfl
 
 /-- The open immersion `U_P → ℙ(W)`, over `S`.
@@ -154,6 +180,17 @@ instance : IsOpenImmersion (projectiveComplementι P).left :=
 lemma opensRange_projectiveComplementι :
     (projectiveComplementι P).left.opensRange = complementOpen P :=
   (complementOpen P).opensRange_ι
+
+/-- For empty `P`, the complement `U_P` is all of `ℙ(W)`: its open immersion is an isomorphism of
+`S`-schemes.
+
+Blueprint: `def:geo-projective`. -/
+instance isIso_projectiveComplementι [IsEmpty P] : IsIso (projectiveComplementι P) := by
+  have : IsIso ((Over.forget _).map (projectiveComplementι P)) := by
+    change IsIso (complementOpen P).ι
+    rw [← Scheme.isoOfEq_hom_ι _ (complementOpen_eq_top (P := P)), ← Scheme.topIso_hom]
+    infer_instance
+  exact isIso_of_reflects_iso _ (Over.forget _)
 
 end Complement
 
@@ -249,54 +286,186 @@ section Ratio
 
 variable {P : ProjectiveArrangement k W} [Nonempty P] {ℓ ℓ' ℓ'' : Dual k W}
 
-/-- The ratio `ℓ / ℓ'` of two equations of hyperplanes of `P`, a global unit on `U_P`: the unit
-`ratioUnit` of `O(U_P)`, through `s_P`. It involves no hyperplane at infinity.
+/-- The ratio `ℓ / ℓ'` of two equations of hyperplanes of `P`, a global unit on `U_P`: the pullback
+along `s_P` of the unit `ratioUnit` of `O(U_P)`. It involves no hyperplane at infinity.
 
 Blueprint: `thm:geo-projective-geometry`. -/
 def projectiveRatio (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
     Γ((projectiveComplement P).left, ⊤)ˣ :=
-  Units.map ((globalSectionsProjectiveComplementIso P).inv.hom :
-    P.ComplementRing →* Γ((projectiveComplement P).left, ⊤)) (ratioUnit hℓ hℓ')
+  Units.map (projectiveComplementIsoSpec P).hom.left.appTop.hom
+    (specUnit (A := CommAlgCat.of k P.ComplementRing) (ratioUnit hℓ hℓ'))
 
-lemma coe_projectiveRatio (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
-    (projectiveRatio hℓ hℓ' : Γ((projectiveComplement P).left, ⊤)) =
-      (globalSectionsProjectiveComplementIso P).inv (ratio ℓ hℓ') :=
-  rfl
-
-/-- The global unit `ℓ / ℓ'` on `U_P` is the pullback along `s_P` of the existing unit `ratioUnit`
-of `O(U_P)`, as a function on `Spec O(U_P)`. This is how the existing ratio formula of the
-projective structure theorem transports to `U_P`.
+/-- The global unit `ℓ / ℓ'` on `U_P` is the pullback along `s_P` of the existing unit
+`ratioUnit` of `O(U_P)`, seen as a function on `Spec O(U_P)`. This is how the ratio formula of the
+existing projective structure theorem transports to `U_P`.
 
 Blueprint: `thm:geo-projective-geometry`. -/
-lemma map_projectiveComplementIsoSpec_ratioUnit (hℓ : LinearMap.ker ℓ ∈ P)
-    (hℓ' : LinearMap.ker ℓ' ∈ P) :
-    Units.map (projectiveComplementIsoSpec P).hom.left.appTop.hom
-        (Units.map (Scheme.ΓSpecIso (.of P.ComplementRing)).inv.hom (ratioUnit hℓ hℓ')) =
-      projectiveRatio hℓ hℓ' :=
+lemma coe_projectiveRatio (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
+    (projectiveRatio hℓ hℓ' : Γ((projectiveComplement P).left, ⊤)) =
+      (projectiveComplementIsoSpec P).hom.left.appTop
+        ((Scheme.ΓSpecIso (.of P.ComplementRing)).inv (ratio ℓ hℓ')) :=
   rfl
 
 @[simp] lemma projectiveRatio_self (hℓ : LinearMap.ker ℓ ∈ P) : projectiveRatio hℓ hℓ = 1 := by
-  rw [projectiveRatio, ratioUnit_self, map_one]
+  rw [projectiveRatio, ratioUnit_self, specUnit, map_one, map_one]
 
 @[simp] lemma projectiveRatio_inv (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
     (projectiveRatio hℓ hℓ')⁻¹ = projectiveRatio hℓ' hℓ := by
-  rw [projectiveRatio, ← map_inv, ratioUnit_inv, projectiveRatio]
+  rw [projectiveRatio, specUnit, ← map_inv, ← map_inv, ratioUnit_inv, projectiveRatio]
 
 lemma projectiveRatio_mul (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P)
     (hℓ'' : LinearMap.ker ℓ'' ∈ P) :
     projectiveRatio hℓ hℓ' * projectiveRatio hℓ' hℓ'' = projectiveRatio hℓ hℓ'' := by
-  rw [projectiveRatio, projectiveRatio, ← map_mul, ratioUnit_mul_ratioUnit, projectiveRatio]
-
-/-- Scaling the numerator of a ratio by a nonzero constant multiplies it by that constant. With
-`projectiveRatio_inv`, changing either equation changes the ratio by a constant. -/
-lemma coe_projectiveRatio_smul {c : kˣ} (hcℓ : LinearMap.ker ((c : k) • ℓ) ∈ P)
-    (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
-    (projectiveRatio hcℓ hℓ' : Γ((projectiveComplement P).left, ⊤)) =
-      algebraMap k (globalSections (projectiveComplement P)) (c : k) * projectiveRatio hℓ hℓ' := by
-  rw [coe_projectiveRatio, ← coe_ratioUnit, coe_ratioUnit_smul hcℓ hℓ hℓ', map_mul, AlgHom.commutes,
-    coe_ratioUnit, coe_projectiveRatio]
+  rw [projectiveRatio, projectiveRatio, specUnit, specUnit, ← map_mul, ← map_mul,
+    ratioUnit_mul_ratioUnit, projectiveRatio]
 
 end Ratio
+
+/-! ### The cone -/
+
+section Cone
+
+variable (P : ProjectiveArrangement k W) [Nonempty P] {ℓ ℓ₀ : Dual k W}
+
+/-- The canonical projection `q : V_P → U_P` from the complement of the cone, here the spectrum of
+its coordinate ring: `Spec` of the inclusion `toCone` of the fractions of degree zero, followed by
+`s_P⁻¹`. It involves no hyperplane at infinity.
+
+Blueprint: `thm:geo-projective-geometry`. -/
+def coneProjection : spec (CommAlgCat.of k P.cone.ComplementRing) ⟶ projectiveComplement P :=
+  specMap (CommAlgCat.ofHom (toCone P)) ≫ (projectiveComplementIsoSpec P).inv
+
+/-- Under `s_P`, the projection `q` is `Spec` of the inclusion of the fractions of degree zero. -/
+@[reassoc (attr := simp)]
+lemma coneProjection_comp_projectiveComplementIsoSpec_hom :
+    coneProjection P ≫ (projectiveComplementIsoSpec P).hom =
+      specMap (CommAlgCat.ofHom (toCone P)) := by
+  rw [coneProjection, Category.assoc, Iso.inv_hom_id, Category.comp_id]
+
+variable {P}
+
+/-- The projection `q` pulls back the ratio `ℓ / ℓ₀` on `U_P` to the function `ℓ / ℓ₀` of
+`O(V_P)`. -/
+lemma map_coneProjection_projectiveRatio (hℓ : LinearMap.ker ℓ ∈ P) (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
+    Units.map (coneProjection P).left.appTop.hom (projectiveRatio hℓ hℓ₀) =
+      specUnit (A := CommAlgCat.of k P.cone.ComplementRing)
+        (Units.map (toCone P : P.ComplementRing →* P.cone.ComplementRing) (ratioUnit hℓ hℓ₀)) := by
+  ext
+  change (coneProjection P).left.appTop ((projectiveComplementIsoSpec P).hom.left.appTop
+    ((Scheme.ΓSpecIso _).inv (ratio ℓ hℓ₀))) = (Scheme.ΓSpecIso _).inv (toCone P (ratio ℓ hℓ₀))
+  rw [← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop, ← Over.comp_left,
+    coneProjection_comp_projectiveComplementIsoSpec_hom]
+  exact specMap_left_appTop_ΓSpecIso_inv _ _
+
+/-- On `V_P`, an equation `ℓ` is `ℓ₀ q^*(ℓ / ℓ₀)`, for every equation `ℓ₀` of a hyperplane of `P`,
+where `q : V_P → U_P` is the canonical projection.
+
+Blueprint: `thm:geo-projective-geometry`. -/
+lemma specUnit_coneUnit (hℓ : LinearMap.ker ℓ ∈ P) (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
+    specUnit (A := CommAlgCat.of k P.cone.ComplementRing) (coneUnit hℓ) =
+      specUnit (A := CommAlgCat.of k P.cone.ComplementRing) (coneUnit hℓ₀) *
+        Units.map (coneProjection P).left.appTop.hom (projectiveRatio hℓ hℓ₀) := by
+  rw [map_coneProjection_projectiveRatio, ← map_mul]
+  congr 1
+  ext
+  rw [Units.val_mul, Units.coe_map, coe_coneUnit, coe_coneUnit, MonoidHom.coe_ofClass,
+    coe_ratioUnit, mul_comm]
+  exact (toCone_ratio_mul ℓ hℓ₀).symm
+
+/-- The isomorphism `V_P ≅ U_P ×_S 𝔾ₘ`, for an equation `ℓ₀` of a hyperplane of `P`: `Spec` of the
+existing `coneEquiv`, then `specLaurentIso`, then `s_P⁻¹ × 𝔾ₘ`. Its first coordinate is the
+canonical projection `q` (`coneIsoProdGm_hom_fst`) and its second is `ℓ₀`
+(`coneIsoProdGm_hom_snd_appTop_gmCoord`), so it depends on `ℓ₀`.
+
+Blueprint: `thm:geo-projective-geometry`. -/
+def coneIsoProdGm (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
+    spec (CommAlgCat.of k P.cone.ComplementRing) ≅ projectiveComplement P ⊗ gm k :=
+  ((specFunctor k).mapIso (CommAlgCat.isoMk (coneEquiv hℓ₀)).op).symm ≪≫
+    specLaurentIso (CommAlgCat.of k P.ComplementRing) ≪≫
+      whiskerRightIso (projectiveComplementIsoSpec P).symm (gm k)
+
+lemma coneIsoProdGm_hom (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
+    (coneIsoProdGm hℓ₀).hom =
+      specMap (CommAlgCat.isoMk (coneEquiv hℓ₀)).inv ≫
+        (specLaurentIso (CommAlgCat.of k P.ComplementRing)).hom ≫
+          ((projectiveComplementIsoSpec P).inv ▷ gm k) :=
+  rfl
+
+/-- The first coordinate of `V_P ≅ U_P ×_S 𝔾ₘ` is the canonical projection `q`.
+
+Blueprint: `thm:geo-projective-geometry`. -/
+@[reassoc (attr := simp)]
+lemma coneIsoProdGm_hom_fst (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
+    (coneIsoProdGm hℓ₀).hom ≫ fst _ _ = coneProjection P := by
+  rw [coneIsoProdGm_hom, Category.assoc, Category.assoc, whiskerRight_fst,
+    specLaurentIso_hom_fst_assoc, ← specMap_comp_assoc, coneProjection]
+  congr 2
+  ext x
+  exact coneEquiv_symm_C hℓ₀ x
+
+/-- The second coordinate of `V_P ≅ U_P ×_S 𝔾ₘ` pulls back the coordinate of `𝔾ₘ` to `ℓ₀`.
+
+Blueprint: `thm:geo-projective-geometry`. -/
+lemma coneIsoProdGm_hom_snd_appTop_gmCoord (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
+    ((coneIsoProdGm hℓ₀).hom ≫ snd _ _).left.appTop (gmCoord k) =
+      (Scheme.ΓSpecIso (.of P.cone.ComplementRing)).inv
+        (algebraMap (CoordinateRing k W) P.cone.ComplementRing (coord ℓ₀.toAffineMap)) := by
+  rw [coneIsoProdGm_hom, Category.assoc, Category.assoc, whiskerRight_snd, specLaurentIso_hom_snd,
+    Over.comp_left, Scheme.Hom.comp_appTop, CommRingCat.comp_apply,
+    unitsEquivHomGm_appTop_gmCoord]
+  change (specMap _).left.appTop ((Scheme.ΓSpecIso _).inv _) = _
+  rw [specMap_left_appTop_ΓSpecIso_inv]
+  exact congrArg _ (coneEquiv_symm_T hℓ₀)
+
+/-- The second coordinate of `V_P ≅ U_P ×_S 𝔾ₘ` is the map of the unit `ℓ₀` of `O(V_P)`.
+
+Blueprint: `thm:geo-projective-geometry`. -/
+lemma coneIsoProdGm_hom_snd (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
+    (coneIsoProdGm hℓ₀).hom ≫ snd _ _ =
+      unitsEquivHomGm _ (specUnit (A := CommAlgCat.of k P.cone.ComplementRing) (coneUnit hℓ₀)) :=
+  hom_ext_gm ((coneIsoProdGm_hom_snd_appTop_gmCoord hℓ₀).trans
+    (unitsEquivHomGm_appTop_gmCoord
+      (specUnit (A := CommAlgCat.of k P.cone.ComplementRing) (coneUnit hℓ₀))).symm)
+
+end Cone
+
+/-! ### The decone -/
+
+section Decone
+
+variable {P : ProjectiveArrangement k W} [Nonempty P] {ℓ ℓ₀ : Dual k W}
+
+/-- The isomorphism `U_P ≅ U_{decone_{ℓ₀} P}` with the complement of the decone in the slice
+`ℓ₀ = 1`, here the spectrum of its coordinate ring, for an equation `ℓ₀` of a hyperplane of `P`:
+`s_P` followed by `Spec` of the existing `deconeEquiv`, which restricts functions to the slice.
+
+Blueprint: `thm:geo-projective-geometry`. -/
+def projectiveDeconeIso (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
+    projectiveComplement P ≅ spec (CommAlgCat.of k (P.decone ℓ₀).ComplementRing) :=
+  projectiveComplementIsoSpec P ≪≫
+    ((specFunctor k).mapIso (CommAlgCat.isoMk (deconeEquiv hℓ₀)).op).symm
+
+lemma projectiveDeconeIso_hom (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
+    (projectiveDeconeIso hℓ₀).hom =
+      (projectiveComplementIsoSpec P).hom ≫ specMap (CommAlgCat.isoMk (deconeEquiv hℓ₀)).inv :=
+  rfl
+
+/-- The decone isomorphism pulls back the restriction of an equation `ℓ` to the slice `ℓ₀ = 1` to
+the ratio `ℓ / ℓ₀`.
+
+Blueprint: `thm:geo-projective-geometry`. -/
+lemma projectiveDeconeIso_hom_appTop (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) (hℓ : LinearMap.ker ℓ ∈ P) :
+    (projectiveDeconeIso hℓ₀).hom.left.appTop
+        ((Scheme.ΓSpecIso (.of (P.decone ℓ₀).ComplementRing)).inv
+          (algebraMap _ _ (coord (ℓ.toAffineMap.comp (chart (slice ℓ₀)))))) =
+      projectiveRatio hℓ hℓ₀ := by
+  rw [projectiveDeconeIso_hom, Over.comp_left, Scheme.Hom.comp_appTop, CommRingCat.comp_apply,
+    specMap_left_appTop_ΓSpecIso_inv, coe_projectiveRatio]
+  congr 2
+  rw [← deconeEquiv_ratio_self hℓ₀ ℓ]
+  exact (deconeEquiv hℓ₀).symm_apply_apply _
+
+end Decone
 
 /-! ### Projective space is smooth -/
 
@@ -347,11 +516,18 @@ variable [FiniteDimensional k W]
 charts `D₊(ℓ)`, each the complement of one hyperplane, which is smooth.
 
 Blueprint: `def:geo-projective`. -/
-instance smooth_projectiveSpace_hom : Smooth (projectiveSpace k W).hom := by
+instance smooth_projToSpec : Smooth (projToSpec k W) := by
+  have : IsZariskiLocalAtSource @Smooth := HasRingHomProperty.instIsZariskiLocalAtSource
   refine IsZariskiLocalAtSource.of_iSup_eq_top _ iSup_basicOpen_coord_eq_top fun ℓ ↦ ?_
-  have := smooth_projectiveComplement_hom_of_nonempty (ofForms {ℓ.1} (by simpa using ℓ.2))
-    (nonempty := nonempty_of_ker_mem (ker_mem_ofForms (Finset.mem_singleton_self ℓ.1)))
-  rwa [projectiveComplement_hom, complementOpen_ofForms_singleton ℓ.2] at this
+  have : Nonempty (ofForms {ℓ.1} (by simpa using ℓ.2)) :=
+    nonempty_of_ker_mem (ker_mem_ofForms (Finset.mem_singleton_self ℓ.1))
+  rw [← complementOpen_ofForms_singleton ℓ.2]
+  exact smooth_projectiveComplement_hom_of_nonempty _
+
+/-- For finite-dimensional `W`, the projective space `ℙ(W)` is smooth over `S`.
+
+Blueprint: `def:geo-projective`. -/
+instance smooth_projectiveSpace_hom : Smooth (projectiveSpace k W).hom := smooth_projToSpec
 
 /-- The complement `U_P` is smooth over `S` for every `P`, including the empty arrangement, for
 which it is `ℙ(W)`.
@@ -368,10 +544,10 @@ end Smooth
 namespace SmoothDomain
 
 variable (D : SmoothDomain k) [FiniteDimensional k W] (P : ProjectiveArrangement k W) [Nonempty P]
-variable {ℓ ℓ₀ : Dual k W}
+variable {ℓ ℓ' ℓ₀ : Dual k W}
 
 /-- The complement `U_P` of a nonempty projective arrangement, as an object of any admissible
-domain `D`. It is smooth and affine, so its membership needs no hypothesis.
+domain `D`. It is smooth and affine, so its membership is found by instances.
 
 Blueprint: `thm:geo-projective-geometry`. -/
 @[implicit_reducible]
@@ -381,64 +557,68 @@ lemma projectiveComplement_obj :
     (D.projectiveComplement P).obj = Geometric.projectiveComplement P :=
   rfl
 
-/-- The comparison `s_P : U_P ≅ Spec O(U_P)`, in a domain `D`. The structure theorem on `U_P` is
-the existing one, on `D.spec (SmoothAlg.projectiveComplement P)`, composed with pullback along
-`s_P`.
+/-- The comparison `s_P : U_P ≅ Spec O(U_P)`, in a domain `D`. A structure theorem for `U_P` is the
+existing one, for `D.spec (SmoothAlg.projectiveComplement P)`, composed with pullback along `s_P`.
 
 Blueprint: `thm:geo-projective-geometry`. -/
 def projectiveComplementIsoSpec :
     D.projectiveComplement P ≅ D.spec (SmoothAlg.projectiveComplement P) :=
   ObjectProperty.isoMk _ (Geometric.projectiveComplementIsoSpec P)
 
-@[simp] lemma projectiveComplementIsoSpec_hom_hom :
+lemma projectiveComplementIsoSpec_hom_hom :
     (D.projectiveComplementIsoSpec P).hom.hom = (Geometric.projectiveComplementIsoSpec P).hom :=
   rfl
 
-@[simp] lemma projectiveComplementIsoSpec_inv_hom :
+lemma projectiveComplementIsoSpec_inv_hom :
     (D.projectiveComplementIsoSpec P).inv.hom = (Geometric.projectiveComplementIsoSpec P).inv :=
   rfl
 
-/-! #### The cone -/
+variable {P} in
+/-- The ratio `ℓ / ℓ'` on `U_P` is the pullback along `s_P` of the existing unit
+`SmoothAlg.projectiveRatioUnit`, seen as a function on `D.spec (SmoothAlg.projectiveComplement P)`.
+This identifies the generators of the existing projective structure theorem with those on `U_P`.
 
-/-- The canonical projection `q : V_P → U_P` from the complement of the cone, here the spectrum of
-its coordinate ring: `Spec` of the inclusion `projectiveToCone` of the fractions of degree zero,
-followed by `s_P⁻¹`. It involves no hyperplane at infinity.
+Blueprint: `thm:geo-projective-geometry`. -/
+lemma coe_projectiveRatio (hℓ : LinearMap.ker ℓ ∈ P) (hℓ' : LinearMap.ker ℓ' ∈ P) :
+    (projectiveRatio hℓ hℓ' : Γ((Geometric.projectiveComplement P).left, ⊤)) =
+      (D.projectiveComplementIsoSpec P).hom.hom.left.appTop
+        ((Scheme.ΓSpecIso (.of (SmoothAlg.projectiveComplement P))).inv
+          (SmoothAlg.projectiveRatioUnit hℓ hℓ' : SmoothAlg.projectiveComplement P)) :=
+  rfl
+
+/-- The canonical projection `q : V_P → U_P`, in a domain `D`, from the spectrum of the coordinate
+ring of the complement of the cone.
 
 Blueprint: `thm:geo-projective-geometry`. -/
 def coneToProjectiveComplement :
     D.spec (SmoothAlg.complement P.cone) ⟶ D.projectiveComplement P :=
-  (D.specFunctor.map (SmoothAlg.projectiveToCone P)).unop ≫ (D.projectiveComplementIsoSpec P).inv
+  ObjectProperty.homMk (coneProjection P)
 
-/-- Under `s_P`, the projection `q : V_P → U_P` is `Spec` of `projectiveToCone`. This is the square
-that makes a structure theorem on `U_P` commute with pullback to the cone.
+lemma coneToProjectiveComplement_hom : (D.coneToProjectiveComplement P).hom = coneProjection P :=
+  rfl
+
+/-- Under `s_P`, the projection `q : V_P → U_P` is `Spec` of the existing `projectiveToCone`. This
+is the square along which a structure theorem on `U_P` commutes with pullback to the cone.
 
 Blueprint: `thm:geo-projective-geometry`. -/
 @[reassoc (attr := simp)]
 lemma coneToProjectiveComplement_comp_projectiveComplementIsoSpec_hom :
     D.coneToProjectiveComplement P ≫ (D.projectiveComplementIsoSpec P).hom =
-      (D.specFunctor.map (SmoothAlg.projectiveToCone P)).unop := by
-  rw [coneToProjectiveComplement, Category.assoc, Iso.inv_hom_id, Category.comp_id]
+      (D.specFunctor.map (SmoothAlg.projectiveToCone P)).unop :=
+  ObjectProperty.hom_ext _ (coneProjection_comp_projectiveComplementIsoSpec_hom P)
 
 variable {P} in
-/-- The isomorphism `V_P ≅ U_P ×_S 𝔾ₘ`, for an equation `ℓ₀` of a hyperplane of `P`: `Spec` of the
-existing `coneIso`, then `specLaurentIso`, then `s_P⁻¹ × 𝔾ₘ`. Its first coordinate is the
-canonical projection (`coneIsoProdGm_hom_prodGmFst`) and its second is `ℓ₀`
-(`coneIsoProdGm_hom_snd`), so it depends on `ℓ₀`.
+/-- The isomorphism `V_P ≅ U_P ×_S 𝔾ₘ`, in a domain `D`, for an equation `ℓ₀` of a hyperplane of
+`P`.
 
 Blueprint: `thm:geo-projective-geometry`. -/
 def coneIsoProdGm (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
     D.spec (SmoothAlg.complement P.cone) ≅ D.prodGm (D.projectiveComplement P) :=
-  (D.specFunctor.mapIso (SmoothAlg.coneIso hℓ₀)).unop.symm ≪≫
-    D.specLaurentIso (SmoothAlg.projectiveComplement P) ≪≫
-      ObjectProperty.isoMk _
-        (whiskerRightIso (Geometric.projectiveComplementIsoSpec P).symm (Geometric.gm k))
+  ObjectProperty.isoMk _ (Geometric.coneIsoProdGm hℓ₀)
 
 variable {P} in
 lemma coneIsoProdGm_hom_hom (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
-    (D.coneIsoProdGm hℓ₀).hom.hom =
-      specMap (SmoothAlg.coneIso hℓ₀).inv.hom ≫
-        (Geometric.specLaurentIso (SmoothAlg.projectiveComplement P)).hom ≫
-          ((Geometric.projectiveComplementIsoSpec P).inv ▷ Geometric.gm k) :=
+    (D.coneIsoProdGm hℓ₀).hom.hom = (Geometric.coneIsoProdGm hℓ₀).hom :=
   rfl
 
 variable {P} in
@@ -448,70 +628,45 @@ Blueprint: `thm:geo-projective-geometry`. -/
 @[reassoc (attr := simp)]
 lemma coneIsoProdGm_hom_prodGmFst (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
     (D.coneIsoProdGm hℓ₀).hom ≫ D.prodGmFst (D.projectiveComplement P) =
-      D.coneToProjectiveComplement P := by
-  apply ObjectProperty.hom_ext
-  rw [ObjectProperty.FullSubcategory.comp_hom, coneIsoProdGm_hom_hom, prodGmFst_hom,
-    Category.assoc, Category.assoc, whiskerRight_fst, specLaurentIso_hom_fst_assoc,
-    ← specMap_comp_assoc, coneToProjectiveComplement, ObjectProperty.FullSubcategory.comp_hom]
-  congr 2
-  rw [← ObjectProperty.FullSubcategory.comp_hom, SmoothAlg.laurentC_comp_coneIso_inv]
-  rfl
+      D.coneToProjectiveComplement P :=
+  ObjectProperty.hom_ext _ (Geometric.coneIsoProdGm_hom_fst hℓ₀)
 
 variable {P} in
-/-- The second coordinate of `V_P ≅ U_P ×_S 𝔾ₘ` is the map of the unit `ℓ₀` of `O(V_P)`.
+/-- The second coordinate of `V_P ≅ U_P ×_S 𝔾ₘ` pulls back the coordinate of `𝔾ₘ` to `ℓ₀`.
 
 Blueprint: `thm:geo-projective-geometry`. -/
-lemma coneIsoProdGm_hom_snd (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
-    (D.coneIsoProdGm hℓ₀).hom.hom ≫ snd _ _ =
-      unitsEquivHomGm _ (Units.map (Scheme.ΓSpecIso (.of (SmoothAlg.complement P.cone))).inv.hom
-        (SmoothAlg.complementUnit P.cone ℓ₀.toAffineMap (cone_covers hℓ₀))) := by
-  rw [coneIsoProdGm_hom_hom, Category.assoc, Category.assoc, whiskerRight_snd,
-    specLaurentIso_hom_snd, ← unitsEquivHomGm_comp]
-  congr 1
-  ext
-  simp only [Units.coe_map, MonoidHom.coe_coe]
-  rw [specMap_left_appTop_ΓSpecIso_inv]
-  exact congrArg _ (congrArg Units.val (SmoothAlg.mapUnits_coneIso_inv_laurentT hℓ₀))
+lemma coneIsoProdGm_hom_snd_appTop_gmCoord (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
+    ((D.coneIsoProdGm hℓ₀).hom.hom ≫ snd _ _).left.appTop (gmCoord k) =
+      (Scheme.ΓSpecIso (.of (SmoothAlg.complement P.cone))).inv
+        (SmoothAlg.complementUnit P.cone ℓ₀.toAffineMap (cone_covers hℓ₀) :
+          SmoothAlg.complement P.cone) :=
+  Geometric.coneIsoProdGm_hom_snd_appTop_gmCoord hℓ₀
 
 variable {P} in
-/-- On `V_P`, an equation `ℓ` is `ℓ₀ q^*(ℓ / ℓ₀)`, for every equation `ℓ₀` of a hyperplane of `P`,
-where `q : V_P → U_P` is the canonical projection.
+/-- The projection `q : V_P → U_P` pulls back the ratio `ℓ / ℓ₀` to the function of the existing
+`SmoothAlg.projectiveToCone (ℓ / ℓ₀)`, which is `ℓ ℓ₀⁻¹` by
+`SmoothAlg.mapUnits_projectiveToCone_projectiveRatioUnit`. So `ℓ = ℓ₀ q^*(ℓ / ℓ₀)` on `V_P`.
 
 Blueprint: `thm:geo-projective-geometry`. -/
-lemma map_coneToProjectiveComplement_projectiveRatio (hℓ : LinearMap.ker ℓ ∈ P)
+lemma coneToProjectiveComplement_appTop_projectiveRatio (hℓ : LinearMap.ker ℓ ∈ P)
     (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
-    Units.map (Scheme.ΓSpecIso (.of (SmoothAlg.complement P.cone))).inv.hom
-        (SmoothAlg.complementUnit P.cone ℓ.toAffineMap (cone_covers hℓ)) =
-      Units.map (Scheme.ΓSpecIso (.of (SmoothAlg.complement P.cone))).inv.hom
-          (SmoothAlg.complementUnit P.cone ℓ₀.toAffineMap (cone_covers hℓ₀)) *
-        Units.map (D.coneToProjectiveComplement P).hom.left.appTop.hom
-          (projectiveRatio hℓ hℓ₀) := by
-  ext
-  simp only [Units.coe_map, Units.val_mul, MonoidHom.coe_coe]
-  rw [coe_projectiveRatio, globalSectionsProjectiveComplementIso_inv_apply,
-    ← projectiveComplementIsoSpec_hom_left, ← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop,
-    ← Over.comp_left, ← projectiveComplementIsoSpec_hom_hom D,
-    ← ObjectProperty.FullSubcategory.comp_hom,
-    coneToProjectiveComplement_comp_projectiveComplementIsoSpec_hom]
-  change _ = _ * (specMap (SmoothAlg.projectiveToCone P).hom).left.appTop _
-  rw [specMap_left_appTop_ΓSpecIso_inv, ← map_mul, SmoothAlg.coe_complementUnit,
-    SmoothAlg.coe_complementUnit, mul_comm]
-  congr 1
-  exact (toCone_ratio_mul ℓ hℓ₀).symm
-
-/-! #### The decone -/
+    (D.coneToProjectiveComplement P).hom.left.appTop
+        (projectiveRatio hℓ hℓ₀ : Γ((Geometric.projectiveComplement P).left, ⊤)) =
+      (Scheme.ΓSpecIso (.of (SmoothAlg.complement P.cone))).inv
+        (SmoothAlg.projectiveToCone P (SmoothAlg.projectiveRatioUnit hℓ hℓ₀)) :=
+  congrArg Units.val (map_coneProjection_projectiveRatio hℓ hℓ₀)
 
 variable {P} in
-/-- The isomorphism `U_P ≅ U_{decone_{ℓ₀} P}` with the complement of the decone in the slice
-`ℓ₀ = 1`, here the spectrum of its coordinate ring, for an equation `ℓ₀` of a hyperplane of `P`:
-`s_P` followed by `Spec` of the existing `deconeIso`, which restricts functions to the slice.
+/-- The isomorphism `U_P ≅ U_{decone_{ℓ₀} P}`, in a domain `D`, for an equation `ℓ₀` of a hyperplane
+of `P`. It is `s_P` followed by `Spec` of the existing `SmoothAlg.deconeIso`.
 
 Blueprint: `thm:geo-projective-geometry`. -/
 def projectiveDeconeIso (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
     D.projectiveComplement P ≅ D.spec (SmoothAlg.complement (P.decone ℓ₀)) :=
-  D.projectiveComplementIsoSpec P ≪≫ (D.specFunctor.mapIso (SmoothAlg.deconeIso hℓ₀)).unop.symm
+  ObjectProperty.isoMk _ (Geometric.projectiveDeconeIso hℓ₀)
 
 variable {P} in
+/-- The decone isomorphism is `s_P` followed by `Spec` of the existing `SmoothAlg.deconeIso`. -/
 lemma projectiveDeconeIso_hom (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) :
     (D.projectiveDeconeIso hℓ₀).hom =
       (D.projectiveComplementIsoSpec P).hom ≫
@@ -523,26 +678,13 @@ variable {P} in
 the ratio `ℓ / ℓ₀`.
 
 Blueprint: `thm:geo-projective-geometry`. -/
-lemma map_projectiveDeconeIso_complementUnit (hℓ₀ : LinearMap.ker ℓ₀ ∈ P)
-    (hℓ : LinearMap.ker ℓ ∈ P) :
-    Units.map (D.projectiveDeconeIso hℓ₀).hom.hom.left.appTop.hom
-        (Units.map (Scheme.ΓSpecIso (.of (SmoothAlg.complement (P.decone ℓ₀)))).inv.hom
+lemma projectiveDeconeIso_hom_appTop (hℓ₀ : LinearMap.ker ℓ₀ ∈ P) (hℓ : LinearMap.ker ℓ ∈ P) :
+    (D.projectiveDeconeIso hℓ₀).hom.hom.left.appTop
+        ((Scheme.ΓSpecIso (.of (SmoothAlg.complement (P.decone ℓ₀)))).inv
           (SmoothAlg.complementUnit (P.decone ℓ₀) (ℓ.toAffineMap.comp (chart (slice ℓ₀)))
-            (decone_covers hℓ₀ hℓ))) =
-      projectiveRatio hℓ hℓ₀ := by
-  ext
-  simp only [Units.coe_map, MonoidHom.coe_coe]
-  rw [projectiveDeconeIso_hom, ObjectProperty.FullSubcategory.comp_hom, Over.comp_left,
-    Scheme.Hom.comp_appTop, CommRingCat.comp_apply]
-  change (D.projectiveComplementIsoSpec P).hom.hom.left.appTop
-    ((specMap (SmoothAlg.deconeIso hℓ₀).inv.hom).left.appTop _) = _
-  rw [specMap_left_appTop_ΓSpecIso_inv, coe_projectiveRatio,
-    globalSectionsProjectiveComplementIso_inv_apply, projectiveComplementIsoSpec_hom_hom,
-    projectiveComplementIsoSpec_hom_left]
-  congr 2
-  rw [← SmoothAlg.mapUnits_deconeIso_hom_projectiveRatioUnit_self hℓ₀ hℓ, SmoothAlg.coe_mapUnits,
-    ← CategoryTheory.comp_apply, Iso.hom_inv_id, CategoryTheory.id_apply]
-  rfl
+            (decone_covers hℓ₀ hℓ) : SmoothAlg.complement (P.decone ℓ₀))) =
+      (projectiveRatio hℓ hℓ₀ : Γ((Geometric.projectiveComplement P).left, ⊤)) :=
+  Geometric.projectiveDeconeIso_hom_appTop hℓ₀ hℓ
 
 end SmoothDomain
 

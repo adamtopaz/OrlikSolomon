@@ -34,11 +34,18 @@ complement of the hyperplanes of `P` in the projective space `Proj Sym(W*)`, usi
 * `OrlikSolomon.mapId_bijective_of_forall_exists_mul_mem`: a homogeneous localization does not
   change when the denominators are enlarged to elements that homogeneously divide the old
   denominators.
+* `ProjectiveArrangement.complementOpen_eq_iInf`, `complementOpen_eq_iInf_basicOpen`: the
+  complement is the intersection of the charts `D₊(ℓ)` of the equations, which depend only on the
+  hyperplanes (`basicOpen_coord_eq_of_ker_eq`). It is `⊤` for empty `P` (`complementOpen_eq_top`).
+* `ProjectiveArrangement.complementι_eq_awayι_of_ker_eq`: the open immersion of the complement,
+  and so `complementOpenIso`, do not depend on the equations chosen to define them.
 
 ## Implementation notes
 
-Nothing else in the library should import this file: the proof of the structure theorem does not
-use schemes. It is what makes the statement of the theorem recognizable. Mathlib has no projective
+The proof of the structure theorem does not use schemes, and none of its modules may import this
+file. It is what makes the statement of the theorem recognizable. The scheme layer of the geometric
+refactor builds on it: `OrlikSolomon/Geometry/Schemes/Projective.lean` makes the complement a scheme
+over `Spec k`. Mathlib has no projective
 space as a named scheme, so `Proj Sym(W*)` is the definition of the projectivization of `W`, and
 `projIsoMvPolynomial` relates it to the polynomial ring in a basis.
 
@@ -46,7 +53,9 @@ space as a named scheme, so `Proj Sym(W*)` is the definition of the projectiviza
 
 The identification of the object of `def:projective` with the complement in `P^n` that the blueprint
 means. The blueprint itself does not spell it out, as it works only with the decone. The first
-sentence of the proof of `lem:decone` is `complementOpen_le_basicOpen`.
+sentence of the proof of `lem:decone` is `complementOpen_le_basicOpen`. The lemmas on the
+intersection of charts and their independence of equations are part of `def:geo-projective` of the
+geometric refactor blueprint.
 -/
 
 @[expose] public section
@@ -420,9 +429,9 @@ theorem specMap_awayEquiv_comp_awayι (F G : P → Dual k W) (hF : ∀ H : P, Li
           (Nat.add_pos_left (card_pos_of_nonempty P) _) := by
   rw [← Proj.SpecMap_awayMap_awayι (symmetricGrading k (Dual k W))
     (prod_coord_mem_symmetricGrading F) (card_pos_of_nonempty P)
-    (prod_coord_mem_symmetricGrading G) rfl, ← Spec.map_comp_assoc]
-  rw [← CommRingCat.ofHom_comp, mapId_comp_awayMap _ (prod_coord_mem_symmetricGrading F)
-    (prod_coord_mem_symmetricGrading G) (powers_prod_coord_le F hF)]
+    (prod_coord_mem_symmetricGrading G) rfl, ← Spec.map_comp_assoc, ← CommRingCat.ofHom_comp,
+    mapId_comp_awayMap _ (prod_coord_mem_symmetricGrading F) (prod_coord_mem_symmetricGrading G)
+      (powers_prod_coord_le F hF)]
   rfl
 
 omit [Nonempty P] in
