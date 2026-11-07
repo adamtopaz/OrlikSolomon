@@ -113,7 +113,7 @@ Geometric Betti and $`\ell`-adic cohomology are the intended ordinary instances,
 Algebraic de Rham cohomology in characteristic zero is the one such example built in Lean, and instantiating the main theorems at it gives {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[].
 Ordinary crystalline cohomology of a nonproper variety is not automatically an instance, because affine-line invariance fails in the naive theory.
 Arithmetic cohomology over a nonclosed field generally has higher Galois cohomology at the point and fails the dimension axiom.
-None of this is formalized: these are the boundaries of application, not extra hypotheses of the theorem.
+The checks and exclusions for the remaining theories are not formalized: they describe the boundaries of application, not extra hypotheses of the theorem.
 
 # The bridge from a degreewise theory
 

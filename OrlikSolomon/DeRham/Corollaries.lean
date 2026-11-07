@@ -14,8 +14,8 @@ public import OrlikSolomon.Presentation.ProjectiveOrdinary
 
 For every field `k` of characteristic zero, with no further hypothesis, this file states the affine
 and projective structure theorems for the algebraic de Rham cohomology `H^•_dR(U/k)` of an
-arrangement complement `U`. These are the first theorems of the library with no cohomology theory
-as a parameter: they mention de Rham cohomology `DeRham.Cohomology k (complement 𝒜)` and the
+arrangement complement `U`. These corollaries have no cohomology theory as a parameter: they
+mention de Rham cohomology `DeRham.Cohomology k (complement 𝒜)` and the
 Orlik–Solomon algebra, and nothing else.
 
 * `cor:dr-affine`: for an arrangement `𝒜` in a finite-dimensional `k`-vector space,
@@ -51,8 +51,9 @@ classes of the instance with the classes `[du/u] t`.
 
 ## Implementation notes
 
-The statements are about `DeRham.Cohomology k A` and its degrees `Cohomology.degree k A q`, and
-mention neither `OrdinaryTheory` nor the coefficient `k[t, t⁻¹]` of the instance. The lemmas
+The corollary statements concern `DeRham.Cohomology k A` and its degrees
+`Cohomology.degree k A q`, and mention neither `OrdinaryTheory` nor the coefficient `k[t, t⁻¹]` of
+the instance. The lemmas
 `affineEquiv_apply` and `projectiveEquiv_apply`, which say how the maps are built, are the only
 exceptions.
 

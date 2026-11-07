@@ -69,7 +69,7 @@ section OnePoint
 
 variable {k : Type u} [Field k] [CharZero k]
 
-/-- The unit `x` on the complement of the origin of the affine line. -/
+/-- The chosen equation of the origin, as a unit on the punctured affine line. -/
 abbrev unitX (k : Type u) [Field k] : (complement (singlePoint k))ˣ :=
   equationUnit (singlePoint k) (singlePointLabel k)
 

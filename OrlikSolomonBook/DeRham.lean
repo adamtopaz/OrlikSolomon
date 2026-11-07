@@ -470,7 +470,8 @@ The theorem does not say that $`C(A)` is nonzero for every $`A`: the zero algebr
 For the standard pair $`(k[x],x)`, the normalized class $`\tau` of {bp "lem:gm"}[] is $`[dx/x]\,t` in $`C(k[x,x^{-1}])_{1,1}`.
 For a unit $`a` on any smooth algebra, the logarithmic class of {bp "def:log"}[] is $`[da/a]\,t`.
 
-In Lean the class $`[da/a]` is defined for a unit of any algebra over any commutative ring, and the residue of $`[df/f]` is $`1` for every smooth principal pair.
+In Lean the class $`[da/a]` is defined for a unit of any algebra over any commutative ring.
+When positive integers are units in the base, the residue of $`[df/f]` is $`1` for every smooth principal pair.
 :::
 
 :::node "cor:dr-affine" (decl := OrlikSolomon.DeRham.affineEquiv) (decl := OrlikSolomon.DeRham.affineEquiv_generator_of_isEquation) (decl := OrlikSolomon.DeRham.affineEquiv_mem_degree_iff) (decl := OrlikSolomon.DeRham.affineDirectSumEquiv) (decl := OrlikSolomon.DeRham.affineDirectSumEquiv_of_mem_degree) (decl := OrlikSolomon.DeRham.affineDegreeEquiv)

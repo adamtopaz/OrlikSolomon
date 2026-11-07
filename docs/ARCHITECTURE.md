@@ -904,7 +904,7 @@ smoothness of the coefficient algebra.
 ### The corollaries
 
 - **No theory in the statements.** `DeRham/Corollaries` states the structure theorems for
-  `DeRham.Cohomology k A` and its degrees `Cohomology.degree k A q`. Its public statements mention
+  `DeRham.Cohomology k A` and its degrees `Cohomology.degree k A q`. The corollary statements mention
   neither `OrdinaryTheory` nor `k[T;T⁻¹]`, except `affineEquiv_apply` and `projectiveEquiv_apply`,
   which say how the maps are built. The hypotheses are `[Field k] [CharZero k]` and those of the
   arrangement, and nothing else.
