@@ -118,9 +118,9 @@ variable {k : Type u} [CommRing k] {R : Type v} [CommRing R] {B : Type w} [CommR
   [Algebra R B] {ℬ : ℤ → Submodule R B} [GradedAlgebra ℬ] {D : SmoothDomain k}
   (T : OrdinaryTheory.{u, v, w, z} D ℬ)
 
-/-- The total cohomology algebra of a scheme. -/
-@[implicit_reducible]
-def obj (X : D.Obj) : AlgCat.{z} B := T.C.obj (op X)
+/-- The total cohomology algebra of a scheme. This reducible accessor lets the functor fields
+and the pullback API use the same ring operations. -/
+abbrev obj (X : D.Obj) : AlgCat.{z} B := T.C.obj (op X)
 
 instance objAlgebra (X : D.Obj) : Algebra R (T.obj X) := T.algebra X
 
@@ -188,8 +188,7 @@ lemma residue_pull {P Q : DivisorPair D} (f : P ⟶ Q) (x : T.obj Q.compl) :
 /-- The boundary projection formula with the degree-one factor first. -/
 lemma residue_mul_pull (P : DivisorPair D) {α : T.obj P.compl}
     (hα : α ∈ T.grading P.compl (1, 1)) (β : T.obj P.ambient) :
-    T.residue P (α * T.pull P.j β) =
-      Mul.mul (α := T.obj P.closed) (T.residue P α) (T.pull P.i β) :=
+    T.residue P (α * T.pull P.j β) = T.residue P α * T.pull P.i β :=
   T.residue_mul_map P hα β
 
 /-- Pullback by an isomorphism preserves and reflects the grading. -/

@@ -235,9 +235,8 @@ lemma toAlgebraic_stdResidue_point (x : T.obj D.gm) :
         (T.standardResidue D.point (T.pull (D.prodGmSnd D.point) x)) := by
   have h := T.residue_pull (DivisorPair.standardPairMap D.specPointIso.hom)
     (T.pull (D.prodGmSnd D.point) x)
-  change T.standardResidue (D.spec (SmoothAlg.point k))
-      (T.pull (D.prodGmMap D.specPointIso.hom) (T.pull (D.prodGmSnd D.point) x)) =
-    T.pull D.specPointIso.hom (T.standardResidue D.point (T.pull (D.prodGmSnd D.point) x)) at h
+  rw [DivisorPair.standardPairMap_compl, DivisorPair.standardPairMap_closed, residue_standardPair,
+    residue_standardPair] at h
   rw [← h, ← pull_comp, SmoothDomain.prodGmMap_prodGmSnd, ← toAlgebraic_standardResidue,
     ← pull_comp, SmoothDomain.specLaurentIso_hom_prodGmSnd]
 
@@ -354,8 +353,8 @@ theorem pull_toAlgebraic_logClass {X : D.Obj} {A : SmoothAlg.{u} k} (g : X ⟶ D
     {v : Γ(X.obj.left, ⊤)ˣ}
     (hv : (v : Γ(X.obj.left, ⊤)) = g.hom.left.appTop ((Scheme.ΓSpecIso (.of A)).inv u)) :
     T.pull g (T.toAlgebraic.logClass u) = T.logClass v := by
-  change T.pull g (T.pull (D.specFunctor.map (SmoothAlg.gmHom u)).unop T.toAlgebraic.tau) = _
-  rw [← pull_specGmIso_hom_tau, ← pull_comp, ← pull_comp, Category.assoc,
+  rw [OrlikSolomon.OrdinaryTheory.logClass, toAlgebraic_map, ← pull_specGmIso_hom_tau,
+    ← pull_comp, ← pull_comp, Category.assoc,
     SmoothDomain.comp_specFunctor_map_gmHom_comp_specGmIso_hom g u hv, logClass]
 
 /-- On `Spec A`, the old class `[u]` of `T.toAlgebraic` is the class of the global unit given by
@@ -527,9 +526,8 @@ Blueprint: `thm:geo-log-laws`. -/
 Blueprint: `thm:geo-log-laws`. -/
 @[simp] theorem residue_logClass_eqnUnit_mul (β : T.obj P.ambient) :
     T.residue P (T.logClass P.eqnUnit * T.pull P.j β) = T.pull P.i β := by
-  have h := T.residue_mul_map P (T.logClass_mem_grading P.eqnUnit) β
-  simp only [map_apply, residue_logClass_eqnUnit, one_mul] at h
-  exact h
+  rw [T.residue_mul_pull P (T.logClass_mem_grading P.eqnUnit) β, residue_logClass_eqnUnit,
+    one_mul]
 
 /-- The residue vanishes on classes pulled back from the ambient scheme. -/
 @[simp] theorem residue_pull_j (β : T.obj P.ambient) : T.residue P (T.pull P.j β) = 0 :=
@@ -563,14 +561,9 @@ variable (X : D.Obj)
 /-- `r([z] π^* b) = b` on `X ×_S 𝔾ₘ`. -/
 @[simp] theorem standardResidue_logClass_prodGmCoord_mul (b : T.obj X) :
     T.standardResidue X (T.logClass (D.prodGmCoord X) * T.pull (D.prodGmFst X) b) = b := by
-  have h := T.residue_logClass_eqnUnit_mul (DivisorPair.standardPair D X)
-    (T.pull (D.prodAffineLineFst X) b)
-  rw [logClass_standardPair_eqnUnit] at h
-  change T.standardResidue X (T.logClass (D.prodGmCoord X) *
-      T.pull (D.prodGmToProdAffineLine X) (T.pull (D.prodAffineLineFst X) b)) =
-    T.pull (D.zeroSection X) (T.pull (D.prodAffineLineFst X) b) at h
-  rwa [← pull_comp, ← pull_comp, SmoothDomain.prodGmToProdAffineLine_prodAffineLineFst,
-    SmoothDomain.zeroSection_prodAffineLineFst, pull_id] at h
+  rw [← SmoothDomain.prodGmToProdAffineLine_prodAffineLineFst, pull_comp,
+    T.standardResidue_mul_pull X (T.logClass_mem_grading _), standardResidue_logClass_prodGmCoord,
+    one_mul, ← pull_comp, SmoothDomain.zeroSection_prodAffineLineFst, pull_id]
 
 /-- The section `z = 1` kills `[z]`, since `[1] = 0`. -/
 theorem pull_oneSection_logClass_prodGmCoord :
@@ -685,8 +678,7 @@ theorem gmProductEquiv_mem_grading_iff {i j : ℤ × ℤ} (hij : j + (1, 1) = i)
       standardResidue_logClass_prodGmCoord_mul] at h'
   · rw [gmProductEquiv_apply]
     exact add_mem (T.pull_mem_grading _ ha)
-      ((isHomogeneousOfShift_mul_left (T := T.C.obj (op (D.prodGm X)))
-        (T.logClass_mem_grading (D.prodGmCoord X))).map_mem hij
+      ((isHomogeneousOfShift_mul_left (T.logClass_mem_grading (D.prodGmCoord X))).map_mem hij
         (T.pull_mem_grading _ hb))
 
 /-- `gmProductEquiv` is natural in `X`. Blueprint: `thm:geo-gm-product`. -/
