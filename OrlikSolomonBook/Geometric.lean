@@ -16,11 +16,12 @@ file := "geometric"
 htmlSplit := .never
 %%%
 
-*The foundations, complements as open subschemes, geometric axioms, affine transports and logarithmic classes are formalized.*
+*The foundations, complements as open subschemes, geometric axioms, affine transports, supports-and-purity bridge and logarithmic classes are formalized.*
 It presents the plan in the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
-Of its 42 nodes, twenty-three are formalized and one partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports], and the three nodes on {bp "def:geo-log"}[logarithmic classes and the product with $`\mathbb{G}_m`].
+Of its 42 nodes, twenty-five are formalized, one partly formalized and sixteen remain planned, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports], the two nodes on {bp "def:geo-supports"}[degreewise supports and purity], and the three nodes on {bp "def:geo-log"}[logarithmic classes and the product with $`\mathbb{G}_m`].
 The partial node is {bp "thm:geo-cartesian"}[], whose Tor-sheaf and conormal statements remain.
 The geometric theory has exactly the old 22 fields, and its affine transports preserve the grading, coefficient maps, pullbacks, Gysin and residue, with both triangle identities.
+The supports-and-purity bridge assembles these fields from degreewise cohomology with localization and purity on every object of the domain and commutes with restriction and affine transport.
 The logarithmic class of a global unit and the decomposition of the cohomology of $`X\times_S\mathbb{G}_m` hold on every object of the domain, affine or not.
 The structure theorems on actual arrangement opens and the de Rham realization through sheaf forms remain planned.
 Every other box below is marked as planned, and for those the blueprint's proposed names under `OrlikSolomon.Geometric` do not exist yet, so this chapter does not list them.
@@ -264,7 +265,7 @@ A pair with a unit equation has $`D=\varnothing` and $`U\simeq X`, and its Gysin
 The proof transports the algebraic consequence of exactness for an empty-divisor pair, so no axiom about the empty scheme is needed, and it holds for zero coefficients too.
 :::
 
-:::node "def:geo-supports"
+:::node "def:geo-supports" (decl := OrlikSolomon.Geometric.DegreewiseTheory) (decl := OrlikSolomon.Geometric.SupportsAndPurity) (decl := OrlikSolomon.Geometric.DegreewiseTheory.toCore) (decl := OrlikSolomon.Geometric.SupportsAndPurity.toCore) (decl := OrlikSolomon.Geometric.DegreewiseTheory.restrict) (decl := OrlikSolomon.Geometric.SupportsAndPurity.restrict) (decl := OrlikSolomon.Geometric.DegreewiseTheory.toAlgebraic) (decl := OrlikSolomon.Geometric.SupportsAndPurity.toAlgebraic) (decl := OrlikSolomon.Geometric.SupportsAndPurity.forgetTotal_incl) (decl := OrlikSolomon.Geometric.SupportsAndPurity.boundaryTotal_incl) (decl := OrlikSolomon.Geometric.SupportsAndPurity.purityTotal_incl)
 A geometric degreewise theory has $`R`-modules $`H^{p,w}(X)`, indexed products, graded commutativity by $`p`, contravariant pullbacks that preserve degrees, and the degreewise coefficient, point and affine-line conditions of the existing bridge, with morphisms of schemes in place of algebra maps and the projection from $`X\times_S\mathbb{A}^1` in place of the polynomial inclusion.
 For a pair, a package of supports and purity consists of $`R`-modules $`H_D^{p,w}(X)` and maps
 $$`a:H_D^{p,w}(X)\to H^{p,w}(X),\qquad\delta:H^{p,w}(U)\to H_D^{p+1,w}(X),\qquad\vartheta:H^{p,w}(D)\xrightarrow{\ \sim\ }H_D^{p+2,w+1}(X),`
@@ -273,11 +274,12 @@ $$`a(x\cdot y)=a(x)\,y,\qquad\vartheta(x\,i^*y)=\vartheta(x)\cdot y,\qquad\delta
 The last formula has no sign.
 :::
 
-:::node "thm:geo-bridge"
+:::node "thm:geo-bridge" (decl := OrlikSolomon.Geometric.ofSupportsAndPurity) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_restrict) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_toAlgebraic) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_pull_incl) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_gysin_apply) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_residue_apply) (decl := OrlikSolomon.Geometric.gysinDegreewiseOfSupportsAndPurity_incl) (decl := OrlikSolomon.Geometric.residueDegreewiseOfSupportsAndPurity_incl) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_exact_gysin_pull) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_exact_pull_residue) (decl := OrlikSolomon.Geometric.ofSupportsAndPurity_exact_residue_gysin)
 These data give a geometric ordinary theory with
 $$`C(X)=\bigoplus_{p,w}H^{p,w}(X),\qquad G=a\vartheta,\qquad r=\vartheta^{-1}\delta,`
 and the construction commutes with restriction of domains and with affine duality.
 The proofs are those of {bp "lem:standard-bridge"}[], whose algebraic lemmas are reused.
+All integer bidegrees are included in the sum. Total exactness follows from degreewise exactness and finite support; it is not an input, and the bridge applies to non-affine objects too.
 :::
 
 # Complements as open subschemes

@@ -226,8 +226,10 @@ lemma boundaryTotal_mul (P : Pair) (x : D.Total (J.compl.obj P)) (y : D.Total (J
     induction y using DirectSum.induction_on with
     | zero => simp
     | of j y =>
-      change S.boundaryTotal P (D.incl (J.compl.obj P) i x * D.mapTotal (J.j.app P) (D.incl (J.ambient.obj P) j y)) =
-        S.supportMulTotal P (S.boundaryTotal P (D.incl (J.compl.obj P) i x)) (D.incl (J.ambient.obj P) j y)
+      change S.boundaryTotal P (D.incl (J.compl.obj P) i x *
+          D.mapTotal (J.j.app P) (D.incl (J.ambient.obj P) j y)) =
+        S.supportMulTotal P (S.boundaryTotal P (D.incl (J.compl.obj P) i x))
+          (D.incl (J.ambient.obj P) j y)
       rw [D.mapTotal_incl, D.incl_mul_incl, S.boundaryTotal_incl,
         S.boundaryTotal_incl, S.supportMulTotal_incl]
       exact DirectSum.of_eq_of_gradedMonoid_eq (S.boundary_mul P x y)
@@ -244,8 +246,8 @@ lemma isHomogeneousOfShift_forgetTotal (P : Pair) :
 
 /-- The connecting homomorphism raises cohomological degree by one and preserves the twist. -/
 lemma isHomogeneousOfShift_boundaryTotal (P : Pair) :
-    IsHomogeneousOfShift (D.grading (J.compl.obj P)) (directSumGrading (R := R) (S.support P)) (1, 0)
-      (S.boundaryTotal P) :=
+    IsHomogeneousOfShift (D.grading (J.compl.obj P))
+      (directSumGrading (R := R) (S.support P)) (1, 0) (S.boundaryTotal P) :=
   isHomogeneousOfShift_shiftedDirectSumMap _ _ _ _
 
 /-- Exactness at total ambient cohomology, derived from degreewise localization with supports. -/
@@ -332,8 +334,8 @@ lemma purityTotal_incl (P : Pair) (i : ℤ × ℤ) (x : D.H (J.closed.obj P) i) 
 
 /-- Oriented purity on total cohomology has bidegree `(2,1)`. -/
 lemma isHomogeneousOfShift_purityTotal (P : Pair) :
-    IsHomogeneousOfShift (D.grading (J.closed.obj P)) (directSumGrading (R := R) (S.support P)) (2, 1)
-      (S.purityTotal P) := by
+    IsHomogeneousOfShift (D.grading (J.closed.obj P))
+      (directSumGrading (R := R) (S.support P)) (2, 1) (S.purityTotal P) := by
   rintro i _ ⟨x, rfl⟩
   rw [S.purityTotal_incl]
   exact lof_mem_directSumGrading _ _ _
@@ -360,8 +362,10 @@ lemma purityTotal_mul (P : Pair) (x : D.Total (J.closed.obj P)) (y : D.Total (J.
     induction y using DirectSum.induction_on with
     | zero => simp
     | of j y =>
-      change S.purityTotal P (D.incl (J.closed.obj P) i x * D.mapTotal (J.i.app P) (D.incl (J.ambient.obj P) j y)) =
-        S.supportMulTotal P (S.purityTotal P (D.incl (J.closed.obj P) i x)) (D.incl (J.ambient.obj P) j y)
+      change S.purityTotal P (D.incl (J.closed.obj P) i x *
+          D.mapTotal (J.i.app P) (D.incl (J.ambient.obj P) j y)) =
+        S.supportMulTotal P (S.purityTotal P (D.incl (J.closed.obj P) i x))
+          (D.incl (J.ambient.obj P) j y)
       rw [D.mapTotal_incl, D.incl_mul_incl, S.purityTotal_incl,
         S.purityTotal_incl, S.supportMulTotal_incl]
       exact DirectSum.of_eq_of_gradedMonoid_eq (S.purity_mul P x y)
@@ -378,7 +382,8 @@ def residueR (P : Pair) : D.Total (J.compl.obj P) →ₗ[R] D.Total (J.closed.ob
 
 /-- The Gysin map has bidegree `(2,1)`. -/
 lemma isHomogeneousOfShift_gysinR (P : Pair) :
-    IsHomogeneousOfShift (D.grading (J.closed.obj P)) (D.grading (J.ambient.obj P)) (2, 1) (S.gysinR P) := by
+    IsHomogeneousOfShift (D.grading (J.closed.obj P)) (D.grading (J.ambient.obj P))
+      (2, 1) (S.gysinR P) := by
   intro i x hx
   change S.forgetTotal P (S.purityTotal P x) ∈ D.grading (J.ambient.obj P) (i + (2, 1))
   simpa only [add_zero] using
@@ -386,7 +391,8 @@ lemma isHomogeneousOfShift_gysinR (P : Pair) :
 
 /-- The residue map has bidegree `(-1,-1)`. -/
 lemma isHomogeneousOfShift_residueR (P : Pair) :
-    IsHomogeneousOfShift (D.grading (J.compl.obj P)) (D.grading (J.closed.obj P)) (-1, -1) (S.residueR P) := by
+    IsHomogeneousOfShift (D.grading (J.compl.obj P)) (D.grading (J.closed.obj P))
+      (-1, -1) (S.residueR P) := by
   intro i x hx
   change (S.purityTotal P).symm (S.boundaryTotal P x) ∈ D.grading (J.closed.obj P) (i + (-1, -1))
   have h := (S.isHomogeneousOfShift_purityTotal P).linearEquiv_symm
@@ -543,7 +549,8 @@ lemma residueDegreewise_incl (P : Pair) {i j : ℤ × ℤ}
 theorem exact_gysinDegreewise_map (P : Pair) {i j : ℤ × ℤ}
     (hij : i + (2, 1) = j) :
     Function.Exact (S.gysinDegreewise P i j) (D.map (J.j.app P) j) := by
-  have h := exact_directSum_components (D.H (J.closed.obj P)) (D.H (J.ambient.obj P)) (D.H (J.compl.obj P))
+  have h := exact_directSum_components (D.H (J.closed.obj P)) (D.H (J.ambient.obj P))
+    (D.H (J.compl.obj P))
     (S.gysinR P) (D.mapTotalR (J.j.app P)).toLinearMap
     (S.isHomogeneousOfShift_gysinR P) (D.isHomogeneousOfShift_mapTotalR (J.j.app P))
     (S.exact_gysinR_map P) hij (add_zero j)
@@ -554,7 +561,8 @@ theorem exact_gysinDegreewise_map (P : Pair) {i j : ℤ × ℤ}
 theorem exact_map_residueDegreewise (P : Pair) {i j : ℤ × ℤ}
     (hij : i + (-1, -1) = j) :
     Function.Exact (D.map (J.j.app P) i) (S.residueDegreewise P i j) := by
-  have h := exact_directSum_components (D.H (J.ambient.obj P)) (D.H (J.compl.obj P)) (D.H (J.closed.obj P))
+  have h := exact_directSum_components (D.H (J.ambient.obj P)) (D.H (J.compl.obj P))
+    (D.H (J.closed.obj P))
     (D.mapTotalR (J.j.app P)).toLinearMap (S.residueR P)
     (D.isHomogeneousOfShift_mapTotalR (J.j.app P)) (S.isHomogeneousOfShift_residueR P)
     (S.exact_map_residueR P) (add_zero i) hij

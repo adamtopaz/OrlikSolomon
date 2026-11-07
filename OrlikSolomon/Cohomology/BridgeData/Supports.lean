@@ -61,7 +61,8 @@ universe u v w z t
 namespace OrlikSolomon
 
 /-- The covariant diagram of certified algebraic divisor pairs. -/
-def algebraicPairDiagram {k : Type u} [CommRing k] : CovariantPairDiagram (SmoothAlg k) (DivisorPair k) where
+def algebraicPairDiagram {k : Type u} [CommRing k] :
+    CovariantPairDiagram (SmoothAlg k) (DivisorPair k) where
   ambient := { obj := DivisorPair.ambient, map f := f.ambient }
   closed := { obj := DivisorPair.closed, map f := f.closed }
   compl := { obj := DivisorPair.compl, map f := f.compl }
