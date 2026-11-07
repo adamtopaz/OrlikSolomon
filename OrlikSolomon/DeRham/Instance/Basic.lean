@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
@@ -42,8 +42,8 @@ The fields of `OrdinaryTheory`, in order:
 which checks that each of them has the exact shape of its field. That is a test of shape: the
 remaining fields are not hypotheses of anything here.
 
-The coefficient ring and the point are nonzero: `nontrivial_coefficients`, and the instance on
-`(twistedCohomologyFunctor k).obj (point k)`.
+When `k` is nonzero, the coefficient ring and the value at the point are nonzero:
+`nontrivial_coefficients`, and the instance on `(twistedCohomologyFunctor k).obj (point k)`.
 
 ## How the instance computes
 
@@ -56,8 +56,9 @@ they are typed differently.
 
 So state and prove computations on `TwistedCohomology k A`, where `simp` works, and pass between the
 two once, with `exact` or `change`. The lemmas `twistedCohomologyFunctor_map_apply` and
-`twistedCohomologyFunctor_map_tmul` are `rfl`. `Examples/DeRhamInstance` shows this on a value of
-the structure: reading a homogeneous class as `T w ⊗ₜ c`, and assembling
+`twistedCohomologyFunctor_map_tmul` are `rfl`. `Examples/DeRhamInstance` shows this on a conditional
+test value of the structure, given its remaining fields: reading a homogeneous class as
+`T w ⊗ₜ c`, and assembling
 `OS_k(𝒜) ≃ₐ[k] H^•_dR(U_𝒜)` from `OrdinaryTheory.diagonalEquiv` and
 `TwistedCohomology.diagonalEquiv`.
 
@@ -82,7 +83,7 @@ namespace OrlikSolomon.DeRham
 variable (k : Type u) [CommRing k]
 
 /-- **The Laurent-twisted functor**, the field `C` of the de Rham instance. It sends a smooth
-algebra `A` to `C(A) = k[T;T⁻¹] ⊗[k] H^•_dR(A/k)`, and a map `φ` to `H(φ) ⊗ 1`. The
+algebra `A` to `C(A) = k[T;T⁻¹] ⊗[k] H^•_dR(A/k)`, and a map `φ` to `1 ⊗ H(φ)`. The
 `k[T;T⁻¹]`-algebra structure uses the coefficient factor.
 
 Blueprint: `def:dr-twisted-functor`. -/
@@ -130,7 +131,7 @@ theorem twistedCohomologyFunctor_map_apply (f : A ⟶ D) (x : TwistedCohomology 
     (twistedCohomologyFunctor k).map f x = TwistedCohomology.map (algHom f) x :=
   rfl
 
-/-- The image of a morphism is `H(φ) ⊗ 1`. This is not a `simp` lemma: see the module docstring.
+/-- The image of a morphism is `1 ⊗ H(φ)`. This is not a `simp` lemma: see the module docstring.
 
 Blueprint: `def:dr-twisted-functor`. -/
 theorem twistedCohomologyFunctor_map_tmul (f : A ⟶ D) (b : k[T;T⁻¹]) (c : Cohomology k A) :

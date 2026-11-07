@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
@@ -26,7 +26,7 @@ Everything here is about the algebra `TwistedCohomology k A` and does not mentio
 
 * `OrlikSolomon.DeRham.TwistedCohomology k A`: the algebra `C(A)`.
 * `TwistedCohomology.grading k A (p, w)`: the piece `T^w H^p`, with its `GradedAlgebra` instance.
-* `TwistedCohomology.map φ`: the map `H(φ) ⊗ 1`, linear over `k[T;T⁻¹]`.
+* `TwistedCohomology.map φ`: the map `1 ⊗ H(φ)`, linear over `k[T;T⁻¹]`.
 * `TwistedCohomology.evalOne k A`: the `k`-algebra map `C(A) → H^•` that forgets the powers of `T`.
 * `TwistedCohomology.gradingEquiv k A p w`, `TwistedCohomology.degreeEquiv k A n w`: the
   identification of `H^p` with the piece `T^w H^p`, for `p : ℤ` and for `p = n : ℕ`.
@@ -78,7 +78,7 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
   {A' : Type v'} [CommRing A'] [Algebra k A'] {A'' : Type v''} [CommRing A''] [Algebra k A'']
 
 /-- The total de Rham cohomology with coefficients in the Laurent polynomials, `C(A)` in the
-blueprint. It is a `k[T;T⁻¹]`-algebra through the left factor, as the blueprint asks, and its
+blueprint. It is a `k[T;T⁻¹]`-algebra through the coefficient factor, here on the left, and its
 `k`-algebra structure is the restriction of that. It is only graded commutative.
 
 Blueprint: `def:dr-twisted-functor`. -/
@@ -334,7 +334,7 @@ theorem isGradedCommutative_grading : IsGradedCommutative (grading k A) Prod.fst
 
 /-! ### Functoriality -/
 
-/-- The map `H(φ) ⊗ 1` on `C(A)`, linear over `k[T;T⁻¹]`, which is what the blueprint's `C(φ)` is.
+/-- The map `1 ⊗ H(φ)` on `C(A)`, linear over `k[T;T⁻¹]`, which is what the blueprint's `C(φ)` is.
 
 Blueprint: `def:dr-twisted-functor`. -/
 def map (φ : A →ₐ[k] A') : TwistedCohomology k A →ₐ[k[T;T⁻¹]] TwistedCohomology k A' :=

@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
@@ -21,14 +21,14 @@ of `OrdinaryTheory` from `gysin` on, stated exactly as in the structure, and
 in the library takes `RemainingFields` as a hypothesis, and `DeRham/Instance` will fill these fields
 itself.
 
-The second part is what the corollaries of the instance need, on a value of the structure. It reads
+The second part checks the corollary shapes for a supplied `S : RemainingFields k`. It reads
 a homogeneous class as `T w ⊗ₜ c`, the classes `logClass` among them. It shows that there is no
 competing `k`-algebra structure, in the forms that fail at `R = B`. It builds the equivalence of
 `OS_k(𝒜)` with de Rham cohomology that `cor:dr-affine` asserts, with its value on generators.
 
 The third part is edge cases: the sign is by cohomological degree and not by weight, negative
-degrees and the zero algebra vanish, the point is nonzero, and affine-line invariance fails in
-characteristic two, so that its hypothesis is needed.
+degrees and the zero algebra vanish, the point is nonzero when `k` is nonzero, and affine-line
+invariance fails in characteristic two, so that its hypothesis is needed.
 
 Blueprint: `def:dr-twisted-functor`, `lem:dr-ordinary-basic`.
 -/
@@ -83,8 +83,9 @@ structure RemainingFields (k : Type u) [Field k] [CharZero k] where
 
 variable {k : Type u} [Field k] [CharZero k]
 
-/-- The structure `OrdinaryTheory`, with every field of `lem:dr-ordinary-basic` filled by
-`DeRham/Instance/Basic`. The fields `algebra` and `isScalarTower` are found by instance search. -/
+/-- A conditional test value of `OrdinaryTheory`, given the remaining ten fields in `S`.
+`DeRham/Instance/Basic` supplies every proved field of `lem:dr-ordinary-basic`; `algebra` and
+`isScalarTower` are found by instance search. -/
 def RemainingFields.theory (S : RemainingFields k) : OrdinaryTheory k (laurentGrading k) where
   bijective_algebraMap_gradeZero := bijective_algebraMap_laurentGrading_zero k
   C := twistedCohomologyFunctor k
@@ -141,7 +142,9 @@ example {p w : ℤ} {x : S.theory.C.obj A} (hx : x ∈ S.theory.grading A (p, w)
     ∃ c ∈ Cohomology.grading k A p, (LaurentPolynomial.T w ⊗ₜ[k] c : TwistedCohomology k A) = x :=
   TwistedCohomology.mem_grading_iff.1 hx
 
-/-- The logarithmic class of a unit has the form that `lem:dr-tau` makes precise. -/
+/-- A logarithmic class in the supplied theory has bidegree `(1, 1)`, so its untwisted factor
+has degree one. For the final de Rham instance, `lem:dr-tau` will identify this factor with the
+de Rham logarithmic class. -/
 theorem exists_logClass_eq (u : Aˣ) :
     ∃ c ∈ Cohomology.degree k A 1, (LaurentPolynomial.T 1 ⊗ₜ[k] c : TwistedCohomology k A) =
       S.theory.logClass u := by
@@ -184,8 +187,8 @@ example (P : DivisorPair k) : S.theory.C.obj P.closed →ₗ[k] S.theory.C.obj P
 
 variable {V : Type u} [AddCommGroup V] [Module k V] [FiniteDimensional k V] (𝒜 : Arrangement k V)
 
-/-- The shape of `cor:dr-affine`: the diagonal of the structure theorem, followed by the removal of
-the powers of `T`. -/
+/-- The conditional shape of `cor:dr-affine`, given the remaining fields in `S`: the diagonal of
+the structure theorem, followed by removal of the powers of `T`. -/
 def osCohomologyEquiv : OSAlgebra k 𝒜 ≃ₐ[k] Cohomology k (complement 𝒜) :=
   (S.theory.diagonalEquiv 𝒜).trans (TwistedCohomology.diagonalEquiv k (complement 𝒜)).symm
 
@@ -196,7 +199,8 @@ theorem osCohomologyEquiv_apply (x : OSAlgebra k 𝒜) :
     congrArg (TwistedCohomology.evalOne k _) (S.theory.coeAlgHom_diagonalEquiv x)
 
 /-- On a generator, the equivalence is the logarithm of an equation, with the power of `T` removed.
-By `lem:dr-tau`, this is the class `[df_H / f_H]`. -/
+For the final normalized de Rham instance, `lem:dr-tau` will identify this value with the class
+`[df_H / f_H]`. -/
 theorem osCohomologyEquiv_generator (H : 𝒜) :
     osCohomologyEquiv S 𝒜 (OSAlgebra.generator k 𝒜 H) =
       TwistedCohomology.evalOne k _ (S.theory.logClass (equationUnit 𝒜 H)) := by
