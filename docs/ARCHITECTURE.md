@@ -980,11 +980,14 @@ below. Stage G2 is
 formalized: `def:geo-affine-space`, `def:geo-complement`, `thm:geo-complement-spec`, `thm:geo-deletion`
 and `thm:geo-small-targets` (#111), described in "Arrangement complements on schemes", and
 `def:geo-projective` and `thm:geo-projective-geometry` (#112, with its affine sides from #111),
-described in "Projective complements on schemes". The logarithms of stage G3 (#113) are formalized:
-`def:geo-log`, `thm:geo-log-laws` and `thm:geo-gm-product`, described in "Geometric logarithms"
-below. Stage G4 (#115), `lem:geo-module-gluing`, `def:geo-forms-sheaf` and
-`thm:geo-forms-comparison`, is formalized as described in "Relative forms as sheaves".
-The other declaration names remain proposals.
+described in "Projective complements on schemes". Stage G3 is formalized: the logarithms
+`def:geo-log`, `thm:geo-log-laws` and `thm:geo-gm-product` (#113), described in "Geometric
+logarithms" below, and the structure theorems `thm:geo-affine` and `thm:geo-projective` (#114),
+described in "The geometric structure theorems" below. The transport rule `thm:geo-transport-all`
+is partly formalized, by the comparison `transportAffineDevelopment` and its laws, since a rule
+about every old statement is not one Lean statement. Stage G4 (#115), `lem:geo-module-gluing`,
+`def:geo-forms-sheaf` and `thm:geo-forms-comparison`, is formalized as described in "Relative
+forms as sheaves". The other declaration names remain proposals.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1330,6 +1333,41 @@ every object of its domain, affine or not, and reuses the algebraic `Cohomology/
   `gmProductEquiv_mem_grading_iff` and the naturality `pull_prodGmMap_gmProductEquiv`. Its proof
   uses only the axioms for the standard pair of `X`.
 
+### The geometric structure theorems
+
+`Presentation/Geometric` (#114) is the public facade of the structure theorems on schemes. It
+reuses the existing theorems and proves nothing about arrangements again.
+
+- **The transport.** `transportAffineDevelopment T e : T.toAlgebraic.C.obj A ≃ₐ[B] T.obj X`, for
+  `e : X ≅ D.spec A`, is pullback along `e`, and its laws are the base cases of the blueprint's
+  induction on expressions: bidegrees (`transportAffineDevelopment_mem_grading_iff`,
+  `transportAffineDevelopmentComponentEquiv`), logarithmic classes
+  (`transportAffineDevelopment_logClass`, from `pull_toAlgebraic_logClass`) and compatible
+  pullbacks (`transportAffineDevelopment_map`, whose hypothesis is a square with
+  `D.specFunctor.map`, the form of the naturality lemmas of `s_𝒜` and `s_P`). Residue and Gysin
+  are compared by `residue_pull` along a pair isomorphism with `DivisorPair.spec`, as
+  `transportAffineDevelopment_deletionResidue` does along `deletionPairIsoSpec`. This is the Lean
+  form of `thm:geo-transport-all`, which stays partly formalized.
+- **The theorems.** `affineEquiv 𝒜 = (T.toAlgebraic.affineEquiv 𝒜).trans
+  (transportAffineDevelopment T (D.complementIsoSpec 𝒜))`, so `affineEquiv_apply` is
+  `Φ^geo = s_𝒜^* ∘ Φ`, and `projectiveEquiv P` is the same with `D.projectiveComplementIsoSpec P`,
+  for `[Nonempty P]`. Every other declaration is the existing one composed with the transport:
+  generators, independence of the equations and uniqueness, the bigrading, naturality for
+  `D.complementInclusion` and `D.complementIso`, the cone projection `D.coneComplementProjection`,
+  the deletion residue, the components, the diagonals over `R` (through `diagonalAlgEquiv` and the
+  transported `BijOn`), vanishing, bases and Betti numbers. The names are those of the existing
+  declarations, in `namespace OrlikSolomon.Geometric.OrdinaryTheory`; `logMonomial`, the typed
+  `deletionResidue` and `deletionGysin`, and `residueComparison` are the geometric ones.
+- **No second structure map.** `ofAlgebraic_affineEquiv` and `ofAlgebraic_projectiveEquiv` say
+  that for an algebraic theory `E` the geometric theorems of `ofAlgebraic E` are the existing ones
+  for `E`, followed by `E` of the ring isomorphism `O(U) ≅ Γ(U)`. The de Rham corollaries on
+  schemes (#116) can be compared with the existing ones through them.
+- **Elaboration.** In `T.logClass u` the object is implicit, and Lean cannot solve it from a unit
+  `u : Γ((complement 𝒜).left, ⊤)ˣ`, since that would mean inverting the projection `X.obj`. When
+  the expected type does not fix it, write `T.logClass (X := D.complement 𝒜) u`, as in
+  `logClass_complementUnit_eq_of_isEquation` and `isFamily_logClass_complementUnit`. This is a
+  case of #128.
+
 ### Relative forms as sheaves
 
 `Geometry/Schemes/ModuleGluing`, in `OrlikSolomon.Geometric`, reuses Mathlib's `tilde.functor`,
@@ -1401,7 +1439,9 @@ into other files updates this table.
 | `Geometry/Schemes/Projective` | `def:geo-projective`, `thm:geo-projective-geometry` | #112 |
 | `Geometry/Schemes/Decone` | the affine sides of `thm:geo-projective-geometry`: the cone and the decone as actual complements | #111 |
 | `Cohomology/Geometric/Logarithms` | `def:geo-log`, `thm:geo-log-laws`, `thm:geo-gm-product` | #113 |
-| `Presentation/Geometric` | `thm:geo-affine`, `thm:geo-projective`, `thm:geo-transport-all` | #114 |
+| `Presentation/Geometric`, the module to import, over `Presentation/Geometric/Transport` | `thm:geo-transport-all`: `transportAffineDevelopment` and its laws | #114 |
+| `Presentation/Geometric/Affine`, `Presentation/Geometric/Ordinary` | `thm:geo-affine`: `affineEquiv` and its API, and the forms over `R` | #114 |
+| `Presentation/Geometric/Projective` | `thm:geo-projective`: `projectiveEquiv`, its diagonal and multiplicities | #114 |
 | `Geometry/Schemes/ModuleGluing` | `lem:geo-module-gluing`: exactness of associated module sheaves, for any modules, with no forms | #115 |
 | `DeRham/Schemes/Forms`, the module to import, over `DeRham/Schemes/Forms/Presheaf`, `DeRham/Schemes/Forms/Sheaf`, `DeRham/Schemes/Forms/Affine` and `DeRham/Schemes/Forms/Pullback` | `def:geo-forms-sheaf`, `thm:geo-forms-comparison` | #115 |
 | `DeRham/Schemes/Affine`, `DeRham/Schemes/Instance`, `DeRham/Schemes/Corollaries` | `def:geo-dr-cohomology`, `thm:geo-dr-instance`, `cor:geo-dr-arrangements` | #116 |

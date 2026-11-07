@@ -393,7 +393,7 @@ All of these are outputs of the proof.
  * In the projective case the empty arrangement is excluded. There is no hyperplane to put at infinity, the space is $`\mathbb{P}^n` itself, and its cohomology needs a projective bundle formula that the axioms do not provide.
 
 *How this book is tied to the code.*
-Every result appears in a box that shows a status and its label in one of three blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, or the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the planned refactor on schemes:
+Every result appears in a box that shows a status and its label in one of three blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, or the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the refactor on schemes:
  * *Planned* means that the result is in scope and no Lean declaration is attached to it yet. The text describes what is intended, and nothing has been checked.
  * *Deferred* means that the result is in the blueprint but outside the current scope of the project.
  * *Partly formalized* means that the box names Lean declarations for part of the result, shows their statements with links to their source, and says what is missing.
@@ -426,16 +426,17 @@ So are the forms of the two theorems with no hypothetical cohomology theory in t
 {ref "de-rham"}[Its chapter] presents the construction and the worked regressions.
 The main theorem does not depend on it: the dependence runs the other way.
 
-*A planned third part.*
-The third blueprint plans to restate both theorems for cohomology theories defined on smooth schemes, with the complements as actual open subschemes of affine and projective space, so that a theory on all smooth schemes would apply to them directly.
-It would reuse every proved algebraic result through the equivalence between smooth algebras and smooth affine schemes, and transport the de Rham instance to smooth affine schemes.
+*A third part, in progress.*
+The third blueprint restates both theorems for cohomology theories defined on smooth schemes, with the complements as actual open subschemes of affine and projective space, so that a theory on all smooth schemes applies to them directly.
+It reuses every proved algebraic result through the equivalence between smooth algebras and smooth affine schemes, and transports the de Rham instance to smooth affine schemes.
 Its formalized foundations include: admissible domains of smooth schemes, the equivalence between smooth algebras and smooth affine schemes, zero schemes and basic opens, products with the affine line and the multiplicative group, units as maps to the multiplicative group, principal smooth divisor pairs with their affine duality, affine space with arrangement complements, deletion pairs and relation targets as open subschemes, and projective space with projective arrangement complements as its open subschemes.
 The geometric cohomology structure and both affine transports are also formalized, with canonical graded comparisons commuting with Gysin and residue.
 The supports-and-purity bridge constructs the geometric theory from degreewise cohomology with products, localization and purity on any admissible domain, including non-affine objects, and commutes with restriction and affine transport.
 The logarithmic classes of global units and the decomposition of the cohomology of a product with the multiplicative group are formalized on every object of a domain, affine or not.
 The sheaves of relative forms now have their differential, wedge product and scheme pullbacks, with the canonical comparison to algebraic forms on affine schemes.
-Applying the affine transport to the existing de Rham theory gives a nonzero theory on smooth affine schemes; its interpretation through sheaf forms and the structure theorems on actual arrangement opens remain planned.
-{ref "geometric"}[Its chapter] presents the plan, and its nodes are counted separately above.
+So are both structure theorems on the actual arrangement opens, for a theory on any admissible domain, obtained from the theorems of this page by transport and not by a second proof.
+Applying the affine transport to the existing de Rham theory gives a nonzero theory on smooth affine schemes; its interpretation through sheaf forms remains planned.
+{ref "geometric"}[Its chapter] presents it, and its nodes are counted separately above.
 Nothing on this page depends on it: the dependence runs the other way.
 
 {include 1 OrlikSolomonBook.Organization}
