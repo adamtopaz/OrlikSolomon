@@ -75,7 +75,8 @@ first page shows the statements, elaborated, with the output of `#print axioms`.
 - Mathematical plan: [`blueprint/`](blueprint/arrangement_cohomology_lean_blueprint.tex)
 - De Rham instance of the axioms:
   [`blueprint/`](blueprint/de_rham_instance_blueprint.tex)
-- Milestone M6, the theorems on smooth schemes, planned, with only the foundations of affine duality formalized:
+- Milestone M6, the theorems on smooth schemes, planned, with only the foundations of affine duality and
+  divisor pairs formalized:
   [`blueprint/`](blueprint/geometric_refactor_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)
