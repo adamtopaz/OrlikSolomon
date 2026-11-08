@@ -8,6 +8,7 @@ module
 public import Mathlib.Algebra.Category.ModuleCat.Biproducts
 public import OrlikSolomon.Examples.DeRhamCalculations.Torus
 public import OrlikSolomon.Examples.Geometric.NonAffine.Fiber
+public import OrlikSolomon.Examples.Geometric.NonAffine.MatchingForms
 
 /-!
 # The two-chart Čech–de Rham complex of the projective line
@@ -178,6 +179,14 @@ def projectiveLineCechHomologyTwoEquiv :
   exact ((asIso i).symm ≪≫ twoChartOverlapHomologySuccIso (B := complex k k[T;T⁻¹]) 0 ≪≫
     homologyIso k k[T;T⁻¹] 1 ≪≫ (overlapDegreeOneEquiv k).toModuleIso.symm).toLinearEquiv
 
+/-- The degree-two Čech class detected by the overlap logarithmic coefficient is nonzero. -/
+theorem projectiveLineCechHomologyTwo_generator_ne_zero :
+    (projectiveLineCechHomologyTwoEquiv k).symm 1 ≠ 0 := by
+  intro h
+  have hh := congrArg (projectiveLineCechHomologyTwoEquiv k) h
+  rw [LinearEquiv.apply_symm_apply, map_zero] at hh
+  exact one_ne_zero hh
+
 /-- The Laurent overlap has no homology above degree one. -/
 theorem overlapComplex_isZero_homology_succ_succ (n : ℕ) :
     Limits.IsZero ((complex k k[T;T⁻¹]).homology (n + 2)) := by
@@ -196,6 +205,40 @@ theorem projectiveLineCechComplex_isZero_homology_succ_succ_succ (n : ℕ) :
   have hS := twoChartFiberSequence_shortExact (projectiveLineRestrictionDifference k)
   exact (hS.homology_exact₂ (n + 3)).isZero_of_both_isZero hB
     (projectiveLineChartComplex_isZero_homology_succ k (n + 2))
+
+/-- The two-chart total complex is exact in degree one. The difference of constants already
+surjects onto the closed overlap functions. -/
+theorem projectiveLineCechComplex_exactAt_one : (projectiveLineCechComplex k).ExactAt 1 := by
+  apply twoChartFiber_exactAt_one (projectiveLineRestrictionDifference k)
+    (projectiveLineChartComplex_exactAt_succ k 0)
+  intro b hb
+  change (⋀[k[T;T⁻¹]]^0 Ω[k[T;T⁻¹]⁄k]) at b
+  rw [complex_d] at hb
+  have hb' := congrArg Subtype.val hb
+  change d k (b : Forms k k[T;T⁻¹]) = 0 at hb'
+  obtain ⟨c, hc⟩ := NonAffine.closedLaurentZero_eq_constant b hb'
+  refine ⟨(0, NonAffine.polynomialConstantForm c), ?_, ?_⟩
+  · rw [projectiveLineChartComplex_d]
+    apply Prod.ext
+    · change (complex k k[X]).d 0 1 0 = 0
+      exact map_zero _
+    · change powerD k k[X] 0 (NonAffine.polynomialConstantForm c) = 0
+      apply Subtype.ext
+      change d k (algebraMap k (Forms k k[X]) c) = 0
+      rw [IsScalarTower.algebraMap_apply k k[X] (Forms k k[X]), d_algebraMap,
+        Derivation.map_algebraMap]
+  · change Forms.mapPower (projectiveLineSecondRestriction k) 0
+      (NonAffine.polynomialConstantForm c) -
+        Forms.mapPower (projectiveLineFirstRestriction k) 0 0 = b
+    rw [map_zero, sub_zero]
+    apply Subtype.ext
+    change Forms.map (projectiveLineSecondRestriction k) (algebraMap k (Forms k k[X]) c) = b.val
+    rw [AlgHom.commutes, hc]
+
+/-- The two-chart Čech–de Rham complex has zero first cohomology. -/
+theorem projectiveLineCechComplex_isZero_homology_one :
+    Limits.IsZero ((projectiveLineCechComplex k).homology 1) :=
+  (projectiveLineCechComplex_exactAt_one k).isZero_homology
 
 end CharacteristicZero
 
