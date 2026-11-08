@@ -1600,6 +1600,7 @@ into other files updates this table.
 | `Examples/Geometric/NonAffine/MatchingForms`, `GlobalForms` | matching polynomial forms, actual sheaf gluing, global functions and the global-forms complex of the projective line | #118 |
 | `Examples/Geometric/NonAffine/Fiber`, `ChartSum` | example-only homotopy-fiber and chart-sum constructions, natural in the restriction diagram | #118 |
 | `Examples/Geometric/NonAffine/Cech`, `CechZero`, `SheafCech` | polynomial/Laurent computation and transport to the actual two-chart Čech–de Rham complex, with its nonzero logarithmic degree-two class | #118 |
+| `Examples/Geometric/NonAffine/MayerVietoris` | the conditional computation for every nonnegative graded family with the normalized two-open long exact sequence, with no cohomology conclusion as input | #118 |
 
 `Geometry/Schemes/ModuleGluing` is generic and uses the namespace `OrlikSolomon.Geometric`.
 `DeRham/Schemes/Forms`, `DeRham/Schemes/Log` and their submodules, together with the four

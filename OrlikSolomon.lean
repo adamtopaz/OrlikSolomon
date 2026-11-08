@@ -135,6 +135,7 @@ public import OrlikSolomon.Examples.Geometric.NonAffine.Fiber
 public import OrlikSolomon.Examples.Geometric.NonAffine.Geometry
 public import OrlikSolomon.Examples.Geometric.NonAffine.GlobalForms
 public import OrlikSolomon.Examples.Geometric.NonAffine.MatchingForms
+public import OrlikSolomon.Examples.Geometric.NonAffine.MayerVietoris
 public import OrlikSolomon.Examples.Geometric.NonAffine.Overlap
 public import OrlikSolomon.Examples.Geometric.NonAffine.Sections
 public import OrlikSolomon.Examples.Geometric.NonAffine.SheafCech
