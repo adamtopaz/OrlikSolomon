@@ -9,16 +9,16 @@ import OrlikSolomon
 open Verso.Genre Manual InlineLean
 open OrlikSolomonBook
 
-#doc (Manual) "Arrangements on schemes (in progress)" =>
+#doc (Manual) "Arrangements on schemes" =>
 %%%
 tag := "geometric"
 file := "geometric"
 htmlSplit := .never
 %%%
 
-*The foundations, complements as open subschemes, geometric axioms, affine transports, the supports-and-purity bridge, logarithmic classes, sheaves of relative forms, the sheaf logarithmic sequence and local comparison, both structure theorems on schemes and the de Rham instance on smooth affine schemes with its corollaries are formalized.*
-It presents the plan in the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
-Of its 42 nodes, thirty-four are formalized, two partly formalized and six remain planned, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports], the two nodes on {bp "def:geo-supports"}[degreewise supports and purity], the three nodes on {bp "def:geo-log"}[logarithmic classes and the product with $`\mathbb{G}_m`], the two {ref "geo-structure"}[structure theorems on schemes], the three nodes on {bp "def:geo-forms-sheaf"}[sheaves of relative forms and affine evaluation], the three nodes on {bp "def:geo-dr-cohomology"}[de Rham cohomology of smooth affine schemes and its instance], and {bp "thm:geo-log-sheaves"}[the sheaf logarithmic residue sequence and local comparison].
+*The foundations, complements as open subschemes, geometric axioms, affine transports, the supports-and-purity bridge, logarithmic classes, sheaves of relative forms, the sheaf logarithmic sequence and local comparison, both structure theorems on schemes, the de Rham instance on smooth affine schemes with its corollaries, and the worked geometric regressions are formalized.*
+This chapter follows the project's [third blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), which is tracked as the milestone "M6 Geometric refactor".
+Of its 42 nodes, forty are formalized and two partly formalized, under the namespace `OrlikSolomon.Geometric`: {bp "def:geo-domain"}[admissible domains], the four nodes of {ref "geo-affine"}[affine duality], the four nodes of {ref "geo-pairs"}[principal smooth divisor pairs], the seven nodes on {ref "geo-complements"}[affine and projective complements as open subschemes], the five nodes on {bp "def:geo-theory"}[geometric cohomology and its affine transports], the two nodes on {bp "def:geo-supports"}[degreewise supports and purity], the three nodes on {bp "def:geo-log"}[logarithmic classes and the product with $`\mathbb{G}_m`], the two {ref "geo-structure"}[structure theorems on schemes], the three nodes on {bp "def:geo-forms-sheaf"}[sheaves of relative forms and affine evaluation], the three nodes on {bp "def:geo-dr-cohomology"}[de Rham cohomology of smooth affine schemes and its instance], {bp "thm:geo-log-sheaves"}[the sheaf logarithmic residue sequence and local comparison], and the six {bp "prop:geo-finite-field"}[worked regression nodes].
 The partial nodes are {bp "thm:geo-cartesian"}[], whose Tor-sheaf and conormal statements remain, and {bp "thm:geo-transport-all"}[], a rule about every old statement, which is formalized by its comparison and the laws it obeys rather than by one Lean statement.
 The geometric theory has exactly the old 22 fields, and its affine transports preserve the grading, coefficient maps, pullbacks, Gysin and residue, with both triangle identities.
 The supports-and-purity bridge assembles these fields from degreewise cohomology with localization and purity on every object of the domain and commutes with restriction and affine transport.
@@ -26,8 +26,8 @@ The logarithmic class of a global unit and the decomposition of the cohomology o
 The affine and projective structure theorems hold on the actual open subschemes, for a theory on any admissible domain, such as all smooth schemes.
 The sheaves of forms have their differential, wedge products and arbitrary scheme pullbacks; affine evaluation agrees with the existing algebraic forms.
 For a smooth affine scheme, de Rham cohomology is the cohomology of the complex of global sheaf forms, the transported de Rham theory is a nonzero geometric theory with value $`k[t,t^{-1}]\otimes_kH^\bullet_{\mathrm{dR}}(X/k)`, and the Orlik–Solomon theorems hold unconditionally for the de Rham cohomology of the actual open subschemes.
-Every other box below is marked as planned, and for those the blueprint's proposed names under `OrlikSolomon.Geometric` do not exist yet, so this chapter does not list them.
-The statements and arguments in the planned boxes are the blueprint's, and no machine has checked them.
+The worked regressions use actual schemes, sheaf forms and residues, including a non-flat transverse map and the two-chart Čech calculation on the projective line.
+The two partial boxes state their remaining clauses explicitly.
 The {ref "status"}[status page] counts these nodes apart from those of the main theorem and of the de Rham instance.
 Neither of those depends on anything here: the plan is built on them, and the dependence runs the other way.
 
@@ -539,7 +539,7 @@ where the shifted complex has differential $`-d`.
 The inclusion $`L^\bullet\to j_*\Omega^\bullet_{U/k}` is a quasi-isomorphism of complexes of sheaves.
 All these maps are natural for morphisms of pairs, with the projection identity on forms and exactly the existing signs.
 The residue sequence, products and naturality hold over every commutative base ring; positive-integer inverses enter only in the local quasi-isomorphism.
-On an affine pair, the complex of global logarithmic sections and all three arrows of its residue sequence are identified with the existing algebraic sequence by {name OrlikSolomon.Geometric.DeRham.affineLogResidueShortComplexIso}`affineLogResidueShortComplexIso`.
+On an affine pair, the three complexes and both maps of the global residue sequence are identified with the existing algebraic sequence by {name OrlikSolomon.Geometric.DeRham.affineLogResidueShortComplexIso}`affineLogResidueShortComplexIso`.
 The proof of the sheaf quasi-isomorphism applies the existing pole theorem on affine neighborhoods and then uses exact filtered colimits to pass to stalks.
 
 This is a statement about sheaves.
@@ -583,7 +583,7 @@ They are also the existing corollaries for the coordinate rings, transported alo
 
 These test the places where a statement about schemes could quietly differ from its algebraic version.
 
-:::node "prop:geo-finite-field"
+:::node "prop:geo-finite-field" (decl := OrlikSolomon.Geometric.Examples.twoPointsOverF2) (decl := OrlikSolomon.Geometric.Examples.nonempty_twoPointsOverF2) (decl := OrlikSolomon.Geometric.Examples.isEmpty_hom_twoPointsOverF2) (decl := OrlikSolomon.Geometric.Examples.twoPointsOverF2_poincarePolynomial) (decl := OrlikSolomon.Geometric.Examples.exists_basis_twoPointsOverF2)
 For the hyperplanes $`0` and $`1` of $`\mathbb{A}^1_{\mathbb{F}_2}`, the complement is
 $$`U=D\bigl(x(x-1)\bigr)\simeq\operatorname{Spec}\mathbb{F}_2\Bigl[x,\frac{1}{x(x-1)}\Bigr].`
 It is a nonempty smooth affine scheme with no $`\mathbb{F}_2`-points: $`\operatorname{Hom}_{\mathbb{F}_2}(\operatorname{Spec}\mathbb{F}_2,U)` is empty.
@@ -592,29 +592,29 @@ Its Poincaré polynomial is $`1+2z`, and every theory has the corresponding two 
 This is the example that {ref "organization"}[the chapter on the organization of the proof] follows, stated for the scheme.
 :::
 
-:::node "prop:geo-degenerate"
+:::node "prop:geo-degenerate" (decl := OrlikSolomon.Geometric.Examples.unitPair_eqn) (decl := OrlikSolomon.Geometric.Examples.unitPairOpenIso) (decl := OrlikSolomon.Geometric.Examples.unitPair_gysin_eq_zero) (decl := OrlikSolomon.Geometric.Examples.unitPair_residue_eq_zero) (decl := OrlikSolomon.Geometric.Examples.zeroScheme_cohomology_eq_zero) (decl := OrlikSolomon.Geometric.Examples.disconnectedDivisorDomainIso) (decl := OrlikSolomon.Geometric.Examples.disconnectedAmbientCoproductIso) (decl := OrlikSolomon.Geometric.Examples.disconnectedComplementCoproductIso) (decl := OrlikSolomon.Geometric.Examples.disconnectedAmbientCohomologyEquiv) (decl := OrlikSolomon.Geometric.Examples.disconnectedAmbient_cohomology_eq_zero_of_mem_degree) (decl := OrlikSolomon.Geometric.Examples.disconnectedCohomologyEquiv_mem_degree_iff) (decl := OrlikSolomon.Geometric.Examples.disconnected_residue_generator) (decl := OrlikSolomon.Geometric.Examples.disconnected_no_global_normal_section)
 The unit pair is $`(X,\varnothing,X,1)`, and $`\operatorname{Spec}0` is the empty smooth affine scheme, whose de Rham cohomology is zero.
 The disconnected smooth scheme $`X=\operatorname{Spec}k\amalg\mathbb{A}^1_k`, with the function $`f=(1,z)`, has $`D\simeq\operatorname{Spec}k` on the second component and $`U\simeq\operatorname{Spec}k\amalg\mathbb{G}_m`.
-In characteristic zero, its untwisted de Rham cohomology is $`H^0(X)=k\times k` and $`H^{>0}(X)=0`, while $`H^0(U)=k\times k`, $`H^1(U)=k\,[(0,dz/z)]` and $`H^{>1}(U)=0`.
-The residue of $`(0,dz/z)` is $`1`, and there is no global derivation $`v` with $`v(f)=1`.
+Over a field of characteristic zero, its untwisted de Rham cohomology is $`H^0(X)=k\times k` and $`H^{>0}(X)=0`, while $`H^0(U)=k\times k`, $`H^1(U)=k\,[(0,dz/z)]` and $`H^{>1}(U)=0`.
+The residue of $`(0,dz/z)` is $`1`. For nonzero $`k`, there is no global derivation $`v` with $`v(f)=1`.
 :::
 
-:::node "prop:geo-exclusions"
-Each of the following is excluded, for a different reason.
+:::node "prop:geo-exclusions" (decl := OrlikSolomon.Geometric.Examples.Nonregular.equation_not_regular) (decl := OrlikSolomon.Geometric.Examples.Nonregular.no_shifted_gysin_exact) (decl := OrlikSolomon.Geometric.Examples.Crossing.equation_regular) (decl := OrlikSolomon.Geometric.Examples.Crossing.divisor_not_smooth) (decl := OrlikSolomon.Geometric.Examples.Crossing.no_sheaf_residue) (decl := OrlikSolomon.Geometric.Examples.Crossing.actualForms_stalk_ne_zero) (decl := OrlikSolomon.Geometric.Examples.ramifiedMap_not_pairHom) (decl := OrlikSolomon.Geometric.Examples.ramifiedMap_not_cartesian) (decl := OrlikSolomon.Geometric.Examples.ramifiedMap_pullback_ideal_ne) (decl := OrlikSolomon.Geometric.Examples.ramifiedMap_preimage_divisor_support) (decl := OrlikSolomon.Geometric.Examples.ramifiedMap_residue_theta)
+Over a nonzero base ring, each of the following is excluded, for a different reason.
  * On $`\operatorname{Spec}(k\times k)`, the function $`f=(1,0)` is not regular. Treating its second component as a smooth divisor of codimension one would make the shifts of the localization sequence false for de Rham or singular cohomology.
  * On $`\mathbb{A}^2_k`, the function $`f=xy` is regular, but $`D=\operatorname{Spec}k[x,y]/(xy)` is not smooth, and the residue sequence of a single smooth divisor fails.
- * The map $`\mathbb{A}^1_x\to\mathbb{A}^1_z` given by $`z\mapsto x^2` is not a morphism between the pairs with equations $`x` and $`z`. The pulled-back divisor is the doubled point, not the reduced one, and the residue of $`d(x^2)/x^2` is $`2`, while the transverse formula would give $`1`.
+ * The map $`\mathbb{A}^1_x\to\mathbb{A}^1_z` given by $`z\mapsto x^2` is not a morphism between the pairs with equations $`x` and $`z`. The pulled-back divisor is the doubled point, not the reduced one, and over a field of characteristic zero the residue of $`d(x^2)/x^2` is $`2`, while the transverse formula would give $`1`.
 :::
 
-:::node "prop:geo-nonflat"
+:::node "prop:geo-nonflat" (decl := OrlikSolomon.Geometric.Examples.nonFlatTransverseMap) (decl := OrlikSolomon.Geometric.Examples.nonFlatTransverseMap_not_flat) (decl := OrlikSolomon.Geometric.Examples.nonFlatTransverseMap_gysin_naturality) (decl := OrlikSolomon.Geometric.Examples.nonFlatTransverseMap_residue_naturality) (decl := OrlikSolomon.Geometric.Examples.unitChangeMap_flat) (decl := OrlikSolomon.Geometric.Examples.nonFlatTransverseMap_thetaSection) (decl := OrlikSolomon.Geometric.Examples.nonFlatTransverseMap_deRham_residue_theta)
 The ring map $`k[z,v]\to k[x,y,y^{-1}]` given by $`z\mapsto xy` and $`v\mapsto0` defines a transverse morphism of pairs
 $$`\bigl(\operatorname{Spec}k[x,y,y^{-1}],\,x\bigr)\longrightarrow\bigl(\mathbb{A}^2_{z,v},\,z\bigr).`
-It is not flat, and both naturality identities hold for it.
+For nonzero $`k`, its ambient map is not flat. Both naturality identities hold over every commutative base ring.
 The simpler map from $`\operatorname{Spec}k[x,y,y^{-1}]` to $`\mathbb{A}^1_z` is flat, and it is an example with different ambient dimensions.
 :::
 
-:::node "prop:geo-nonaffine"
-The projective line $`\mathbb{P}^1_k` is an object of the domains of all smooth schemes and of smooth separated schemes of finite type, and it is not affine.
+:::node "prop:geo-nonaffine" (decl := OrlikSolomon.Geometric.Examples.projectiveLineScope) (decl := OrlikSolomon.Geometric.Examples.projectiveLinePair) (decl := OrlikSolomon.Geometric.Examples.projectiveLineSftPair) (decl := OrlikSolomon.Geometric.Examples.projectiveLineGmProduct) (decl := OrlikSolomon.Geometric.Examples.projectiveLineSftGmProduct) (decl := OrlikSolomon.Geometric.Examples.projectiveLineGlobalFormsComplexIso) (decl := OrlikSolomon.Geometric.Examples.projectiveLineSheafCechIso) (decl := OrlikSolomon.Geometric.Examples.projectiveLineSheafCechHomologyZeroEquiv) (decl := OrlikSolomon.Geometric.Examples.projectiveLineSheafCechHomologyTwoEquiv_logClass) (decl := OrlikSolomon.Geometric.Examples.projectiveLineSheafCechComplex_isZero_homology_one) (decl := OrlikSolomon.Geometric.Examples.projectiveLineSheafCechComplex_isZero_homology_succ_succ_succ) (decl := OrlikSolomon.Geometric.Examples.projectiveLineGlobalForms_not_quasiIso) (decl := OrlikSolomon.Geometric.Examples.projectiveLineMVHomologyDifference_equiv) (decl := OrlikSolomon.Geometric.Examples.ProjectiveLineMayerVietorisData.homologyZeroEquiv) (decl := OrlikSolomon.Geometric.Examples.ProjectiveLineMayerVietorisData.homologyOne_subsingleton) (decl := OrlikSolomon.Geometric.Examples.ProjectiveLineMayerVietorisData.homologyTwoEquiv) (decl := OrlikSolomon.Geometric.Examples.ProjectiveLineMayerVietorisData.homologyHigh_subsingleton)
+For a field $`k`, the projective line $`\mathbb{P}^1_k` is an object of the domains of all smooth schemes and of smooth separated schemes of finite type, and it is not affine.
 For every geometric theory on either domain, the pair
 $$`\bigl(\mathbb{P}^1_k\times\mathbb{A}^1,\ \mathbb{P}^1_k\times\{0\},\ \mathbb{P}^1_k\times\mathbb{G}_m,\ z\bigr)`
 is allowed, and it satisfies {bp "thm:geo-gm-product"}[].
@@ -623,6 +623,8 @@ The affine de Rham instance does not claim to evaluate this object.
 For a field of characteristic zero, the complex of global de Rham forms on $`\mathbb{P}^1_k` has cohomology $`k` in degree zero and zero otherwise.
 The total complex of the Čech–de Rham double complex of the two standard charts has cohomology $`k` in degrees zero and two and zero otherwise.
 Any extension that agrees with the affine de Rham theory and has the usual Mayer–Vietoris triangle for two opens must give the second answer, so the affine definition by global sections would be wrong for all schemes.
+The conditional conclusion starts with the actual chart and overlap de Rham homology and the maps induced by sheaf restriction. The affine calculations then identify its long exact sequence with the scalar model: the two chart groups are $`k^2` in degree zero and zero above, the overlap groups are $`k` in degrees zero and one, and the difference of restrictions in degree zero is $`(a,b)\mapsto b-a`.
+The input contains restriction and boundary maps with exactness, and derives all four degreewise conclusions.
 :::
 
 The punctured line, the two-dimensional torus and the obstructions in positive characteristic are the existing de Rham regressions, transported to the actual schemes $`\mathbb{G}_m`, $`\mathbb{G}_m^2` and $`\mathbb{A}^1` by the comparison of forms.
@@ -638,7 +640,7 @@ Membership of a smooth affine scheme in a domain should be supplied automaticall
 Its acceptance tests include a file that states the affine and projective theorems for a theory on all smooth schemes using only the geometric statements, with no affine comparison supplied by the user, and a file that states the two de Rham corollaries for the open subschemes, with no theory and no Laurent variable in them.
 Both naturality fields are to be tested on the morphism of {bp "prop:geo-nonflat"}[], which is not flat, and the comparisons with spectra on all three maps of a deletion pair, not only on the open inclusion.
 
-:::node "prop:geo-affine-regressions"
+:::node "prop:geo-affine-regressions" (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.gmCohomologyEquiv_apply) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.gmCohomologyEquiv_mem_degree_iff) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.gmClass_mul_self) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.gmClass_residue) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.torusCohomologyEquiv_apply) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.torusCohomologyEquiv_mem_degree_iff) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.torus_exterior_relations) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.torus_top_ne_zero) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.torusXResidue_top) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.torusYResidue_top) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.affineLinePowerForm_closed) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.affineLinePower_ne_constant) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.affineLineCharacteristicForm_not_exact) (decl := OrlikSolomon.Geometric.Examples.AffineDeRham.affineLine_pull_not_surjective)
 Over a field of characteristic zero, $`H^\bullet_{\mathrm{dR}}(\mathbb{G}_m)=k\oplus k\,[dx/x]`, with a generator of degree one, of square zero and with residue $`1`, and
 $$`H^\bullet_{\mathrm{dR}}(\mathbb{G}_m^2)=\textstyle\bigwedge_k(e_x,e_y),\qquad e_x=[dx/x],\quad e_y=[dy/y].`
 In the smooth pairs with ambient $`\mathbb{A}^1_x\times\mathbb{G}_{m,y}` and $`\mathbb{G}_{m,x}\times\mathbb{A}^1_y`, the residues of $`e_xe_y` are $`e_y` and $`-e_x`.

@@ -16,7 +16,7 @@ file := "status"
 %%%
 
 These tables are generated when the book is built, from the same boxes that appear in the chapters, and they list every node of the three blueprints.
-Each is counted separately: the main theorem does not depend on the de Rham instance, neither of them depends on the planned geometric refactor, and in each case the dependence runs the other way.
+Each is counted separately: the main theorem does not depend on the de Rham instance, neither of them depends on the geometric refactor, and in each case the dependence runs the other way.
 A node is listed as formalized only if its box names Lean declarations.
 For each of those, the build checks only that it exists, and that it depends on no `sorry` and on no axiom other than `propext`, `Classical.choice` and `Quot.sound`.
 That the declarations cover the node's statement, and that the prose around them is accurate, are checked by human or agent review, not by the build.
@@ -27,6 +27,8 @@ Every result of the first blueprint that mentions cohomology is proved for an ar
 The de Rham instance is one nonzero value, for fields of characteristic zero, and no value has been constructed in Lean for singular or $`\ell`-adic cohomology.
 Instantiated at the de Rham instance, the affine and projective theorems become the unconditional statements {bp "cor:dr-affine"}[] and {bp "cor:dr-projective"}[] about algebraic de Rham cohomology over such fields.
 
-Of the third blueprint, the geometric refactor, thirty-four nodes are formalized, two partly formalized and six remain planned: affine duality, principal divisor pairs, affine and projective complements as open subschemes, geometric cohomology, both affine transports, the supports-and-purity bridge, logarithmic classes with the product with $`\mathbb{G}_m`, sheaves of relative forms with affine evaluation, the affine and projective structure theorems on actual arrangement opens, and de Rham cohomology of smooth affine schemes with the de Rham instance on them and its unconditional corollaries for the actual open subschemes, including the sheaf logarithmic residue sequence, its local quasi-isomorphism and the affine comparison of the instance's residue and Gysin maps. The Cartesian node retains its Tor-sheaf and conormal statements, and the statement-by-statement transport rule remains partly formalized. {ref "geometric"}[Its chapter] presents the remaining work.
+Of the third blueprint, the geometric refactor, forty nodes are formalized and two partly formalized: affine duality, principal divisor pairs, affine and projective complements as open subschemes, geometric cohomology, both affine transports, the supports-and-purity bridge, logarithmic classes with the product with $`\mathbb{G}_m`, sheaves of relative forms with affine evaluation, the affine and projective structure theorems on actual arrangement opens, and de Rham cohomology of smooth affine schemes with the de Rham instance on them and its unconditional corollaries for the actual open subschemes, together with the six worked geometric regressions.
+The sheaf logarithmic residue sequence and its local quasi-isomorphism are proved separately; their affine comparison identifies the instance's residue and Gysin maps on global sheaf representatives.
+The Cartesian node retains its Tor-sheaf and conormal statements, and the statement-by-statement transport rule remains partly formalized. {ref "geometric"}[Its chapter] gives the proved statements and the remaining clauses.
 
 {statusOverview}
