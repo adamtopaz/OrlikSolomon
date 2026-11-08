@@ -32,8 +32,8 @@ namespace OrlikSolomon.Geometric.Examples
 variable {k : Type u} [CommRing k] {D : SmoothDomain k} (P : DivisorPair D) (n : ℕ)
 
 /-- Identity pullback simplifies with its canonical inverse-image reindexing. -/
-example (U : P.ambient.obj.left.Opensᵒᵖ) :
-    logSheafPullbackAt (𝟙 P) n U = (logSheafIdentitySectionsEquiv P n U).toLinearMap := by
+example (U : P.ambient.obj.left.Opensᵒᵖ) (x : (logSheaf P n).obj.obj U) :
+    (logSheafIdentitySectionsEquiv P n U).symm (logSheafPullbackAt (𝟙 P) n U x) = x := by
   simp
 
 /-- Residue of a normal form simplifies through zero addition on one concrete divisor carrier. -/

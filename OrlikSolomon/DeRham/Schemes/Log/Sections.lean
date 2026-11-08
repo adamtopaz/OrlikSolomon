@@ -99,4 +99,13 @@ is displayed on both sides, rather than identified through a direct-image object
   exact ConcreteCategory.congr_hom
     (NatTrans.congr_app (congrArg (fun f => f.hom) (logSheafPullback_id P n)) U) a
 
+/-- Undoing the inverse-image reindexing after identity pullback recovers the original section.
+Blueprint: the identity compatibility in `thm:geo-log-sheaves`. -/
+-- Reduce the whole coherence expression before rewriting its inner identity pullback.
+@[simp↓] theorem logSheafPullbackAt_id_cancel (n : ℕ) (U : P.ambient.obj.left.Opensᵒᵖ)
+    (x : (logSheaf P n).obj.obj U) :
+    (logSheafIdentitySectionsEquiv P n U).symm (logSheafPullbackAt (𝟙 P) n U x) = x := by
+  rw [logSheafPullbackAt_id]
+  exact (logSheafIdentitySectionsEquiv P n U).symm_apply_apply x
+
 end OrlikSolomon.Geometric.DeRham
