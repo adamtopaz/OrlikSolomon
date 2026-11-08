@@ -326,6 +326,16 @@ private def productSecondClass : Cohomology k (k × B) :=
   Cohomology.mk (algebraMap (k × B) (Forms k (k × B)) (0, 1))
     (by rw [d_algebraMap]; exact diff_idempotent _ (by simp))
 
+/-- The first component of the product splitting is pullback along the first projection. -/
+theorem productCohomologyEquivOfAugmentation_fst (ε : B →ₐ[k] k)
+    (c : Cohomology k (k × B)) :
+    (productCohomologyEquivOfAugmentation ε c).1 = Cohomology.map (AlgHom.fst k k B) c := by rfl
+
+/-- The second component of the product splitting is pullback along the second projection. -/
+theorem productCohomologyEquivOfAugmentation_snd (ε : B →ₐ[k] k)
+    (c : Cohomology k (k × B)) :
+    (productCohomologyEquivOfAugmentation ε c).2 = Cohomology.map (AlgHom.snd k k B) c := by rfl
+
 private theorem productCohomologyEquivOfAugmentation_symm (ε : B →ₐ[k] k)
     (c₁ : Cohomology k k) (c₂ : Cohomology k B) :
     (productCohomologyEquivOfAugmentation ε).symm (c₁, c₂) =
