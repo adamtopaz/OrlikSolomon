@@ -6,6 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.DeRham.Schemes.Forms.Sheaf
+public import OrlikSolomon.Geometry.Schemes.ModuleGluing
 public import Mathlib.CategoryTheory.Adjunction.CompositionIso
 public import Mathlib.Topology.Sheaves.Functors
 public import Mathlib.CategoryTheory.Sites.PreservesLocallyBijective
@@ -23,7 +24,8 @@ commute with the differential without any flatness hypothesis.
 * `formsSheafPullback_unit`: agreement on forms represented by presheaf sections.
 * `formsSheafPullback_d`: compatibility with the relative de Rham differential.
 * `formsSheafInverseImage`: the equivalent map from the inverse-image sheaf of base modules.
-* `sheafPullbackId`, `sheafPullbackComp`: canonical coherence isomorphisms for inverse images.
+* `OrlikSolomon.Geometric.sheafPullbackId` and `OrlikSolomon.Geometric.sheafPullbackComp`:
+  canonical coherence isomorphisms for inverse images.
 * `formsSheafInverseImage_id`, `formsSheafInverseImage_comp`: inverse-image functoriality.
 * `formsSheafInverseImage_wedge`: wedge compatibility on sections represented by
   the adjunction unit.
@@ -471,58 +473,26 @@ private theorem homEquiv_pullbackComp {F : C ⥤ D} {G : D ⥤ C} {H : D ⥤ E}
 
 end PullbackCoherence
 
-/-- The inverse-image functor on module-valued sheaves for the identity map is canonically
-isomorphic to the identity functor, by the identity adjunction. -/
-def sheafPullbackId (R : Type u) [Ring R] (T : TopCat.{u}) :
-    TopCat.Sheaf.pullback (ModuleCat.{u} R) (𝟙 T) ≅ 𝟭 _ :=
-  (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{u} R) (𝟙 T)).leftAdjointIdIso
-    (Iso.refl _)
+@[deprecated (since := "2026-11-07")]
+alias sheafPullbackId := OrlikSolomon.Geometric.sheafPullbackId
 
-/-- Successive inverse images of module-valued sheaves are canonically isomorphic to the
-inverse image for the composite map, by composition of the pullback-pushforward adjunctions. -/
-def sheafPullbackComp (R : Type u) [Ring R] {T₁ T₂ T₃ : TopCat.{u}}
-    (f : T₁ ⟶ T₂) (g : T₂ ⟶ T₃) :
-    TopCat.Sheaf.pullback (ModuleCat.{u} R) g ⋙
-      TopCat.Sheaf.pullback (ModuleCat.{u} R) f ≅
-        TopCat.Sheaf.pullback (ModuleCat.{u} R) (f ≫ g) :=
-  Adjunction.leftAdjointCompIso
-    (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{u} R) g)
-    (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{u} R) f)
-    (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{u} R) (f ≫ g))
-    (Iso.refl _)
+@[deprecated (since := "2026-11-07")]
+alias sheafPullbackComp := OrlikSolomon.Geometric.sheafPullbackComp
 
-/-- Composing inverse image with the identity on the source agrees with the right unitor. -/
-theorem sheafPullbackComp_id_comp (R : Type u) [Ring R] {T₁ T₂ : TopCat.{u}}
-    (f : T₁ ⟶ T₂) :
-    sheafPullbackComp R (𝟙 T₁) f =
-      Functor.isoWhiskerLeft (TopCat.Sheaf.pullback (ModuleCat.{u} R) f)
-        (sheafPullbackId R T₁) ≪≫ Functor.rightUnitor _ := by
-  exact Adjunction.leftAdjointCompIso_comp_id _ _ _ _ (by ext; rfl)
+@[deprecated (since := "2026-11-07")]
+alias sheafPullbackComp_id_comp := OrlikSolomon.Geometric.sheafPullbackComp_id_comp
 
-/-- Composing inverse image with the identity on the target agrees with the left unitor. -/
-theorem sheafPullbackComp_comp_id (R : Type u) [Ring R] {T₁ T₂ : TopCat.{u}}
-    (f : T₁ ⟶ T₂) :
-    sheafPullbackComp R f (𝟙 T₂) =
-      Functor.isoWhiskerRight (sheafPullbackId R T₂)
-        (TopCat.Sheaf.pullback (ModuleCat.{u} R) f) ≪≫ Functor.leftUnitor _ := by
-  exact Adjunction.leftAdjointCompIso_id_comp _ _ _ _ (by ext; rfl)
+@[deprecated (since := "2026-11-07")]
+alias sheafPullbackComp_comp_id := OrlikSolomon.Geometric.sheafPullbackComp_comp_id
 
-/-- The two canonical comparisons for three successive inverse images agree under the
-functor associator. -/
-theorem sheafPullbackComp_assoc (R : Type u) [Ring R] {T₁ T₂ T₃ T₄ : TopCat.{u}}
-    (f : T₁ ⟶ T₂) (g : T₂ ⟶ T₃) (h : T₃ ⟶ T₄) :
-    Functor.isoWhiskerLeft (TopCat.Sheaf.pullback (ModuleCat.{u} R) h)
-        (sheafPullbackComp R f g) ≪≫ sheafPullbackComp R (f ≫ g) h =
-      (Functor.associator _ _ _).symm ≪≫
-        Functor.isoWhiskerRight (sheafPullbackComp R g h)
-          (TopCat.Sheaf.pullback (ModuleCat.{u} R) f) ≪≫ sheafPullbackComp R f (g ≫ h) := by
-  exact Adjunction.leftAdjointCompIso_assoc _ _ _ _ _ _ _ _ _ _ (by ext; rfl)
+@[deprecated (since := "2026-11-07")]
+alias sheafPullbackComp_assoc := OrlikSolomon.Geometric.sheafPullbackComp_assoc
 
 /-- Pullback of forms by the identity agrees with the canonical inverse-image identity
 isomorphism. -/
 @[simp] theorem formsSheafInverseImage_id (n : ℕ) :
     formsSheafInverseImage (𝟙 X) n =
-      (sheafPullbackId k X.left).hom.app (formsSheaf k X n) := by
+      (Geometric.sheafPullbackId k X.left).hom.app (formsSheaf k X n) := by
   apply ((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k)
     (Over.Hom.left (𝟙 X)).base).homEquiv _ _).injective
   rw [formsSheafInverseImage_adjunction, formsSheafPullback_id]
@@ -535,7 +505,7 @@ set_option backward.isDefEq.respectTransparency.types false in
 composition isomorphism, without any flatness hypothesis. -/
 theorem formsSheafInverseImage_comp {Z : Over (Spec (CommRingCat.of k))}
     (f : X ⟶ Y) (g : Y ⟶ Z) (n : ℕ) :
-    (sheafPullbackComp k f.left.base g.left.base).hom.app (formsSheaf k Z n) ≫
+    (Geometric.sheafPullbackComp k f.left.base g.left.base).hom.app (formsSheaf k Z n) ≫
         formsSheafInverseImage (f ≫ g) n =
       (TopCat.Sheaf.pullback (ModuleCat k) f.left.base).map
         (formsSheafInverseImage g n) ≫ formsSheafInverseImage f n := by
@@ -550,7 +520,7 @@ theorem formsSheafInverseImage_comp {Z : Over (Spec (CommRingCat.of k))}
     ← formsSheafPullback_comp]
   rw [show (((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) g.left.base).comp
       (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) f.left.base)).homEquiv _ _
-      ((sheafPullbackComp k f.left.base g.left.base).hom.app (formsSheaf k Z n))) =
+      ((Geometric.sheafPullbackComp k f.left.base g.left.base).hom.app (formsSheaf k Z n))) =
         (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat k) (f ≫ g).left.base).unit.app
           (formsSheaf k Z n) from homEquiv_pullbackComp _ _ _ _]
   exact formsSheafInverseImage_adjunction (f ≫ g) n
@@ -648,12 +618,13 @@ def formsComplexNatInverseImage (g : X ⟶ Y) :
 @[simp] theorem formsComplexNatInverseImage_f (g : X ⟶ Y) (n : ℕ) :
     (formsComplexNatInverseImage g).f n = formsSheafInverseImage g n := rfl
 
+-- The pointwise identity comparison and its induced complex have equal transported carriers.
 set_option backward.isDefEq.respectTransparency.types false in
 /-- Inverse-image pullback by the identity on the de Rham complex agrees with the canonical
 identity comparison induced from the sheaf pullback functor. -/
 @[simp] theorem formsComplexNatInverseImage_id :
     formsComplexNatInverseImage (𝟙 X) =
-      ((NatIso.mapHomologicalComplex (sheafPullbackId k X.left) (.up ℕ)) ≪≫
+      ((NatIso.mapHomologicalComplex (Geometric.sheafPullbackId k X.left) (.up ℕ)) ≪≫
         CategoryTheory.Functor.mapHomologicalComplexIdIso _ (.up ℕ)).hom.app
           (formsComplexNat k X) := by
   apply HomologicalComplex.hom_ext
@@ -665,13 +636,14 @@ identity comparison induced from the sheaf pullback functor. -/
     using (formsSheafInverseImage_id (k := k) (X := X) n).trans
       (Category.comp_id _).symm
 
+-- The composite inverse-image functors coincide after unfolding their complex transports.
 set_option backward.isDefEq.respectTransparency.types false in
 /-- Inverse-image pullback of de Rham complexes is functorial under the canonical
 composition comparison induced from sheaf pullback. -/
 theorem formsComplexNatInverseImage_comp {Z : Over (Spec (CommRingCat.of k))}
     (f : X ⟶ Y) (g : Y ⟶ Z) :
     (CategoryTheory.Functor.mapHomologicalComplexCompIso
-      (sheafPullbackComp k f.left.base g.left.base) (.up ℕ)).hom.app
+      (Geometric.sheafPullbackComp k f.left.base g.left.base) (.up ℕ)).hom.app
         (formsComplexNat k Z) ≫ formsComplexNatInverseImage (f ≫ g) =
       ((TopCat.Sheaf.pullback (ModuleCat k) f.left.base).mapHomologicalComplex (.up ℕ)).map
         (formsComplexNatInverseImage g) ≫ formsComplexNatInverseImage f := by

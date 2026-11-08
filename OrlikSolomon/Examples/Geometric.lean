@@ -12,6 +12,7 @@ public import OrlikSolomon.Examples.Geometric.AffineDeRham
 public import OrlikSolomon.Examples.Geometric.DeRhamAcceptance
 public import OrlikSolomon.Examples.Geometric.Degenerate
 public import OrlikSolomon.Examples.Geometric.Exclusions
+public import OrlikSolomon.Examples.Geometric.LogSheaf
 public import OrlikSolomon.Examples.Geometric.Morphisms
 public import OrlikSolomon.Examples.Geometric.NonAffine
 public import OrlikSolomon.Presentation.Geometric

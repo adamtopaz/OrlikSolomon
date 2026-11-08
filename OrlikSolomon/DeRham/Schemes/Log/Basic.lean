@@ -270,6 +270,70 @@ def thetaSection : (formsSheaf k P.compl.obj 1).obj.obj (op ⊤) :=
   (formsSheafUnit k P.compl.obj 1).app (op ⊤)
     ⟨dlog k P.eqnUnit, dlog_mem_exteriorPower_one k _⟩
 
+-- Algebraic exterior-power carriers and presheaf section carriers coincide after unfolding.
+set_option backward.isDefEq.respectTransparency false in
+/-- The logarithmic section restricts to the differential of the restricted unit. -/
+lemma thetaSection_restrict (U : P.compl.obj.left.Opens) :
+    (formsSheaf k P.compl.obj 1).obj.map U.leTop.op (thetaSection P) =
+      (formsSheafUnit k P.compl.obj 1).app (op U)
+        ⟨dlog k (Units.map (sectionRestriction k P.compl.obj U.leTop).toMonoidHom
+          P.eqnUnit), dlog_mem_exteriorPower_one k _⟩ := by
+  rw [thetaSection]
+  rw [← (formsSheafUnit k P.compl.obj 1).naturality_apply U.leTop.op]
+  congr 1
+  apply Subtype.ext
+  exact Forms.map_dlog _ _
+
+-- The sheafification representative and its exterior degree cast use the same underlying form.
+set_option backward.isDefEq.respectTransparency false in
+/-- On every complement open, left logarithmic multiplication is the wedge product with
+the restriction of the actual global section `thetaSection`. The cast records `1 + n = n + 1`. -/
+lemma thetaWedgeSheaf_eq_wedge (n : ℕ) (U : P.compl.obj.left.Opens)
+    (a : (formsSheaf k P.compl.obj n).obj.obj (op U)) :
+    (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op U) a =
+      (formsSheafCast k P.compl.obj (Nat.add_comm 1 n)).hom.app (op U)
+        (formsSheafWedge k P.compl.obj 1 n (op U)
+          ((formsSheaf k P.compl.obj 1).obj.map U.leTop.op (thetaSection P)) a) := by
+  have : Presheaf.IsLocallySurjective (_root_.Opens.grothendieckTopology P.compl.obj.left)
+      (formsSheafUnit k P.compl.obj n) := by
+    change Presheaf.IsLocallySurjective _ (toSheafify _ (formsPresheaf k P.compl.obj n))
+    infer_instance
+  apply (formsSheaf k P.compl.obj (n + 1)).isSeparated _ _
+    (Presheaf.imageSieve_mem _ (formsSheafUnit k P.compl.obj n) a)
+  rintro V f ⟨b, hb⟩
+  rw [← (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.naturality_apply f.op,
+    ← (formsSheafCast k P.compl.obj (Nat.add_comm 1 n)).hom.naturality_apply f.op,
+    formsSheafWedge_naturality, ← Functor.map_comp_apply, ← hb]
+  have hf : U.leTop.op ≫ f.op = V.leTop.op := Subsingleton.elim _ _
+  rw [hf, thetaSection_restrict, thetaWedgeSheaf_unit, formsSheafWedge_unit,
+    formsSheafCast_unit_apply]
+  congr 1
+  apply Subtype.ext
+  let c : (formsPresheaf k P.compl.obj 1).obj (op V) :=
+    ⟨dlog k (Units.map (sectionRestriction k P.compl.obj V.leTop).toMonoidHom
+      P.eqnUnit), dlog_mem_exteriorPower_one k _⟩
+  change (dlog k (Units.map (sectionRestriction k P.compl.obj V.leTop).toMonoidHom
+      P.eqnUnit) * b.val) =
+    ((formsPresheafCast k P.compl.obj (Nat.add_comm 1 n)).app (op V)
+      ((formsPresheafMul k P.compl.obj 1 n).app (op V) (c ⊗ₜ[k] b)) :
+        ⋀[sectionAlgebra k P.compl.obj V]^(n + 1) Ω[sectionAlgebra k P.compl.obj V⁄k]).val
+  rw [formsPresheafCast_val, formsPresheafMul_tmul]
+
+/-- On global sections, logarithmic multiplication is wedge with `thetaSection` itself,
+without restricting it along the identity of the top open. -/
+lemma thetaWedgeSheaf_top_eq_wedge (n : ℕ)
+    (a : (formsSheaf k P.compl.obj n).obj.obj (op ⊤)) :
+    (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op ⊤) a =
+      (formsSheafCast k P.compl.obj (Nat.add_comm 1 n)).hom.app (op ⊤)
+        (formsSheafWedge k P.compl.obj 1 n (op ⊤) (thetaSection P) a) := by
+  have h : (formsSheaf k P.compl.obj 1).obj.map
+      (⊤ : P.compl.obj.left.Opens).leTop.op (thetaSection P) = thetaSection P := by
+    change (formsSheaf k P.compl.obj 1).obj.map (𝟙 (op ⊤)) (thetaSection P) = _
+    exact ConcreteCategory.congr_hom ((formsSheaf k P.compl.obj 1).obj.map_id _) _
+  exact (thetaWedgeSheaf_eq_wedge P n ⊤ a).trans (congrArg
+    (fun b => (formsSheafCast k P.compl.obj (Nat.add_comm 1 n)).hom.app (op ⊤)
+      (formsSheafWedge k P.compl.obj 1 n (op ⊤) b a)) h)
+
 /-- The logarithmic one-form on the complement is closed. -/
 theorem thetaSection_d :
     (formsSheafD k P.compl.obj 1).hom.app (op ⊤) (thetaSection P) = 0 := by

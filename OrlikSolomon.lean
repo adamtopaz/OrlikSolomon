@@ -92,6 +92,7 @@ public import OrlikSolomon.DeRham.Schemes.Log.Residue
 public import OrlikSolomon.DeRham.Schemes.Log.ResidueAffine
 public import OrlikSolomon.DeRham.Schemes.Log.Restriction
 public import OrlikSolomon.DeRham.Schemes.Log.RestrictionImage
+public import OrlikSolomon.DeRham.Schemes.Log.Sections
 public import OrlikSolomon.DeRham.SmoothPair
 public import OrlikSolomon.DeRham.SmoothPair.Koszul
 public import OrlikSolomon.DeRham.SmoothPair.Projective
@@ -124,6 +125,7 @@ public import OrlikSolomon.Examples.Geometric.AffineDeRham
 public import OrlikSolomon.Examples.Geometric.DeRhamAcceptance
 public import OrlikSolomon.Examples.Geometric.Degenerate
 public import OrlikSolomon.Examples.Geometric.Exclusions
+public import OrlikSolomon.Examples.Geometric.LogSheaf
 public import OrlikSolomon.Examples.Geometric.Morphisms
 public import OrlikSolomon.Examples.Geometric.NonAffine
 public import OrlikSolomon.Examples.Geometric.NonAffine.Cech

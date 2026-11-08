@@ -17,6 +17,8 @@ No flatness or characteristic assumption is used.
 
 The main maps are `logSheafPullback` and `logComplexNatPullback`; the typed section maps
 `logSheafPullbackAt` and `logSheafPullbackTop` preserve wedge products and units.
+`logSheafPullbackSections` names the inverse-image module to keep identity reindexing stable
+under simplification without changing the underlying section type.
 `logSheafWithEqnIso` and `logComplexNatWithEqnIso` express invariance under associated equations.
 
 Blueprint: naturality in `thm:geo-log-sheaves`.
@@ -238,7 +240,6 @@ theorem logSheafPullback_unique (F : P ⟶ Q) (n : ℕ)
     ← Functor.map_comp, regularToLogSheaf_comp_logToOpenSheaf]
   exact regularPullback_openFormsPullback F n
 
-
 private def pairClosedPushforwardIso (F : P ⟶ Q) :
     TopCat.Sheaf.pushforward (ModuleCat k) F.closed.hom.left.base ⋙
         TopCat.Sheaf.pushforward (ModuleCat k) Q.i.hom.left.base ≅
@@ -314,7 +315,6 @@ private lemma logMkSheaf_pullback_normal (F : P ⟶ Q)
       logMkSheaf_residue, biprod.inr_snd_assoc]
     exact (regularPullback_closedFormsPullback F n).symm
 
-
 /-- Complement pullback commutes with the ordinary de Rham differential. -/
 @[reassoc] theorem openFormsPullback_d (F : P ⟶ Q) (n : ℕ) :
     openFormsPullback F n ≫
@@ -382,7 +382,6 @@ def logComplexNatPullback (F : P ⟶ Q) : logComplexNat Q ⟶
   change logToOpenSheaf P n ≫ 𝟙 (openFormsSheaf P n) =
     𝟙 (logSheaf P n) ≫ logToOpenSheaf P n
   exact (Category.comp_id _).trans (Category.id_comp _).symm
-
 
 variable {R : DivisorPair D}
 
@@ -455,11 +454,19 @@ theorem logComplexNatPullback_comp (F : P ⟶ Q) (G : Q ⟶ R) :
   intro n
   exact logSheafPullback_comp F G n
 
+/-- Logarithmic sections on the inverse image of an ambient open under a pair morphism.
+This named module keeps the inverse-image carrier stable under simplification of the
+projections of an identity morphism. It is definitionally the usual section module and
+is transparent to instance search for arithmetic with ordinary sections on the same open. -/
+@[instance_reducible] def logSheafPullbackSections (F : P ⟶ Q) (n : ℕ)
+    (U : Q.ambient.obj.left.Opensᵒᵖ) :
+    ModuleCat k :=
+  (logSheaf P n).obj.obj (op (F.ambient.hom.left ⁻¹ᵁ U.unop))
 
-/-- Pullback on an individual ambient open, with the inverse-image section carrier explicit. -/
+/-- Pullback on an individual ambient open, with its inverse-image section module named
+by `logSheafPullbackSections` so that identity reindexing is stable under simplification. -/
 def logSheafPullbackAt (F : P ⟶ Q) (n : ℕ) (U : Q.ambient.obj.left.Opensᵒᵖ) :
-    (logSheaf Q n).obj.obj U →ₗ[k]
-      (logSheaf P n).obj.obj (op (F.ambient.hom.left ⁻¹ᵁ U.unop)) :=
+    (logSheaf Q n).obj.obj U →ₗ[k] logSheafPullbackSections F n U :=
   ((logSheafPullback F n).hom.app U).hom
 
 /-- On sections, logarithmic pullback includes as ordinary complement pullback. -/
@@ -526,7 +533,6 @@ theorem openFormsPullback_wedge (F : P ⟶ Q) (p q : ℕ)
   rw [logSheafPullbackAt_inclusion, logSheafWedge_logToOpenSheaf,
     logSheafWedge_logToOpenSheaf, logSheafPullbackAt_inclusion, logSheafPullbackAt_inclusion]
   exact openFormsPullback_wedge F p q U _ _
-
 
 /-- Transverse pullback preserves the unit logarithmic form. -/
 @[simp] theorem logSheafPullbackAt_one (F : P ⟶ Q)
@@ -635,7 +641,6 @@ private lemma withEqn_pullback_inv_inclusion (P : DivisorPair D)
     (logSheafWithEqnIso P f hf n).hom ≫ logToOpenSheaf P n =
       logToOpenSheaf (P.withEqn f hf) n := withEqn_pullback_inv_inclusion P f hf n
 
-
 /-- Change of associated equation preserves regular forms. -/
 @[reassoc (attr := simp)] theorem logSheafWithEqnIso_hom_regular (P : DivisorPair D)
     (f : Γ(P.ambient.obj.left, ⊤)) (hf : Associated f P.eqn) (n : ℕ) :
@@ -696,7 +701,6 @@ private lemma closedFormsPullback_withEqn_inv (P : DivisorPair D)
     (f : Γ(P.ambient.obj.left, ⊤)) (hf : Associated f P.eqn) (n : ℕ) :
     (logComplexNatWithEqnIso P f hf).hom.f n = (logSheafWithEqnIso P f hf n).hom := by rfl
 
-
 /-- Pullback of global logarithmic forms on the displayed top-open section carriers. -/
 def logSheafPullbackTop (F : P ⟶ Q) (n : ℕ) :
     (logSheaf Q n).obj.obj (op ⊤) →ₗ[k] (logSheaf P n).obj.obj (op ⊤) :=
@@ -741,7 +745,6 @@ theorem logSheafPullbackTop_d (F : P ⟶ Q) (n : ℕ)
       logSheafPullbackTop F (n + 1) ((logSheafD Q n).hom.app (op ⊤) a) :=
   ConcreteCategory.congr_hom
     (NatTrans.congr_app (congrArg (fun f => f.hom) (logSheafPullback_d F n)) (op ⊤)) a
-
 
 /-- On global sections, closed-form pullback is ordinary pullback on the divisor. -/
 theorem closedFormsPullback_app_top (F : P ⟶ Q) (n : ℕ)

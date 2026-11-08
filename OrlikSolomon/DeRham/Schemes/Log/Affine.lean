@@ -307,6 +307,7 @@ private lemma counit_eqnUnit :
   affineAssociatedSheafFunctor (A := CommRingCat.of (globalSections X)) ⋙
     TopCat.Sheaf.pushforward (ModuleCat.{u} k) (specGlobalSectionsIso X).hom.left.base
 
+-- The associated affine sheaf and its top sections identify only after unfolding transport.
 set_option backward.isDefEq.respectTransparency false in
 private def associatedAffineGlobalIso (X : Over (Spec (CommRingCat.of k))) [IsAffine X.left]
     (M : ModuleCat.{u} (globalSections X)) [Module k M] [IsScalarTower k (globalSections X) M] :
