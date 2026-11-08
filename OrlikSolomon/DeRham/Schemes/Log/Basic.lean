@@ -319,6 +319,21 @@ lemma thetaWedgeSheaf_eq_wedge (n : ℕ) (U : P.compl.obj.left.Opens)
         ⋀[sectionAlgebra k P.compl.obj V]^(n + 1) Ω[sectionAlgebra k P.compl.obj V⁄k]).val
   rw [formsPresheafCast_val, formsPresheafMul_tmul]
 
+/-- On global sections, logarithmic multiplication is wedge with `thetaSection` itself,
+without restricting it along the identity of the top open. -/
+lemma thetaWedgeSheaf_top_eq_wedge (n : ℕ)
+    (a : (formsSheaf k P.compl.obj n).obj.obj (op ⊤)) :
+    (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op ⊤) a =
+      (formsSheafCast k P.compl.obj (Nat.add_comm 1 n)).hom.app (op ⊤)
+        (formsSheafWedge k P.compl.obj 1 n (op ⊤) (thetaSection P) a) := by
+  have h : (formsSheaf k P.compl.obj 1).obj.map
+      (⊤ : P.compl.obj.left.Opens).leTop.op (thetaSection P) = thetaSection P := by
+    change (formsSheaf k P.compl.obj 1).obj.map (𝟙 (op ⊤)) (thetaSection P) = _
+    exact ConcreteCategory.congr_hom ((formsSheaf k P.compl.obj 1).obj.map_id _) _
+  exact (thetaWedgeSheaf_eq_wedge P n ⊤ a).trans (congrArg
+    (fun b => (formsSheafCast k P.compl.obj (Nat.add_comm 1 n)).hom.app (op ⊤)
+      (formsSheafWedge k P.compl.obj 1 n (op ⊤) b a)) h)
+
 /-- The logarithmic one-form on the complement is closed. -/
 theorem thetaSection_d :
     (formsSheafD k P.compl.obj 1).hom.app (op ⊤) (thetaSection P) = 0 := by

@@ -43,6 +43,10 @@ positive integers are units, in particular over a characteristic-zero field.
   on the shifted divisor forms;
 * `logSheafComparison`: the stalkwise quasi-isomorphism over a characteristic-zero field;
 * `affineLogResidueShortComplexIso`: the affine comparison of all three complexes and arrows;
+* `affineGlobalLogToOpen_quasiIso`, `logResidueSheafTop_surjective`,
+  `exact_regularToLogTop_logResidueSheafTop`: affine global comparison, residue lifts and exactness;
+* `logToOpenSheafAt`, `logResidueSheafAt`, `logSheafIdentitySectionsEquiv`: the typed section
+  operations from `Log/Sections`, including simplification through identity reindexing;
 * `logSheafPullback`, `logSheafWithEqnIso`, `logResidueSheaf_right_projection`: naturality,
   independence of an associated equation and the signless right projection formula.
 

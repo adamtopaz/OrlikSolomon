@@ -35,6 +35,15 @@ variable {k : Type u} [CommRing k] {D : SmoothDomain k}
   simp only [thetaToLogSheaf, Category.assoc, logMkSheaf_d, biprod.inr_map_assoc,
     Preadditive.neg_comp]
 
+/-- On sections, the differential of a theta generator is minus theta times the
+differential of its coefficient. -/
+theorem thetaToLogSheaf_d_apply (P : DivisorPair D) (n : ℕ)
+    (U : P.ambient.obj.left.Opensᵒᵖ) (a : (formsSheaf k P.ambient.obj n).obj.obj U) :
+    (logSheafD P (n + 1)).hom.app U ((thetaToLogSheaf P n).hom.app U a) =
+      -((thetaToLogSheaf P (n + 1)).hom.app U ((formsSheafD k P.ambient.obj n).hom.app U a)) :=
+  ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) (thetaToLogSheaf_d P n)) U) a
+
 /-- The residue of a left logarithmic generator is restriction of its coefficient. -/
 @[reassoc (attr := simp)] theorem thetaToLogSheaf_residue (P : DivisorPair D) (n : ℕ) :
     thetaToLogSheaf P n ≫ logResidueSheaf P n = formsSheafPullback P.i.hom n := by
@@ -53,14 +62,16 @@ private lemma logSheafCast_cancel (P : DivisorPair D) {p q : ℕ} (h : p = q)
   subst q
   rfl
 
-/-- Residue annihilates regular forms, on every ambient open. -/
+/-- Residue annihilates regular forms, on every ambient open.
+For simplification on the actual divisor carrier, use `logResidueSheafAt_regular`. -/
 @[simp] theorem logResidueSheaf_regular (P : DivisorPair D) (n : ℕ)
     (U : P.ambient.obj.left.Opensᵒᵖ) (a : (formsSheaf k P.ambient.obj (n + 1)).obj.obj U) :
     (logResidueSheaf P n).hom.app U ((regularToLogSheaf P (n + 1)).hom.app U a) = 0 :=
   ConcreteCategory.congr_hom (NatTrans.congr_app
     (congrArg (fun f => f.hom) (regularToLogSheaf_residue P n)) U) a
 
-/-- Residue of a logarithmic generator is the restriction of its coefficient. -/
+/-- Residue of a logarithmic generator is the restriction of its coefficient.
+For simplification on the actual divisor carrier, use `logResidueSheafAt_theta`. -/
 @[simp] theorem logResidueSheaf_theta (P : DivisorPair D) (n : ℕ)
     (U : P.ambient.obj.left.Opensᵒᵖ) (a : (formsSheaf k P.ambient.obj n).obj.obj U) :
     (logResidueSheaf P n).hom.app U ((thetaToLogSheaf P n).hom.app U a) =

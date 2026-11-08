@@ -578,7 +578,8 @@ def logSheafOneSection (U : P.ambient.obj.left.Opensᵒᵖ) : (logSheaf P 0).obj
   ConcreteCategory.congr_hom (NatTrans.congr_app
     (congrArg (fun f => f.hom) (regularToLogSheaf_comp_logToOpenSheaf P n)) U) a
 
-/-- The logarithmic generator includes as left multiplication by `df/f`, on sections. -/
+/-- The logarithmic generator includes as left multiplication by `df/f`, on sections.
+For simplification on the actual complement carrier, use `logToOpenSheafAt_theta`. -/
 @[simp] theorem thetaToLogSheaf_logToOpenSheaf (n : ℕ) (U : P.ambient.obj.left.Opensᵒᵖ)
     (a : (formsSheaf k P.ambient.obj n).obj.obj U) :
     (logToOpenSheaf P (n + 1)).hom.app U ((thetaToLogSheaf P n).hom.app U a) =

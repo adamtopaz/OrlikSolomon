@@ -618,6 +618,7 @@ def formsComplexNatInverseImage (g : X ⟶ Y) :
 @[simp] theorem formsComplexNatInverseImage_f (g : X ⟶ Y) (n : ℕ) :
     (formsComplexNatInverseImage g).f n = formsSheafInverseImage g n := rfl
 
+-- The pointwise identity comparison and its induced complex have equal transported carriers.
 set_option backward.isDefEq.respectTransparency.types false in
 /-- Inverse-image pullback by the identity on the de Rham complex agrees with the canonical
 identity comparison induced from the sheaf pullback functor. -/
@@ -635,6 +636,7 @@ identity comparison induced from the sheaf pullback functor. -/
     using (formsSheafInverseImage_id (k := k) (X := X) n).trans
       (Category.comp_id _).symm
 
+-- The composite inverse-image functors coincide after unfolding their complex transports.
 set_option backward.isDefEq.respectTransparency.types false in
 /-- Inverse-image pullback of de Rham complexes is functorial under the canonical
 composition comparison induced from sheaf pullback. -/

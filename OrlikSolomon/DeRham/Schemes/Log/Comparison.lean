@@ -5,40 +5,27 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import Mathlib.Algebra.Category.ModuleCat.AB
-public import Mathlib.Algebra.Category.ModuleCat.FilteredColimits
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
-public import Mathlib.CategoryTheory.Limits.Preserves.FunctorCategory
-public import Mathlib.Topology.Sheaves.Abelian
-public import OrlikSolomon.DeRham.Log
 public import OrlikSolomon.DeRham.Pole.Degree
 public import OrlikSolomon.DeRham.Schemes.Log.Restriction
 
 /-!
-# Logarithmic comparisons and detection on stalks
+# Logarithmic comparisons on affine schemes and stalks
 
 The ordinary module stalk functors preserve homology and jointly detect isomorphisms of
 sheaves. Consequently they detect quasi-isomorphisms of sheaf complexes of any shape.
-This criterion is the sheaf-theoretic step in the logarithmic comparison of
-`thm:geo-log-sheaves`; it makes no assertion about applying global sections to a
+The criteria in `Geometry/Schemes/ModuleGluing` give the sheaf-theoretic step in the logarithmic
+comparison of `thm:geo-log-sheaves`; they make no assertion about applying global sections to a
 quasi-isomorphism.
 
-The existing pole comparison is also packaged as a quasi-isomorphism of the actual
-algebraic logarithmic complex. Its proof uses the existing comparison on cohomology and
-the degreewise primitive criteria, including degree zero.
+The algebraic logarithmic quasi-isomorphism is imported from `DeRham/Pole/Degree`. It gives
+global comparison on affine pairs and local comparison on affine neighborhoods for the
+stalkwise theorem.
 
 ## Main results
 
-* `OrlikSolomon.Geometric.sheafComplex_quasiIso_iff_stalk`: a map of module-sheaf complexes is a
-  quasi-isomorphism exactly when all of its stalk maps are quasi-isomorphisms.
-* `OrlikSolomon.DeRham.logToLocalization_quasiIso`: the algebraic logarithmic inclusion is a
-  quasi-isomorphism for a smooth principal pair when positive integers are units.
-* `OrlikSolomon.Geometric.presheafComplex_stalk_quasiIso_of_basis` and
-  `OrlikSolomon.Geometric.sheafComplex_quasiIso_of_basis`:
-  quasi-isomorphisms on the section complexes of a basis induce quasi-isomorphisms on
-  stalks and, for sheaves, on the sheaf complexes.
 * `affineGlobalLogToOpen_quasiIso`: global comparison on an affine pair, from the algebraic theorem.
 * `logSheafComparison_of_units` and `logSheafComparison`: the actual logarithmic inclusion
   is a quasi-isomorphism of sheaf complexes, proved on affine neighborhoods and then stalks.

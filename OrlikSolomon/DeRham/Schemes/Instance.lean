@@ -73,7 +73,7 @@ namespace OrlikSolomon.Geometric.DeRham
 
 section SheafRepresentatives
 
-variable {k : Type u} [CommRing k] {D : SmoothDomain k}
+variable {k : Type u} [CommRing k]
 
 private lemma globalFormsEquiv_symm_logToOpenTop (P : DivisorPair (SmoothDomain.aff k)) (n : ℕ)
     (l : (logSheaf P n).obj.obj (op ⊤)) :

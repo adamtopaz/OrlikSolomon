@@ -36,6 +36,29 @@ example (U : P.ambient.obj.left.Opensᵒᵖ) (x : (logSheaf P n).obj.obj U) :
     (logSheafIdentitySectionsEquiv P n U).symm (logSheafPullbackAt (𝟙 P) n U x) = x := by
   simp
 
+/-- The pointwise identity law normalizes the linear-map coercion. -/
+example (U : P.ambient.obj.left.Opensᵒᵖ) (x : (logSheaf P n).obj.obj U) :
+    logSheafPullbackAt (𝟙 P) n U x = logSheafIdentitySectionsEquiv P n U x := by
+  simp
+
+/-- The named inverse-image module keeps linear-equivalence coercions stable under simp. -/
+example (U : P.ambient.obj.left.Opensᵒᵖ) (x : (logSheaf P n).obj.obj U) :
+    (logSheafIdentitySectionsEquiv P n U).toLinearMap x =
+      logSheafIdentitySectionsEquiv P n U x := by
+  simp
+
+/-- Identity reindexing cancels after addition of separately pulled-back sections. -/
+example (U : P.ambient.obj.left.Opensᵒᵖ) (x y : (logSheaf P n).obj.obj U) :
+    (logSheafIdentitySectionsEquiv P n U).symm
+      (logSheafPullbackAt (𝟙 P) n U x + logSheafPullbackAt (𝟙 P) n U y) = x + y := by
+  simp
+
+/-- Identity reindexing cancels through scalar multiplication. -/
+example (U : P.ambient.obj.left.Opensᵒᵖ) (c : k) (x : (logSheaf P n).obj.obj U) :
+    (logSheafIdentitySectionsEquiv P n U).symm (c • logSheafPullbackAt (𝟙 P) n U x) =
+      c • x := by
+  simp
+
 /-- Residue of a normal form simplifies through zero addition on one concrete divisor carrier. -/
 example (U : P.ambient.obj.left.Opensᵒᵖ)
     (ω : (formsSheaf k P.ambient.obj (n + 1)).obj.obj U)
@@ -43,7 +66,16 @@ example (U : P.ambient.obj.left.Opensᵒᵖ)
     logResidueSheafAt P n U
       ((regularToLogSheaf P (n + 1)).hom.app U ω + (thetaToLogSheaf P n).hom.app U η) =
       formsSheafPullbackAt P.i.hom U.unop n η := by
-  simp only [map_add, logResidueSheafAt_regular, logResidueSheafAt_theta, zero_add]
+  simp
+
+/-- The named module remains transparent to the original pullback and wedge simp API. -/
+example {Q : DivisorPair D} (F : P ⟶ Q) (p q : ℕ)
+    (U : Q.ambient.obj.left.Opensᵒᵖ) (c : k)
+    (a : (logSheaf Q p).obj.obj U) (b : (logSheaf Q q).obj.obj U) :
+    logSheafPullbackAt F (p + q) U (c • logSheafWedge Q p q U a b) =
+      c • logSheafWedge P p q (op (F.ambient.hom.left ⁻¹ᵁ U.unop))
+        (logSheafPullbackAt F p U a) (logSheafPullbackAt F q U b) := by
+  simp
 
 /-- Inclusion of a theta generator simplifies to left logarithmic multiplication. -/
 example (U : P.ambient.obj.left.Opensᵒᵖ)
@@ -57,6 +89,20 @@ example (U : P.ambient.obj.left.Opensᵒᵖ)
 example : thetaToLogSheaf P n ≫ logSheafD P (n + 1) +
     formsSheafD k P.ambient.obj n ≫ thetaToLogSheaf P (n + 1) = 0 := by
   rw [thetaToLogSheaf_d, neg_add_cancel]
+
+/-- The applied differential formula rewrites directly on sections. -/
+example (U : P.ambient.obj.left.Opensᵒᵖ)
+    (η : (formsSheaf k P.ambient.obj n).obj.obj U)
+    (hη : (formsSheafD k P.ambient.obj n).hom.app U η = 0) :
+    (logSheafD P (n + 1)).hom.app U ((thetaToLogSheaf P n).hom.app U η) = 0 := by
+  rw [thetaToLogSheaf_d_apply, hη, map_zero, neg_zero]
+
+/-- The global wedge formula uses theta without an identity restriction. -/
+example (η : (formsSheaf k P.compl.obj n).obj.obj (op ⊤)) :
+    (thetaWedgeSheaf P.compl.obj P.eqnUnit n).hom.app (op ⊤) η =
+      (formsSheafCast k P.compl.obj (Nat.add_comm 1 n)).hom.app (op ⊤)
+        (formsSheafWedge k P.compl.obj 1 n (op ⊤) (thetaSection P) η) := by
+  rw [thetaWedgeSheaf_top_eq_wedge]
 
 variable (Q : DivisorPair (SmoothDomain.aff k))
 

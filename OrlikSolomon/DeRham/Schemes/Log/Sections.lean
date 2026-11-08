@@ -14,9 +14,15 @@ The maps here display complement and divisor sections on inverse-image opens. Th
 mixing the carrier of a direct-image sheaf with the equal concrete section carrier in one
 formula. The underlying sheaf maps and their existing public statements are unchanged.
 
-Main results: `logToOpenSheafAt_theta`, `logResidueSheafAt_regular_add_theta`, and
+## Main results
+
+`logToOpenSheafAt_theta`, `logResidueSheafAt_regular_add_theta`, and
 `logSheafPullbackAt_id`. These formulas support ordinary `simp` and ring rewriting without
 unfolding the image construction or a direct-image functor.
+
+The named target module `logSheafPullbackSections` keeps identity preimages out of implicit
+carrier arguments. Consequently the usual linear-equivalence coercion, inverse, addition
+and scalar-multiplication simp lemmas apply to `logSheafIdentitySectionsEquiv`.
 
 Blueprint: the section formulas in `thm:geo-log-sheaves`.
 -/
@@ -84,12 +90,11 @@ multiplication. -/
   simp only [map_add, logResidueSheafAt_regular, logResidueSheafAt_theta, zero_add]
 
 /-- The canonical reindexing from an open to its inverse image under the identity pair map.
-Keeping the reindexing explicit makes the identity law type-correct at implicit transparency. -/
+Its named target module is stable under simplification of identity-morphism projections. -/
 def logSheafIdentitySectionsEquiv (n : ℕ) (U : P.ambient.obj.left.Opensᵒᵖ) :
-    (logSheaf P n).obj.obj U ≃ₗ[k]
-      (logSheaf P n).obj.obj (op ((𝟙 P : P ⟶ P).ambient.hom.left ⁻¹ᵁ U.unop)) :=
+    (logSheaf P n).obj.obj U ≃ₗ[k] logSheafPullbackSections (𝟙 P) n U :=
   (eqToIso (by rfl : (logSheaf P n).obj.obj U =
-    (logSheaf P n).obj.obj (op ((𝟙 P : P ⟶ P).ambient.hom.left ⁻¹ᵁ U.unop)))).toLinearEquiv
+    logSheafPullbackSections (𝟙 P) n U)).toLinearEquiv
 
 /-- Identity logarithmic pullback is the canonical section reindexing. The inverse-image open
 is displayed on both sides, rather than identified through a direct-image object. -/
@@ -100,9 +105,9 @@ is displayed on both sides, rather than identified through a direct-image object
     (NatTrans.congr_app (congrArg (fun f => f.hom) (logSheafPullback_id P n)) U) a
 
 /-- Undoing the inverse-image reindexing after identity pullback recovers the original section.
+The ordinary identity and linear-equivalence simp lemmas already prove this equality.
 Blueprint: the identity compatibility in `thm:geo-log-sheaves`. -/
--- Reduce the whole coherence expression before rewriting its inner identity pullback.
-@[simp↓] theorem logSheafPullbackAt_id_cancel (n : ℕ) (U : P.ambient.obj.left.Opensᵒᵖ)
+theorem logSheafPullbackAt_id_cancel (n : ℕ) (U : P.ambient.obj.left.Opensᵒᵖ)
     (x : (logSheaf P n).obj.obj U) :
     (logSheafIdentitySectionsEquiv P n U).symm (logSheafPullbackAt (𝟙 P) n U x) = x := by
   rw [logSheafPullbackAt_id]

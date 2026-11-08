@@ -237,8 +237,6 @@ private theorem moduleCat_quasiIso_of_representatives {R : Type u} [Ring R]
 
 section AlgebraicComparison
 
-open OrlikSolomon.DeRham
-
 variable (k : Type u) [CommRing k] {A : Type v} [CommRing A] [Algebra k A]
   (f : A) (T : Type v) [CommRing T] [Algebra k T] [Algebra A T] [IsScalarTower k A T]
   [IsLocalization.Away f T]

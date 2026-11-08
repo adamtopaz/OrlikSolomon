@@ -125,6 +125,7 @@ private lemma associatedBase_map_smul {M N : ModuleCat A} (f : M ⟶ N)
       a • ((affineAssociatedSheafFunctor (k := k)).map f).hom.app (op U) x :=
   ((modulesSpecToSheaf.map (tilde.map f)).hom.app (op U)).hom.map_smul a x
 
+-- Compare sheaf-hom carriers with their associated-module section presentations.
 set_option backward.isDefEq.respectTransparency false in
 private lemma associatedBase_hom_ext {M N : ModuleCat A}
     (φ ψ : (affineAssociatedSheafFunctor (k := k)).obj M ⟶
@@ -376,6 +377,7 @@ private lemma specNormalSourceIso_inr (n : ℕ) :
       biprod.inr_fst, biprod.inr_snd, CategoryTheory.Functor.map_id, Functor.map_zero,
       Category.id_comp, CategoryTheory.Limits.zero_comp]
 
+-- The conjugation uses equal scalar actions presented through different Spec transports.
 set_option backward.isDefEq.respectTransparency false in
 private lemma specRegular_conjugate_smul (n : ℕ) (U : (Spec AP).Opens) (a : P.ambient)
     (x : ((FA).obj (ModuleCat.of AP (⋀[P.ambient]^n Ω[P.ambient⁄k]))).obj.obj (op U)) :

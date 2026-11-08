@@ -111,7 +111,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `DeRham/Pole/Contraction`      | `thm:dr-pole-contraction`: the explicit contracting operator and its degree |
 | `DeRham/Pole/Reduction`        | finite cocycle and primitive reduction for `thm:dr-comparison` |
 | `DeRham/Pole/Comparison`       | `thm:dr-comparison`: bijectivity of the canonical map and its algebra equivalence |
-| `DeRham/Pole/Degree`           | natural and integer degree equivalences, preservation, reflection and certificate independence |
+| `DeRham/Pole/Degree`           | natural and integer degree equivalences, preservation, reflection, certificate independence, and `logToLocalization_quasiIso` |
 | `DeRham/Pole`                 | global logarithmic comparison; the module to import |
 | `DeRham/Maps`                  | `residue` on `H^•(T)`, through `thm:dr-comparison`: exactness in each degree, `thm:dr-projection` and `residue_map`; the module to import |
 | `DeRham/PrincipalQuotient`     | `lem:dr-quotient`, for any surjection of algebras with principal kernel |
@@ -814,6 +814,8 @@ a nonzero coefficient ring is assumed. A smooth principal pair supplies the norm
 `logToLocalizationDegreeEquiv` and `logToLocalizationGradingEquiv`. Their forward and inverse
 formulas identify the canonical map in each degree. The full algebra equivalence is independent
 of the coefficient-unit proofs and the chosen closed-divisor presentation or certificate.
+It also packages the algebraic comparison as the chain-map statement
+`DeRham.logToLocalization_quasiIso`.
 
 ### Cohomology
 
@@ -1551,10 +1553,14 @@ follow-ups. A PR that splits a row into other files updates this table.
 
 `Log/Sections` displays complement and divisor section carriers on their inverse-image opens.
 Its typed maps and the explicit identity reindexing support simplification without unfolding
-direct images. The legacy raw sheaf equations remain available. On affine pairs,
-`affineGlobalLogToOpen_quasiIso` follows from the algebraic pole comparison, now also stated
-as `DeRham.logToLocalization_quasiIso`. Global residue lifts and their regular differentials
-exist by the affine exact sequence. These are statements about affine global sections;
+direct images. The named module `logSheafPullbackSections` keeps identity preimages stable
+under `simp`, including coercions, inverse reindexing, addition and scalar multiplication.
+The legacy raw sheaf equations remain available. On affine pairs,
+`affineGlobalLogToOpen_quasiIso` follows from the canonical algebraic chain-map comparison
+`DeRham.logToLocalization_quasiIso`; the old
+`Geometric.DeRham.algebraicLogToLocalization_quasiIso` is a deprecated alias.
+Global residue lifts and their regular differentials exist by the affine exact sequence.
+These are statements about affine global sections;
 no exactness of non-affine global sections is asserted.
 
 | Module under `OrlikSolomon/` | Blueprint labels | Issue |
