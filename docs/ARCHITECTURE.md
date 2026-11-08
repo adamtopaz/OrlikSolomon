@@ -1555,6 +1555,8 @@ follow-ups. A PR that splits a row into other files updates this table.
 Its typed maps and the explicit identity reindexing support simplification without unfolding
 direct images. The named module `logSheafPullbackSections` keeps identity preimages stable
 under `simp`, including coercions, inverse reindexing, addition and scalar multiplication.
+Its `@[instance_reducible]` attribute lets instance search combine pulled-back and ordinary
+sections on the same open, following the wrapper rule of #128.
 The legacy raw sheaf equations remain available. On affine pairs,
 `affineGlobalLogToOpen_quasiIso` follows from the canonical algebraic chain-map comparison
 `DeRham.logToLocalization_quasiIso`; the old
@@ -1607,7 +1609,7 @@ no exactness of non-affine global sections is asserted.
 | `DeRham/Schemes/Log/ResidueAffine` | affine residue comparison, global exactness and lifts, and domain-general closure of representatives | #117, #137 |
 | `DeRham/Schemes/Log/Comparison` | stalkwise and affine-global quasi-isomorphisms from the algebraic pole theorem; deprecated aliases for moved helpers | #117, #137 |
 | `DeRham/Schemes/Log/Projection` | the form-level right projection identity, with logarithmic factor on the left and no sign | #117 |
-| `DeRham/Schemes/Log/Naturality` | transverse maps and unit changes of equation | #117 |
+| `DeRham/Schemes/Log/Naturality` | transverse maps, unit changes of equation, and typed inverse-image section carriers | #117, #137 |
 | `Examples/Geometric` | umbrella, geometric bridge and ring-rewriting acceptance consumers, and `prop:geo-finite-field` | #118 |
 | `Examples/Geometric/Acceptance`, `Examples/Geometric/DeRhamAcceptance` | consumers importing only the geometric public facade or its unconditional de Rham corollaries | #118 |
 | `Examples/Geometric/Degenerate` | `prop:geo-degenerate`: actual empty, unit and disconnected pairs, their forms, cohomology and residue | #118 |

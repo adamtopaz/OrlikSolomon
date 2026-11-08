@@ -457,8 +457,8 @@ theorem logComplexNatPullback_comp (F : P ⟶ Q) (G : Q ⟶ R) :
 /-- Logarithmic sections on the inverse image of an ambient open under a pair morphism.
 This named module keeps the inverse-image carrier stable under simplification of the
 projections of an identity morphism. It is definitionally the usual section module and
-remains transparent to implicit type matching with the existing section formulas. -/
-@[implicit_reducible] def logSheafPullbackSections (F : P ⟶ Q) (n : ℕ)
+is transparent to instance search for arithmetic with ordinary sections on the same open. -/
+@[instance_reducible] def logSheafPullbackSections (F : P ⟶ Q) (n : ℕ)
     (U : Q.ambient.obj.left.Opensᵒᵖ) :
     ModuleCat k :=
   (logSheaf P n).obj.obj (op (F.ambient.hom.left ⁻¹ᵁ U.unop))

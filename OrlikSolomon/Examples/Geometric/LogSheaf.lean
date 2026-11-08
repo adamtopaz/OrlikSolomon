@@ -12,7 +12,8 @@ public import OrlikSolomon.DeRham.Schemes.Log
 # Consumers of the logarithmic section API
 
 These examples import the logarithmic umbrella alone. They check simplification on explicit
-complement/divisor section carriers, identity reindexing, the signed theta differential,
+complement/divisor section carriers, mixed section arithmetic, identity reindexing, the signed
+theta differential,
 and affine global comparison and residue lifts. Characteristic two and the zero base ring
 exercise global lifts without an ordinary-theory instance.
 
@@ -75,6 +76,31 @@ example {Q : DivisorPair D} (F : P ⟶ Q) (p q : ℕ)
     logSheafPullbackAt F (p + q) U (c • logSheafWedge Q p q U a b) =
       c • logSheafWedge P p q (op (F.ambient.hom.left ⁻¹ᵁ U.unop))
         (logSheafPullbackAt F p U a) (logSheafPullbackAt F q U b) := by
+  simp
+
+/-- Pulled-back and regular logarithmic sections share the same addition in either order. -/
+example {Q : DivisorPair D} (F : P ⟶ Q) (U : Q.ambient.obj.left.Opensᵒᵖ)
+    (x : (logSheaf Q n).obj.obj U)
+    (ω : (formsSheaf k P.ambient.obj n).obj.obj (op (F.ambient.hom.left ⁻¹ᵁ U.unop))) :
+    (regularToLogSheaf P n).hom.app _ ω + logSheafPullbackAt F n U x =
+      logSheafPullbackAt F n U x + (regularToLogSheaf P n).hom.app _ ω := by
+  rw [add_comm]
+
+/-- Complement inclusion distributes over a pullback plus an ordinary inverse-image section. -/
+example {Q : DivisorPair D} (F : P ⟶ Q) (U : Q.ambient.obj.left.Opensᵒᵖ)
+    (x : (logSheaf Q n).obj.obj U)
+    (y : (logSheaf P n).obj.obj (op (F.ambient.hom.left ⁻¹ᵁ U.unop))) :
+    (logToOpenSheaf P n).hom.app (op (F.ambient.hom.left ⁻¹ᵁ U.unop))
+        (logSheafPullbackAt F n U x + y) =
+      (logToOpenSheaf P n).hom.app _ (logSheafPullbackAt F n U x) +
+        (logToOpenSheaf P n).hom.app _ y := by
+  simp
+
+/-- Scalar multiplication, subtraction and addition mix pullbacks with ordinary sections. -/
+example {Q : DivisorPair D} (F : P ⟶ Q) (U : Q.ambient.obj.left.Opensᵒᵖ) (c : k)
+    (x : (logSheaf Q n).obj.obj U)
+    (y : (logSheaf P n).obj.obj (op (F.ambient.hom.left ⁻¹ᵁ U.unop))) :
+    c • logSheafPullbackAt F n U x - y + y = c • logSheafPullbackAt F n U x := by
   simp
 
 /-- Inclusion of a theta generator simplifies to left logarithmic multiplication. -/

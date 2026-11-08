@@ -23,6 +23,8 @@ unfolding the image construction or a direct-image functor.
 The named target module `logSheafPullbackSections` keeps identity preimages out of implicit
 carrier arguments. Consequently the usual linear-equivalence coercion, inverse, addition
 and scalar-multiplication simp lemmas apply to `logSheafIdentitySectionsEquiv`.
+For inverse reindexing of an arbitrary target section, use the carrier
+`logSheafPullbackSections (𝟙 P) n U` in its binder.
 
 Blueprint: the section formulas in `thm:geo-log-sheaves`.
 -/
