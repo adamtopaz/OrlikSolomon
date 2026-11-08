@@ -78,7 +78,7 @@ With the ambient space fixed, the statement would not supply its own induction h
  * the structure of the axioms, and the affine and projective theorems
  * a nonzero value of the structure, and the forms of those theorems for algebraic de Rham cohomology, with no hypothetical cohomology theory
 *
- * {ref "geometric"}[Arrangements on schemes], in progress, with foundations, affine and projective complements as open subschemes, geometric axioms, affine transports, the supports-and-purity bridge, logarithmic classes, sheaves of forms with affine evaluation, both structure theorems on schemes and the de Rham instance on smooth affine schemes with its corollaries formalized
+ * {ref "geometric"}[Arrangements on schemes], with foundations, affine and projective complements as open subschemes, geometric axioms, affine transports, the supports-and-purity bridge, logarithmic classes, sheaves of forms with affine evaluation, both structure theorems on schemes and the de Rham instance on smooth affine schemes with its corollaries, the logarithmic sheaf sequence and local comparison, and worked geometric regressions formalized
  * the affine and projective theorems, the de Rham instance, and Mathlib's schemes
  * the same theorems for cohomology theories on smooth schemes, with complements as open subschemes, and the de Rham instance on smooth affine schemes
 :::

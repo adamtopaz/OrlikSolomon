@@ -31,6 +31,7 @@ open Geometric.DeRham OrlikSolomon.DeRham
 universe u
 
 variable (k : Type u) [Field k]
+
 /-- Polynomial forms are the actual sheaf forms on a standard projective-line chart. -/
 def projectiveLineChartFormsEquiv (i : Fin 2) (n : ℕ) :
     (⋀[k[X]]^n Ω[k[X]⁄k]) ≃ₗ[k]
@@ -43,10 +44,12 @@ def projectiveLineChartFormsEquiv (i : Fin 2) (n : ℕ) :
       Subtype.ext ((Forms.mapEquiv (projectiveLineChartSectionsEquiv k i).symm).right_inv a.val) } :
       _ ≃ₗ[k] _).trans
     (affineOpenFormsComparison _ _ (isAffineOpen_projectiveLineChart k i) n)
+
 /-- The intersection of the two standard projective-line charts is affine. -/
 lemma isAffineOpen_projectiveLineOverlap : IsAffineOpen (projectiveLineOverlap k) := by
   rw [← projectiveLineOverlapMap_opensRange]
   exact isAffineOpen_opensRange (projectiveLineOverlapMap k).left
+
 /-- Laurent polynomial forms are the actual sheaf forms on the chart intersection. -/
 def projectiveLineOverlapFormsEquiv (n : ℕ) :
     (⋀[LaurentPolynomial k]^n Ω[LaurentPolynomial k⁄k]) ≃ₗ[k]
@@ -59,17 +62,20 @@ def projectiveLineOverlapFormsEquiv (n : ℕ) :
       Subtype.ext ((Forms.mapEquiv (projectiveLineOverlapSectionsEquiv k).symm).right_inv a.val) } :
       _ ≃ₗ[k] _).trans
     (affineOpenFormsComparison _ _ (isAffineOpen_projectiveLineOverlap k) n)
+
 /-- The chart comparison sends a polynomial form to its sheafification. -/
 lemma projectiveLineChartFormsEquiv_apply (i : Fin 2) (n : ℕ) (a : ⋀[k[X]]^n Ω[k[X]⁄k]) :
     projectiveLineChartFormsEquiv k i n a =
       (formsSheafUnit k (projectiveLine k) n).app (op (projectiveLineChart k i))
         (Forms.mapPower (projectiveLineChartSectionsEquiv k i).symm.toAlgHom n a) := rfl
+
 /-- The overlap comparison sends a Laurent form to its sheafification. -/
 lemma projectiveLineOverlapFormsEquiv_apply (n : ℕ)
     (a : ⋀[LaurentPolynomial k]^n Ω[LaurentPolynomial k⁄k]) :
     projectiveLineOverlapFormsEquiv k n a =
       (formsSheafUnit k (projectiveLine k) n).app (op (projectiveLineOverlap k))
         (Forms.mapPower (projectiveLineOverlapSectionsEquiv k).symm.toAlgHom n a) := rfl
+
 private lemma restrict_zero_ring :
     (sectionRestriction k (projectiveLine k) (homOfLE (projectiveLineOverlap_le_chart k 0))).comp
         (projectiveLineChartSectionsEquiv k 0).symm.toAlgHom =
@@ -82,6 +88,7 @@ private lemma restrict_zero_ring :
     ((projectiveLineChartSectionsEquiv k 0).symm a)
   simpa only [AlgHom.comp_apply, AlgEquiv.coe_toAlgHom,
     AlgEquiv.apply_symm_apply] using h
+
 private lemma restrict_one_ring :
     (sectionRestriction k (projectiveLine k) (homOfLE (projectiveLineOverlap_le_chart k 1))).comp
         (projectiveLineChartSectionsEquiv k 1).symm.toAlgHom =
@@ -95,6 +102,7 @@ private lemma restrict_one_ring :
     ((projectiveLineChartSectionsEquiv k 1).symm a)
   simpa only [AlgHom.comp_apply, AlgEquiv.coe_toAlgHom,
     AlgEquiv.apply_symm_apply] using h
+
 /-- Restriction from the first chart is the Laurent inclusion on forms. -/
 lemma projectiveLineChartFormsEquiv_restrict_zero (n : ℕ) (a : ⋀[k[X]]^n Ω[k[X]⁄k]) :
     (formsSheaf k (projectiveLine k) n).obj.map
@@ -119,6 +127,7 @@ lemma projectiveLineChartFormsEquiv_restrict_zero (n : ℕ) (a : ⋀[k[X]]^n Ω[
         (LinearMap.congr_fun (Forms.mapPower_comp
           (projectiveLineOverlapSectionsEquiv k).symm.toAlgHom
           (Polynomial.toLaurentAlg : k[X] →ₐ[k] LaurentPolynomial k) n) a))
+
 /-- Restriction from the second chart is Laurent inversion on forms. -/
 lemma projectiveLineChartFormsEquiv_restrict_one (n : ℕ) (a : ⋀[k[X]]^n Ω[k[X]⁄k]) :
     (formsSheaf k (projectiveLine k) n).obj.map
@@ -152,16 +161,19 @@ def projectiveLineFormsOn (U : (projectiveLine k).left.Opens) :
   ((sheafToPresheaf (Opens.grothendieckTopology (projectiveLine k).left) (ModuleCat k) ⋙
     (evaluation _ _).obj (op U)).mapHomologicalComplex _).obj
       (formsComplexNat k (projectiveLine k))
+
 /-- Evaluation on an open has the expected sheaf-form terms. -/
 @[simp]
 lemma projectiveLineFormsOn_X (U : (projectiveLine k).left.Opens) (n : ℕ) :
     (projectiveLineFormsOn k U).X n = (formsSheaf k (projectiveLine k) n).obj.obj (op U) := rfl
+
 /-- Evaluation on an open has the actual sheaf differential. -/
 @[simp]
 lemma projectiveLineFormsOn_d (U : (projectiveLine k).left.Opens) (n : ℕ) :
     (projectiveLineFormsOn k U).d n (n + 1) =
       (formsSheafD k (projectiveLine k) n).hom.app (op U) := by
   simp [projectiveLineFormsOn]
+
 /-- The standard-chart form comparison preserves the de Rham differential. -/
 lemma projectiveLineChartFormsEquiv_d (i : Fin 2) (n : ℕ)
     (a : ⋀[k[X]]^n Ω[k[X]⁄k]) :
@@ -175,6 +187,7 @@ lemma projectiveLineChartFormsEquiv_d (i : Fin 2) (n : ℕ)
       (Forms.mapPower (projectiveLineChartSectionsEquiv k i).symm.toAlgHom (n + 1)
         (powerD k k[X] n a))
   rw [affineOpenFormsComparison_d, Forms.mapPower_powerD]
+
 /-- The overlap form comparison preserves the de Rham differential. -/
 lemma projectiveLineOverlapFormsEquiv_d (n : ℕ)
     (a : ⋀[LaurentPolynomial k]^n Ω[LaurentPolynomial k⁄k]) :
@@ -188,6 +201,7 @@ lemma projectiveLineOverlapFormsEquiv_d (n : ℕ)
       (Forms.mapPower (projectiveLineOverlapSectionsEquiv k).symm.toAlgHom (n + 1)
         (powerD k (LaurentPolynomial k) n a))
   rw [affineOpenFormsComparison_d, Forms.mapPower_powerD]
+
 /-- Polynomial de Rham forms are the actual complex on each standard chart. -/
 def projectiveLineChartFormsComplexIso (i : Fin 2) :
     complex k k[X] ≅ projectiveLineFormsOn k (projectiveLineChart k i) :=
@@ -197,6 +211,7 @@ def projectiveLineChartFormsComplexIso (i : Fin 2) :
       rw [projectiveLineFormsOn_d, complex_d]
       ext a
       exact projectiveLineChartFormsEquiv_d k i n a)
+
 /-- Laurent de Rham forms are the actual complex on the chart intersection. -/
 def projectiveLineOverlapFormsComplexIso :
     complex k (LaurentPolynomial k) ≅ projectiveLineFormsOn k (projectiveLineOverlap k) :=
@@ -206,6 +221,7 @@ def projectiveLineOverlapFormsComplexIso :
       rw [projectiveLineFormsOn_d, complex_d]
       ext a
       exact projectiveLineOverlapFormsEquiv_d k n a)
+
 /-- The actual sheaf restriction from a standard chart to the intersection. -/
 def projectiveLineFormsRestriction (i : Fin 2) :
     projectiveLineFormsOn k (projectiveLineChart k i) ⟶
@@ -215,6 +231,7 @@ def projectiveLineFormsRestriction (i : Fin 2) :
       intro n
       rw [projectiveLineFormsOn_d, projectiveLineFormsOn_d]
       exact (formsSheafD k (projectiveLine k) n).hom.naturality _)
+
 /-- The first-chart complex comparison intertwines actual restriction and Laurent inclusion. -/
 lemma projectiveLineChartFormsComplexIso_restrict_zero :
     (projectiveLineChartFormsComplexIso k 0).hom ≫ projectiveLineFormsRestriction k 0 =
@@ -222,6 +239,7 @@ lemma projectiveLineChartFormsComplexIso_restrict_zero :
         (projectiveLineOverlapFormsComplexIso k).hom := by
   ext n a
   exact projectiveLineChartFormsEquiv_restrict_zero k n a
+
 /-- The second-chart complex comparison intertwines actual restriction and Laurent inversion. -/
 lemma projectiveLineChartFormsComplexIso_restrict_one :
     (projectiveLineChartFormsComplexIso k 1).hom ≫ projectiveLineFormsRestriction k 1 =

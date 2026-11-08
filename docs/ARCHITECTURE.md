@@ -991,7 +991,9 @@ forms as sheaves". Stage G5 (#116) is formalized as described in "The de Rham in
 schemes": `def:geo-dr-cohomology`, `cor:geo-dr-arrangements` and `thm:geo-dr-instance`.
 Stage G6 (#117), `thm:geo-log-sheaves`, proves the logarithmic sheaf sequence and local comparison,
 including agreement of the instance's Gysin and residue maps on global sheaf representatives.
-The worked geometric regressions of #118 remain planned.
+The worked geometric regressions and acceptance consumers of #118 use the actual scheme
+objects and sheaf maps. They include the two-chart Čech complex of the projective line; no
+non-affine de Rham instance or arbitrary-cover independence is asserted.
 
 The namespace is `OrlikSolomon.Geometric`. Inside it, the proposed names `OrdinaryTheory`,
 `DivisorPair` and `DeRham` resolve to the geometric declarations rather than to the existing ones,
@@ -1413,8 +1415,8 @@ homology, and give `tilde_map_exact` for arbitrary module sequences. There is no
 generation or nonzero-ring assumption, and no higher-cohomology vanishing assertion.
 
 The `DeRham/Schemes/Forms` umbrella and its `Presheaf`, `Sheaf`, `Affine`, `Associated` and
-`Pullback` files use `OrlikSolomon.Geometric.DeRham` and import no G0 module. They work over any commutative base
-ring and on any object of `Over (Spec k)`. `sectionAlgebra k X U` bundles regular functions with
+`Pullback` files use `OrlikSolomon.Geometric.DeRham` and import no G0 module. They work over any
+commutative base ring and on any object of `Over (Spec k)`. `sectionAlgebra k X U` bundles regular functions with
 the base-ring action; `formsPresheaf` applies the existing exterior-power forms and their
 functorial maps to it. `formsSheaf` sheafifies in `k`-modules. Mathlib's presheaf-of-modules
 sheafification equips the same underlying additive carriers with their structure-sheaf actions
@@ -1527,16 +1529,16 @@ zero, `i_*Ω_D^n` in degree `n + 1`, and differential `-d`. Residue is normalize
 a sign. The residue sequence works over a commutative base ring.
 
 `affineLogComparison`, `affineLogComplexIso` and `affineLogResidueShortComplexIso` identify the
-three terms and both maps of the affine global sequence with the existing algebraic sequence. Their
-representative formulas identify the old algebraic logarithmic sequence with the actual affine
+three terms and both maps of the affine global sequence with the existing algebraic sequence.
+Their representative formulas identify the old algebraic logarithmic sequence with the actual affine
 global sheaf sequence. In `Schemes/Instance`, `residue_globalClass` and
 `gysin_globalClass_of_logResidue_eq` identify its residue and Gysin on these sheaf representatives.
 Gysin retains the representative convention
 `[γ] ↦ [dλ]`; a generic connecting-map convention is not assumed.
 
 Positive-integer inverses enter only in `Comparison`, where `logSheafComparison` proves that
-inclusion into the ordinary direct-image de Rham complex is a quasi-isomorphism on stalks. Neither this result
-nor the sheaf short exact sequence is passed through underived global sections on a
+inclusion into the ordinary direct-image de Rham complex is a quasi-isomorphism on stalks. Neither
+this result nor the sheaf short exact sequence is passed through underived global sections on a
 non-affine scheme.
 
 ### Modules
@@ -1588,7 +1590,16 @@ into other files updates this table.
 | `DeRham/Schemes/Log/Comparison` | stalkwise quasi-isomorphism from the old pole theorem | #117 |
 | `DeRham/Schemes/Log/Projection` | the form-level right projection identity, with logarithmic factor on the left and no sign | #117 |
 | `DeRham/Schemes/Log/Naturality` | transverse maps and unit changes of equation | #117 |
-| `Examples/Geometric` | `prop:geo-finite-field`, `prop:geo-degenerate`, `prop:geo-exclusions`, `prop:geo-nonflat`, `prop:geo-nonaffine`, `prop:geo-affine-regressions`, and the blueprint's acceptance consumers | #118 |
+| `Examples/Geometric` | umbrella, geometric bridge and ring-rewriting acceptance consumers, and `prop:geo-finite-field` | #118 |
+| `Examples/Geometric/Acceptance`, `Examples/Geometric/DeRhamAcceptance` | consumers importing only the geometric public facade or its unconditional de Rham corollaries | #118 |
+| `Examples/Geometric/Degenerate` | `prop:geo-degenerate`: actual empty, unit and disconnected pairs, their forms, cohomology and residue | #118 |
+| `Examples/Geometric/Morphisms`, `Examples/Geometric/Exclusions` | `prop:geo-nonflat`, `prop:geo-exclusions`: actual non-flat transverse and ramified maps, the regularity shift obstruction, and the crossing sheaf/stalk obstruction | #118 |
+| `Examples/Geometric/AffineDeRham` | `prop:geo-affine-regressions`: actual punctured line, torus, both residue signs and positive-characteristic obstructions | #118 |
+| `Examples/Geometric/NonAffine` | `prop:geo-nonaffine`: facade for the projective-line example | #118 |
+| `Examples/Geometric/NonAffine/Geometry`, `Charts`, `Overlap`, `Sections`, `ChartForms` | actual projective line, standard pair, two-open cover, polynomial/Laurent coordinates, section comparisons and chain-level restriction squares | #118 |
+| `Examples/Geometric/NonAffine/MatchingForms`, `GlobalForms` | matching polynomial forms, actual sheaf gluing, global functions and the global-forms complex of the projective line | #118 |
+| `Examples/Geometric/NonAffine/Fiber`, `ChartSum` | example-only homotopy-fiber and chart-sum constructions, natural in the restriction diagram | #118 |
+| `Examples/Geometric/NonAffine/Cech`, `CechZero`, `SheafCech` | polynomial/Laurent computation and transport to the actual two-chart Čech–de Rham complex, with its nonzero logarithmic degree-two class | #118 |
 
 `Geometry/Schemes/ModuleGluing` is generic and uses the namespace `OrlikSolomon.Geometric`.
 `DeRham/Schemes/Forms`, `DeRham/Schemes/Log` and their submodules, together with the four

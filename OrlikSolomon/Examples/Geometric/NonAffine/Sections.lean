@@ -31,21 +31,26 @@ open Geometric.DeRham
 
 universe u
 variable {k : Type u} [CommRing k]
+
 private def specSectionsEquiv (A : CommAlgCat.{u} k) :
     sectionAlgebra k (spec A) ⊤ ≃ₐ[k] A :=
   (globalSectionsAlgEquiv (spec A)).symm.trans (CommAlgCat.algEquivOfIso (globalSectionsSpecIso A))
+
 private lemma specSectionsEquiv_apply (A : CommAlgCat.{u} k)
     (a : sectionAlgebra k (spec A) ⊤) :
     specSectionsEquiv A a = (Scheme.ΓSpecIso (.of A)).hom a := rfl
+
 private def openSectionMap {X : Over (Spec (.of k))} {A : CommAlgCat.{u} k}
     (f : spec A ⟶ X) (U : X.left.Opens) (h : ⊤ ≤ f.left ⁻¹ᵁ U) :
     sectionAlgebra k X U →ₐ[k] A :=
   (specSectionsEquiv A).toAlgHom.comp
     ((sectionRestriction k (spec A) (homOfLE h)).comp (sectionPullback f U))
+
 private lemma openSectionMap_apply {X : Over (Spec (.of k))} {A : CommAlgCat.{u} k}
     (f : spec A ⟶ X) (U : X.left.Opens) (h : ⊤ ≤ f.left ⁻¹ᵁ U)
     (a : sectionAlgebra k X U) :
     openSectionMap f U h a = (Scheme.ΓSpecIso (.of A)).hom (f.left.appLE U ⊤ h a) := rfl
+
 private lemma openSectionMap_bijective {X : Over (Spec (.of k))} {A : CommAlgCat.{u} k}
     (f : spec A ⟶ X) [IsOpenImmersion f.left] (U : X.left.Opens)
     (h : ⊤ ≤ f.left ⁻¹ᵁ U) (hU : U ≤ f.left.opensRange) :
@@ -55,6 +60,7 @@ private lemma openSectionMap_bijective {X : Over (Spec (.of k))} {A : CommAlgCat
   exact (specSectionsEquiv A).bijective.comp
     ((ConcreteCategory.bijective_of_isIso ((spec A).left.presheaf.map (homOfLE h).op)).comp
       (ConcreteCategory.bijective_of_isIso (f.left.app U)))
+
 private def openSectionsEquiv {X : Over (Spec (.of k))} {A : CommAlgCat.{u} k}
     (f : spec A ⟶ X) [IsOpenImmersion f.left] (U : X.left.Opens)
     (h : ⊤ ≤ f.left ⁻¹ᵁ U) (hU : U ≤ f.left.opensRange) :

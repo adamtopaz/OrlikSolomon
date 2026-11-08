@@ -37,6 +37,7 @@ universe u
 section Gluing
 
 variable {k : Type u} [CommRing k] {X : TopCat.{u}}
+
 private def matchingSections (F : TopCat.Sheaf (ModuleCat.{u} k) X) (U V W : Opens X)
     (hWU : W ≤ U) (hWV : W ≤ V) :
     Submodule k (F.obj.obj (op U) × F.obj.obj (op V)) where
@@ -51,6 +52,7 @@ private def matchingSections (F : TopCat.Sheaf (ModuleCat.{u} k) X) (U V W : Ope
     change _ = _ at hp
     change F.obj.map _ (a • p.1) = F.obj.map _ (a • p.2)
     simp only [map_smul, hp]
+
 private def globalToMatching (F : TopCat.Sheaf (ModuleCat.{u} k) X) (U V W : Opens X)
     (hWU : W ≤ U) (hWV : W ≤ V) :
     F.obj.obj (op ⊤) →ₗ[k] matchingSections F U V W hWU hWV where
@@ -61,6 +63,7 @@ private def globalToMatching (F : TopCat.Sheaf (ModuleCat.{u} k) X) (U V W : Ope
       rfl⟩
   map_add' a b := by apply Subtype.ext; exact Prod.ext (map_add _ _ _) (map_add _ _ _)
   map_smul' a b := by apply Subtype.ext; exact Prod.ext (map_smul _ _ _) (map_smul _ _ _)
+
 private lemma globalToMatching_bijective (F : TopCat.Sheaf (ModuleCat.{u} k) X)
     (U V W : Opens X) (hWU : W ≤ U) (hWV : W ≤ V) (hW : W = U ⊓ V)
     (hUV : U ⊔ V = ⊤) : Function.Bijective (globalToMatching F U V W hWU hWV) := by
@@ -102,13 +105,14 @@ private abbrev chartMatchingSections (n : ℕ) :=
   matchingSections (formsSheaf k (projectiveLine k) n)
     (projectiveLineChart k 0) (projectiveLineChart k 1) (projectiveLineOverlap k)
     (projectiveLineOverlap_le_chart k 0) (projectiveLineOverlap_le_chart k 1)
+
 private def matchingSectionsEquiv (n : ℕ) :
     chartMatchingSections k n ≃ₗ[k] NonAffine.matchingForms k n where
   toFun p := ⟨((projectiveLineChartFormsEquiv k 0 n).symm p.val.1,
     (projectiveLineChartFormsEquiv k 1 n).symm p.val.2), by
       apply (NonAffine.mem_matchingForms _ _).2
       apply (projectiveLineOverlapFormsEquiv k n).injective
-      exact (projectiveLineChartFormsEquiv_restrict_zero k n 
+      exact (projectiveLineChartFormsEquiv_restrict_zero k n
         ((projectiveLineChartFormsEquiv k 0 n).symm p.val.1)).symm.trans
         ((congrArg ((formsSheaf k (projectiveLine k) n).obj.map
           (homOfLE (projectiveLineOverlap_le_chart k 0)).op)
@@ -116,7 +120,7 @@ private def matchingSectionsEquiv (n : ℕ) :
           (p.property.trans ((congrArg ((formsSheaf k (projectiveLine k) n).obj.map
             (homOfLE (projectiveLineOverlap_le_chart k 1)).op)
             ((projectiveLineChartFormsEquiv k 1 n).apply_symm_apply p.val.2)).symm.trans
-              (projectiveLineChartFormsEquiv_restrict_one k n 
+              (projectiveLineChartFormsEquiv_restrict_one k n
                 ((projectiveLineChartFormsEquiv k 1 n).symm p.val.2)))))⟩
   invFun p := ⟨(projectiveLineChartFormsEquiv k 0 n p.val.1,
     projectiveLineChartFormsEquiv k 1 n p.val.2), by
@@ -132,6 +136,7 @@ private def matchingSectionsEquiv (n : ℕ) :
     ((projectiveLineChartFormsEquiv k 1 n).symm_apply_apply p.val.2))
   map_add' p q := Subtype.ext (Prod.ext (map_add _ _ _) (map_add _ _ _))
   map_smul' a p := Subtype.ext (Prod.ext (map_smul _ _ _) (map_smul _ _ _))
+
 /-- Global forms on the projective line are matching polynomial forms on its two charts. -/
 @[no_expose] def projectiveLineGlobalFormsMatchingEquiv (n : ℕ) :
     (formsSheaf k (projectiveLine k) n).obj.obj (op ⊤) ≃ₗ[k] NonAffine.matchingForms k n :=
@@ -155,6 +160,7 @@ instance projectiveLineGlobalFormsPositive_subsingleton (n : ℕ) :
 private def globalFunctionCoefficient : sectionAlgebra k (projectiveLine k) ⊤ →ₐ[k] k :=
   (Polynomial.aeval (0 : k)).comp ((projectiveLineChartSectionsEquiv k 0).toAlgHom.comp
     (sectionRestriction k (projectiveLine k) (homOfLE le_top)))
+
 private lemma globalFunction_eq_constant (a : sectionAlgebra k (projectiveLine k) ⊤) :
     a = algebraMap k (sectionAlgebra k (projectiveLine k) ⊤) (globalFunctionCoefficient k a) := by
   let p : k[X] := projectiveLineChartSectionsEquiv k 0
@@ -247,6 +253,7 @@ private def globalTermIso (n : ℕ) :
     exact hz.iso
       (HomologicalComplex.isZero_single_obj_X (ComplexShape.up ℕ) 0
         (ModuleCat.of k k) (n + 1) (by omega))
+
 /-- The actual global-sections de Rham complex of the projective line is `k` in degree zero.
 Blueprint: `prop:geo-nonaffine`. -/
 @[no_expose] def projectiveLineGlobalFormsComplexIso :

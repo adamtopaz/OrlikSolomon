@@ -34,6 +34,7 @@ universe u
 variable {k : Type u} [Field k] {W : Type u} [AddCommGroup W] [Module k W]
 variable (P Q : ProjectiveArrangement k W) [Nonempty P] [Nonempty Q]
 variable (h : P.cone.equationSubmonoid ≤ Q.cone.equationSubmonoid)
+
 private def incRing : P.ComplementRing →+* Q.ComplementRing :=
   mapId (symmetricGrading k (Dual k W)) h
 omit [Nonempty P] [Nonempty Q] in
@@ -45,6 +46,7 @@ private lemma mapId_comp_awayEquiv :
   ext z
   obtain ⟨c, rfl⟩ := HomogeneousLocalization.mk_surjective z
   rfl
+
 private lemma complementInclusion_square :
     Spec.map (CommRingCat.ofHom (R := P.ComplementRing) (S := Q.ComplementRing)
       (incRing P Q h)) ≫
@@ -93,42 +95,53 @@ end Inclusion
 
 universe u
 variable (k : Type u) [Field k]
+
 private abbrev l (i : Fin 2) := projectiveLineCoordinate k i
+
 private lemma lne (i : Fin 2) : l k i ≠ 0 := projectiveLineCoordinate_ne_zero k i
+
 /-- The two coordinate points omitted by the chart overlap. -/
 @[no_expose] def projectiveLineOverlapArrangement : ProjectiveArrangement k (Fin 2 → k) := by
   classical
   exact ofForms {l k 0, l k 1} (by
     simp only [Finset.mem_insert, Finset.mem_singleton]
     rintro m (rfl | rfl) <;> exact lne k _)
+
 /-- Both coordinate hyperplanes belong to the overlap arrangement. -/
 lemma projectiveLineCoordinate_ker_mem_overlap (i : Fin 2) :
     LinearMap.ker (projectiveLineCoordinate k i) ∈ projectiveLineOverlapArrangement k := by
   classical
   apply ker_mem_ofForms
   fin_cases i <;> simp
+
 /-- The coordinate-point arrangement is nonempty. -/
 instance projectiveLineOverlapArrangement_nonempty :
     Nonempty (projectiveLineOverlapArrangement k) :=
   nonempty_of_ker_mem (projectiveLineCoordinate_ker_mem_overlap k 0)
+
 private def subLinear : Dual k (Fin 2 → k) →ₗ[k] LaurentPolynomial k where
   toFun m := LaurentPolynomial.C (m (Pi.single 0 1)) +
     LaurentPolynomial.C (m (Pi.single 1 1)) * LaurentPolynomial.T 1
   map_add' m n := by simp [add_mul, add_add_add_comm]
   map_smul' a m := by simp [Algebra.smul_def, mul_add, mul_assoc]
+
 private def subst : CoordinateRing k (Fin 2 → k) →ₐ[k] LaurentPolynomial k :=
   SymmetricAlgebra.lift (subLinear k)
+
 private lemma subst_coord (m : Dual k (Fin 2 → k)) :
     subst k (coord m.toAffineMap) = LaurentPolynomial.C (m (Pi.single 0 1)) +
       LaurentPolynomial.C (m (Pi.single 1 1)) * LaurentPolynomial.T 1 := by
   rw [coord_toAffineMap, subst, SymmetricAlgebra.lift_ι_apply]
   rfl
+
 private lemma subst_zero : subst k (coord (l k 0).toAffineMap) = 1 := by
   rw [subst_coord]
   simp [l, projectiveLineCoordinate]
+
 private lemma subst_one : subst k (coord (l k 1).toAffineMap) = LaurentPolynomial.T 1 := by
   rw [subst_coord]
   simp [l, projectiveLineCoordinate]
+
 private def coneEval :
     (projectiveLineOverlapArrangement k).cone.ComplementRing →ₐ[k] LaurentPolynomial k :=
   Arrangement.ComplementRing.lift _ (subst k) fun K hK ↦ by
@@ -143,13 +156,16 @@ private def coneEval :
       subst m
       exact ⟨(l k 1).toAffineMap, isEquation_toAffineMap (lne k 1), by
         rw [subst_one]; exact LaurentPolynomial.isUnit_T 1⟩
+
 private lemma coneEval_coord (m : Dual k (Fin 2 → k)) :
     coneEval k (algebraMap _ _ (coord m.toAffineMap)) = LaurentPolynomial.C (m (Pi.single 0 1)) +
       LaurentPolynomial.C (m (Pi.single 1 1)) * LaurentPolynomial.T 1 := by
   rw [coneEval, Arrangement.ComplementRing.lift_algebraMap, subst_coord]
+
 private def overlapEval :
     (projectiveLineOverlapArrangement k).ComplementRing →ₐ[k] LaurentPolynomial k :=
   (coneEval k).comp (toCone _)
+
 private lemma overlapEval_ratio (m : Dual k (Fin 2 → k)) :
     overlapEval k (ratio m (projectiveLineCoordinate_ker_mem_overlap k 0)) =
       LaurentPolynomial.C (m (Pi.single 0 1)) +
@@ -159,11 +175,13 @@ private lemma overlapEval_ratio (m : Dual k (Fin 2 → k)) :
   rw [map_mul, coneEval, Arrangement.ComplementRing.lift_algebraMap,
     subst_zero, mul_one, Arrangement.ComplementRing.lift_algebraMap, subst_coord] at h
   exact h
+
 private def overlapInverse :
     LaurentPolynomial k →ₐ[k] (projectiveLineOverlapArrangement k).ComplementRing :=
   laurentPolynomialLift (Algebra.ofId k _)
     (ratioUnit (projectiveLineCoordinate_ker_mem_overlap k 1)
       (projectiveLineCoordinate_ker_mem_overlap k 0))
+
 private lemma linear_decomp (m : Dual k (Fin 2 → k)) :
     m = m (Pi.single 0 1) • l k 0 + m (Pi.single 1 1) • l k 1 := by
   have hv (v : Fin 2 → k) : v = v 0 • Pi.single 0 1 + v 1 • Pi.single 1 1 := by
@@ -174,12 +192,14 @@ private lemma linear_decomp (m : Dual k (Fin 2 → k)) :
   simp only [LinearMap.add_apply, LinearMap.smul_apply, projectiveLineCoordinate_apply, l,
     smul_eq_mul]
   ring
+
 private lemma fixed_ratio (m : Dual k (Fin 2 → k)) :
     overlapInverse k (overlapEval k (ratio m (projectiveLineCoordinate_ker_mem_overlap k 0))) =
       ratio m (projectiveLineCoordinate_ker_mem_overlap k 0) := by
   rw [overlapEval_ratio]
   conv_rhs => rw [linear_decomp k m, ratio_add, ratio_smul, ratio_smul, ratio_self]
   simp [overlapInverse, laurentPolynomialLift_T, Algebra.smul_def]
+
 /-- The ring of the overlap is the Laurent polynomial ring, with `T = X₁/X₀`. -/
 @[no_expose] def projectiveLineOverlapRingEquiv :
     (projectiveLineOverlapArrangement k).ComplementRing ≃ₐ[k] LaurentPolynomial k :=
@@ -204,6 +224,7 @@ private lemma fixed_ratio (m : Dual k (Fin 2 → k)) :
           (ratio m (projectiveLineCoordinate_ker_mem_overlap k 0))) := by
         rw [← map_mul, ← map_mul, ratio_mul_ratio]
       _ = _ := by rw [fixed_ratio, ratio_mul_ratio])
+
 /-- The overlap removes every hyperplane removed by either individual chart. -/
 lemma projectiveLineChart_cone_le_overlap (i : Fin 2) :
     (projectiveLineChartArrangement k i).cone ≤ (projectiveLineOverlapArrangement k).cone := by
@@ -213,6 +234,7 @@ lemma projectiveLineChart_cone_le_overlap (i : Fin 2) :
   have hm' : m = l k i := Finset.mem_singleton.mp hm
   subst m
   exact mem_cone.mpr ⟨_, projectiveLineCoordinate_ker_mem_overlap k i, rfl⟩
+
 /-- Restriction from a standard chart to their intersection, as a map of rings. -/
 def projectiveLineChartRingRestriction (i : Fin 2) :
     (projectiveLineChartArrangement k i).ComplementRing →ₐ[k]
@@ -220,10 +242,12 @@ def projectiveLineChartRingRestriction (i : Fin 2) :
   toRingHom := HomogeneousLocalization.mapId _
     (Arrangement.equationSubmonoid_mono (projectiveLineChart_cone_le_overlap k i))
   commutes' _ := rfl
+
 /-- Restriction keeps a homogeneous-coordinate ratio. -/
 lemma projectiveLineChartRingRestriction_ratio (i : Fin 2) (m : Dual k (Fin 2 → k)) :
     projectiveLineChartRingRestriction k i (ratio m (projectiveLineCoordinate_ker_mem k i)) =
       ratio m (projectiveLineCoordinate_ker_mem_overlap k i) := rfl
+
 /-- The first chart coordinate restricts to the Laurent coordinate. -/
 lemma projectiveLineOverlapRingEquiv_X :
     projectiveLineOverlapRingEquiv k (ratio (projectiveLineCoordinate k 1)
@@ -231,6 +255,7 @@ lemma projectiveLineOverlapRingEquiv_X :
   change overlapEval k _ = _
   rw [overlapEval_ratio]
   simp [projectiveLineCoordinate]
+
 /-- The second chart coordinate restricts to the inverse Laurent coordinate. -/
 lemma projectiveLineOverlapRingEquiv_Y :
     projectiveLineOverlapRingEquiv k (ratio (projectiveLineCoordinate k 0)
@@ -242,6 +267,7 @@ lemma projectiveLineOverlapRingEquiv_Y :
   rw [ratio_self, map_mul, projectiveLineOverlapRingEquiv_X, map_one] at h
   rw [h, ← LaurentPolynomial.T_add]
   simp
+
 /-- In coordinates, restriction from the first chart is `X ↦ T`. -/
 lemma projectiveLineChartRingRestriction_zero :
     (projectiveLineOverlapRingEquiv k).toAlgHom.comp
@@ -252,6 +278,7 @@ lemma projectiveLineChartRingRestriction_zero :
     ((projectiveLineChartRingEquiv k 0).symm X)) = Polynomial.toLaurent X
   rw [projectiveLineChartRingEquiv_symm_X, projectiveLineChartRingRestriction_ratio]
   simpa only [l, Fin.reduceRev, Polynomial.toLaurent_X] using projectiveLineOverlapRingEquiv_X k
+
 /-- In coordinates, restriction from the second chart is `Y ↦ T⁻¹`. -/
 lemma projectiveLineChartRingRestriction_one :
     (projectiveLineOverlapRingEquiv k).toAlgHom.comp

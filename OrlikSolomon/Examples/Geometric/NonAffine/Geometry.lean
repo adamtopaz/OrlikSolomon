@@ -54,6 +54,7 @@ instance projectiveLine_smooth : Smooth (projectiveLine k).hom :=
 private instance : IsScalarTower k (symmetricGrading k (Dual k (Fin 2 → k)) 0)
     (CoordinateRing k (Fin 2 → k)) :=
   IsScalarTower.of_algebraMap_eq' rfl
+
 /-- The projective line is proper over the base field. -/
 instance projectiveLine_proper : IsProper (projectiveLine k).hom := by
   have : Algebra.FiniteType (symmetricGrading k (Dual k (Fin 2 → k)) 0)
@@ -81,16 +82,20 @@ instance projectiveLine_proper : IsProper (projectiveLine k).hom := by
   infer_instance
 
 private abbrev Index := ULift.{u} (Fin 2)
+
 private abbrev grading := MvPolynomial.homogeneousSubmodule Index k
+
 private lemma x_irrelevant (i : Index) :
     MvPolynomial.X i ∈ HomogeneousIdeal.irrelevant (grading k) :=
   HomogeneousIdeal.mem_irrelevant_of_mem _ (by decide : 0 < 1)
     (MvPolynomial.isHomogeneous_X k i)
+
 private def originIdeal : HomogeneousIdeal (grading k) :=
   ⟨Ideal.span (MvPolynomial.X '' ({⟨0⟩} : Set Index)),
     Ideal.homogeneous_span _ _ (by
       rintro _ ⟨i, -, rfl⟩
       exact ⟨1, MvPolynomial.isHomogeneous_X k i⟩)⟩
+
 private lemma x_one_not_origin :
     (MvPolynomial.X (⟨1⟩ : Index) : MvPolynomial Index k) ∉ originIdeal k := by
   intro h
@@ -101,6 +106,7 @@ private lemma x_one_not_origin :
   simp only [Set.mem_singleton_iff] at hi
   subst i
   simp at h
+
 private def genericPoint : ProjectiveSpectrum (grading k) where
   asHomogeneousIdeal := ⊥
   isPrime := by change (⊥ : Ideal (MvPolynomial Index k)).IsPrime; infer_instance
@@ -108,10 +114,12 @@ private def genericPoint : ProjectiveSpectrum (grading k) where
     have hx := h (x_irrelevant k ⟨0⟩)
     change MvPolynomial.X (⟨0⟩ : Index) ∈ (⊥ : Ideal (MvPolynomial Index k)) at hx
     exact MvPolynomial.X_ne_zero (R := k) (⟨0⟩ : Index) (by simpa only [Ideal.mem_bot] using hx)
+
 private def originPoint : ProjectiveSpectrum (grading k) where
   asHomogeneousIdeal := originIdeal k
   isPrime := MvPolynomial.span_X_image_isPrime _
   not_irrelevant_le h := x_one_not_origin k (h (x_irrelevant k ⟨1⟩))
+
 private lemma generic_ne_origin : genericPoint k ≠ originPoint k := by
   intro h
   have hx : MvPolynomial.X (⟨0⟩ : Index) ∈ (originPoint k).asHomogeneousIdeal :=
@@ -119,6 +127,7 @@ private lemma generic_ne_origin : genericPoint k ≠ originPoint k := by
   rw [← h] at hx
   change MvPolynomial.X (⟨0⟩ : Index) ∈ (⊥ : Ideal (MvPolynomial Index k)) at hx
   exact MvPolynomial.X_ne_zero (R := k) (⟨0⟩ : Index) (by simpa only [Ideal.mem_bot] using hx)
+
 private lemma not_t1 : ¬ T1Space (Proj (grading k)) := by
   intro h
   change T1Space (ProjectiveSpectrum (grading k)) at h
@@ -128,7 +137,6 @@ private lemma not_t1 : ¬ T1Space (Proj (grading k)) := by
   have hcl := (ProjectiveSpectrum.le_iff_mem_closure _ _ _).mp hle
   rw [closure_singleton] at hcl
   exact generic_ne_origin k (Set.mem_singleton_iff.mp hcl).symm
-
 
 
 /-- The projective line is not affine over any field.

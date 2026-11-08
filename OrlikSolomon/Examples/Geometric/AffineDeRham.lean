@@ -295,6 +295,13 @@ theorem torus_anticommute : torusY k * torusX k = -(torusX k * torusY k) := by
   rw [torusX_eq, torusY_eq, ← map_mul, OrlikSolomon.DeRham.Examples.torus_anticommute,
     map_neg, map_mul]
 
+omit [CharZero k] in
+/-- The actual two-torus generators satisfy the three defining exterior relations. -/
+theorem torus_exterior_relations :
+    torusX k * torusX k = 0 ∧ torusY k * torusY k = 0 ∧
+      torusY k * torusX k = -(torusX k * torusY k) :=
+  ⟨torusX_mul_self k, torusY_mul_self k, torus_anticommute k⟩
+
 /-- The ordered top exterior class of the two-torus is nonzero. -/
 theorem torus_top_ne_zero : torusX k * torusY k ≠ 0 := by
   rw [torusX_eq, torusY_eq, ← map_mul]

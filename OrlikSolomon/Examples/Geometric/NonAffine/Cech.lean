@@ -143,14 +143,14 @@ theorem projectiveLineChartComplex_isZero_homology_succ (n : ℕ) :
 
 /-- Inclusion of the ordered logarithmic generator identifies `k` with the overlap's `H¹`. -/
 def overlapDegreeOneMap : k →ₗ[k]
-    OrlikSolomon.DeRham.Cohomology.degree k (SmoothAlg.gm k) 1 :=
+    OrlikSolomon.DeRham.Cohomology.degree k k[T;T⁻¹] 1 :=
   (((OrlikSolomon.DeRham.Examples.gmCohomologyEquiv k).toLinearMap).comp
     (LinearMap.inr k k k)).codRestrict _ (fun a =>
       (OrlikSolomon.DeRham.Examples.gmCohomologyEquiv_mem_degree_one_iff k 0 a).mpr rfl)
 
 /-- The degree-one cohomology of the overlap is generated freely by `[dx/x]`. -/
 def overlapDegreeOneEquiv : k ≃ₗ[k]
-    OrlikSolomon.DeRham.Cohomology.degree k (SmoothAlg.gm k) 1 :=
+    OrlikSolomon.DeRham.Cohomology.degree k k[T;T⁻¹] 1 :=
   LinearEquiv.ofBijective (overlapDegreeOneMap k) (by
     constructor
     · intro a b h
@@ -159,15 +159,25 @@ def overlapDegreeOneEquiv : k ≃ₗ[k]
         OrlikSolomon.DeRham.Examples.gmCohomologyEquiv k (0, b) at hh
       exact congrArg Prod.snd ((OrlikSolomon.DeRham.Examples.gmCohomologyEquiv k).injective hh)
     · intro c
-      obtain ⟨⟨a, b⟩, hab⟩ := (OrlikSolomon.DeRham.Examples.gmCohomologyEquiv k).surjective c
+      obtain ⟨⟨a, b⟩, hab⟩ := (OrlikSolomon.DeRham.Examples.gmCohomologyEquiv k).surjective
+        (c : OrlikSolomon.DeRham.Cohomology k k[T;T⁻¹])
       have ha := (OrlikSolomon.DeRham.Examples.gmCohomologyEquiv_mem_degree_one_iff k a b).mp
         (hab ▸ c.2)
       subst a
       exact ⟨b, Subtype.ext hab⟩)
 
-/-- The two-chart Čech complex has `H² = k`, although global forms on `ℙ¹` do not. -/
-def projectiveLineCechHomologyTwoEquiv :
-    (projectiveLineCechComplex k).homology 2 ≃ₗ[k] k := by
+/-- The overlap coefficient one is the existing class `[dT/T]`, with its degree witness. -/
+lemma overlapDegreeOneEquiv_one_val :
+    (overlapDegreeOneEquiv k 1).val =
+      OrlikSolomon.DeRham.Examples.laurentThetaClass k (SmoothAlg.point k) := by
+  change OrlikSolomon.DeRham.Examples.gmCohomologyEquiv k (0, 1) = _
+  simp only [OrlikSolomon.DeRham.Examples.gmCohomologyEquiv_apply, map_zero, map_one,
+    mul_one, zero_add]
+
+/-- Inclusion of the shifted overlap identifies its second homology with the Čech homology. -/
+def projectiveLineCechOverlapHomologyTwoIso :
+    (twoChartOverlap (complex k k[T;T⁻¹])).homology 2 ≅
+      (projectiveLineCechComplex k).homology 2 := by
   let S := twoChartFiberSequence (projectiveLineRestrictionDifference k)
   have hS : S.ShortExact := twoChartFiberSequence_shortExact _
   let i := HomologicalComplex.homologyMap S.f 2
@@ -175,9 +185,35 @@ def projectiveLineCechHomologyTwoEquiv :
     ((projectiveLineChartComplex_isZero_homology_succ k 0).eq_of_src _ _)
   have hepi : Epi i := (hS.homology_exact₂ 2).epi_f
     ((projectiveLineChartComplex_isZero_homology_succ k 1).eq_of_tgt _ _)
-  have : IsIso i := isIso_of_mono_of_epi i
-  exact ((asIso i).symm ≪≫ twoChartOverlapHomologySuccIso (B := complex k k[T;T⁻¹]) 0 ≪≫
+  letI : IsIso i := isIso_of_mono_of_epi i
+  exact @asIso _ _ _ _ i (isIso_of_mono_of_epi i)
+
+/-- The two-chart Čech complex has `H² = k`, although global forms on `ℙ¹` do not. -/
+def projectiveLineCechHomologyTwoEquiv :
+    (projectiveLineCechComplex k).homology 2 ≃ₗ[k] k :=
+  ((projectiveLineCechOverlapHomologyTwoIso k).symm ≪≫
+    twoChartOverlapHomologySuccIso (B := complex k k[T;T⁻¹]) 0 ≪≫
     homologyIso k k[T;T⁻¹] 1 ≪≫ (overlapDegreeOneEquiv k).toModuleIso.symm).toLinearEquiv
+
+/-- The overlap logarithmic generator enters degree two through the inclusion of the
+shifted overlap complex. Thus this is the Čech class `[dT/T]`. -/
+def projectiveLineCechLogClass : (projectiveLineCechComplex k).homology 2 :=
+  (projectiveLineCechOverlapHomologyTwoIso k).hom
+      ((twoChartOverlapHomologySuccIso (B := complex k k[T;T⁻¹]) 0 ≪≫
+        homologyIso k k[T;T⁻¹] 1).inv (overlapDegreeOneEquiv k 1))
+
+/-- The degree-two comparison sends the overlap logarithmic class to one. -/
+@[simp]
+lemma projectiveLineCechHomologyTwoEquiv_logClass :
+    projectiveLineCechHomologyTwoEquiv k (projectiveLineCechLogClass k) = 1 := by
+  change (overlapDegreeOneEquiv k).symm
+    ((homologyIso k k[T;T⁻¹] 1).hom
+      ((twoChartOverlapHomologySuccIso (B := complex k k[T;T⁻¹]) 0).hom
+        ((projectiveLineCechOverlapHomologyTwoIso k).inv
+          (projectiveLineCechLogClass k)))) = 1
+  dsimp only [projectiveLineCechLogClass, Iso.trans_inv, ModuleCat.comp_apply]
+  rw [Iso.hom_inv_id_apply, ConcreteCategory.comp_apply, Iso.inv_hom_id_apply,
+    Iso.inv_hom_id_apply, LinearEquiv.symm_apply_apply]
 
 /-- The degree-two Čech class detected by the overlap logarithmic coefficient is nonzero. -/
 theorem projectiveLineCechHomologyTwo_generator_ne_zero :
