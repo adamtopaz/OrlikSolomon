@@ -185,6 +185,32 @@ lemma ramifiedMap_same_support :
         PrimeSpectrum.zeroLocus {SmoothAlg.polynomialX (SmoothAlg.point k)} :=
   PrimeSpectrum.zeroLocus_singleton_pow _ 2 (by decide)
 
+/-- On actual scheme points, the inverse image of the reduced divisor has exactly the same
+closed support. The doubled and reduced ideal sheaves still differ. -/
+lemma ramifiedMap_preimage_divisor_support :
+    (ramifiedMap k D).hom.left ⁻¹' Set.range (standardSpecPair k D).i.hom.left =
+      Set.range (standardSpecPair k D).i.hom.left := by
+  let P := OrlikSolomon.DivisorPair.standardPair (SmoothAlg.point k)
+  let φ : P.ambient →+* P.ambient :=
+    (SmoothAlg.algHom (OrlikSolomon.DeRham.Examples.ramifiedAmbient k)).toRingHom
+  have hr : Set.range (PrimeSpectrum.comap (SmoothAlg.algHom P.i).toRingHom) =
+      PrimeSpectrum.zeroLocus {P.eqn} :=
+    (range_comap_of_surjective _ _ P.surjective_i).trans
+      ((congrArg (fun I : Ideal P.ambient => PrimeSpectrum.zeroLocus (I : Set P.ambient))
+        P.ker_i).trans (PrimeSpectrum.zeroLocus_span _))
+  change PrimeSpectrum.comap φ ⁻¹' Set.range (PrimeSpectrum.comap
+      (SmoothAlg.algHom P.i).toRingHom) =
+    Set.range (PrimeSpectrum.comap (SmoothAlg.algHom P.i).toRingHom)
+  refine (congrArg (fun Z : Set (PrimeSpectrum P.ambient) =>
+    PrimeSpectrum.comap φ ⁻¹' Z) hr).trans ?_
+  refine Eq.trans ?_ hr.symm
+  rw [PrimeSpectrum.preimage_comap_zeroLocus, Set.image_singleton]
+  have hφ : φ P.eqn = P.eqn ^ 2 :=
+    OrlikSolomon.DeRham.Examples.ramifiedAmbient_polynomialX k
+  exact (congrArg (fun a : P.ambient => PrimeSpectrum.zeroLocus {a}) hφ).trans
+    (PrimeSpectrum.zeroLocus_singleton_pow _ 2 (by decide))
+
+
 /-- The ideals `(x²)` and `(x)` differ even though their closed supports agree. -/
 lemma ramifiedMap_principal_ideals_ne [Nontrivial k] :
     Ideal.span ({(Polynomial.X : Polynomial k) ^ 2} : Set (Polynomial k)) ≠
