@@ -247,4 +247,44 @@ theorem twoChartFiber_exactAt_one (hA : A.ExactAt 1)
   · change φ.f 0 (a + c) = x.2
     rw [map_add, hc₁, add_sub_cancel]
 
+section Isomorphism
+
+variable {A' B' : CochainComplex (ModuleCat.{v} k) ℕ} (ψ : A' ⟶ B')
+  (eA : A ≅ A') (eB : B ≅ B')
+
+/-- A commuting isomorphism of restriction diagrams identifies the total-complex terms. -/
+def twoChartFiberTermIso : (n : ℕ) → twoChartFiberTerm φ n ≅ twoChartFiberTerm ψ n
+  | 0 => (HomologicalComplex.eval _ _ 0).mapIso eA
+  | n + 1 =>
+    (LinearEquiv.prodCongr
+      ((HomologicalComplex.eval _ _ (n + 1)).mapIso eA).toLinearEquiv
+      ((HomologicalComplex.eval _ _ n).mapIso eB).toLinearEquiv).toModuleIso
+
+/-- An isomorphism of the chart/overlap diagram induces an isomorphism of its total complex. -/
+def twoChartFiberIso (h : eA.hom ≫ ψ = φ ≫ eB.hom) : twoChartFiber φ ≅ twoChartFiber ψ :=
+  HomologicalComplex.Hom.isoOfComponents (twoChartFiberTermIso φ ψ eA eB) (by
+    rintro n _ rfl
+    rw [twoChartFiber_d, twoChartFiber_d]
+    ext x
+    cases n with
+    | zero =>
+      change (A'.d 0 1 (eA.hom.f 0 x), ψ.f 0 (eA.hom.f 0 x)) =
+        (eA.hom.f 1 (A.d 0 1 x), eB.hom.f 0 (φ.f 0 x))
+      apply Prod.ext
+      · exact congr($(eA.hom.comm 0 1) x)
+      · exact congr($(congrArg (fun f : A ⟶ B' => f.f 0) h) x)
+    | succ n =>
+      change (A'.d (n + 1) (n + 2) (eA.hom.f (n + 1) x.1),
+        ψ.f (n + 1) (eA.hom.f (n + 1) x.1) - B'.d n (n + 1) (eB.hom.f n x.2)) =
+        (eA.hom.f (n + 2) (A.d (n + 1) (n + 2) x.1),
+          eB.hom.f (n + 1) (φ.f (n + 1) x.1 - B.d n (n + 1) x.2))
+      apply Prod.ext
+      · exact congr($(eA.hom.comm (n + 1) (n + 2)) x.1)
+      · have hf := congr($(congrArg (fun f : A ⟶ B' => f.f (n + 1)) h) x.1)
+        have hd := congr($(eB.hom.comm n (n + 1)) x.2)
+        rw [map_sub]
+        exact congrArg₂ (· - ·) hf hd)
+
+end Isomorphism
+
 end OrlikSolomon.Geometric.Examples
