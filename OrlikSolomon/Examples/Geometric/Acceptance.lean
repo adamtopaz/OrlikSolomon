@@ -149,4 +149,19 @@ example (x : T.toAlgebraic.C.obj (SmoothAlg.complement 𝒜)) :
 
 end Deletion
 
+/-- At `R = B`, the geometric diagonal equivalence still gives the realization map.
+The inferred types retain the two documented object-algebra structures. -/
+example {ℬ' : ℤ → Submodule B B} [GradedAlgebra ℬ']
+    (T' : OrdinaryTheory.{u, w, w, z} (SmoothDomain.all k) ℬ') (x : OSAlgebra B 𝒜) :
+    DirectSum.coeAlgHom _ (T'.diagonalEquiv 𝒜 x) = T'.realizationOverR 𝒜 x :=
+  T'.coeAlgHom_diagonalEquiv x
+
+/-- The generator formula also rewrites with the documented `R = B` diamond. -/
+example {ℬ' : ℤ → Submodule B B} [GradedAlgebra ℬ']
+    (T' : OrdinaryTheory.{u, w, w, z} (SmoothDomain.all k) ℬ')
+    (H : 𝒜) {f : V →ᵃ[k] k} (hf : IsEquation f H) :
+    T'.affineEquiv 𝒜 (generator B 𝒜 H) =
+      T'.logClass (complementUnit 𝒜 f (hf.covers H.2)) := by
+  rw [T'.affineEquiv_generator_of_isEquation H hf]
+
 end OrlikSolomon.Geometric.Examples

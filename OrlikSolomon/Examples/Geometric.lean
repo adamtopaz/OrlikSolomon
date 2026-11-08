@@ -200,7 +200,7 @@ private def frozenResidueComponent {k : Type u} [CommRing k] {D : SmoothDomain k
     T.grading P.compl i →ₗ[R] T.grading P.closed (i + (-1, -1)) :=
   (T.isHomogeneousOfShift_residueOverR P).component rfl
 
-/-- The bridge preserves the component maps of a realizable zero-coefficient input. -/
+/-- The bridge preserves component maps of a realizable zero-coefficient input with `R = B`. -/
 example {k : Type u} [CommRing k] (D : SmoothDomain k) {X Y : D.Obj} (f : X ⟶ Y)
     (P : DivisorPair D) (i : ℤ × ℤ) :
     let T := ofSupportsAndPurity (zeroDegreewiseTheory.{u, v, v, v} D)
@@ -212,6 +212,13 @@ example {k : Type u} [CommRing k] (D : SmoothDomain k) {X Y : D.Obj} (f : X ⟶ 
       (frozenResidueComponent T P i x : T.obj P.closed) = T.residue P x) := by
   intro T
   exact ⟨fun _ ↦ rfl, fun _ ↦ rfl, fun _ ↦ rfl⟩
+
+/-- At `R = B`, the residue projection formula still supports subsequent ring rewrites. -/
+example {ℬ' : ℤ → Submodule B B} [GradedAlgebra ℬ']
+    (T' : OrdinaryTheory.{u, w, w, z} D ℬ') (P : DivisorPair D) {α : T'.obj P.compl}
+    (hα : α ∈ T'.grading P.compl (1, 1)) (h1 : T'.residue P α = 1)
+    (β : T'.obj P.ambient) : T'.residue P (α * T'.pull P.j β) = T'.pull P.i β := by
+  rw [T'.residue_mul_pull P hα β, h1, one_mul]
 
 /-! ### A nonempty scheme without rational points -/
 

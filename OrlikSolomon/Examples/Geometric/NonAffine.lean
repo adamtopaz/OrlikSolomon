@@ -17,8 +17,8 @@ pair, its two affine charts and Laurent overlap, and both computations of differ
 Global forms give `k` in degree zero only. The actual two-chart Čech–de Rham complex gives
 `k` in degrees zero and two over a characteristic-zero field, with generator `[dT/T]`.
 `ProjectiveLineMayerVietorisData` also proves the same answer for every graded family fitting
-the normalized Mayer–Vietoris long exact sequence. No non-affine cohomology instance is
-constructed or assumed.
+the Mayer–Vietoris long exact sequence on the actual affine-chart and overlap homology.
+No non-affine cohomology instance is constructed or assumed.
 
 Main results: `projectiveLineScope`, `projectiveLineGlobalFormsComplexIso`,
 `projectiveLineSheafCechIso`, the degreewise homology comparisons and vanishing results,

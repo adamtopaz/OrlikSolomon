@@ -90,7 +90,7 @@ def projectiveLineRestrictionDifference : projectiveLineChartComplex k ⟶ compl
         congr($((complexMap (projectiveLineSecondRestriction k)).comm n (n + 1)) x.2)
         congr($((complexMap (projectiveLineFirstRestriction k)).comm n (n + 1)) x.1))
 
-/-- The actual two-chart total complex, built from the existing algebraic de Rham complexes. -/
+/-- The polynomial/Laurent model of the two-chart total complex. -/
 def projectiveLineCechComplex : CochainComplex (ModuleCat k) ℕ :=
   twoChartFiber (projectiveLineRestrictionDifference k)
 
