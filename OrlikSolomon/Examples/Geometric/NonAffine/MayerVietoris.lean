@@ -40,13 +40,15 @@ namespace OrlikSolomon.Geometric.Examples
 variable (k : Type u) [CommRing k]
 
 /-- The normalized affine-chart groups: `k × k` in degree zero and zero otherwise. -/
-@[implicit_reducible]
+-- Instance search must see the concrete product carrier in mixed-coordinate formulas.
+@[instance_reducible]
 def projectiveLineMVCharts : ℕ → ModuleCat.{u} k
   | 0 => ModuleCat.of k (k × k)
   | _ + 1 => ModuleCat.of k PUnit.{u + 1}
 
 /-- The normalized Laurent-overlap groups: `k` in degrees zero and one and zero otherwise. -/
-@[implicit_reducible]
+-- Keep the scalar and zero carriers visible to the same instance-search convention.
+@[instance_reducible]
 def projectiveLineMVOverlap : ℕ → ModuleCat.{u} k
   | 0 => ModuleCat.of k k
   | 1 => ModuleCat.of k k
