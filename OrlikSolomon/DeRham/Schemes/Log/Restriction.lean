@@ -591,7 +591,8 @@ private def localAlgebraicOpenIso :
         (openComplexRestrictionIso P V).symm ≪≫
     (restrictionSectionsComplexIso P V).app (openFormsComplexNat P)
 
-private lemma affineLogComplexIso_toOpen_aux (Q : DivisorPair (SmoothDomain.aff k)) :
+/-- On an affine pair, the algebraic and sheaf-global inclusions form a commuting square. -/
+lemma affineLogComplexIso_toOpen (Q : DivisorPair (SmoothDomain.aff k)) :
     (affineLogComplexIso Q).hom ≫
         ((sheafSectionsFunctor (k := k) Q.ambient.obj.left ⊤).mapHomologicalComplex (.up ℕ)).map
           (logToOpenComplexNat Q) =
@@ -618,7 +619,7 @@ private lemma localAlgebraicLogIso_toOpen :
             (logToOpenComplexNat (affineNeighborhoodPair P V)) =
       logToLocalization k (affineNeighborhoodAlgebraicPair P V).eqn
         (affineNeighborhoodAlgebraicPair P V).compl ≫ (localAlgebraicOpenIso P V).hom :=
-  affineLogComplexIso_toOpen_aux (affineNeighborhoodPair P V)
+  affineLogComplexIso_toOpen (affineNeighborhoodPair P V)
 
 private lemma logComplexRestrictionIso_inv_toOpen :
     (logComplexRestrictionIso P V).inv ≫

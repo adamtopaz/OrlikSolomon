@@ -28,6 +28,13 @@ universe u
 namespace OrlikSolomon.Geometric.DeRham
 variable {k : Type u} [CommRing k] {D : SmoothDomain k}
 
+/-- Differentiating a left-theta logarithmic form negates the differential of its coefficient. -/
+@[reassoc] theorem thetaToLogSheaf_d (P : DivisorPair D) (n : ℕ) :
+    thetaToLogSheaf P n ≫ logSheafD P (n + 1) =
+      -(formsSheafD k P.ambient.obj n ≫ thetaToLogSheaf P (n + 1)) := by
+  simp only [thetaToLogSheaf, Category.assoc, logMkSheaf_d, biprod.inr_map_assoc,
+    Preadditive.neg_comp]
+
 /-- The residue of a left logarithmic generator is restriction of its coefficient. -/
 @[reassoc (attr := simp)] theorem thetaToLogSheaf_residue (P : DivisorPair D) (n : ℕ) :
     thetaToLogSheaf P n ≫ logResidueSheaf P n = formsSheafPullback P.i.hom n := by

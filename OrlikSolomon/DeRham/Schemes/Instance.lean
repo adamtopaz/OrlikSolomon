@@ -75,55 +75,6 @@ section SheafRepresentatives
 
 variable {k : Type u} [CommRing k] {D : SmoothDomain k}
 
-/-- The actual complement inclusion of a closed logarithmic section is closed. -/
-lemma formsSheafD_logToOpenTop_eq_zero (P : DivisorPair D) {n : ℕ}
-    {l : (logSheaf P n).obj.obj (op ⊤)}
-    (hl : (logSheafD P n).hom.app (op ⊤) l = 0) :
-    (formsSheafD k P.compl.obj n).hom.app (op ⊤) (logToOpenTop P n l) = 0 := by
-  have h := ConcreteCategory.congr_hom
-    (NatTrans.congr_app (congrArg (fun f => f.hom)
-      (logSheafD_comp_logToOpenSheaf P n)) (op ⊤)) l
-  change logToOpenTop P (n + 1) ((logSheafD P n).hom.app (op ⊤) l) =
-    (formsSheafD k P.compl.obj n).hom.app (op ⊤) (logToOpenTop P n l) at h
-  exact h.symm.trans (by rw [hl, map_zero])
-
-/-- The residue of a closed global logarithmic section is closed. -/
-lemma formsSheafD_logResidueSheafTop_eq_zero (P : DivisorPair D) {n : ℕ}
-    {l : (logSheaf P (n + 1)).obj.obj (op ⊤)}
-    (hl : (logSheafD P (n + 1)).hom.app (op ⊤) l = 0) :
-    (formsSheafD k P.closed.obj n).hom.app (op ⊤) (logResidueSheafTop P n l) = 0 := by
-  have h := ConcreteCategory.congr_hom
-    (NatTrans.congr_app (congrArg (fun f => f.hom) (logResidueSheaf_d P n)) (op ⊤)) l
-  change logResidueSheafTop P (n + 1) ((logSheafD P (n + 1)).hom.app (op ⊤) l) =
-    -((formsSheafD k P.closed.obj n).hom.app (op ⊤) (logResidueSheafTop P n l)) at h
-  rw [hl, map_zero] at h
-  exact neg_eq_zero.mp h.symm
-
-/-- A regular form representing the differential of a global logarithmic section is closed. -/
-lemma formsSheafD_eq_zero_of_regularToLogTop_eq_logSheafD (P : DivisorPair D) {n : ℕ}
-    {l : (logSheaf P n).obj.obj (op ⊤)}
-    {ω : (formsSheaf k P.ambient.obj (n + 1)).obj.obj (op ⊤)}
-    (hω : regularToLogTop P (n + 1) ω = (logSheafD P n).hom.app (op ⊤) l) :
-    (formsSheafD k P.ambient.obj (n + 1)).hom.app (op ⊤) ω = 0 := by
-  have : Mono (regularToLogSheaf P (n + 1 + 1)).hom :=
-    (sheafToPresheaf (_root_.Opens.grothendieckTopology P.ambient.obj.left)
-      (ModuleCat k)).map_mono _
-  have : Mono ((regularToLogSheaf P (n + 1 + 1)).hom.app (op ⊤)) :=
-    ((evaluation _ _).obj (op ⊤)).map_mono _
-  apply (ModuleCat.mono_iff_injective ((regularToLogSheaf P (n + 1 + 1)).hom.app (op ⊤))).1
-    inferInstance
-  have h := ConcreteCategory.congr_hom
-    (NatTrans.congr_app (congrArg (fun f => f.hom) (regularToLogSheaf_d P (n + 1))) (op ⊤)) ω
-  change (logSheafD P (n + 1)).hom.app (op ⊤) (regularToLogTop P (n + 1) ω) =
-    (regularToLogSheaf P (n + 1 + 1)).hom.app (op ⊤)
-      ((formsSheafD k P.ambient.obj (n + 1)).hom.app (op ⊤) ω) at h
-  rw [hω] at h
-  have hdd := ConcreteCategory.congr_hom
-    (NatTrans.congr_app (congrArg (fun f => f.hom) (logSheafD_comp P n)) (op ⊤)) l
-  change (logSheafD P (n + 1)).hom.app (op ⊤)
-    ((logSheafD P n).hom.app (op ⊤) l) = 0 at hdd
-  simpa only [map_zero] using h.symm.trans hdd
-
 private lemma globalFormsEquiv_symm_logToOpenTop (P : DivisorPair (SmoothDomain.aff k)) (n : ℕ)
     (l : (logSheaf P n).obj.obj (op ⊤)) :
     (globalFormsEquiv P.compl.obj n).symm (logToOpenTop P n l) =

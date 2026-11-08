@@ -20,6 +20,8 @@ follows from the algebraic comparison.
 
 ## Main results
 
+* `logResidueSheafTop_surjective` and `exact_regularToLogTop_logResidueSheafTop`: global lifts
+  and exactness on affine pairs, including the regular differential of a closed-residue lift.
 * `affineLogComparison_residue`: compatibility with actual sheaf residue, without another sign.
 * `affineShiftedClosedComplexIso`: compatibility with the explicitly signed divisor shift.
 * `affineLogResidueShortComplexIso`: comparison with the actual global sheaf short complex.
@@ -56,6 +58,7 @@ lemma leftDlogPower_map {A B : Type u} [CommRing A] [CommRing B]
   rw [map_mul, Forms.map_dlog]
   rfl
 
+-- The affine comparison passes between exterior-power and sheaf section carriers.
 set_option backward.isDefEq.respectTransparency false in
 /-- The affine global forms comparison preserves left logarithmic multiplication. -/
 lemma globalFormsEquiv_leftDlogPower
@@ -106,16 +109,62 @@ lemma globalShiftedClosedComplexNat_d_succ (P : DivisorPair D) (n : ℕ) :
     ((sheafToPresheaf (_root_.Opens.grothendieckTopology P.ambient.obj.left) (ModuleCat k) ⋙
       (evaluation _ _).obj (op ⊤)).mapHomologicalComplex (.up ℕ))
 
-
 /-- Degree zero of the global shifted divisor complex is a zero object. -/
 lemma globalShiftedClosedComplexNat_isZero_zero (P : DivisorPair D) :
     IsZero ((globalShiftedClosedComplexNat P).X 0) :=
   (sheafToPresheaf (_root_.Opens.grothendieckTopology P.ambient.obj.left) (ModuleCat k) ⋙
     (evaluation _ _).obj (op ⊤)).map_isZero (isZero_zero _)
 
+/-- The actual complement inclusion of a closed logarithmic section is closed. -/
+lemma formsSheafD_logToOpenTop_eq_zero (P : DivisorPair D) {n : ℕ}
+    {l : (logSheaf P n).obj.obj (op ⊤)}
+    (hl : (logSheafD P n).hom.app (op ⊤) l = 0) :
+    (formsSheafD k P.compl.obj n).hom.app (op ⊤) (logToOpenTop P n l) = 0 := by
+  have h := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom)
+      (logSheafD_comp_logToOpenSheaf P n)) (op ⊤)) l
+  change logToOpenTop P (n + 1) ((logSheafD P n).hom.app (op ⊤) l) =
+    (formsSheafD k P.compl.obj n).hom.app (op ⊤) (logToOpenTop P n l) at h
+  exact h.symm.trans (by rw [hl, map_zero])
+
+/-- The residue of a closed global logarithmic section is closed. -/
+lemma formsSheafD_logResidueSheafTop_eq_zero (P : DivisorPair D) {n : ℕ}
+    {l : (logSheaf P (n + 1)).obj.obj (op ⊤)}
+    (hl : (logSheafD P (n + 1)).hom.app (op ⊤) l = 0) :
+    (formsSheafD k P.closed.obj n).hom.app (op ⊤) (logResidueSheafTop P n l) = 0 := by
+  have h := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) (logResidueSheaf_d P n)) (op ⊤)) l
+  change logResidueSheafTop P (n + 1) ((logSheafD P (n + 1)).hom.app (op ⊤) l) =
+    -((formsSheafD k P.closed.obj n).hom.app (op ⊤) (logResidueSheafTop P n l)) at h
+  rw [hl, map_zero] at h
+  exact neg_eq_zero.mp h.symm
+
+/-- A regular form representing the differential of a global logarithmic section is closed. -/
+lemma formsSheafD_eq_zero_of_regularToLogTop_eq_logSheafD (P : DivisorPair D) {n : ℕ}
+    {l : (logSheaf P n).obj.obj (op ⊤)}
+    {ω : (formsSheaf k P.ambient.obj (n + 1)).obj.obj (op ⊤)}
+    (hω : regularToLogTop P (n + 1) ω = (logSheafD P n).hom.app (op ⊤) l) :
+    (formsSheafD k P.ambient.obj (n + 1)).hom.app (op ⊤) ω = 0 := by
+  have : Mono (regularToLogSheaf P (n + 1 + 1)).hom :=
+    (sheafToPresheaf (_root_.Opens.grothendieckTopology P.ambient.obj.left)
+      (ModuleCat k)).map_mono _
+  have : Mono ((regularToLogSheaf P (n + 1 + 1)).hom.app (op ⊤)) :=
+    ((evaluation _ _).obj (op ⊤)).map_mono _
+  apply (ModuleCat.mono_iff_injective ((regularToLogSheaf P (n + 1 + 1)).hom.app (op ⊤))).1
+    inferInstance
+  have h := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) (regularToLogSheaf_d P (n + 1))) (op ⊤)) ω
+  change (logSheafD P (n + 1)).hom.app (op ⊤) (regularToLogTop P (n + 1) ω) =
+    (regularToLogSheaf P (n + 1 + 1)).hom.app (op ⊤)
+      ((formsSheafD k P.ambient.obj (n + 1)).hom.app (op ⊤) ω) at h
+  rw [hω] at h
+  have hdd := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) (logSheafD_comp P n)) (op ⊤)) l
+  change (logSheafD P (n + 1)).hom.app (op ⊤)
+    ((logSheafD P n).hom.app (op ⊤) l) = 0 at hdd
+  simpa only [map_zero] using h.symm.trans hdd
 
 variable (P : DivisorPair (SmoothDomain.aff k))
-
 
 private def affineShiftedClosedComponentIso : (n : ℕ) →
     (shiftedComplex k P.globalSections.closed).X n ≅ (globalShiftedClosedComplexNat P).X n
@@ -149,6 +198,7 @@ private lemma globalSections_eqnUnit :
   apply Units.ext
   rfl
 
+-- The top-open direct image and the concrete complement sections agree after unfolding.
 set_option backward.isDefEq.respectTransparency false in
 /-- The affine logarithmic comparison preserves a left-theta algebraic representative. -/
 lemma affineLogComparison_theta (n : ℕ)
@@ -234,6 +284,7 @@ lemma affineLogComplexIso_regularToLog :
     affineLogComparison P n (powerToLog k P.globalSections.eqn P.globalSections.compl n x)
   exact (affineLogComparison_regular P n x).symm
 
+-- The shifted divisor comparison identifies the direct-image top sections with divisor forms.
 set_option backward.isDefEq.respectTransparency false in
 /-- Residue commutes with the affine comparisons as a map of complexes to the signed shift. -/
 lemma affineLogComplexIso_residue :
@@ -266,6 +317,38 @@ lemma globalLogResidueShortComplexNat_shortExact :
     (globalLogResidueShortComplexNat P).ShortExact :=
   ShortComplex.shortExact_of_iso (affineLogResidueShortComplexIso P)
     (logResidueShortExact P.globalSections.compl P.globalSections.isSmoothPrincipalPair)
+
+/-- On an affine pair, every global divisor form has a global logarithmic residue lift.
+This uses affine comparison; it asserts no surjectivity on arbitrary non-affine opens. -/
+lemma logResidueSheafTop_surjective (n : ℕ) :
+    Function.Surjective (logResidueSheafTop P n) := by
+  intro γ
+  obtain ⟨x, hx⟩ := logPowerResidue_surjective P.globalSections.compl
+    P.globalSections.isSmoothPrincipalPair n ((globalFormsEquiv P.closed.obj n).symm γ)
+  refine ⟨affineLogComparison P (n + 1) x, ?_⟩
+  rw [affineLogComparison_residue, hx, LinearEquiv.apply_symm_apply]
+
+/-- The actual global residue sequence of an affine pair is exact in each positive degree. -/
+lemma exact_regularToLogTop_logResidueSheafTop (n : ℕ) :
+    Function.Exact (regularToLogTop P (n + 1)) (logResidueSheafTop P n) := by
+  have h := (HomologicalComplex.shortExact_iff_degreewise_shortExact _).1
+    (globalLogResidueShortComplexNat_shortExact P) (n + 1)
+  exact (ShortComplex.ShortExact.moduleCat_exact_iff_function_exact _).1 h.exact
+
+/-- A logarithmic lift of a closed divisor form has a regular global differential, yielding
+the lift-and-differentiate representative for Gysin with the positive `d(l)` convention. -/
+lemma exists_regularToLogTop_eq_logSheafD_of_residue_closed (n : ℕ)
+    (l : (logSheaf P (n + 1)).obj.obj (op ⊤))
+    (hl : (formsSheafD k P.closed.obj n).hom.app (op ⊤)
+      (logResidueSheafTop P n l) = 0) :
+    ∃ ω : (formsSheaf k P.ambient.obj (n + 1 + 1)).obj.obj (op ⊤),
+      regularToLogTop P (n + 1 + 1) ω = (logSheafD P (n + 1)).hom.app (op ⊤) l := by
+  apply (exact_regularToLogTop_logResidueSheafTop P (n + 1) _).1
+  have h := ConcreteCategory.congr_hom
+    (NatTrans.congr_app (congrArg (fun f => f.hom) (logResidueSheaf_d P n)) (op ⊤)) l
+  change logResidueSheafTop P (n + 1) ((logSheafD P (n + 1)).hom.app (op ⊤) l) =
+    -((formsSheafD k P.closed.obj n).hom.app (op ⊤) (logResidueSheafTop P n l)) at h
+  exact h.trans (by rw [hl, neg_zero])
 
 /-- The regular component of the short-complex comparison is the global forms comparison. -/
 @[simp] lemma affineLogResidueShortComplexIso_hom_τ₁ :

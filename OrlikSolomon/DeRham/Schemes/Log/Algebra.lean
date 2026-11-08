@@ -232,6 +232,7 @@ private def regularThetaProduct (p q : ℕ) :
   (p : ℤ).negOnePow • (formsMulSheaf P.ambient.obj p q ≫ thetaToLogSheaf P (p + q) ≫
     logSheafCast P (by omega))
 
+-- Tensor currying compares the sheaf tensor product with direct-image section carriers.
 set_option backward.isDefEq.respectTransparency false in
 private theorem regularProduct_inclusion (p q : ℕ) :
     regularProduct P p q ≫ logToOpenSheaf P (p + q) =
@@ -245,6 +246,7 @@ private theorem regularProduct_inclusion (p q : ℕ) :
     tensorEquiv_formsMulSheaf]
   exact formsSheafPullback_mul P.j.hom p q
 
+-- The theta product combines a degree cast with the direct-image wedge product.
 set_option backward.isDefEq.respectTransparency false in
 private theorem thetaRegularProduct_inclusion (p q : ℕ) :
     thetaRegularProduct P p q ≫ logToOpenSheaf P (p + 1 + q) =
@@ -295,6 +297,7 @@ private theorem mul_dlog {A : Type u} [CommRing A] [Algebra k A]
     ι_mul_eq_involute_mul _ (CliffordAlgebra.involute x),
     CliffordAlgebra.involute_involute]
 
+-- The signed product uses the same section carriers before and after reindexing degrees.
 set_option backward.isDefEq.respectTransparency false in
 private theorem regularThetaProduct_inclusion (p q : ℕ) :
     regularThetaProduct P p q ≫ logToOpenSheaf P (p + (q + 1)) =
@@ -348,6 +351,7 @@ private theorem regularThetaProduct_inclusion (p q : ℕ) :
     involute_of_mem_exteriorPower (Forms.map_mem_exteriorPower φ a'.property),
     mul_smul_comm, smul_mul_assoc, mul_assoc]
 
+-- Tensor representatives use concrete complement sections behind the direct-image wrappers.
 set_option backward.isDefEq.respectTransparency false in
 private theorem thetaThetaProduct_zero (p q : ℕ) :
     ((formsSheafPullback P.j.hom p ≫ openThetaWedgeSheaf P p) ⊗ₘ
@@ -412,6 +416,7 @@ private def normalProduct : (p q : ℕ) →
         (biprod.snd ⊗ₘ biprod.fst) ≫ thetaRegularProduct P p (q + 1) +
           (biprod.fst ⊗ₘ biprod.snd) ≫ regularThetaProduct P (p + 1) q
 
+-- The degreewise normal-form cover and its inclusion have the same direct-image carriers.
 set_option backward.isDefEq.respectTransparency false in
 private theorem normalProduct_inclusion (p q : ℕ) :
     normalProduct P p q ≫ logToOpenSheaf P (p + q) =
@@ -581,6 +586,21 @@ def logSheafOneSection (U : P.ambient.obj.left.Opensᵒᵖ) : (logSheaf P 0).obj
         ((formsSheafPullback P.j.hom n).hom.app U a) :=
   ConcreteCategory.congr_hom (NatTrans.congr_app
     (congrArg (fun f => f.hom) (thetaToLogSheaf_comp_logToOpenSheaf P n)) U) a
+
+/-- The logarithmic generator includes as wedge multiplication by the restricted global
+section `thetaSection`, on every ambient open. -/
+theorem thetaToLogSheaf_logToOpenSheaf_wedge (n : ℕ) (U : P.ambient.obj.left.Opensᵒᵖ)
+    (a : (formsSheaf k P.ambient.obj n).obj.obj U) :
+    (logToOpenSheaf P (n + 1)).hom.app U ((thetaToLogSheaf P n).hom.app U a) =
+      (formsSheafCast k P.compl.obj (Nat.add_comm 1 n)).hom.app
+        (op (P.j.hom.left ⁻¹ᵁ U.unop))
+        (formsSheafWedge k P.compl.obj 1 n (op (P.j.hom.left ⁻¹ᵁ U.unop))
+          ((formsSheaf k P.compl.obj 1).obj.map
+            (P.j.hom.left ⁻¹ᵁ U.unop).leTop.op (thetaSection P))
+          ((formsSheafPullback P.j.hom n).hom.app U a)) := by
+  exact (thetaToLogSheaf_logToOpenSheaf P n U a).trans
+    (thetaWedgeSheaf_eq_wedge P n (P.j.hom.left ⁻¹ᵁ U.unop)
+      ((formsSheafPullback P.j.hom n).hom.app U a))
 
 /-- On sections, degree casts commute with logarithmic inclusion. -/
 @[simp] theorem logSheafCast_logToOpenSheaf {p q : ℕ} (h : p = q)

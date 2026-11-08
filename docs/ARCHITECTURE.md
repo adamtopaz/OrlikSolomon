@@ -1413,6 +1413,9 @@ reuses the existing theorems and proves nothing about arrangements again.
 maps on distinguished opens with localized linear maps, prove preservation of monomorphisms and
 homology, and give `tilde_map_exact` for arbitrary module sequences. There is no finite-
 generation or nonzero-ring assumption, and no higher-cohomology vanishing assertion.
+It also provides the generic stalk/basis criteria for quasi-isomorphisms and coherent
+inverse-image identity/composition maps. The old de Rham names are deprecated aliases, and
+callers use the canonical `OrlikSolomon.Geometric` names.
 
 The `DeRham/Schemes/Forms` umbrella and its `Presheaf`, `Sheaf`, `Affine`, `Associated` and
 `Pullback` files use `OrlikSolomon.Geometric.DeRham` and import no G0 module. They work over any
@@ -1543,8 +1546,16 @@ non-affine scheme.
 
 ### Modules
 
-The paths are the blueprint's proposals, and each row is one of #107–#118. A PR that splits a row
-into other files updates this table.
+The paths began with the blueprint's proposals for #107–#118; the table also records approved
+follow-ups. A PR that splits a row into other files updates this table.
+
+`Log/Sections` displays complement and divisor section carriers on their inverse-image opens.
+Its typed maps and the explicit identity reindexing support simplification without unfolding
+direct images. The legacy raw sheaf equations remain available. On affine pairs,
+`affineGlobalLogToOpen_quasiIso` follows from the algebraic pole comparison, now also stated
+as `DeRham.logToLocalization_quasiIso`. Global residue lifts and their regular differentials
+exist by the affine exact sequence. These are statements about affine global sections;
+no exactness of non-affine global sections is asserted.
 
 | Module under `OrlikSolomon/` | Blueprint labels | Issue |
 | ---------------------------- | ---------------- | ----- |
@@ -1571,7 +1582,7 @@ into other files updates this table.
 | `Presentation/Geometric`, the module to import, over `Presentation/Geometric/Transport` | `thm:geo-transport-all`: `transportAffineDevelopment` and its laws | #114 |
 | `Presentation/Geometric/Affine`, `Presentation/Geometric/Ordinary` | `thm:geo-affine`: `affineEquiv` and its API, and the forms over `R` | #114 |
 | `Presentation/Geometric/Projective` | `thm:geo-projective`: `projectiveEquiv`, its diagonal and multiplicities | #114 |
-| `Geometry/Schemes/ModuleGluing` | `lem:geo-module-gluing`: exactness of associated module sheaves, for any modules, with no forms | #115 |
+| `Geometry/Schemes/ModuleGluing` | `lem:geo-module-gluing`: associated-module exactness, generic stalk/basis comparison and inverse-image coherence, with no forms | #115, #137 |
 | `DeRham/Schemes/Forms`, the module to import, over `DeRham/Schemes/Forms/Presheaf`, `DeRham/Schemes/Forms/Sheaf`, `DeRham/Schemes/Forms/Affine` and `DeRham/Schemes/Forms/Pullback` | `def:geo-forms-sheaf`, `thm:geo-forms-comparison` | #115 |
 | `DeRham/Schemes/GlobalSections` | the two presentations of `Γ(X, 𝒪_X)`, the complex `Γ(X, Ω^•_{X/k})` and its affine comparison with algebraic forms, for `def:geo-dr-cohomology` and `thm:geo-log-sheaves` | #116 |
 | `DeRham/Schemes/Affine` | `def:geo-dr-cohomology`: `Cohomology`, `globalFormsHomologyIso`, `globalClass` and the direct sum | #116 |
@@ -1584,15 +1595,17 @@ into other files updates this table.
 | `DeRham/Schemes/Log/AffineImage` | exact associated-module image comparison on spectra and transport of logarithmic images along pair isomorphisms | #117 |
 | `DeRham/Schemes/Log/Affine` | affine-neighborhood pairs, associated-module image comparison and affine cochain isomorphisms | #117 |
 | `DeRham/Schemes/Log/RestrictionImage` | exact image transport for open restrictions, retaining regular, theta and differential compatibility | #117 |
+| `DeRham/Schemes/Log/Sections` | typed complement/residue section maps and explicit identity reindexing; imports only Naturality | #137 |
 | `DeRham/Schemes/Log/Restriction` | restriction to affine neighborhoods, their global logarithmic and open-form complexes, and the inclusion comparison | #117 |
 | `DeRham/Schemes/Log/Residue` | residue descent, signs and the short exact sequence of sheaf complexes | #117 |
-| `DeRham/Schemes/Log/ResidueAffine` | comparison of the affine residue short complex and its representatives with the algebraic sequence | #117 |
-| `DeRham/Schemes/Log/Comparison` | stalkwise quasi-isomorphism from the old pole theorem | #117 |
+| `DeRham/Schemes/Log/ResidueAffine` | affine residue comparison, global exactness and lifts, and domain-general closure of representatives | #117, #137 |
+| `DeRham/Schemes/Log/Comparison` | stalkwise and affine-global quasi-isomorphisms from the algebraic pole theorem; deprecated aliases for moved helpers | #117, #137 |
 | `DeRham/Schemes/Log/Projection` | the form-level right projection identity, with logarithmic factor on the left and no sign | #117 |
 | `DeRham/Schemes/Log/Naturality` | transverse maps and unit changes of equation | #117 |
 | `Examples/Geometric` | umbrella, geometric bridge and ring-rewriting acceptance consumers, and `prop:geo-finite-field` | #118 |
 | `Examples/Geometric/Acceptance`, `Examples/Geometric/DeRhamAcceptance` | consumers importing only the geometric public facade or its unconditional de Rham corollaries | #118 |
 | `Examples/Geometric/Degenerate` | `prop:geo-degenerate`: actual empty, unit and disconnected pairs, their forms, cohomology and residue | #118 |
+| `Examples/Geometric/LogSheaf` | strict consumers of typed section maps, signed theta differentiation, affine comparison and lifts, characteristic two and zero base | #137 |
 | `Examples/Geometric/Morphisms`, `Examples/Geometric/Exclusions` | `prop:geo-nonflat`, `prop:geo-exclusions`: actual non-flat transverse and ramified maps, the regularity shift obstruction, and the crossing sheaf/stalk obstruction | #118 |
 | `Examples/Geometric/AffineDeRham` | `prop:geo-affine-regressions`: actual punctured line, torus, both residue signs and positive-characteristic obstructions | #118 |
 | `Examples/Geometric/NonAffine` | `prop:geo-nonaffine`: facade for the projective-line example | #118 |

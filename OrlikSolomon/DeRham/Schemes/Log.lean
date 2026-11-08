@@ -16,6 +16,7 @@ public import OrlikSolomon.DeRham.Schemes.Log.Residue
 public import OrlikSolomon.DeRham.Schemes.Log.ResidueAffine
 public import OrlikSolomon.DeRham.Schemes.Log.Restriction
 public import OrlikSolomon.DeRham.Schemes.Log.RestrictionImage
+public import OrlikSolomon.DeRham.Schemes.Log.Sections
 
 /-!
 # Logarithmic forms, residue and local comparison on schemes
