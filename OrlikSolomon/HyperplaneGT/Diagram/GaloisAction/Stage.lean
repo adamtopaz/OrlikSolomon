@@ -69,7 +69,6 @@ theorem galoisLabelEquiv_mul (𝒜 : StableArrangement k₀ k n) (σ τ : k ≃�
   apply Subtype.ext
   exact fieldAffineSubspace_trans τ.toRingEquiv σ.toRingEquiv H.val
 
-@[simp]
 theorem galoisLabelEquiv_symm (𝒜 : StableArrangement k₀ k n) (σ : k ≃ₐ[k₀] k) :
     (galoisLabelEquiv 𝒜 σ).symm = galoisLabelEquiv 𝒜 σ⁻¹ := by
   ext H
@@ -215,7 +214,6 @@ theorem galoisOSAlgebraAction_apply (𝒜 : StableArrangement k₀ k n) (σ : k 
     galoisOSAlgebraAction R 𝒜 σ = galoisOSAlgebraEquiv R 𝒜 σ := rfl
 
 /-- The inverse algebra automorphism is induced by the inverse field automorphism. -/
-@[simp]
 theorem galoisOSAlgebraEquiv_symm (𝒜 : StableArrangement k₀ k n) (σ : k ≃ₐ[k₀] k) :
     (galoisOSAlgebraEquiv R 𝒜 σ).symm = galoisOSAlgebraEquiv R 𝒜 σ⁻¹ :=
   (map_inv (galoisOSAlgebraAction R 𝒜) σ).symm

@@ -44,6 +44,20 @@ theorem coefficients_fixed (𝒜 : StableArrangement k₀ k n) (σ : k ≃ₐ[k�
     galoisOSAlgebraEquiv R 𝒜 σ (algebraMap R (OSAlgebra R 𝒜.val) r) =
       algebraMap R (OSAlgebra R 𝒜.val) r := by simp
 
+/-- The label action retains both standard inverse-cancellation simp rules. -/
+theorem label_inverse_cancellation (𝒜 : StableArrangement k₀ k n) (σ : k ≃ₐ[k₀] k)
+    (H : 𝒜.val) :
+    (galoisLabelEquiv 𝒜 σ).symm (galoisLabelEquiv 𝒜 σ H) = H ∧
+      galoisLabelEquiv 𝒜 σ ((galoisLabelEquiv 𝒜 σ).symm H) = H := by
+  constructor <;> simp
+
+/-- The algebra action retains both standard inverse-cancellation simp rules. -/
+theorem algebra_inverse_cancellation (𝒜 : StableArrangement k₀ k n) (σ : k ≃ₐ[k₀] k)
+    (x : OSAlgebra R 𝒜.val) :
+    (galoisOSAlgebraEquiv R 𝒜 σ).symm (galoisOSAlgebraEquiv R 𝒜 σ x) = x ∧
+      galoisOSAlgebraEquiv R 𝒜 σ ((galoisOSAlgebraEquiv R 𝒜 σ).symm x) = x := by
+  constructor <;> simp
+
 /-- Moving a hyperplane moves its generator whenever the coefficient ring is nonzero. -/
 theorem moved_generator [Nontrivial R] (𝒜 : StableArrangement k₀ k n)
     (σ : k ≃ₐ[k₀] k) (H : 𝒜.val) (hH : galoisLabelEquiv 𝒜 σ H ≠ H) :
