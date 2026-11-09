@@ -145,6 +145,7 @@ public import OrlikSolomon.Examples.Geometric.NonAffine.Overlap
 public import OrlikSolomon.Examples.Geometric.NonAffine.Sections
 public import OrlikSolomon.Examples.Geometric.NonAffine.SheafCech
 public import OrlikSolomon.Examples.HyperplaneGT.Collineation
+public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
 public import OrlikSolomon.Examples.HyperplaneGT.DegreeOne
 public import OrlikSolomon.Examples.Moebius
 public import OrlikSolomon.Examples.Ordinary
@@ -197,6 +198,10 @@ public import OrlikSolomon.HyperplaneGT.Geometry.Collineation
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Chart
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Field
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Span
+public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates
+public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Equations
+public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Graphs
+public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Incidence
 public import OrlikSolomon.Interface.Logarithms
 public import OrlikSolomon.Interface.OSAlgebra
 public import OrlikSolomon.Interface.ProjectiveComplement
@@ -224,9 +229,3 @@ public import OrlikSolomon.Presentation.ProjectiveOrdinary
 public import OrlikSolomon.Presentation.Realization
 public import OrlikSolomon.Presentation.RepresentativeRelations
 public import OrlikSolomon.Presentation.Structure
-
-/-!
-# OrlikSolomon
-
-The root of the library. Every module of the library is imported here.
--/

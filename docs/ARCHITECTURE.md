@@ -1711,9 +1711,10 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-A01, the canonical degree-one basis and algebra generation, and pure coordinate geometry
-C01–C03 over an arbitrary field are formalized; the reconstruction theorem remains planned.
-The book records the status of the complete blueprint statements.
+G01–G03, the coordinate geometry, A01, the canonical degree-one basis and algebra generation,
+and pure coordinate reconstruction C01–C03 over an arbitrary field are formalized; the
+reconstruction theorem remains planned. The book records the status of the complete blueprint
+statements.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
 described under Algebra above. The A02 box remains planned: its arrangement-specific degree-two
 kernel still needs the identification of its relators.
@@ -1769,7 +1770,10 @@ approved plan; the issue links identify the implementation work.
 | --- | --- | --- |
 | `Algebra/HomogeneousRelations` | Implemented generic lowest-degree relation spans, with explicit degree-zero assumptions and an exterior-quotient kernel consumer; A02 remains planned | W02, [#154](https://github.com/adamtopaz/OrlikSolomon/issues/154) |
 | `Algebra/FinsuppKernel` | Implemented generic kernel calculation for maps that discard labels and merge equal retained labels; L01 remains planned | W10, [#162](https://github.com/adamtopaz/OrlikSolomon/issues/162) |
-| `HyperplaneGT/Geometry/Coordinates` | G01–G03; facade over smaller coordinate/incidence/chart leaves if needed | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
+| `HyperplaneGT/Geometry/Coordinates` | Formalized G01–G03 facade joining the coefficient, graph and strict-incidence APIs | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
+| `HyperplaneGT/Geometry/Coordinates/Equations` | Coefficient tuples of affine forms and the coefficient-point equivalence, G01 | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
+| `HyperplaneGT/Geometry/Coordinates/Incidence` | Strict parallelism, guarded dependent triples, normal-form dichotomy, equation/point/trace criteria, G02 | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
+| `HyperplaneGT/Geometry/Coordinates/Graphs` | Equation-independent verticality, unique graph equations, affine projection equivalences and exact projected traces, G03 | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
 | `HyperplaneGT/Geometry/Galois` | G04–G06 | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
 | `HyperplaneGT/Algebra/DegreeOne` | A01, formalized: canonical degree-one equivalence, basis, coordinates, inclusion naturality and full algebra generation | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
 | `HyperplaneGT/Algebra/LowDegrees`, with a `QuadraticKernel` leaf | A02 and low-degree facade, planned | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
@@ -1792,6 +1796,22 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT`, with small topic leaves | Coefficient, dimension, marking, cofinality, generator and transport acceptance consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
 | `Examples/HyperplaneGT/DegreeOne` | Formalized A01 consumers: zero coefficients, empty arrangements, dimensions zero and one, and zero new coordinates after inclusion | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
 | `Examples/HyperplaneGT/Collineation` | Formalized C01–C03 consumers: identity extraction, dimension-zero charts, characteristic-two zero sums and points at infinity | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
+| `Examples/HyperplaneGT/Coordinates` | G01–G03 consumers: dimension zero, parallel points, inverse chart and coefficient formulas, zero-ring coordinate splitting, and concurrent/empty triples over `𝔽₂` | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
+
+`HyperplaneGT/Geometry/Coordinates` is a facade over three leaves. `Equations` represents affine
+forms by their constant and normal coefficients, using Mathlib's affine-map decomposition,
+standard-coordinate equivalence and `Fin.consLinearEquiv`. These form calculations work over
+commutative rings. Over a field, `coefficientPointEquiv` identifies the existing affine-subspace
+hyperplanes with all projective coefficient points except the constant point, with representative
+and inverse computation lemmas. `Incidence` uses strict `Parallel` and guarded `DependentTriple`
+predicates; it reuses the existing kernel-comparison and codimension lemmas to identify normal,
+equation, projective-point and nonempty-trace criteria. `Graphs` uses finite coordinate sets with
+their member subtypes, has an equation-independent verticality test, and normalizes each
+nonvertical hyperplane to a unique graph. `graphProjectionEquiv` has an explicit inverse and
+`map_graphSubspace_inf` computes the projected intersection exactly. The facade supplies the
+strict-parallel graph wrapper. These statements have no characteristic or dimension lower bound
+and import no cohomology theory. The empty-triangle regression over `𝔽₂` tests the nonemptiness
+guard even though the conventional codimension of the empty plane subspace is two.
 
 `osDegreeOneEquiv R 𝒜 : (𝒜 →₀ R) ≃ₗ[R] OSAlgebra.degree R 𝒜 1` is the canonical finite
 linear combination of the hyperplane generators. Its inverse and `osDegreeOneBasis` expose
@@ -1847,7 +1867,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-4 formalized, 0 partly formalized and 37 planned, separate from the other blueprints. Each
+7 formalized, 0 partly formalized and 34 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally

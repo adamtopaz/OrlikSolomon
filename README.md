@@ -25,7 +25,8 @@ details.
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-4 formalized, 0 partly formalized and 37 planned. The canonical degree-one OS basis,
+7 formalized, 0 partly formalized and 34 planned. Coefficient points, hyperplane incidence
+and coordinate graphs (G01–G03) are proved over arbitrary fields. The canonical degree-one OS basis,
 its inclusion naturality and algebra generation (A01) are proved over arbitrary commutative
 coefficient rings. Pure coordinate reconstruction (C01–C03) is also proved over arbitrary
 fields in dimension at least two, with the prescribed fixed projective frame. The planned
