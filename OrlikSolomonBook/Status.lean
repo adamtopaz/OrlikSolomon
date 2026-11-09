@@ -35,7 +35,7 @@ The Cartesian node retains its Tor-sheaf and conormal statements, and the statem
 The fourth blueprint, cohomological hyperplane reconstruction, is in progress.
 Its 38 named groups contain 41 separately labeled statements: U01, U04 and L02 each contain a definition and a lemma, which have separate boxes and statuses.
 A01 is formalized: the canonical degree-one generator basis, its inclusion naturality and generation of the whole OS algebra hold over arbitrary commutative coefficient rings.
-C01–C03 are also formalized: projective span preservation, separate affine coordinate bijections, and the unique field automorphism from the prescribed fixed frame, over an arbitrary field.
+C01–C03 are also formalized over an arbitrary field: projective span preservation, separate affine coordinate bijections, and, in dimension at least two, the unique field automorphism from the prescribed fixed frame.
 The other thirty-seven statements are planned, with no partly formalized statements; the reconstruction theorem is not yet formalized.
 {ref "hyperplane-gt"}[Its chapter] explains the proposed theorem, its hypotheses and the limits of the planned applications.
 

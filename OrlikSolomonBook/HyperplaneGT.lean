@@ -22,7 +22,7 @@ The blueprint has 38 named groups, G01–E03, containing 41 separately labeled s
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
 Four boxes are formalized, none is partly formalized and thirty-seven remain planned.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
-C01–C03 recover a unique field automorphism from an arbitrary projective collineation fixing the prescribed frame, over any field.
+C01–C03 recover a unique field automorphism from an arbitrary projective collineation fixing the prescribed frame, over any field and in dimension at least two.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
