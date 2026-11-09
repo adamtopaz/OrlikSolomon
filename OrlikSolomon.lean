@@ -5,6 +5,8 @@ public import OrlikSolomon.Algebra.ComplexReduction
 public import OrlikSolomon.Algebra.Exact
 public import OrlikSolomon.Algebra.ExteriorBoundary
 public import OrlikSolomon.Algebra.ExteriorWords
+public import OrlikSolomon.Algebra.FinsuppKernel
+public import OrlikSolomon.Algebra.HomogeneousRelations
 public import OrlikSolomon.Algebra.RelationQuotient
 public import OrlikSolomon.Algebra.SymmetricGrading
 public import OrlikSolomon.Cohomology.Axioms
@@ -119,6 +121,7 @@ public import OrlikSolomon.Examples.DeRhamPole
 public import OrlikSolomon.Examples.DeRhamSmoothPair
 public import OrlikSolomon.Examples.Degenerate
 public import OrlikSolomon.Examples.Exterior
+public import OrlikSolomon.Examples.FinsuppKernel
 public import OrlikSolomon.Examples.Geometric
 public import OrlikSolomon.Examples.Geometric.Acceptance
 public import OrlikSolomon.Examples.Geometric.AffineDeRham
