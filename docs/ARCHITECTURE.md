@@ -1711,7 +1711,7 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A03, C01–C03, U01–U05 and S02 are formalized, including U04's actual universal
+G01–G06, A01–A03, C01–C03, U01–U05, L01–L03 and S02 are formalized, including U04's actual universal
 configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
 reconstruction theorem remains planned. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
@@ -1778,7 +1778,7 @@ approved plan; the issue links identify the implementation work.
 | Module | Responsibility | Work item and issue |
 | --- | --- | --- |
 | `Algebra/HomogeneousRelations` | Implemented generic lowest-degree relation spans, with explicit degree-zero assumptions and an exterior-quotient kernel consumer; used by A02 | W02, [#154](https://github.com/adamtopaz/OrlikSolomon/issues/154) |
-| `Algebra/FinsuppKernel` | Implemented generic kernel calculation for maps that discard labels and merge equal retained labels; L01 remains planned | W10, [#162](https://github.com/adamtopaz/OrlikSolomon/issues/162) |
+| `Algebra/FinsuppKernel` | Implemented generic kernel calculation for maps that discard labels and merge equal retained labels; applied by L01 | W10, [#162](https://github.com/adamtopaz/OrlikSolomon/issues/162) |
 | `HyperplaneGT/Geometry/Coordinates` | Formalized G01–G03 facade joining the coefficient, graph and strict-incidence APIs | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
 | `HyperplaneGT/Geometry/Coordinates/Equations` | Coefficient tuples of affine forms and the coefficient-point equivalence, G01 | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
 | `HyperplaneGT/Geometry/Coordinates/Incidence` | Strict parallelism, guarded dependent triples, normal-form dichotomy, equation/point/trace criteria, G02 | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
@@ -1798,7 +1798,13 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Algebra/Dual/Alternating` | Determinant exterior lift, explicit-Q centralizer, coordinate tests and generic paired invariance, U04 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `HyperplaneGT/Algebra/Dual/Configurations` | U04: determinant tests for the literal global parallel-pair/guarded-triple relation span, without cofinal-system hypotheses | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `HyperplaneGT/Algebra/Dual/DiagramAction` | U04: actual DiagramAut contragredient homomorphism, paired commuting invariance and centralizer image equality | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
-| `HyperplaneGT/Reconstruction/Trace` | L01–L03 | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
+| `HyperplaneGT/Reconstruction/Trace` | L01–L03, formalized: exact trace kernel, inertia/decomposition, evaluation annihilators and actual graph restriction | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
+| `HyperplaneGT/Reconstruction/Trace/Geometry` | Intrinsic labels through the existing chart, optional actual traces and geometric label surjectivity | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
+| `HyperplaneGT/Reconstruction/Trace/Map` | Literal supported domain, canonical free-module coordinates and surjective trace map | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
+| `HyperplaneGT/Reconstruction/Trace/Kernel` | Actual ambient kernel and exact strict-parallel / guarded-triple generator span | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
+| `HyperplaneGT/Reconstruction/Trace/Decomposition` | Coordinate delta inertia, coordinate-defined decomposition and explicit full-product equivalence | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
+| `HyperplaneGT/Reconstruction/Trace/Annihilators` | Four direct evaluation-annihilator equalities and the actual-Q unit-delta centralizer | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
+| `HyperplaneGT/Reconstruction/Trace/Projection` | Derived vertical-trace bijection, supported vertical module and actual dual restriction, including low dimensions | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
 | `HyperplaneGT/Reconstruction/Local` | L04–L05 | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
 | `HyperplaneGT/Reconstruction/Projections` | P01–P02 | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
 | `HyperplaneGT/Reconstruction/Incidence` | I01–I04 | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
@@ -1821,6 +1827,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/Universal` | U01–U02 consumers: common vector/relator stages, zero coefficients, independent-universe linear lifts and the essential common-target component in dimension zero | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
 | `Examples/HyperplaneGT/GaloisAction` | S02 consumers: all-length relators, zero coefficients, dimension zero, full marking squares, a characteristic-two cubic relation and nontrivial complex conjugation on an integral OS generator | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
 | `Examples/HyperplaneGT/Diagram` | A03 consumers: concrete constructors, zero coefficients, characteristic-two relations, Laurent-polynomial marking maps, and dimension-zero target interchange | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
+| `Examples/HyperplaneGT/Trace` | L01–L03 consumers: discarded/merged traces, empty-triangle guard, zero and nilpotent coefficients, low dimensions and a nonzero actual vertical target | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
 
 `HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
 the actual exterior quotient to `osExteriorSquareMap`, surjective onto the existing internal
@@ -1995,8 +2002,29 @@ nontriviality, finite label types and surjectivity are not assumptions of that i
 and annihilation of this kernel without unfolding the relation span. Representatives are chosen
 only inside the proof, not in the public API. `Examples/FinsuppKernel` exercises an empty target,
 discarded and duplicate labels, characteristic two and zero coefficients through these APIs.
-The affine trace geometry and geometric surjectivity of L01 remain unproved, so its book box
-remains planned.
+`Reconstruction/Trace` applies this generic kernel theorem to the actual trace labels. Its six
+leaves separate geometry, the map, the kernel, decomposition coordinates, annihilators and graph
+restriction. `IntrinsicHyperplane H` is an `@[instance_reducible] def` synonym for the existing
+hyperplanes in `H.val.direction`, represented through `chart H.val`. The affine retraction
+proves label surjectivity without redefining arrangement machinery for torsors. `traceDomain`
+is the literal supported Finsupp submodule with coefficient at H zero; `traceKernel` is the
+actual kernel embedded in the universal module. Its exact generators are strict parallel
+singles and guarded dependent-triple differences, over arbitrary rings; the map and its
+surjectivity already work over semirings.
+
+`inertia` is the span of the actual delta functional and `decomposition` is defined by its
+parallel/triple coordinate conditions. `decompositionEquiv` identifies it with the distinguished
+value and the full function space on intrinsic traces. Coordinate delta and trace indicators
+prove all four evaluation-annihilator equalities directly, with no reflexivity assumption.
+`centralizer_unit_smul_delta` uses the actual global Q tests in every position and only unit
+cancellation. `Projection` derives the bijection between vertical labels and actual intrinsic
+traces from graph projection and the chart; `verticalRestriction` is restriction to the actual
+supported vertical module. Its image on decomposition is the full dual and its kernel is
+inertia. The decomposition results hold over arbitrary commutative rings, including zero,
+with independent coefficient and geometric-field universes and exactly the omitted-coordinate
+and nonvertical hypotheses. No theory imports are added. The durable examples pin the empty
+triangle guard, characteristic two, a unit over `ZMod 4`, zero coefficients, dimension zero,
+dimension-one `D = I`, and a nonzero actual vertical coordinate and its extension.
 
 The [supervisor's statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
 requires Claude's approval before proofs are finalized only for S03–S05, E01–E03 and statements
@@ -2007,7 +2035,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-20 formalized and 21 planned, separate from the other blueprints. Each
+24 formalized and 17 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
