@@ -203,6 +203,9 @@ public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Coordinates
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Primitive
 public import OrlikSolomon.HyperplaneGT.Algebra.LowDegrees
 public import OrlikSolomon.HyperplaneGT.Algebra.QuadraticKernel
+public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Lift
+public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Relations
+public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Support
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Chart
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Field
