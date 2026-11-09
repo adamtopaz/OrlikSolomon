@@ -34,7 +34,7 @@ the interface and explains how to audit it.
 
 The file is organized as public definitions (Part I), a clearly delimited private proof region
 that readers may skip, public statements (Part II), then `#print axioms` on the five theorems.
-The proof region comes first because Lean does not allow forward references. After building,
+The proof region precedes Part II because Lean does not allow forward references. After building,
 `lake exe audit --interface` checks the provenance of the public types and data. The logical
 axiom reports, `scripts/check.sh` and `scripts/replay.sh` give the accompanying trust checks.
 The three mathematical blueprints retain their separate status counts; this interface adds no

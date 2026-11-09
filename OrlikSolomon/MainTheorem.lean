@@ -49,7 +49,7 @@ The file is arranged in the following order.
 To know what the project proves, read Part I, skip the marked Proof region, read Part II and inspect
 these axiom reports. Lean's kernel checks the skipped proofs.
 
-Two independent mechanisms enforce the first point.
+Two independent mechanisms enforce this interface boundary.
 
 * The library is imported privately (`import`, not `public import`). Lean's module system rejects
   any public signature or exposed definition body that refers to a privately imported declaration,
