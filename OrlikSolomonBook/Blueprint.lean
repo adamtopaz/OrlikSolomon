@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 import Lean.Data.Json
 
@@ -73,7 +73,9 @@ Classifies the text that precedes a `\label`. Returns `some (some node)` if the 
 theorem-like environment, `some none` if it is on a sectioning command, and `none` otherwise.
 -/
 private def classify (label before : String) : Option (Option Node) := do
-  let lastLine := ((before.splitOn "\n").getLast?.getD "").trimAscii.copy
+  -- A section label may follow its heading on a new line, including after blank lines.
+  -- Trim only whitespace: intervening prose must still make the label an error.
+  let lastLine := ((before.trimAscii.copy.splitOn "\n").getLast?.getD "").trimAscii.copy
   if sectioningCommands.any (lastLine.startsWith ·) then
     return none
   let tail ← afterLastBegin? before

@@ -17,6 +17,7 @@ import OrlikSolomonBook.Multiplicities
 import OrlikSolomonBook.Projective
 import OrlikSolomonBook.DeRham
 import OrlikSolomonBook.Geometric
+import OrlikSolomonBook.HyperplaneGT
 import OrlikSolomonBook.Generalized
 import OrlikSolomonBook.Status
 
@@ -396,7 +397,7 @@ All of these are outputs of the proof.
  * In the projective case the empty arrangement is excluded. There is no hyperplane to put at infinity, the space is $`\mathbb{P}^n` itself, and its cohomology needs a projective bundle formula that the axioms do not provide.
 
 *How this book is tied to the code.*
-Each blueprint result appears in a box that shows a status and its label in one of three blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, or the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the refactor on schemes:
+Each blueprint result appears in a box that shows a status and its label in one of four blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the refactor on schemes, or the [fourth](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for the planned cohomological reconstruction application:
  * *Planned* means that the result is in scope and no Lean declaration is attached to it yet. The text describes what is intended, and nothing has been checked.
  * *Deferred* means that the result is in the blueprint but outside the current scope of the project.
  * *Partly formalized* means that the box names Lean declarations for part of the result, shows their statements with links to their source, and says what is missing.
@@ -442,7 +443,14 @@ Applying the affine transport to the existing de Rham theory gives a nonzero the
 The logarithmic sheaf residue sequence and its local quasi-isomorphism are proved separately and compared with the affine instance.
 Worked geometric regressions include complements without rational points, unit and disconnected pairs, non-flat pullback, residue multiplicity, and the projective line, where global forms differ from its two-chart Čech complex.
 {ref "geometric"}[Its chapter] presents it, and its nodes are counted separately above.
-Nothing on this page depends on it: the dependence runs the other way.
+The algebraic structure theorems and their algebraic de Rham corollaries do not depend on this refactor.
+
+*A planned reconstruction application.*
+The fourth blueprint proposes recovering the Galois group of a perfect field from the marked degree-one and degree-two cohomology diagram of hyperplane complements over its algebraic closure, up to a central scalar subgroup.
+The coefficient ring is required to be nonzero and local, or an integral domain, and the ambient dimension is at least two.
+The proof first classifies automorphisms of an explicit Orlik–Solomon diagram, then uses the existing structure theorem to pass to a supplied theory satisfying the axioms.
+Its characteristic-zero de Rham specialization is also planned; no reconstruction theorem is formalized yet.
+The blueprint has 38 named groups containing 41 separately labeled statements, all tracked as planned in {ref "hyperplane-gt"}[the new chapter] and counted separately above.
 
 {include 1 OrlikSolomonBook.MainTheorem}
 
@@ -469,6 +477,8 @@ Nothing on this page depends on it: the dependence runs the other way.
 {include 1 OrlikSolomonBook.DeRham}
 
 {include 1 OrlikSolomonBook.Geometric}
+
+{include 1 OrlikSolomonBook.HyperplaneGT}
 
 {include 1 OrlikSolomonBook.Generalized}
 
