@@ -25,10 +25,14 @@ Read these before working:
    anything elsewhere on GitHub: no issues, PRs, forks or gists on Mathlib, Verso or any
    other project. Never edit files under `.lake/packages`. If a dependency has a bug or a
    gap, work around it here and record it in an issue on this repository.
-2. **No new blueprints.** Never write a mathematical blueprint. Fill in routine detail
-   directly, which is always preferred. If substantive mathematics is missing, follow the
-   `blueprint-gap` skill: the supervisor passes a precise scope to Adam, who supplies the
-   blueprint.
+2. **Blueprints are written only by GPT-6-Astra.** It writes every new mathematical
+   blueprint in `blueprint/`; no other agent, including the supervisors, writes one. Fill
+   in routine detail directly, which is always preferred. If substantive mathematics is
+   missing, follow the `blueprint-gap` skill: report the gap to the supervisor who launched
+   you, who relays it to Claude if necessary. Only the Claude supervisor gives Astra a
+   precise scope with repository pointers. Astra does no formalization and does not
+   commit, push or open PRs. Claude checks with Adam before committing any blueprint
+   Astra writes.
 3. **This project stands alone.** Do not read or borrow from other directories under
    `~/projects/autoformalization/`. Search only this repository and its dependencies.
 4. **No unproved mathematics on `main`.** No `sorry`, `admit`, `axiom`, `native_decide`,
@@ -47,6 +51,8 @@ Read these before working:
 - A supervisor (Claude) and a deputy supervisor (Codex) plan the work, and only they merge.
   Subagents do the work and report to the supervisor that launched them. Read
   `docs/TEAM.md` for roles, ownership, reviews and the tmux protocol.
+- GPT-6-Astra writes all new mathematical blueprints. Only Claude sends it blueprint
+  requests; formalization work stays with the supervisors and their subagents.
 - All work is tracked by a GitHub issue. Every change reaches `main` through a PR that
   closes its issue, with one concern per PR.
 - A PR needs CI passing and an approving review from an agent that did not write it. All

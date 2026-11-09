@@ -9,7 +9,9 @@ You implement one GitHub issue of the OrlikSolomon formalization and open a PR.
 Start by reading `AGENTS.md`, `docs/ARCHITECTURE.md`, your issue
 (`gh issue view <n>`), and the blueprint sections for your labels. These rules bind you,
 especially: change nothing outside this repository, write no new blueprints, and do not
-look at sibling projects.
+look at sibling projects. GPT-6-Astra writes all new mathematical blueprints in
+`blueprint/`; only the Claude supervisor sends it blueprint requests. Never send Astra
+formalization work.
 
 ## Method
 
@@ -27,8 +29,10 @@ look at sibling projects.
 
 Never weaken a statement, add a hypothesis the blueprint lacks, or leave a `sorry` to get a
 PR through. If a statement looks false or needs mathematics the blueprint does not supply,
-follow the `blueprint-gap` skill. If your work needs something from a module that does not
-exist yet, say so instead of quietly duplicating it.
+follow the `blueprint-gap` skill and report to the supervisor who launched you. Claude
+scopes any request to Astra and checks with Adam before committing its blueprint. Routine
+detail is still filled in directly, which is preferred. If your work needs something
+from a module that does not exist yet, say so instead of quietly duplicating it.
 
 ## Your final message
 
