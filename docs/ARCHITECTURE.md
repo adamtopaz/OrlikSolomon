@@ -1709,11 +1709,12 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design and implementation of the development. G01–G03, the
-coordinate geometry, and A01, the canonical degree-one basis and algebra generation, are formalized;
+coordinate geometry, and A01–A02, the canonical degree-one basis, algebra generation and exact
+degree-two kernel, are formalized;
 the reconstruction theorem remains planned.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
-described under Algebra above. The A02 box remains planned: its arrangement-specific degree-two
-kernel still needs the identification of its relators.
+described under Algebra above; `HyperplaneGT/Algebra/QuadraticKernel` applies it to the actual OS
+quotient and identifies its full degree-two kernel.
 The [parent issue #151](https://github.com/adamtopaz/OrlikSolomon/issues/151),
 [approved plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326)
 and [child-issue index](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079)
@@ -1764,7 +1765,7 @@ approved plan; the issue links identify the implementation work.
 
 | Module | Responsibility | Work item and issue |
 | --- | --- | --- |
-| `Algebra/HomogeneousRelations` | Implemented generic lowest-degree relation spans, with explicit degree-zero assumptions and an exterior-quotient kernel consumer; A02 remains planned | W02, [#154](https://github.com/adamtopaz/OrlikSolomon/issues/154) |
+| `Algebra/HomogeneousRelations` | Implemented generic lowest-degree relation spans, with explicit degree-zero assumptions and an exterior-quotient kernel consumer; used by A02 | W02, [#154](https://github.com/adamtopaz/OrlikSolomon/issues/154) |
 | `Algebra/FinsuppKernel` | Generic kernel calculation for maps that discard labels and merge equal retained labels | W10, [#162](https://github.com/adamtopaz/OrlikSolomon/issues/162) |
 | `HyperplaneGT/Geometry/Coordinates` | Formalized G01–G03 facade joining the coefficient, graph and strict-incidence APIs | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
 | `HyperplaneGT/Geometry/Coordinates/Equations` | Coefficient tuples of affine forms and the coefficient-point equivalence, G01 | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
@@ -1772,7 +1773,7 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Geometry/Coordinates/Graphs` | Equation-independent verticality, unique graph equations, affine projection equivalences and exact projected traces, G03 | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
 | `HyperplaneGT/Geometry/Galois` | G04–G06 | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
 | `HyperplaneGT/Algebra/DegreeOne` | A01, formalized: canonical degree-one equivalence, basis, coordinates, inclusion naturality and full algebra generation | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
-| `HyperplaneGT/Algebra/LowDegrees`, with a `QuadraticKernel` leaf | A02 and low-degree facade, planned | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
+| `HyperplaneGT/Algebra/LowDegrees`, with a `QuadraticKernel` leaf | A02, formalized: exact degree-two kernel of the actual quotient, parallel-pair and guarded dependent-triple spans, generator formulas and inclusion naturality | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
 | `HyperplaneGT/Diagram/Basic` | A03, marked diagrams and their automorphisms | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `HyperplaneGT/Diagram/Universal` | U01–U02 | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
 | `HyperplaneGT/Algebra/Dual` | U03–U05, with generic-index results separated from hyperplane specializations | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
@@ -1792,6 +1793,18 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT`, with small topic leaves | Coefficient, dimension, marking, cofinality, generator and transport acceptance consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
 | `Examples/HyperplaneGT/DegreeOne` | Formalized A01 consumers: zero coefficients, empty arrangements, dimensions zero and one, and zero new coordinates after inclusion | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
 | `Examples/HyperplaneGT/Coordinates` | G01–G03 consumers: dimension zero, parallel points, inverse chart and coefficient formulas, zero-ring coordinate splitting, and concurrent/empty triples over `𝔽₂` | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
+| `Examples/HyperplaneGT/QuadraticKernel` | A02 consumers: empty and dimension-zero arrangements, zero coefficients, disjoint points, characteristic-two concurrent relations and the zero quadratic kernel of the empty triangle | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
+
+`HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
+the actual exterior quotient to `osExteriorSquareMap`, surjective onto the existing internal
+degree-two submodule. Its generic finite-dimensional extraction `osExteriorSquareMap_ker_eq`
+uses homogeneous projection and the existing minimum lengths of empty and guarded dependent
+lists. Relators in two different degrees are zero, so the proof works over the zero ring.
+`quadraticKernel_eq_span` identifies the complete kernel with `quadraticRelationSpan`, using
+all strict parallel pairs and all guarded dependent triples on the hyperplane labels. The
+public exterior-pair and difference-pair formulas hide subtype representatives. Exterior-square
+label inclusion commutes with the quotient and preserves the full quadratic relation span.
+There is no assertion that the higher OS relations are generated by the quadratic kernel.
 
 `HyperplaneGT/Geometry/Coordinates` is a facade over three leaves. `Equations` represents affine
 forms by their constant and normal coefficients, using Mathlib's affine-map decomposition,
@@ -1836,7 +1849,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-4 formalized, 0 partly formalized and 37 planned, separate from the other blueprints. Each
+5 formalized, 0 partly formalized and 36 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
