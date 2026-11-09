@@ -58,9 +58,10 @@ theorem fieldCoordinateAddEquiv_smul (σ : k ≃+* k) (c : k) (x : ι → k) :
   simp
 
 /-- The public semilinear coordinate map. Its function and scalar-transport API require no
-inverse-pair instances in the consumer's environment. -/
+inverse-pair instances in the consumer's environment. The canonical ring-hom coercion
+also exposes Mathlib's existing surjectivity instance for semilinear submodule images. -/
 def fieldCoordinateLinearMap (σ : k ≃+* k) (ι : Type v) :
-    (ι → k) →ₛₗ[σ.toRingHom] (ι → k) where
+    (ι → k) →ₛₗ[(σ : k →+* k)] (ι → k) where
   toFun := fieldCoordinateAddEquiv σ ι
   map_add' := (fieldCoordinateAddEquiv σ ι).map_add
   map_smul' := fieldCoordinateAddEquiv_smul σ
