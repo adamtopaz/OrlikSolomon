@@ -39,7 +39,8 @@ variable {V : Type v} [AddCommGroup V] [Module k V] [FiniteDimensional k V]
   (hg : (degree R 𝒜 1).map g.toLinearMap = degree R 𝒜 1)
 
 /-- A degree-one-preserving presentation automorphism, in the canonical free-module
-coordinates. This construction needs no condition on the higher-degree generators. -/
+coordinates. This construction needs no separate degree-preservation hypothesis above degree
+one. -/
 def osDegreeOneAut : (𝒜 →₀ R) ≃ₗ[R] (𝒜 →₀ R) :=
   (osDegreeOneEquiv R 𝒜).trans
     ((g.toLinearEquiv.ofSubmodules _ _ hg).trans (osDegreeOneEquiv R 𝒜).symm)

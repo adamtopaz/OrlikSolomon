@@ -25,12 +25,14 @@ details.
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-14 formalized, 1 partly formalized and 26 planned. Coefficient points, hyperplane incidence
+15 formalized, 1 partly formalized and 25 planned. Coefficient points, hyperplane incidence
 and coordinate graphs (G01–G03) are proved over arbitrary fields. G04–G06 construct the
 coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal
 systems with actual marking maps to one common target. The canonical degree-one OS basis,
 its inclusion naturality and algebra generation (A01), and the exact degree-two quotient kernel
 (A02), are proved over arbitrary commutative coefficient rings, including zero coefficients.
+A03 defines the marked quadratic and full graded automorphism groups, with one common target
+and faithful degree-one restriction, over those same coefficient rings.
 Pure coordinate reconstruction (C01–C03) is also proved over arbitrary fields in dimension at least
 two, with the prescribed fixed projective frame.
 Full-dual coordinates and the local primitive-coordinate criterion

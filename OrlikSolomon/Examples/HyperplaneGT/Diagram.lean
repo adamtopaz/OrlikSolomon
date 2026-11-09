@@ -101,6 +101,11 @@ theorem zeroRing_aut_eq_one
     (g : DiagramAut (ZMod 1) (binarySystem 1) ({0} : Set (ZMod 2))) : g = 1 :=
   Subsingleton.elim _ _
 
+/-- The full graded group also retains its expected triviality over zero coefficients. -/
+theorem zeroRing_graded_aut_eq_one
+    (g : GradedDiagramAut (ZMod 1) (binarySystem 1) ({0} : Set (ZMod 2))) : g = 1 :=
+  Subsingleton.elim _ _
+
 /-- An actual characteristic-two marking sends the full target quadratic module into Q. -/
 theorem charTwo_quadratic_relation :
     exteriorPower.map 2 (coordinateMarking.basisMap (ZMod 2) coordinate_available)
