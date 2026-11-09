@@ -7,10 +7,10 @@ module
 
 public import OrlikSolomon.Geometry.Schemes.Projective
 public import OrlikSolomon.Presentation.Basic
-public import Mathlib.RingTheory.GradedAlgebra.Radical
+import Mathlib.RingTheory.GradedAlgebra.Radical
 
 /-!
-# The main theorem's projective space, hyperplanes, complement and ratios
+# The main theorem's projective space and hyperplanes
 
 This bridge uses the exact Mathlib presentations of the approved main-theorem interface. Its
 `degreeGrading`, `projectiveSpace`, `IsEquation`, `Hyperplane`, `HyperplaneArrangement` and
@@ -29,7 +29,7 @@ the geometry bridge for milestone M7 (#141); it does not change any blueprint st
 
 noncomputable section
 
-open CategoryTheory AlgebraicGeometry Module HomogeneousLocalization
+open CategoryTheory AlgebraicGeometry Module
 
 attribute [local instance] MvPolynomial.gradedAlgebra
 
@@ -256,7 +256,6 @@ than the length of the list. -/
 def IsDependent {𝒜 : HyperplaneArrangement k n} (S : List 𝒜) : Prop :=
   ∃ ℓ : Fin S.length → MvPolynomial (Fin (n + 1)) k,
     (∀ j, IsEquation ((S[j] : 𝒜) : Hyperplane k n) (ℓ j)) ∧ ¬ LinearIndependent k ℓ
-
 
 /-! ### Equations determine their linear kernels -/
 
