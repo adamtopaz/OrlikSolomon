@@ -583,7 +583,10 @@ def ratio {𝒜 : HyperplaneArrangement k n} {K : Hyperplane k n} (hK : K ∈ �
 This private implementation precedes Part II because Lean declarations cannot refer forward.
 -/
 
-/- BEGIN PROOF REGION — SKIP THIS; resume at END PROOF REGION below. -/
+/- BEGIN PROOF REGION — SKIP THIS; resume at END PROOF REGION below.
+Nothing in this region is part of the public statement.
+`lake exe audit --interface` enforces the boundary.
+-/
 
 namespace Proof
 
@@ -947,6 +950,10 @@ variable (𝒜 : MainTheorem.HyperplaneArrangement k n)
 private def coneIndexEquiv : 𝒜 ≃ (Interface.toProjectiveArrangement (arrangement 𝒜)).cone :=
   (arrangementEquiv 𝒜).trans (Interface.coneHyperplaneEquiv (arrangement 𝒜))
 
+private theorem coneIndexEquiv_apply (H : 𝒜) :
+    coneIndexEquiv 𝒜 H = (Interface.toProjectiveArrangement (arrangement 𝒜)).coneHyperplaneEquiv
+      (Interface.projectiveHyperplaneEquiv (arrangement 𝒜) (arrangementEquiv 𝒜 H)) := rfl
+
 private theorem dependence_iff (S : List 𝒜) :
     MainTheorem.IsDependent S ↔ Arrangement.IsDependent (S.map (coneIndexEquiv 𝒜)) := by
   have h := (dependent_iff S).trans
@@ -1032,14 +1039,16 @@ private theorem canonicalEquiv_generator (T : CohomologyTheory.{u, v, w, z} 𝒟
     (equation_iff.1 hℓ)
   have hker' := Interface.hyperplaneSubmodule_eq_ker (H := hyperplaneEquiv (K : Hyperplane k n))
     (equation_iff.1 hℓ')
-  simp only [SourceAlgebra.coneIndexEquiv, Interface.coneHyperplaneEquiv, Equiv.trans_apply]
+  rw [SourceAlgebra.coneIndexEquiv_apply, SourceAlgebra.coneIndexEquiv_apply]
   rw [Geometric.OrdinaryTheory.projectiveEquiv_difference_of_ker_eq _ _ _ _
     (ℓ := Interface.toDual ℓ) (ℓ' := Interface.toDual ℓ') hker.symm hker'.symm]
   exact ratioClass_pull T h𝒜 H.2 K.2 hℓ hℓ' τ hτ g hg
 
 end Proof
 
-/- END PROOF REGION — resume reading here. -/
+/- END PROOF REGION — resume reading the public statement here.
+The skipped region is excluded from the statement by `lake exe audit --interface`.
+-/
 
 /-! ## Part II: statements -/
 
