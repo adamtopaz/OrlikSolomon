@@ -5,7 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Annihilators
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
 
 /-!
@@ -131,5 +131,45 @@ theorem dimension_zero_vectors {k : Type u} [Field k] (R : Type v) [CommRing R]
     (x : Hyperplane k 0 →₀ R) : x = 0 := by
   let _ := dimension_zero (k := k)
   exact Subsingleton.elim _ _
+
+/-- In dimension zero the actual vertical free span is zero. -/
+theorem dimension_zero_vertical_module {k : Type u} [Field k]
+    (R : Type v) [CommRing R] :
+    verticalModule (k := k) R (∅ : Finset (Fin 0)) = ⊥ := verticalModule_empty R
+
+/-- Dimension one has decomposition equal to inertia, with nonzero nilpotent coefficients
+and characteristic-two geometry. -/
+theorem dimension_one_decomposition :
+    decomposition (ZMod 4)
+      (graphHyperplane (k := ZMod 2) (0 : Fin 1) (AffineMap.const _ _ 0)) =
+        inertia (ZMod 4) (graphHyperplane 0 (AffineMap.const _ _ 0)) :=
+  decomposition_eq_inertia_dimension_one _ _
+
+/-- The first coordinate axis is a genuine vertical label over the complement of the second
+coordinate. -/
+theorem xLine_isVertical : IsVertical (omittedCoordinates 1) (xLine (ZMod 2)) := by
+  rw [isVertical_iff_of_isEquation _ _ (isEquation_graphEquation 0 (AffineMap.const _ _ 0))]
+  intro j hj
+  have hji : j = 1 := by simpa using hj
+  subst j
+  rw [affineCoefficients_succ]
+  simp [graphEquation]
+
+/-- The target of restriction is the actual vertical-module dual and can contain a nonzero
+functional. -/
+theorem actual_vertical_coordinate :
+    (verticalRestriction (ZMod 4) (omittedCoordinates 1) (Finsupp.lapply (xLine (ZMod 2))))
+      (verticalSingle (ZMod 4) (omittedCoordinates 1)
+        ⟨xLine (ZMod 2), xLine_isVertical⟩ 1) = 1 := by
+  simp
+
+/-- A nonzero actual vertical coordinate extends to a decomposition functional of the other
+axis. No chosen normalized model is substituted for the target. -/
+theorem actual_vertical_extension :
+    ∃ φ : decomposition (ZMod 4) (yLine (ZMod 2)),
+      decompositionVerticalRestriction (ZMod 4) (omittedCoordinates 1) (yLine (ZMod 2)) φ =
+        verticalRestriction (ZMod 4) (omittedCoordinates 1) (Finsupp.lapply (xLine (ZMod 2))) :=
+  decompositionVerticalRestriction_surjective (ZMod 4) (omittedCoordinates 1) 1
+    (mem_omittedCoordinates 1) (yLine (ZMod 2)) (not_isVertical_graphHyperplane 1 _) _
 
 end OrlikSolomon.HyperplaneGT.TraceExamples

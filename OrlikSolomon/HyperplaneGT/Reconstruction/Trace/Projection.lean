@@ -45,6 +45,15 @@ universe u
 
 variable {k : Type u} [Field k] {n : ℕ}
 
+/-- No genuine hyperplane uses only the empty set of coordinates: its linear part would
+vanish. This includes the low-dimensional cases of L03. -/
+theorem not_isVertical_empty (H : Hyperplane k n) : ¬IsVertical ∅ H := by
+  intro hH
+  apply (isEquation_equation H.property).linear_ne_zero
+  rw [linear_eq_zero_iff_coefficients]
+  intro j
+  exact hH j (by simp)
+
 private def chartProjection (i : Fin n) (H : Hyperplane k n) :
     H.val.direction →ᵃ[k] (omittedCoordinates i → k) :=
   (coordinateProjection (omittedCoordinates i)).toAffineMap.comp (chart H.val)
@@ -245,6 +254,13 @@ Blueprint: `M_z` in `lem:l03`. -/
 def verticalModule (z : Finset (Fin n)) : Submodule R (Hyperplane k n →₀ R) :=
   Finsupp.supported R R {K | IsVertical z K}
 
+/-- The empty coordinate set spans no vertical labels. -/
+theorem verticalModule_empty : verticalModule (k := k) R (∅ : Finset (Fin n)) = ⊥ := by
+  have hs : {K : Hyperplane k n | IsVertical ∅ K} = ∅ := by
+    ext K
+    simp [not_isVertical_empty K]
+  rw [verticalModule, hs, Finsupp.supported_empty]
+
 /-- Vertical-module membership means vanishing at each nonvertical coordinate. -/
 @[simp]
 theorem mem_verticalModule (z : Finset (Fin n)) (x : Hyperplane k n →₀ R) :
@@ -411,6 +427,24 @@ theorem ker_decompositionVerticalRestriction (z : Finset (Fin n)) (i : Fin n)
     φ.val ∈ W) (ker_verticalRestriction_inf_decomposition R z i hzi H hH)
   change (verticalRestriction R z φ.val = 0) ↔ φ.val ∈ inertia R H
   simpa only [Submodule.mem_inf, LinearMap.mem_ker, φ.property, and_true] using Iff.of_eq he
+
+/-- In dimension one there are no intrinsic hyperplane traces, so decomposition is exactly
+inertia. This holds for every point and every commutative coefficient ring, including zero.
+Blueprint: the dimension-one case of `lem:l03`. -/
+theorem decomposition_eq_inertia_dimension_one (H : Hyperplane k 1) :
+    decomposition R H = inertia R H := by
+  have hzi : ∀ j : Fin 1, j ∈ (∅ : Finset (Fin 1)) ↔ j ≠ 0 := by
+    intro j
+    have hj : j = 0 := Subsingleton.elim _ _
+    simp [hj]
+  have he := ker_verticalRestriction_inf_decomposition R ∅ 0 hzi H (not_isVertical_empty H)
+  have hk : LinearMap.ker (verticalRestriction (k := k) R (∅ : Finset (Fin 1))) = ⊤ := by
+    ext φ
+    simp only [LinearMap.mem_ker, Submodule.mem_top, iff_true]
+    rw [verticalRestriction_eq_zero_iff]
+    intro K hK
+    exact (not_isVertical_empty K hK).elim
+  rwa [hk, top_inf_eq] at he
 
 end DecompositionRestriction
 
