@@ -450,7 +450,7 @@ The fourth blueprint proposes recovering the Galois group of a perfect field fro
 The coefficient ring is required to be nonzero and local, or an integral domain, and the ambient dimension is at least two.
 The proof first classifies automorphisms of an explicit Orlik–Solomon diagram, then uses the existing structure theorem to pass to a supplied theory satisfying the axioms.
 Its characteristic-zero de Rham specialization is also planned; no reconstruction theorem is formalized yet.
-The blueprint has 38 named groups containing 41 separately labeled statements: G01–G03, the coordinate geometry, A01, the canonical degree-one basis and algebra generation, and C01–C03, pure coordinate field reconstruction, are formalized; the other thirty-four remain planned in {ref "hyperplane-gt"}[the new chapter] and are counted separately above.
+The blueprint has 38 named groups containing 41 separately labeled statements: G01–G03, the coordinate geometry, A01–A02, the canonical degree-one basis, algebra generation and full quadratic kernel, and C01–C03, pure coordinate field reconstruction, are formalized; the other thirty-three remain planned in {ref "hyperplane-gt"}[the new chapter] and are counted separately above.
 
 {include 1 OrlikSolomonBook.MainTheorem}
 
