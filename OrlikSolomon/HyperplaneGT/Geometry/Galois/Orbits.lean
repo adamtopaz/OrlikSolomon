@@ -98,6 +98,19 @@ theorem mem_galoisClosure (s : Finset (Hyperplane k n)) (H : Hyperplane k n) :
   classical
   simp only [galoisClosure, Finset.mem_biUnion, mem_galoisOrbit]
 
+@[simp]
+theorem galoisClosure_empty : galoisClosure (k₀ := k₀) (∅ : Finset (Hyperplane k n)) = ∅ := by
+  classical
+  ext H
+  simp only [mem_galoisClosure, Finset.notMem_empty, false_and, exists_false]
+
+/-- Enlarging a finite input set enlarges its finite orbit union. -/
+theorem galoisClosure_mono {s t : Finset (Hyperplane k n)} (h : s ⊆ t) :
+    galoisClosure (k₀ := k₀) s ⊆ galoisClosure (k₀ := k₀) t := by
+  intro H hH
+  obtain ⟨K, hK, hHK⟩ := (mem_galoisClosure s H).mp hH
+  exact (mem_galoisClosure t H).mpr ⟨K, h hK, hHK⟩
+
 /-- Every original hyperplane belongs to its finite stable enlargement. -/
 theorem subset_galoisClosure (s : Finset (Hyperplane k n)) :
     s ⊆ galoisClosure (k₀ := k₀) s := by
@@ -127,6 +140,30 @@ theorem isGaloisStable_stableClosure (s : Finset (Hyperplane k n)) :
   rw [mem_stableClosure, mem_galoisClosure] at hH ⊢
   obtain ⟨K, hK, hH⟩ := hH
   exact ⟨K, hK, MulAction.mem_orbit_of_mem_orbit σ hH⟩
+
+/-- The finite orbit union is the least stable arrangement containing the chosen labels. -/
+theorem stableClosure_le_iff (s : Finset (Hyperplane k n))
+    {A : Arrangement k (Fin n → k)} (hA : IsGaloisStable (k₀ := k₀) A) :
+    stableClosure (k₀ := k₀) s ≤ A ↔ ∀ H ∈ s, H.val ∈ A := by
+  constructor
+  · intro h H hH
+    exact h ((mem_stableClosure s H).mpr (subset_galoisClosure s hH))
+  · intro hs J hJ
+    let H : Hyperplane k n := ⟨J, (stableClosure (k₀ := k₀) s).isHyperplane hJ⟩
+    have hH := (mem_stableClosure s H).mp hJ
+    obtain ⟨K, hK, σ, hσ⟩ := (mem_galoisClosure s H).mp hH
+    have hAK := hA σ K (hs K hK)
+    change H.val ∈ A
+    rw [← hσ]
+    exact hAK
+
+@[simp]
+theorem stableClosure_empty :
+    stableClosure (k₀ := k₀) (∅ : Finset (Hyperplane k n)) = ∅ := by
+  apply le_antisymm
+  · exact (stableClosure_le_iff ∅ isGaloisStable_empty).mpr (by simp)
+  · intro H hH
+    exact (Arrangement.notMem_empty H hH).elim
 
 /-- The full collection of finite stable arrangements is a cofinal system. Directedness and
 finite common upper stages follow from the generic `CofinalSystem` API.
