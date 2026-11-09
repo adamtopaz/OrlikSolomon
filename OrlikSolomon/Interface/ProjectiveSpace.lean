@@ -435,4 +435,52 @@ theorem isEquation_coneHyperplaneEquiv {𝒜 : HyperplaneArrangement k n} (H : �
   rw [coe_coneHyperplaneEquiv, hyperplaneSubmodule_eq_ker hℓ]
   exact isEquation_toAffineMap (toDual_ne_zero hℓ.isHomogeneous hℓ.ne_zero)
 
+/-! ### Dependence of equations -/
+
+/-- Dependence of scheme hyperplanes can be tested using any equations of the list. -/
+theorem isDependent_iff_not_linearIndependent {𝒜 : HyperplaneArrangement k n} (S : List 𝒜)
+    (ℓ : Fin S.length → MvPolynomial (Fin (n + 1)) k)
+    (hℓ : ∀ j, IsEquation (S.get j : Hyperplane k n) (ℓ j)) :
+    IsDependent S ↔ ¬ LinearIndependent k ℓ := by
+  classical
+  constructor
+  · rintro ⟨ℓ', hℓ', hdep⟩ hli
+    choose c hc using fun j ↦ ((hℓ j).existsUnique_smul (hℓ' j)).exists
+    apply hdep
+    convert hli.units_smul c using 1
+    funext j
+    exact hc j
+  · exact fun h ↦ ⟨ℓ, hℓ, h⟩
+
+/-- The interface's dependence predicate is exactly dependence in the library's central cone.
+The statement allows repeated hyperplanes and the empty list. -/
+theorem isDependent_iff_cone {𝒜 : HyperplaneArrangement k n} (S : List 𝒜) :
+    IsDependent S ↔ Arrangement.IsDependent (S.map (coneHyperplaneEquiv 𝒜)) := by
+  let e := coneHyperplaneEquiv 𝒜
+  let ℓ : Fin S.length → MvPolynomial (Fin (n + 1)) k :=
+    fun j ↦ hyperplaneForm (S.get j)
+  let ℓ' : Fin (S.map e).length → MvPolynomial (Fin (n + 1)) k :=
+    fun j ↦ hyperplaneForm (e.symm ((S.map e).get j))
+  let ef : Fin S.length ≃ Fin (S.map e).length := finCongr (List.length_map (as := S) e).symm
+  have hℓ : ∀ j, IsEquation (S.get j : Hyperplane k n) (ℓ j) :=
+    fun j ↦ isEquation_hyperplaneForm _
+  have hcomp : ℓ' ∘ ef = ℓ := by
+    funext j
+    simp [ℓ, ℓ', ef, List.get_eq_getElem]
+  have hℓ' : ∀ j, OrlikSolomon.IsEquation (toDual (ℓ' j)).toAffineMap
+      ((S.map e).get j : AffineSubspace k (Fin (n + 1) → k)) := by
+    intro j
+    have ht := isEquation_coneHyperplaneEquiv (e.symm ((S.map e).get j))
+      (isEquation_hyperplaneForm _)
+    change OrlikSolomon.IsEquation (toDual (ℓ' j)).toAffineMap
+      (e (e.symm ((S.map e).get j)) : AffineSubspace k (Fin (n + 1) → k)) at ht
+    simpa only [e.apply_symm_apply] using ht
+  rw [isDependent_iff_not_linearIndependent S ℓ hℓ,
+    Arrangement.isDependent_iff_not_linearIndependent
+      (fun j ↦ (toDual (ℓ' j)).toAffineMap) hℓ'
+      ((toProjectiveArrangement 𝒜).cone_isCentral.inter_ne_bot _)]
+  apply not_congr
+  exact (linearIndependent_toDual_comp_iff (fun j ↦ (hℓ j).isHomogeneous)).symm.trans
+    (linearIndependent_equiv' ef (congrArg (fun f ↦ toDual ∘ f) hcomp))
+
 end OrlikSolomon.Interface
