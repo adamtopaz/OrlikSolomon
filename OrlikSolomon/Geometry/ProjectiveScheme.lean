@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
@@ -39,6 +39,13 @@ complement of the hyperplanes of `P` in the projective space `Proj Sym(W*)`, usi
   hyperplanes (`basicOpen_coord_eq_of_ker_eq`). It is `⊤` for empty `P` (`complementOpen_eq_top`).
 * `ProjectiveArrangement.complementι_eq_awayι_of_ker_eq`: the open immersion of the complement,
   and so `complementOpenIso`, do not depend on the equations chosen to define them.
+* `OrlikSolomon.proj_map_toSpecZero_algebraMap`: a graded map fixing the base scalars induces a
+  map of projective schemes over that base.
+* `ProjectiveArrangement.complementι_eq_specMap_comp_awayι`: the complement inclusion factors
+  through the chart of every equation of a member of the arrangement.
+* `ProjectiveArrangement.complementOpenIso_hom_appTop_ratio`: the coordinate-ring ratio is the
+  restriction of the homogeneous fraction from the corresponding chart. This is used by the
+  Mathlib projective-space interface of milestone M7.
 
 ## Implementation notes
 
