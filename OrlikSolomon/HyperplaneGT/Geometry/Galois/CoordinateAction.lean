@@ -37,6 +37,23 @@ variable {k : Type u} [Field k] {ι : Type v}
 local instance (σ : k ≃+* k) : RingHomInvPair σ.toRingHom σ.symm.toRingHom :=
   RingHomInvPair.of_ringEquiv σ
 
+/-- Coordinatewise application of a field automorphism as an additive equivalence. This point
+map requires no auxiliary inverse-pair instances in downstream consumers. -/
+def fieldCoordinateAddEquiv (σ : k ≃+* k) (ι : Type v) : (ι → k) ≃+ (ι → k) where
+  toFun x i := σ (x i)
+  invFun x i := σ.symm (x i)
+  left_inv x := by ext i; simp
+  right_inv x := by ext i; simp
+  map_add' x y := by ext i; simp
+
+@[simp]
+theorem fieldCoordinateAddEquiv_apply (σ : k ≃+* k) (x : ι → k) (i : ι) :
+    fieldCoordinateAddEquiv σ ι x i = σ (x i) := rfl
+
+@[simp]
+theorem fieldCoordinateAddEquiv_symm_apply (σ : k ≃+* k) (x : ι → k) (i : ι) :
+    (fieldCoordinateAddEquiv σ ι).symm x i = σ.symm (x i) := rfl
+
 /-- Coordinatewise application of a field automorphism is a semilinear equivalence. -/
 def fieldCoordinateEquiv (σ : k ≃+* k) (ι : Type v) :
     (ι → k) ≃ₛₗ[σ.toRingHom] (ι → k) where
@@ -58,7 +75,7 @@ theorem fieldCoordinateEquiv_symm_apply (σ : k ≃+* k) (x : ι → k) (i : ι)
 /-- The affine subspace obtained by applying a field automorphism to all coordinates. -/
 def fieldAffineSubspace (σ : k ≃+* k) (X : AffineSubspace k (ι → k)) :
     AffineSubspace k (ι → k) where
-  carrier := fieldCoordinateEquiv σ ι '' (X : Set (ι → k))
+  carrier := fieldCoordinateAddEquiv σ ι '' (X : Set (ι → k))
   smul_vsub_vadd_mem' c := by
     rintro _ _ _ ⟨x, hx, rfl⟩ ⟨y, hy, rfl⟩ ⟨z, hz, rfl⟩
     refine ⟨σ.symm c • (x -ᵥ y) +ᵥ z, X.smul_vsub_vadd_mem (σ.symm c) hx hy hz, ?_⟩
@@ -68,22 +85,22 @@ def fieldAffineSubspace (σ : k ≃+* k) (X : AffineSubspace k (ι → k)) :
 
 @[simp]
 theorem mem_fieldAffineSubspace (σ : k ≃+* k) (X : AffineSubspace k (ι → k)) (x : ι → k) :
-    x ∈ fieldAffineSubspace σ X ↔ (fieldCoordinateEquiv σ ι).symm x ∈ X := by
-  change x ∈ fieldCoordinateEquiv σ ι '' (X : Set (ι → k)) ↔ _
+    x ∈ fieldAffineSubspace σ X ↔ (fieldCoordinateAddEquiv σ ι).symm x ∈ X := by
+  change x ∈ fieldCoordinateAddEquiv σ ι '' (X : Set (ι → k)) ↔ _
   constructor
   · rintro ⟨y, hy, rfl⟩
-    exact ((fieldCoordinateEquiv σ ι).symm_apply_apply y).symm ▸ hy
+    exact ((fieldCoordinateAddEquiv σ ι).symm_apply_apply y).symm ▸ hy
   · intro hx
-    exact ⟨(fieldCoordinateEquiv σ ι).symm x, hx,
-      (fieldCoordinateEquiv σ ι).apply_symm_apply x⟩
+    exact ⟨(fieldCoordinateAddEquiv σ ι).symm x, hx,
+      (fieldCoordinateAddEquiv σ ι).apply_symm_apply x⟩
 
 @[simp]
 theorem fieldAffineSubspace_symm (σ : k ≃+* k) (X : AffineSubspace k (ι → k)) :
     fieldAffineSubspace σ.symm (fieldAffineSubspace σ X) = X := by
   ext x
   simp only [mem_fieldAffineSubspace]
-  have hx : (fieldCoordinateEquiv σ ι).symm
-      ((fieldCoordinateEquiv σ.symm ι).symm x) = x := by
+  have hx : (fieldCoordinateAddEquiv σ ι).symm
+      ((fieldCoordinateAddEquiv σ.symm ι).symm x) = x := by
     ext i
     exact σ.symm_apply_apply (x i)
   rw [hx]
@@ -100,10 +117,10 @@ def fieldAffineSubspaceOrderIso (σ : k ≃+* k) :
     intro X Y
     constructor
     · intro h x hx
-      have himage : fieldCoordinateEquiv σ ι x ∈ fieldAffineSubspace σ X :=
+      have himage : fieldCoordinateAddEquiv σ ι x ∈ fieldAffineSubspace σ X :=
         ⟨x, hx, rfl⟩
       have hy := (mem_fieldAffineSubspace σ Y _).mp (h himage)
-      exact (fieldCoordinateEquiv σ ι).symm_apply_apply x ▸ hy
+      exact (fieldCoordinateAddEquiv σ ι).symm_apply_apply x ▸ hy
     · intro h x hx
       exact (mem_fieldAffineSubspace σ Y x).mpr (h ((mem_fieldAffineSubspace σ X x).mp hx))
 
@@ -219,7 +236,7 @@ theorem affineCoefficients_fieldAffineForm (σ : k ≃+* k) (f : (Fin n → k) �
 /-- The transformed equation evaluates to the field transform of the original value on
 transformed points. -/
 theorem fieldAffineForm_apply (σ : k ≃+* k) (f : (Fin n → k) →ᵃ[k] k) (x : Fin n → k) :
-    fieldAffineForm σ f (fieldCoordinateEquiv σ (Fin n) x) = σ (f x) := by
+    fieldAffineForm σ f (fieldCoordinateAddEquiv σ (Fin n) x) = σ (f x) := by
   have hfx : f x = affineCoefficients f 0 + ∑ i : Fin n, affineCoefficients f i.succ * x i := by
     rw [← coefficientForm_apply, coefficientForm_affineCoefficients]
   simp only [fieldAffineForm, coefficientForm_apply]
@@ -244,8 +261,8 @@ theorem isEquation_fieldAffineForm (σ : k ≃+* k) {H : AffineSubspace k (Fin n
   refine ⟨(fieldAffineForm_linear_ne_zero_iff σ f).mpr hf.linear_ne_zero, ?_⟩
   ext x
   rw [mem_zeroLocus, mem_fieldAffineSubspace]
-  have hx := fieldAffineForm_apply σ f ((fieldCoordinateEquiv σ (Fin n)).symm x)
-  rw [(fieldCoordinateEquiv σ (Fin n)).apply_symm_apply] at hx
+  have hx := fieldAffineForm_apply σ f ((fieldCoordinateAddEquiv σ (Fin n)).symm x)
+  rw [(fieldCoordinateAddEquiv σ (Fin n)).apply_symm_apply] at hx
   rw [hx, map_eq_zero_iff σ σ.injective, hf.apply_eq_zero_iff]
 
 /-- The map on projective coefficient points induced by the semilinear coordinate map. -/
