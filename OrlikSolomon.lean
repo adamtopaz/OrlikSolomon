@@ -229,3 +229,9 @@ public import OrlikSolomon.Presentation.ProjectiveOrdinary
 public import OrlikSolomon.Presentation.Realization
 public import OrlikSolomon.Presentation.RepresentativeRelations
 public import OrlikSolomon.Presentation.Structure
+
+/-!
+# OrlikSolomon
+
+The root of the library. Every module of the library is imported here.
+-/
