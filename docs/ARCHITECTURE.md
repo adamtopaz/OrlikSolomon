@@ -1652,6 +1652,6 @@ identical to the interface's. Inside `namespace OrlikSolomon.Interface`, the nam
 and `OrdinaryTheory` resolve to the algebraic declarations, so write `Geometric.DivisorPair` and
 `Geometric.OrdinaryTheory`.
 
-| Module under `OrlikSolomon/` | Contents | Issue |
-| ---------------------------- | -------- | ----- |
+| Module under `OrlikSolomon/` | Blueprint labels | Issue |
+| ---------------------------- | ---------------- | ----- |
 | `Interface/Logarithms` | the interface's `standardDivisor` as the library pair `Interface.standardPair D`, its isomorphism `standardPairIso` with `standardPair D D.point` and the residue comparison; `τ` as the unique class of bidegree `(1, 1)` with residue `1` at the origin (`def:geo-log`); a map to `𝔾ₘ` pulling the coordinate back to `f` exists exactly when `f` is a unit, is then unique, and pulls `τ` back to `[f]` (`thm:geo-units`) | #143 |
