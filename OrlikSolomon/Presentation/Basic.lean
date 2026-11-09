@@ -9,6 +9,7 @@ public import Mathlib.LinearAlgebra.ExteriorAlgebra.Grading
 public import OrlikSolomon.Algebra.ExteriorBoundary
 public import OrlikSolomon.Algebra.RelationQuotient
 public import OrlikSolomon.Geometry.Arrangement
+import Mathlib.LinearAlgebra.Dimension.OrzechProperty
 
 /-!
 # The affine Orlik–Solomon algebra
@@ -17,6 +18,8 @@ public import OrlikSolomon.Geometry.Arrangement
 empty intersections and the signed boundaries for nonempty dependent intersections.
 `Arrangement.IsDependent` includes the nonempty-intersection guard: the numerical convention
 for `codim ⊥` must never create a boundary relation.
+For nonempty intersections, `Arrangement.isDependent_iff_not_linearIndependent` identifies this
+condition with linear dependence of the equations, including for lists with repetitions.
 
 The quotient map, generators, word spanning, and the universal property `OSAlgebra.lift`
 are the public interface. Inclusions of arrangements induce algebra maps, including the
@@ -53,6 +56,20 @@ theorem isDependent_nil (𝒜 : Arrangement k V) : ¬ IsDependent ([] : List �
 theorem not_isDependent_of_inter_eq_bot {𝒜 : Arrangement k V} {I : List 𝒜}
     (h : inter I = ⊥) : ¬ IsDependent I :=
   fun hI ↦ hI.1 h
+
+/-- For a nonempty intersection, dependence of a list of hyperplanes is equivalent to linear
+dependence of the linear parts of any equations for those hyperplanes. The list may be empty
+or contain repetitions.
+
+Blueprint: the dependent-boundary relation of `def:os` and the rank formula of `lem:equations`. -/
+theorem isDependent_iff_not_linearIndependent [FiniteDimensional k V]
+    {𝒜 : Arrangement k V} {I : List 𝒜} (f : Fin I.length → V →ᵃ[k] k)
+    (hf : ∀ i, IsEquation (f i) (I.get i : AffineSubspace k V))
+    (hne : inter I ≠ ⊥) :
+    IsDependent I ↔ ¬ LinearIndependent k (fun i ↦ (f i).linear) := by
+  rw [IsDependent, and_iff_right hne, inter_eq_iInf_get,
+    codim_iInf_of_isEquation hf (inter_eq_iInf_get I ▸ hne),
+    linearIndependent_iff_card_le_finrank_span, Fintype.card_fin, not_le, Set.finrank]
 
 @[simp]
 theorem isDependent_map_inclusion {𝒜 ℬ : Arrangement k V} (h : 𝒜 ≤ ℬ) (I : List 𝒜) :
