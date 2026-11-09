@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
@@ -16,7 +16,12 @@ public import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Basic
 public import Mathlib.AlgebraicGeometry.Pullbacks
 public import Mathlib.LinearAlgebra.ExteriorAlgebra.Basic
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import OrlikSolomon.DeRham.Schemes.Instance
 import OrlikSolomon.Geometry.Schemes.PrincipalPair.Certificates
+import OrlikSolomon.Interface.Logarithms
+import OrlikSolomon.Interface.OSAlgebra
+import OrlikSolomon.Interface.ProjectiveComplement
+import OrlikSolomon.Presentation.Geometric.Projective
 
 /-!
 # The Orlik–Solomon theorem for projective hyperplane arrangements
@@ -31,14 +36,18 @@ interface of the whole library.
 
 ## Trust model
 
-The file has three parts.
+The file is arranged in the following order.
 
-* **Part I: definitions** and **Part II: statements** use only Mathlib, Lean core and earlier
-  declarations of this file. To know what the project proves, read these two parts and nothing else
-  in the repository.
-* **Part III: proofs**, in the namespace `OrlikSolomon.MainTheorem.Proof`, proves Part II with the
-  library. Nobody needs to read it: Lean's kernel checks it, and the file ends with `#print axioms`
-  on each Part II theorem, which must list only `propext`, `Classical.choice` and `Quot.sound`.
+* **Part I: definitions** uses only Mathlib, Lean core and earlier declarations of this file.
+* The **Proof region**, in `OrlikSolomon.MainTheorem.Proof`, implements the proofs with the
+  library. Clear opening and closing comments mark this region **skip this**. Lean requires these
+  helpers before the statements that use them.
+* **Part II: statements** again uses only Mathlib, Lean core and earlier interface declarations.
+* The final **`#print axioms`** commands check each Part II theorem. Only `propext`,
+  `Classical.choice` and `Quot.sound` may appear.
+
+To know what the project proves, read Part I, skip the marked Proof region, read Part II and inspect
+these axiom reports. Lean's kernel checks the skipped proofs.
 
 Two independent mechanisms enforce the first point.
 
@@ -49,23 +58,25 @@ Two independent mechanisms enforce the first point.
   discharge proof obligations of definitions, and their statements are again Mathlib only.
 * `lake exe audit` checks, on the compiled file, that every constant in the type of a declaration of
   Parts I and II, and in the value of such a definition, comes from Mathlib, from Lean core or from
-  this file outside Part III. A theorem may be cited anywhere, since a proof carries no data.
+  this file outside the Proof region. A theorem may be cited anywhere, since a proof carries
+  no data.
   `lake exe audit --interface` runs this check alone.
 
 ## How to audit
 
-Read Parts I and II. Check that `CohomologyTheory` asks for the axioms C1–C5 and for nothing that
-resembles a conclusion, that the objects of Part I are the intended ones, and that the statements of
-Part II say what they should. Then run `lake exe audit` and read the output of `#print axioms`.
+Read Part I and check that `CohomologyTheory` asks for the axioms C1–C5 and for nothing that
+resembles a conclusion, and that its objects are the intended ones. Skip the Proof region between
+its opening and closing marker comments. Read Part II and check its statements. Finally run
+`lake exe audit` and inspect the concluding `#print axioms` output, in that order.
 
 ## Design decisions
 
 * **Any class of smooth schemes.** A cohomology theory is defined on a class `𝒟` of smooth
   `k`-schemes (`SmoothSchemeClass`) that contains every smooth affine scheme and is closed under
   isomorphisms and under `X ↦ X × 𝔸¹`. The standard reading is `𝒟 = allSmooth k`: a cohomology
-  theory on all smooth `k`-schemes. Every theorem holds for every `𝒟`, and smaller classes, such as
-  `smoothAffine k`, make it stronger: a theory on a class restricts to any smaller one, and the
-  complement of a nonempty arrangement is affine, so it belongs to every class.
+  theory on all smooth `k`-schemes. Every theorem holds for every `𝒟`. A theory on a class restricts
+  to any smaller class still satisfying the four conditions; `smoothAffine k` asks the least of a
+  theory. The complement of a nonempty arrangement is affine, so it belongs to every class.
 * **Principal divisors.** The Gysin sequence is asked only for divisors with a global equation; see
   `PrincipalSmoothDivisor`.
 * **Hyperplanes are subsets of `ℙⁿ`.** `ℙⁿ` is Mathlib's `Proj k[x₀, …, xₙ]`. A hyperplane is the
@@ -298,9 +309,10 @@ form of the structure theorem.
 * C5: these maps commute with transverse pullback, and the residue satisfies the projection formula
   `r(α j^*β) = r(α) i^*β` for `α` of bidegree `(1, 1)`.
 
-Every field holds for singular cohomology with coefficients `R[T, T⁻¹]` and `T` of weight `1`, the
-Tate twist, on smooth complex varieties, and `nonempty_cohomologyTheory` constructs a nonzero
-example in Lean. -/
+These axioms are standard properties of, for example, singular cohomology of smooth complex
+varieties with coefficients `R[T, T⁻¹]`, with `T` of weight `1` for the Tate twist. They have
+not been verified for singular cohomology in Lean. The verified nonzero example is the affine
+de Rham theory of `nonempty_cohomologyTheory`. -/
 structure CohomologyTheory (𝒟 : SmoothSchemeClass k) {R : Type v} [CommRing R] {B : Type w}
     [CommRing B] [Algebra R B] (ℬ : ℤ → Submodule R B) [GradedAlgebra ℬ] where
   /-- C1: the structure map identifies `R` with the weight-zero part `ℬ 0` of `B`. -/
@@ -566,12 +578,475 @@ def ratio {𝒜 : HyperplaneArrangement k n} {K : Hyperplane k n} (hK : K ∈ �
       (HomogeneousLocalization.Away.mk (degreeGrading k n) hℓ'.isHomogeneous 1 ℓ
         (by simpa using hℓ)))
 
+/-! ## Proof region — skip this
+
+This private implementation precedes Part II because Lean declarations cannot refer forward.
+-/
+
+/- BEGIN PROOF REGION — SKIP THIS; resume at END PROOF REGION below. -/
+
+namespace Proof
+
+variable {ℬ} {𝒟 : SmoothSchemeClass k} [GradedAlgebra ℬ]
+
+private def affineObject (𝒟 : SmoothSchemeClass k) (X : (Geometric.SmoothDomain.aff k).Obj) :
+    𝒟.Obj := ⟨X.obj, 𝒟.of_isAffine _ X.property.1 X.property.2⟩
+
+private def affineInclusion (𝒟 : SmoothSchemeClass k) :
+    (Geometric.SmoothDomain.aff k).Obj ⥤ 𝒟.Obj where
+  obj := affineObject 𝒟
+  map f := ObjectProperty.homMk f.hom
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
+private def toPrincipal (𝒟 : SmoothSchemeClass k)
+    (P : Geometric.DivisorPair (Geometric.SmoothDomain.aff k)) : PrincipalSmoothDivisor 𝒟 where
+  ambient := affineObject 𝒟 P.ambient
+  closed := affineObject 𝒟 P.closed
+  compl := affineObject 𝒟 P.compl
+  i := (affineInclusion 𝒟).map P.i
+  j := (affineInclusion 𝒟).map P.j
+  eqn := P.eqn
+  eqn_mem_nonZeroDivisors := P.isRegularSection_eqn
+  isClosedImmersion_i := P.isClosedImmersion_i
+  ker_i := P.ker_i
+  isOpenImmersion_j := P.isOpenImmersion_j
+  opensRange_j := P.opensRange_j
+
+private def toPrincipalHom {P Q : Geometric.DivisorPair (Geometric.SmoothDomain.aff k)}
+    (f : P ⟶ Q) : (toPrincipal 𝒟 P).Hom (toPrincipal 𝒟 Q) where
+  ambient := (affineInclusion 𝒟).map f.ambient
+  closed := (affineInclusion 𝒟).map f.closed
+  compl := (affineInclusion 𝒟).map f.compl
+  i_comp := by
+    change (affineInclusion 𝒟).map P.i ≫ (affineInclusion 𝒟).map f.ambient =
+      (affineInclusion 𝒟).map f.closed ≫ (affineInclusion 𝒟).map Q.i
+    simpa only [Functor.map_comp] using congrArg (affineInclusion 𝒟).map f.i_comp
+  j_comp := by
+    change (affineInclusion 𝒟).map P.j ≫ (affineInclusion 𝒟).map f.ambient =
+      (affineInclusion 𝒟).map f.compl ≫ (affineInclusion 𝒟).map Q.j
+    simpa only [Functor.map_comp] using congrArg (affineInclusion 𝒟).map f.j_comp
+  associated_eqn := f.associated_eqn
+
+private def affineTheory (T : CohomologyTheory.{u, v, w, z} 𝒟 ℬ) :
+    Geometric.OrdinaryTheory.{u, v, w, z} (Geometric.SmoothDomain.aff k) ℬ where
+  bijective_algebraMap_gradeZero := T.bijective_algebraMap_gradeZero
+  C := (affineInclusion 𝒟).op ⋙ T.C
+  algebra X := T.algebra ((affineInclusion 𝒟).obj X)
+  isScalarTower X := T.isScalarTower ((affineInclusion 𝒟).obj X)
+  grading X := T.grading ((affineInclusion 𝒟).obj X)
+  gradedAlgebra X := T.gradedAlgebra ((affineInclusion 𝒟).obj X)
+  algebraMap_mem_grading X {w} {b} hb :=
+    T.algebraMap_mem_grading ((affineInclusion 𝒟).obj X) hb
+  isHomogeneousOfShift_map f := by
+    intro ⟨p, w⟩ x hx
+    change T.C.map ((affineInclusion 𝒟).map f).op x ∈
+      T.grading ((affineInclusion 𝒟).obj _) ((p, w) + 0)
+    simpa only [add_zero] using T.map_mem_grading ((affineInclusion 𝒟).map f) hx
+  isGradedCommutative X := by
+    intro ⟨p, w⟩ ⟨q, v⟩ x y hx hy
+    exact T.mul_comm_of_mem_grading (affineObject 𝒟 X) hx hy
+  bijective_algebraMap_point := T.bijective_algebraMap_point
+  eq_zero_of_mem_grading_point {p} {w} hp {x} hx := T.eq_zero_of_mem_grading_point hp hx
+  bijective_pullback_affineLine X := T.bijective_map_prodAffineLineFst (affineObject 𝒟 X)
+  gysin P := T.gysin (toPrincipal 𝒟 P)
+  residue P := T.residue (toPrincipal 𝒟 P)
+  isHomogeneousOfShift_gysin P := by
+    intro ⟨p, w⟩ x hx
+    exact T.gysin_mem_grading (toPrincipal 𝒟 P) hx
+  isHomogeneousOfShift_residue P := by
+    intro ⟨p, w⟩ x hx
+    change T.residue (toPrincipal 𝒟 P) x ∈ T.grading (toPrincipal 𝒟 P).closed
+      ((p, w) + (-1, -1))
+    simpa only [sub_eq_add_neg, Prod.mk_add_mk] using T.residue_mem_grading (toPrincipal 𝒟 P) hx
+  exact_gysin_map P := T.exact_gysin_map (toPrincipal 𝒟 P)
+  exact_map_residue P := T.exact_map_residue (toPrincipal 𝒟 P)
+  exact_residue_gysin P := T.exact_residue_gysin (toPrincipal 𝒟 P)
+  gysin_map f x := T.gysin_map (toPrincipalHom f) x
+  residue_map f x := T.residue_map (toPrincipalHom f) x
+  residue_mul_map P {α} hα β := T.residue_mul_map (toPrincipal 𝒟 P) hα β
+
+private def toPair (P : PrincipalSmoothDivisor (SmoothSchemeClass.smoothAffine k)) :
+    Geometric.DivisorPair (Geometric.SmoothDomain.aff k) where
+  ambient := P.ambient
+  closed := P.closed
+  compl := P.compl
+  i := P.i
+  j := P.j
+  eqn := P.eqn
+  isRegularSection_eqn := P.eqn_mem_nonZeroDivisors
+  isClosedImmersion_i := P.isClosedImmersion_i
+  ker_i := P.ker_i
+  isOpenImmersion_j := P.isOpenImmersion_j
+  opensRange_j := P.opensRange_j
+
+private def toPairHom {P Q : PrincipalSmoothDivisor (SmoothSchemeClass.smoothAffine k)}
+    (f : P.Hom Q) : toPair P ⟶ toPair Q where
+  ambient := f.ambient
+  closed := f.closed
+  compl := f.compl
+  i_comp := f.i_comp
+  j_comp := f.j_comp
+  associated_eqn := f.associated_eqn
+
+private def fromGeometric
+    (T : Geometric.OrdinaryTheory.{u, v, w, z} (Geometric.SmoothDomain.aff k) ℬ) :
+    CohomologyTheory.{u, v, w, z} (SmoothSchemeClass.smoothAffine k) ℬ where
+  bijective_algebraMap_gradeZero := T.bijective_algebraMap_gradeZero
+  C := T.C
+  algebra X := T.algebra X
+  isScalarTower X := T.isScalarTower X
+  grading := T.grading
+  gradedAlgebra X := T.gradedAlgebra X
+  algebraMap_mem_grading := T.algebraMap_mem_grading
+  map_mem_grading {X} {Y} f {p} {w} {x} hx := by
+    change T.C.map f.op x ∈ T.grading X (p, w)
+    have hm := T.isHomogeneousOfShift_map f hx
+    change T.C.map f.op x ∈ T.grading X ((p, w) + 0) at hm
+    simpa only [add_zero] using hm
+  mul_comm_of_mem_grading X {p} {w} {q} {v} {x} {y} hx hy := T.isGradedCommutative X hx hy
+  bijective_algebraMap_point := T.bijective_algebraMap_point
+  eq_zero_of_mem_grading_point := T.eq_zero_of_mem_grading_point
+  bijective_map_prodAffineLineFst := T.bijective_pullback_affineLine
+  gysin P := T.gysin (toPair P)
+  residue P := T.residue (toPair P)
+  gysin_mem_grading P {p} {w} {x} hx := T.isHomogeneousOfShift_gysin (toPair P) hx
+  residue_mem_grading P {p} {w} {x} hx := by
+    change T.residue (toPair P) x ∈ T.grading (toPair P).closed (p - 1, w - 1)
+    simpa only [sub_eq_add_neg, Prod.mk_add_mk] using
+      T.isHomogeneousOfShift_residue (toPair P) hx
+  exact_gysin_map P := T.exact_gysin_map (toPair P)
+  exact_map_residue P := T.exact_map_residue (toPair P)
+  exact_residue_gysin P := T.exact_residue_gysin (toPair P)
+  gysin_map f x := T.gysin_map (toPairHom f) x
+  residue_map f x := T.residue_map (toPairHom f) x
+  residue_mul_map P {α} hα β := T.residue_mul_map (toPair P) hα β
+
+private theorem toPrincipal_standardPair :
+    toPrincipal 𝒟 (Interface.standardPair (Geometric.SmoothDomain.aff k)) = standardDivisor 𝒟 := rfl
+
+private theorem fundamentalClass_iff (T : CohomologyTheory.{u, v, w, z} 𝒟 ℬ)
+    (τ : T.C.obj (op 𝒟.multiplicativeGroup)) :
+    T.IsFundamentalClass τ ↔ τ = (affineTheory T).tau :=
+  Interface.mem_grading_and_residue_eq_one_iff (affineTheory T)
+
+private theorem fundamentalClass_existsUnique (T : CohomologyTheory.{u, v, w, z} 𝒟 ℬ) :
+    ∃! τ, T.IsFundamentalClass τ :=
+  Interface.existsUnique_mem_grading_and_residue_eq_one (affineTheory T)
+
+private theorem equation_iff {H : Set (MainTheorem.projectiveSpace k n).left}
+    {ℓ : MvPolynomial (Fin (n + 1)) k} :
+    MainTheorem.IsEquation H ℓ ↔ Interface.IsEquation H ℓ :=
+  ⟨fun h ↦ ⟨h.isHomogeneous, h.ne_zero, h.zeroLocus_eq⟩,
+    fun h ↦ ⟨h.isHomogeneous, h.ne_zero, h.zeroLocus_eq⟩⟩
+
+private def hyperplaneEquiv : MainTheorem.Hyperplane k n ≃ Interface.Hyperplane k n :=
+  Equiv.subtypeEquivRight fun H ↦ exists_congr fun ℓ ↦ equation_iff (H := H) (ℓ := ℓ)
+
+@[simp] private theorem coe_hyperplaneEquiv (H : MainTheorem.Hyperplane k n) :
+    (hyperplaneEquiv H).1 = H.1 := rfl
+
+private def arrangement (𝒜 : MainTheorem.HyperplaneArrangement k n) :
+    Interface.HyperplaneArrangement k n := 𝒜.map hyperplaneEquiv.toEmbedding
+
+@[simp] private theorem mem_arrangement {𝒜 : MainTheorem.HyperplaneArrangement k n}
+    {H : Interface.Hyperplane k n} : H ∈ arrangement 𝒜 ↔ hyperplaneEquiv.symm H ∈ 𝒜 := by
+  simp [arrangement]
+
+private def arrangementEquiv (𝒜 : MainTheorem.HyperplaneArrangement k n) : 𝒜 ≃ arrangement 𝒜 :=
+  .ofBijective (fun H ↦ ⟨hyperplaneEquiv H, by simp [H.2]⟩)
+    ⟨fun H K h ↦ Subtype.ext (hyperplaneEquiv.injective (congrArg Subtype.val h)),
+      fun K ↦ by
+        refine ⟨⟨hyperplaneEquiv.symm K, mem_arrangement.1 K.2⟩, ?_⟩
+        apply Subtype.ext
+        exact hyperplaneEquiv.apply_symm_apply (K : Interface.Hyperplane k n)⟩
+
+@[simp] private theorem coe_arrangementEquiv {𝒜 : MainTheorem.HyperplaneArrangement k n} (H : 𝒜) :
+    (arrangementEquiv 𝒜 H).1.1 = H.1.1 := rfl
+
+private theorem union_arrangement (𝒜 : MainTheorem.HyperplaneArrangement k n) :
+    (⋃ H ∈ arrangement 𝒜, (H : Set (Interface.projectiveSpace k n).left)) =
+      ⋃ H ∈ 𝒜, (H : Set (MainTheorem.projectiveSpace k n).left) := by
+  ext x
+  constructor
+  · intro hx
+    obtain ⟨H, hH, hx⟩ := Set.mem_iUnion₂.1 hx
+    obtain ⟨K, hK, rfl⟩ := Finset.mem_map.1 hH
+    exact Set.mem_iUnion₂.2 ⟨K, hK, hx⟩
+  · intro hx
+    obtain ⟨H, hH, hx⟩ := Set.mem_iUnion₂.1 hx
+    exact Set.mem_iUnion₂.2 ⟨hyperplaneEquiv H, Finset.mem_map.2 ⟨H, hH, rfl⟩, hx⟩
+
+private theorem dependent_iff {𝒜 : MainTheorem.HyperplaneArrangement k n} (S : List 𝒜) :
+    MainTheorem.IsDependent S ↔ Interface.IsDependent (S.map (arrangementEquiv 𝒜)) := by
+  let e := arrangementEquiv 𝒜
+  let ef : Fin (S.map e).length ≃ Fin S.length := finCongr (List.length_map (as := S) e)
+  have hget (j : Fin (S.map e).length) : (S.map e).get j = e (S.get (ef j)) := by
+    simp [ef, List.get_eq_getElem]
+  constructor
+  · rintro ⟨ℓ, hℓ, hdep⟩
+    refine ⟨ℓ ∘ ef, ?_, ?_⟩
+    · intro j
+      change Interface.IsEquation (((S.map e).get j).1.1) (ℓ (ef j))
+      rw [hget]
+      exact equation_iff.1 (hℓ (ef j))
+    · exact fun hli ↦ hdep ((linearIndependent_equiv ef).1 hli)
+  · rintro ⟨ℓ, hℓ, hdep⟩
+    refine ⟨ℓ ∘ ef.symm, ?_, ?_⟩
+    · intro j
+      apply equation_iff.2
+      have ht := hℓ (ef.symm j)
+      change Interface.IsEquation (((S.map e).get (ef.symm j)).1.1) (ℓ (ef.symm j)) at ht
+      rw [hget, ef.apply_symm_apply] at ht
+      exact ht
+    · exact fun hli ↦ hdep ((linearIndependent_equiv ef.symm).1 hli)
+
+private theorem complementOpens_eq (𝒜 : MainTheorem.HyperplaneArrangement k n) :
+    MainTheorem.complementOpens 𝒜 = Interface.complementOpens (arrangement 𝒜) := by
+  apply TopologicalSpace.Opens.ext
+  exact congrArg (fun Z ↦ Zᶜ) (union_arrangement 𝒜).symm
+
+private def complementReindexIso (𝒜 : MainTheorem.HyperplaneArrangement k n) :
+    MainTheorem.complement 𝒜 ≅ Interface.complement (arrangement 𝒜) :=
+  Over.isoMk ((MainTheorem.projectiveSpace k n).left.isoOfEq (complementOpens_eq 𝒜)) (by
+    change (((MainTheorem.projectiveSpace k n).left.isoOfEq (complementOpens_eq 𝒜)).hom ≫
+      (Interface.complementOpens (arrangement 𝒜)).ι) ≫ (MainTheorem.projectiveSpace k n).hom =
+        (MainTheorem.complementOpens 𝒜).ι ≫ (MainTheorem.projectiveSpace k n).hom
+    exact congrArg (fun f ↦ f ≫ (MainTheorem.projectiveSpace k n).hom)
+      (Scheme.isoOfEq_hom_ι _ (complementOpens_eq 𝒜)))
+
+private theorem isoOfEq_appTop_appLE {X : Scheme.{u}} {U V : X.Opens} (h : U = V)
+    {W : X.Opens} (hu : ⊤ ≤ U.ι ⁻¹ᵁ W) (hv : ⊤ ≤ V.ι ⁻¹ᵁ W) (s : Γ(X, W)) :
+    (X.isoOfEq h).hom.appTop (V.ι.appLE W ⊤ hv s) = U.ι.appLE W ⊤ hu s := by
+  subst V
+  simp
+
+private theorem complementReindexIso_hom_appTop_ratio {𝒜 : MainTheorem.HyperplaneArrangement k n}
+    {K : MainTheorem.Hyperplane k n} (hK : K ∈ 𝒜)
+    {ℓ ℓ' : MvPolynomial (Fin (n + 1)) k} (hℓ : ℓ.IsHomogeneous 1)
+    (hℓ' : MainTheorem.IsEquation K ℓ') :
+    (complementReindexIso 𝒜).hom.left.appTop
+        (Interface.ratio (𝒜 := arrangement 𝒜) (K := hyperplaneEquiv K)
+          (by simpa using hK) hℓ (equation_iff.1 hℓ')) =
+      MainTheorem.ratio hK hℓ hℓ' := by
+  exact isoOfEq_appTop_appLE (complementOpens_eq 𝒜) _ _ _
+
+private theorem actual_complement_isAffine_smooth (𝒜 : MainTheorem.HyperplaneArrangement k n)
+    (h𝒜 : 𝒜.Nonempty) : IsAffine (MainTheorem.complement 𝒜).left ∧
+      Smooth (MainTheorem.complement 𝒜).hom := by
+  have hne : (arrangement 𝒜).Nonempty := by
+    obtain ⟨H, hH⟩ := h𝒜
+    exact ⟨hyperplaneEquiv H, by simpa using hH⟩
+  have h := Interface.complement_isAffine_smooth (arrangement 𝒜) hne
+  have := h.1
+  have := h.2
+  refine ⟨.of_isIso (complementReindexIso 𝒜).hom.left, ?_⟩
+  have hcomp : Smooth ((complementReindexIso 𝒜).hom.left ≫
+      (Interface.complement (arrangement 𝒜)).hom) := inferInstance
+  exact (Over.w (complementReindexIso 𝒜).hom) ▸ hcomp
+
+private theorem actual_isUnit_ratio {𝒜 : MainTheorem.HyperplaneArrangement k n}
+    {H K : MainTheorem.Hyperplane k n} (hH : H ∈ 𝒜) (hK : K ∈ 𝒜)
+    {ℓ ℓ' : MvPolynomial (Fin (n + 1)) k}
+    (hℓ : MainTheorem.IsEquation H ℓ) (hℓ' : MainTheorem.IsEquation K ℓ') :
+    IsUnit (MainTheorem.ratio hK hℓ.isHomogeneous hℓ') := by
+  let : Nonempty (arrangement 𝒜) := ⟨⟨hyperplaneEquiv H, by simpa using hH⟩⟩
+  have hu := Interface.isUnit_ratio (arrangement 𝒜)
+    (H := hyperplaneEquiv H) (K := hyperplaneEquiv K)
+    (by simpa using hH) (by simpa using hK) (equation_iff.1 hℓ) (equation_iff.1 hℓ')
+  have hm := hu.map ((complementReindexIso 𝒜).hom.left.appTop.hom)
+  exact (complementReindexIso_hom_appTop_ratio hK hℓ.isHomogeneous hℓ') ▸ hm
+
+private instance arrangement_nonempty (𝒜 : MainTheorem.HyperplaneArrangement k n) [Nonempty 𝒜] :
+    Nonempty (arrangement 𝒜) := (arrangementEquiv 𝒜).symm.nonempty
+
+private def actualComplementIso (𝒜 : MainTheorem.HyperplaneArrangement k n) :
+    MainTheorem.complement 𝒜 ≅
+      Geometric.projectiveComplement (Interface.toProjectiveArrangement (arrangement 𝒜)) :=
+  complementReindexIso 𝒜 ≪≫ Interface.complementIso (arrangement 𝒜)
+
+private theorem actualComplementIso_hom_appTop_projectiveRatio
+    {𝒜 : MainTheorem.HyperplaneArrangement k n} [Nonempty 𝒜]
+    {H K : MainTheorem.Hyperplane k n} (hH : H ∈ 𝒜) (hK : K ∈ 𝒜)
+    {ℓ ℓ' : MvPolynomial (Fin (n + 1)) k}
+    (hℓ : MainTheorem.IsEquation H ℓ) (hℓ' : MainTheorem.IsEquation K ℓ') :
+    (actualComplementIso 𝒜).hom.left.appTop
+        (Geometric.projectiveRatio
+          (Interface.ker_toDual_mem_toProjectiveArrangement (𝒜 := arrangement 𝒜)
+            (H := hyperplaneEquiv H) (by simpa using hH) (equation_iff.1 hℓ))
+          (Interface.ker_toDual_mem_toProjectiveArrangement (𝒜 := arrangement 𝒜)
+            (H := hyperplaneEquiv K) (by simpa using hK) (equation_iff.1 hℓ')) :
+          Γ((Geometric.projectiveComplement
+            (Interface.toProjectiveArrangement (arrangement 𝒜))).left, ⊤)) =
+      MainTheorem.ratio hK hℓ.isHomogeneous hℓ' := by
+  change ((complementReindexIso 𝒜).hom.left ≫
+    (Interface.complementIso (arrangement 𝒜)).hom.left).appTop _ = _
+  rw [Scheme.Hom.comp_appTop, CommRingCat.comp_apply,
+    Interface.complementIso_hom_appTop_projectiveRatio (arrangement 𝒜)
+      (H := hyperplaneEquiv H) (K := hyperplaneEquiv K) (by simpa using hH)
+      (by simpa using hK) (equation_iff.1 hℓ) (equation_iff.1 hℓ')]
+  exact complementReindexIso_hom_appTop_ratio hK hℓ.isHomogeneous hℓ'
+
+
+private theorem affineComplement_property (𝒜 : HyperplaneArrangement k n)
+    (h𝒜 : 𝒜.Nonempty) : (Geometric.SmoothDomain.aff k).property (complement 𝒜) :=
+  actual_complement_isAffine_smooth 𝒜 h𝒜
+
+private def affineComplement (𝒜 : HyperplaneArrangement k n) (h𝒜 : 𝒜.Nonempty) :
+    (Geometric.SmoothDomain.aff k).Obj :=
+  ⟨complement 𝒜, affineComplement_property 𝒜 h𝒜⟩
+
+private def classComplement (𝒟 : SmoothSchemeClass k) (𝒜 : HyperplaneArrangement k n)
+    (h𝒜 : 𝒜.Nonempty) : 𝒟.Obj := affineObject 𝒟 (affineComplement 𝒜 h𝒜)
+
+private theorem hom_ratio_existsUnique (𝒟 : SmoothSchemeClass k)
+    {𝒜 : HyperplaneArrangement k n} (h𝒜 : 𝒜.Nonempty)
+    {H K : Hyperplane k n} (hH : H ∈ 𝒜) (hK : K ∈ 𝒜)
+    {ℓ ℓ' : MvPolynomial (Fin (n + 1)) k} (hℓ : IsEquation H ℓ) (hℓ' : IsEquation K ℓ') :
+    ∃! g : classComplement 𝒟 𝒜 h𝒜 ⟶ 𝒟.multiplicativeGroup,
+      g.hom.left.appTop (gmCoordinate k) = ratio hK hℓ.isHomogeneous hℓ' := by
+  obtain ⟨g, hg, hu⟩ := (Interface.existsUnique_hom_gm_iff (complement 𝒜)
+    (ratio hK hℓ.isHomogeneous hℓ')).2 (actual_isUnit_ratio hH hK hℓ hℓ')
+  refine ⟨ObjectProperty.homMk g, hg, fun g' hg' ↦ ?_⟩
+  exact ObjectProperty.hom_ext _ (hu g'.hom hg')
+
+private def geometricComplementIso (𝒜 : HyperplaneArrangement k n) [Nonempty 𝒜]
+    (h𝒜 : 𝒜.Nonempty) :
+    affineComplement 𝒜 h𝒜 ≅ (Geometric.SmoothDomain.aff k).projectiveComplement
+      (Interface.toProjectiveArrangement (arrangement 𝒜)) :=
+  ObjectProperty.isoMk _ (actualComplementIso 𝒜)
+
+private theorem ratioClass_pull (T : CohomologyTheory.{u, v, w, z} 𝒟 ℬ)
+    {𝒜 : HyperplaneArrangement k n} [Nonempty 𝒜] (h𝒜 : 𝒜.Nonempty)
+    {H K : Hyperplane k n} (hH : H ∈ 𝒜) (hK : K ∈ 𝒜)
+    {ℓ ℓ' : MvPolynomial (Fin (n + 1)) k} (hℓ : IsEquation H ℓ) (hℓ' : IsEquation K ℓ')
+    (τ : T.C.obj (op 𝒟.multiplicativeGroup)) (hτ : T.IsFundamentalClass τ)
+    (g : classComplement 𝒟 𝒜 h𝒜 ⟶ 𝒟.multiplicativeGroup)
+    (hg : g.hom.left.appTop (gmCoordinate k) = ratio hK hℓ.isHomogeneous hℓ') :
+    (affineTheory T).pullIso (geometricComplementIso 𝒜 h𝒜)
+      ((affineTheory T).logClass
+        (Geometric.projectiveRatio
+          (Interface.ker_toDual_mem_toProjectiveArrangement (𝒜 := arrangement 𝒜)
+            (H := hyperplaneEquiv H) (by simpa using hH) (equation_iff.1 hℓ))
+          (Interface.ker_toDual_mem_toProjectiveArrangement (𝒜 := arrangement 𝒜)
+            (H := hyperplaneEquiv K) (by simpa using hK) (equation_iff.1 hℓ')))) =
+      T.C.map g.op τ := by
+  rw [Geometric.OrdinaryTheory.pullIso_apply, Geometric.OrdinaryTheory.pull_logClass]
+  symm
+  change (affineTheory T).pull
+    (ObjectProperty.homMk g.hom : affineComplement 𝒜 h𝒜 ⟶ (Geometric.SmoothDomain.aff k).gm)
+    τ = _
+  rw [(fundamentalClass_iff T τ).1 hτ]
+  apply Interface.pull_tau_eq_logClass
+  exact hg.trans (actualComplementIso_hom_appTop_projectiveRatio hH hK hℓ hℓ').symm
+
+namespace SourceAlgebra
+
+variable (𝒜 : MainTheorem.HyperplaneArrangement k n)
+
+private def coneIndexEquiv : 𝒜 ≃ (Interface.toProjectiveArrangement (arrangement 𝒜)).cone :=
+  (arrangementEquiv 𝒜).trans (Interface.coneHyperplaneEquiv (arrangement 𝒜))
+
+private theorem dependence_iff (S : List 𝒜) :
+    MainTheorem.IsDependent S ↔ Arrangement.IsDependent (S.map (coneIndexEquiv 𝒜)) := by
+  have h := (dependent_iff S).trans
+    (Interface.isDependent_iff_cone (S.map (arrangementEquiv 𝒜)))
+  simpa only [List.map_map, coneIndexEquiv, Equiv.coe_trans] using h
+
+variable (B) [Nonempty 𝒜]
+
+private def projectiveSourceEquiv :
+    MainTheorem.projectiveOrlikSolomonAlgebra B 𝒜 ≃ₐ[B]
+      OSAlgebra.projectiveAlgebra B
+        (Interface.toProjectiveArrangement (arrangement 𝒜)).cone_isCentral :=
+  Interface.projectiveAlgebraEquiv B 𝒜 (MainTheorem.IsDependent (𝒜 := 𝒜))
+    (coneIndexEquiv 𝒜) (fun S _ ↦ dependence_iff 𝒜 S)
+      (Interface.toProjectiveArrangement (arrangement 𝒜)).cone_isCentral
+
+private theorem projectiveSourceEquiv_generator (H K : 𝒜) :
+    projectiveSourceEquiv (B := B) 𝒜 (MainTheorem.projectiveGenerator B 𝒜 H K) =
+      OSAlgebra.projectiveDifference B
+        (Interface.toProjectiveArrangement (arrangement 𝒜)).cone_isCentral
+        (coneIndexEquiv 𝒜 H) (coneIndexEquiv 𝒜 K) := by
+  apply Subtype.ext
+  exact Interface.coe_projectiveAlgebraEquiv_projectiveGenerator B 𝒜
+    (MainTheorem.IsDependent (𝒜 := 𝒜)) (coneIndexEquiv 𝒜)
+    (fun S _ ↦ dependence_iff 𝒜 S)
+    (Interface.toProjectiveArrangement (arrangement 𝒜)).cone_isCentral H K
+
+variable (ℬ)
+
+omit [GradedAlgebra ℬ] in
+private theorem projectiveSourceEquiv_mem_grading_iff (i : ℤ × ℤ)
+    (x : MainTheorem.projectiveOrlikSolomonAlgebra B 𝒜) :
+    projectiveSourceEquiv (B := B) 𝒜 x ∈ OSAlgebra.projectiveBigrading B ℬ
+      (Interface.toProjectiveArrangement (arrangement 𝒜)).cone_isCentral i ↔
+        x ∈ MainTheorem.projectiveOrlikSolomonGrading B 𝒜 ℬ i :=
+  Interface.projectiveAlgebraEquiv_mem_projectiveBigrading_iff B 𝒜
+    (MainTheorem.IsDependent (𝒜 := 𝒜)) ℬ (coneIndexEquiv 𝒜)
+    (fun S _ ↦ dependence_iff 𝒜 S)
+    (Interface.toProjectiveArrangement (arrangement 𝒜)).cone_isCentral i x
+
+end SourceAlgebra
+
+private def canonicalEquiv (T : CohomologyTheory.{u, v, w, z} 𝒟 ℬ)
+    (𝒜 : HyperplaneArrangement k n) [Nonempty 𝒜] (h𝒜 : 𝒜.Nonempty) :
+    projectiveOrlikSolomonAlgebra B 𝒜 ≃ₐ[B] T.C.obj (op (classComplement 𝒟 𝒜 h𝒜)) :=
+  ((SourceAlgebra.projectiveSourceEquiv (B := B) 𝒜).trans
+    ((affineTheory T).projectiveEquiv (Interface.toProjectiveArrangement (arrangement 𝒜)))).trans
+      ((affineTheory T).pullIso (geometricComplementIso 𝒜 h𝒜))
+
+private theorem canonicalEquiv_mem_grading_iff (T : CohomologyTheory.{u, v, w, z} 𝒟 ℬ)
+    (𝒜 : HyperplaneArrangement k n) [Nonempty 𝒜] (h𝒜 : 𝒜.Nonempty)
+    (i : ℤ × ℤ) (x : projectiveOrlikSolomonAlgebra B 𝒜) :
+    canonicalEquiv T 𝒜 h𝒜 x ∈ T.grading (classComplement 𝒟 𝒜 h𝒜) i ↔
+      x ∈ projectiveOrlikSolomonGrading B 𝒜 ℬ i := by
+  change (affineTheory T).pullIso (geometricComplementIso 𝒜 h𝒜)
+    ((affineTheory T).projectiveEquiv _ (SourceAlgebra.projectiveSourceEquiv (B := B) 𝒜 x)) ∈
+      (affineTheory T).grading (affineComplement 𝒜 h𝒜) i ↔ _
+  rw [Geometric.OrdinaryTheory.pullIso_mem_grading_iff,
+    Geometric.OrdinaryTheory.projectiveEquiv_mem_grading_iff]
+  exact SourceAlgebra.projectiveSourceEquiv_mem_grading_iff (B := B) (ℬ := ℬ) 𝒜 i x
+
+private theorem canonicalEquiv_image_grading (T : CohomologyTheory.{u, v, w, z} 𝒟 ℬ)
+    (𝒜 : HyperplaneArrangement k n) [Nonempty 𝒜] (h𝒜 : 𝒜.Nonempty) (i : ℤ × ℤ) :
+    canonicalEquiv T 𝒜 h𝒜 '' (projectiveOrlikSolomonGrading B 𝒜 ℬ i : Set _) =
+      T.grading (classComplement 𝒟 𝒜 h𝒜) i := by
+  ext y
+  obtain ⟨x, rfl⟩ := (canonicalEquiv T 𝒜 h𝒜).surjective y
+  rw [(canonicalEquiv T 𝒜 h𝒜).injective.mem_set_image]
+  exact (canonicalEquiv_mem_grading_iff T 𝒜 h𝒜 i x).symm
+
+private theorem canonicalEquiv_generator (T : CohomologyTheory.{u, v, w, z} 𝒟 ℬ)
+    (𝒜 : HyperplaneArrangement k n) [Nonempty 𝒜] (h𝒜 : 𝒜.Nonempty) (H K : 𝒜)
+    {ℓ ℓ' : MvPolynomial (Fin (n + 1)) k}
+    (hℓ : IsEquation (H : Hyperplane k n) ℓ) (hℓ' : IsEquation (K : Hyperplane k n) ℓ')
+    (τ : T.C.obj (op 𝒟.multiplicativeGroup)) (hτ : T.IsFundamentalClass τ)
+    (g : classComplement 𝒟 𝒜 h𝒜 ⟶ 𝒟.multiplicativeGroup)
+    (hg : g.hom.left.appTop (gmCoordinate k) = ratio K.2 hℓ.isHomogeneous hℓ') :
+    canonicalEquiv T 𝒜 h𝒜 (projectiveGenerator B 𝒜 H K) = T.C.map g.op τ := by
+  change (affineTheory T).pullIso _ ((affineTheory T).projectiveEquiv _
+    (SourceAlgebra.projectiveSourceEquiv (B := B) 𝒜 (projectiveGenerator B 𝒜 H K))) = _
+  rw [SourceAlgebra.projectiveSourceEquiv_generator]
+  have hker := Interface.hyperplaneSubmodule_eq_ker (H := hyperplaneEquiv (H : Hyperplane k n))
+    (equation_iff.1 hℓ)
+  have hker' := Interface.hyperplaneSubmodule_eq_ker (H := hyperplaneEquiv (K : Hyperplane k n))
+    (equation_iff.1 hℓ')
+  simp only [SourceAlgebra.coneIndexEquiv, Interface.coneHyperplaneEquiv, Equiv.trans_apply]
+  rw [Geometric.OrdinaryTheory.projectiveEquiv_difference_of_ker_eq _ _ _ _
+    (ℓ := Interface.toDual ℓ) (ℓ' := Interface.toDual ℓ') hker.symm hker'.symm]
+  exact ratioClass_pull T h𝒜 H.2 K.2 hℓ hℓ' τ hτ g hg
+
+end Proof
+
+/- END PROOF REGION — resume reading here. -/
+
 /-! ## Part II: statements -/
 
 /-- The complement of a nonempty arrangement is affine and smooth over `k`. -/
 theorem complement_isAffine_smooth (h𝒜 : 𝒜.Nonempty) :
     IsAffine (complement 𝒜).left ∧ Smooth (complement 𝒜).hom :=
-  sorry
+  Proof.actual_complement_isAffine_smooth 𝒜 h𝒜
 
 /-- The complement of a nonempty arrangement, as a member of `𝒟`. It is one by
 `complement_isAffine_smooth`, since every class contains the smooth affine schemes. This definition
@@ -586,7 +1061,7 @@ variable {𝒟 : SmoothSchemeClass k} {ℬ} [GradedAlgebra ℬ]
 /-- Every cohomology theory, on any class `𝒟`, has exactly one fundamental class. -/
 theorem existsUnique_fundamentalClass (T : CohomologyTheory.{u, v, w, z} 𝒟 ℬ) :
     ∃! τ, T.IsFundamentalClass τ :=
-  sorry
+  Proof.fundamentalClass_existsUnique T
 
 /-- For equations `ℓ` and `ℓ'` of hyperplanes of `𝒜`, there is exactly one morphism of `k`-schemes
 `g : U → 𝔾ₘ` that pulls the coordinate back to `ℓ / ℓ'`. In particular `ℓ / ℓ'` is a unit. The
@@ -596,7 +1071,7 @@ theorem existsUnique_hom_ratio (𝒟 : SmoothSchemeClass k) {𝒜 : HyperplaneAr
     {ℓ ℓ' : MvPolynomial (Fin (n + 1)) k} (hℓ : IsEquation H ℓ) (hℓ' : IsEquation K ℓ') :
     ∃! g : complementObj 𝒟 h𝒜 ⟶ 𝒟.multiplicativeGroup,
       g.hom.left.appTop (gmCoordinate k) = ratio hK hℓ.isHomogeneous hℓ' :=
-  sorry
+  Proof.hom_ratio_existsUnique 𝒟 h𝒜 hH hK hℓ hℓ'
 
 /-- **The Orlik–Solomon theorem.** Let `T` be a cohomology theory on a class `𝒟` of smooth
 `k`-schemes, and let `𝒜` be a nonempty arrangement of hyperplanes in `ℙⁿ_k`, with complement `U`.
@@ -623,8 +1098,10 @@ theorem orlikSolomon (T : CohomologyTheory.{u, v, w, z} 𝒟 ℬ) (𝒜 : Hyperp
           g.hom.left.appTop (gmCoordinate k) = ratio K.2 hℓ.isHomogeneous hℓ' →
           Φ (projectiveGenerator B 𝒜 H K) = T.C.map g.op τ) ∧
       ∀ p w : ℤ, Φ '' (projectiveOrlikSolomonGrading B 𝒜 ℬ (p, w) : Set _) =
-        T.grading (complementObj 𝒟 h𝒜) (p, w) :=
-  sorry
+        T.grading (complementObj 𝒟 h𝒜) (p, w) := by
+  let : Nonempty 𝒜 := 𝒜.nonempty_coe_sort.mpr h𝒜
+  exact ⟨Proof.canonicalEquiv T 𝒜 h𝒜, Proof.canonicalEquiv_generator T 𝒜 h𝒜,
+    fun p w ↦ Proof.canonicalEquiv_image_grading T 𝒜 h𝒜 (p, w)⟩
 
 /-- **The axioms are consistent.** For a field `k` of characteristic zero, algebraic de Rham
 cohomology with coefficients `B = k[T, T⁻¹]`, graded by `ℬ w = k T^w`, is a cohomology theory on
@@ -637,12 +1114,14 @@ affine, through hypercohomology, which is not formalized. -/
 theorem nonempty_cohomologyTheory (k : Type u) [Field k] [CharZero k] :
     Nonempty (CohomologyTheory.{u, u, u, u} (SmoothSchemeClass.smoothAffine k)
       (AddMonoidAlgebra.grade k : ℤ → Submodule k k[T;T⁻¹])) :=
-  sorry
+  ⟨Proof.fromGeometric (Geometric.DeRham.ordinaryTheory k)⟩
 
-/-! ## Part III: proofs
+/-! ## Axiom reports -/
 
-The proofs of Part II, in the namespace `OrlikSolomon.MainTheorem.Proof`, are added once the
-statements above are approved (#140). The file will end with `#print axioms` on each theorem of
-Part II. -/
+#print axioms complement_isAffine_smooth
+#print axioms existsUnique_fundamentalClass
+#print axioms existsUnique_hom_ratio
+#print axioms orlikSolomon
+#print axioms nonempty_cohomologyTheory
 
 end OrlikSolomon.MainTheorem
