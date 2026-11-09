@@ -38,6 +38,10 @@ With the ambient space fixed, the statement would not supply its own induction h
  * Input
  * Output
 *
+ * {ref "main-theorem"}[The main theorem]
+ * Mathlib objects, and an explicit structure of cohomology axioms
+ * one auditable projective statement, its generator formula, its onto grading pieces, and the verified nonzero affine de Rham example
+*
  * {ref "algebra"}[Reusable algebra]
  * nothing about arrangements or cohomology
  * gradings by submodules, exterior words with signs, and a quotient with both an algebra and a linear universal property

@@ -191,6 +191,7 @@ public import OrlikSolomon.Interface.Logarithms
 public import OrlikSolomon.Interface.OSAlgebra
 public import OrlikSolomon.Interface.ProjectiveComplement
 public import OrlikSolomon.Interface.ProjectiveSpace
+public import OrlikSolomon.MainTheorem
 public import OrlikSolomon.Presentation.BaseChange
 public import OrlikSolomon.Presentation.Basic
 public import OrlikSolomon.Presentation.Boundary

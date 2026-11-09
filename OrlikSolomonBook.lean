@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Adam Topaz, Claude, Codex
 -/
 import OrlikSolomonBook.Node
+import OrlikSolomonBook.MainTheorem
 import OrlikSolomonBook.Organization
 import OrlikSolomonBook.ReusableAlgebra
 import OrlikSolomonBook.Geometry
@@ -33,6 +34,8 @@ Both theorems are proved, for every cohomology theory that satisfies the axioms.
 For algebraic de Rham cohomology over a field of characteristic zero, which the library proves satisfies the axioms, they are also proved as theorems with no hypothetical cohomology theory in them, as explained below.
 The book is written for a working mathematician who wants to know what exactly is proved, from what, and how.
 No knowledge of Lean is needed: the prose stands on its own, and the Lean statements are shown so that you can compare them with the mathematics.
+For the public statement in one auditable file, start with {ref "main-theorem"}[The main theorem].
+That chapter quotes its definitions and statements using Mathlib objects, and explains the hypothesis of a theory and the verified affine de Rham example.
 
 {statusSummary}
 
@@ -393,7 +396,7 @@ All of these are outputs of the proof.
  * In the projective case the empty arrangement is excluded. There is no hyperplane to put at infinity, the space is $`\mathbb{P}^n` itself, and its cohomology needs a projective bundle formula that the axioms do not provide.
 
 *How this book is tied to the code.*
-Every result appears in a box that shows a status and its label in one of three blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, or the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the refactor on schemes:
+Each blueprint result appears in a box that shows a status and its label in one of three blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, or the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the refactor on schemes:
  * *Planned* means that the result is in scope and no Lean declaration is attached to it yet. The text describes what is intended, and nothing has been checked.
  * *Deferred* means that the result is in the blueprint but outside the current scope of the project.
  * *Partly formalized* means that the box names Lean declarations for part of the result, shows their statements with links to their source, and says what is missing.
@@ -440,6 +443,8 @@ The logarithmic sheaf residue sequence and its local quasi-isomorphism are prove
 Worked geometric regressions include complements without rational points, unit and disconnected pairs, non-flat pullback, residue multiplicity, and the projective line, where global forms differ from its two-chart Čech complex.
 {ref "geometric"}[Its chapter] presents it, and its nodes are counted separately above.
 Nothing on this page depends on it: the dependence runs the other way.
+
+{include 1 OrlikSolomonBook.MainTheorem}
 
 {include 1 OrlikSolomonBook.Organization}
 
