@@ -16,14 +16,15 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate geometry G01–G03 and low-degree algebraic inputs A01–A02 are formalized; the reconstruction theorem is planned.*
+*The coordinate geometry G01–G03 and low-degree algebraic inputs A01–A02 and pure coordinate reconstruction C01–C03 are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Five boxes are formalized, none is partly formalized and thirty-six remain planned.
+Eight boxes are formalized, none is partly formalized and thirty-three remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
 A02 identifies the full degree-two kernel of the actual exterior quotient with the parallel-pair and guarded dependent-triple relation span, including zero coefficients and characteristic two.
+C01–C03 recover a unique field automorphism from an arbitrary projective collineation fixing the prescribed frame, over any field and in dimension at least two.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
@@ -298,24 +299,25 @@ They are independent of the coefficient ring, cohomology and the construction of
 
 ## C01: finite projective spans
 
-:::node "lem:c01"
+:::node "lem:c01" (decl := OrlikSolomon.HyperplaneGT.collineation_preserves_span)
 A projective bijection preserving lines in both directions preserves the projective span of every finite set.
-The blueprint proves this by finite linear combinations and closure under joining distinct points, without assuming a fundamental theorem of projective geometry.
+The Lean theorem preserves arbitrary projective spans by the existing span-induction principle, without assuming a fundamental theorem of projective geometry.
 :::
 
 ## C02: separate coordinate functions
 
-:::node "lem:c02"
+:::node "lem:c02" (decl := OrlikSolomon.HyperplaneGT.collineation_coordinate_functions) (decl := OrlikSolomon.HyperplaneGT.affineChartPoint_collineationChartMap)
 If the bijection fixes the coordinate points $`[e_0]` and $`[e_i]`, it preserves the chart $`a_0=1` and acts there by separate bijections $`f_i:k\to k` with $`f_i(0)=0`.
 Preservation of the coordinate directions makes each output coordinate depend only on its corresponding input coordinate.
 :::
 
 ## C03: the unique field automorphism
 
-:::node "thm:c03"
+:::node "thm:c03" (decl := OrlikSolomon.HyperplaneGT.coordinateFieldEquiv) (decl := OrlikSolomon.HyperplaneGT.coordinateFieldEquiv_affineChartPoint) (decl := OrlikSolomon.HyperplaneGT.coordinateFieldEquiv_mk) (decl := OrlikSolomon.HyperplaneGT.existsUnique_coordinateFieldEquiv)
 For $`n\ge2`, additionally fixing $`[e_i-e_0]` and $`[e_i-e_j]` forces a unique field automorphism $`\sigma` with $`F([a])=[\sigma(a)]` coordinatewise.
-The planned coordinate argument proves additivity, multiplicativity and bijectivity, then treats points at infinity.
-The zero-sum line case is handled separately.
+The coordinate argument proves additivity, multiplicativity and bijectivity, then treats points at infinity.
+The points $`[e_i-e_0]` are separate extra markings: on the affine chart they fix minus one on each axis.
+Sum lines are described using an affine point and their fixed direction point at infinity, which stay distinct even when the coordinate sum is zero; the zero values of the coordinate bijections are handled explicitly.
 :::
 
 ## C04: the Galois homomorphism
