@@ -50,19 +50,37 @@ theorem fieldCoordinateAddEquiv_apply (σ : k ≃+* k) (x : ι → k) (i : ι) :
 theorem fieldCoordinateAddEquiv_symm_apply (σ : k ≃+* k) (x : ι → k) (i : ι) :
     (fieldCoordinateAddEquiv σ ι).symm x i = σ.symm (x i) := rfl
 
-/-- Coordinatewise application of a field automorphism is a semilinear equivalence. -/
-def fieldCoordinateEquiv (σ : k ≃+* k) (ι : Type v) :
+/-- Coordinate transport is semilinear: the field automorphism acts on scalar coefficients. -/
+@[simp]
+theorem fieldCoordinateAddEquiv_smul (σ : k ≃+* k) (c : k) (x : ι → k) :
+    fieldCoordinateAddEquiv σ ι (c • x) = σ c • fieldCoordinateAddEquiv σ ι x := by
+  ext i
+  simp
+
+/-- The public semilinear coordinate map. Its function and scalar-transport API require no
+inverse-pair instances in the consumer's environment. The canonical ring-hom coercion
+also exposes Mathlib's existing surjectivity instance for semilinear submodule images. -/
+def fieldCoordinateLinearMap (σ : k ≃+* k) (ι : Type v) :
+    (ι → k) →ₛₗ[(σ : k →+* k)] (ι → k) where
+  toFun := fieldCoordinateAddEquiv σ ι
+  map_add' := (fieldCoordinateAddEquiv σ ι).map_add
+  map_smul' := fieldCoordinateAddEquiv_smul σ
+
+@[simp]
+theorem fieldCoordinateLinearMap_apply (σ : k ≃+* k) (x : ι → k) (i : ι) :
+    fieldCoordinateLinearMap σ ι x i = σ (x i) := rfl
+
+/-- Coordinatewise field transport is injective. -/
+theorem fieldCoordinateLinearMap_injective (σ : k ≃+* k) :
+    Function.Injective (fieldCoordinateLinearMap σ ι) :=
+  (fieldCoordinateAddEquiv σ ι).injective
+
+-- Mathlib's semilinear equivalence type needs local inverse-pair instances. Keep that
+-- implementation device private; all public point and semilinear maps above work without it.
+private def fieldCoordinateEquiv (σ : k ≃+* k) (ι : Type v) :
     (ι → k) ≃ₛₗ[σ.toRingHom] (ι → k) :=
   { fieldCoordinateAddEquiv σ ι with
-    map_smul' c x := by ext i; simp }
-
-@[simp]
-theorem fieldCoordinateEquiv_apply (σ : k ≃+* k) (x : ι → k) (i : ι) :
-    fieldCoordinateEquiv σ ι x i = σ (x i) := rfl
-
-@[simp]
-theorem fieldCoordinateEquiv_symm_apply (σ : k ≃+* k) (x : ι → k) (i : ι) :
-    (fieldCoordinateEquiv σ ι).symm x i = σ.symm (x i) := rfl
+    map_smul' := fieldCoordinateAddEquiv_smul σ }
 
 /-- The affine subspace obtained by applying a field automorphism to all coordinates. -/
 def fieldAffineSubspace (σ : k ≃+* k) (X : AffineSubspace k (ι → k)) :
@@ -146,12 +164,12 @@ theorem fieldAffineSubspace_eq_bot_iff (σ : k ≃+* k) (X : AffineSubspace k (�
 semilinear image of the original direction. This includes the empty subspace. -/
 theorem direction_fieldAffineSubspace (σ : k ≃+* k) (X : AffineSubspace k (ι → k)) :
     (fieldAffineSubspace σ X).direction =
-      X.direction.map (fieldCoordinateEquiv σ ι).toLinearMap := by
+      X.direction.map (fieldCoordinateLinearMap σ ι) := by
   rw [AffineSubspace.direction_eq_vectorSpan, AffineSubspace.direction_eq_vectorSpan,
     vectorSpan_def, vectorSpan_def, Submodule.map_span]
-  change Submodule.span k ((fieldCoordinateEquiv σ ι '' (X : Set (ι → k))) -
-      (fieldCoordinateEquiv σ ι '' (X : Set (ι → k)))) =
-    Submodule.span k (fieldCoordinateEquiv σ ι '' ((X : Set (ι → k)) - (X : Set (ι → k))))
+  change Submodule.span k ((fieldCoordinateLinearMap σ ι '' (X : Set (ι → k))) -
+      (fieldCoordinateLinearMap σ ι '' (X : Set (ι → k)))) =
+    Submodule.span k (fieldCoordinateLinearMap σ ι '' ((X : Set (ι → k)) - (X : Set (ι → k))))
   rw [Set.image_sub]
 
 /-- A coordinatewise field automorphism preserves the dimension of every affine direction.
@@ -261,8 +279,8 @@ theorem isEquation_fieldAffineForm (σ : k ≃+* k) {H : AffineSubspace k (Fin n
 def fieldCoefficientPoint (σ : k ≃+* k)
     (p : Projectivization k (Fin (n + 1) → k)) :
     Projectivization k (Fin (n + 1) → k) :=
-  Projectivization.map (fieldCoordinateEquiv σ (Fin (n + 1))).toLinearMap
-    (fieldCoordinateEquiv σ (Fin (n + 1))).injective p
+  Projectivization.map (fieldCoordinateLinearMap σ (Fin (n + 1)))
+    (fieldCoordinateLinearMap_injective σ) p
 
 /-- The actions on hyperplanes and on projective equation coefficients agree, independently
 of the equation used for the hyperplane. -/
