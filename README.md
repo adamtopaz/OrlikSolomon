@@ -20,17 +20,19 @@ and interpreted by hand for ℓ-adic cohomology, but not in Lean. The empty proj
 is excluded. The [book](https://adamtopaz.github.io/OrlikSolomon/) states the theorems and has the
 details.
 
-**Planned milestone M8:** cohomological hyperplane reconstruction is tracked by
+**Milestone M8 in progress:** cohomological hyperplane reconstruction is tracked by
 [#151](https://github.com/adamtopaz/OrlikSolomon/issues/151) and its
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-0 formalized, 0 partly formalized and 41 planned. It studies automorphisms of marked
+1 formalized, 0 partly formalized and 40 planned. The canonical degree-one OS basis,
+its inclusion naturality and algebra generation (A01) are proved over arbitrary commutative
+coefficient rings. The planned reconstruction studies automorphisms of marked
 degree-one/cup-kernel and diagonal graded cohomology diagrams in dimension at least two,
 with nonzero local or integral-domain coefficients. The theory-level results will be conditional
 on the existing axioms, with an unconditional characteristic-zero de Rham specialization.
-PR [#152](https://github.com/adamtopaz/OrlikSolomon/pull/152) supplies the planned book chapter;
-the reconstruction mathematics has not yet been formalized.
+The [book chapter](https://adamtopaz.github.io/OrlikSolomon/hyperplane-gt/) tracks the proved
+and planned statements; the reconstruction theorem has not yet been formalized.
 
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective
@@ -116,7 +118,7 @@ first page shows the statements, elaborated, with the output of `#print axioms`.
   consumers, formalized to the extent indicated in their book boxes:
   [`blueprint/`](blueprint/geometric_refactor_blueprint.tex)
 - Auditable public projective theorem: [`MainTheorem.lean`](OrlikSolomon/MainTheorem.lean)
-- Planned milestone M8, cohomological hyperplane reconstruction:
+- Milestone M8, cohomological hyperplane reconstruction in progress:
   [`blueprint/`](blueprint/cohomological_hyperplane_gt_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)

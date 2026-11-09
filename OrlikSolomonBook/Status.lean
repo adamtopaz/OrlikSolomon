@@ -32,9 +32,10 @@ Of the third blueprint, the geometric refactor, forty nodes are formalized and t
 The sheaf logarithmic residue sequence and its local quasi-isomorphism are proved separately; their affine comparison identifies the instance's residue and Gysin maps on global sheaf representatives.
 The Cartesian node retains its Tor-sheaf and conormal statements, and the statement-by-statement transport rule remains partly formalized. {ref "geometric"}[Its chapter] gives the proved statements and the remaining clauses.
 
-The fourth blueprint, cohomological hyperplane reconstruction, is planned.
+The fourth blueprint, cohomological hyperplane reconstruction, is in progress.
 Its 38 named groups contain 41 separately labeled statements: U01, U04 and L02 each contain a definition and a lemma, which have separate boxes and statuses.
-All 41 statements are planned, with no Lean declarations attached.
+A01 is formalized: the canonical degree-one generator basis, its inclusion naturality and generation of the whole OS algebra hold over arbitrary commutative coefficient rings.
+The other forty statements are planned, with no partly formalized statements; the reconstruction theorem is not yet formalized.
 {ref "hyperplane-gt"}[Its chapter] explains the proposed theorem, its hypotheses and the limits of the planned applications.
 
 {statusOverview}
