@@ -20,7 +20,13 @@ import Lean
   `unsafe` and `partial def`. The only exceptions are two kinds of constant that Lean itself
   generates for safe code: see `isGeneratedCtorIdxImpl` and `isGeneratedUnsafeRec`;
 * a declaration of the project depends on an axiom other than `propext`, `Classical.choice` and
-  `Quot.sound`, which is how `sorry`, `admit` and `native_decide` show up.
+  `Quot.sound`, which is how `sorry`, `admit` and `native_decide` show up;
+* Parts I and II of `OrlikSolomon.MainTheorem`, the file that states the main theorem, mention a
+  declaration of the library. See `checkInterface`.
+
+`lake exe audit --interface` makes only the last check. Given the components of a module name, as in
+`lake exe audit --interface OrlikSolomon MainTheorem`, it checks that module instead, loading it on
+its own, which is how the check is tested on a module that breaks the rule.
 
 `lake exe audit --replay` makes the same checks of the modules, then sends every constant of each
 one back through the kernel, proofs included, and leaves nothing out. It fails unless the kernel
@@ -331,6 +337,111 @@ def checkDeclarations (library : Library) : IO (Array String × String) := do
     axioms {axioms.qsort Name.lt}"
   return (problems.qsort (· < ·), summary)
 
+/-- The module that states the main theorem. Its Parts I and II are what an auditor reads, so they
+may mention only Mathlib, Lean core and the module itself. -/
+def interfaceModule : Name := `OrlikSolomon.MainTheorem
+
+/-- The namespace of Part III of `interfaceModule`, the proofs, which may use the whole library. -/
+def interfaceProofNamespace : Name := `OrlikSolomon.MainTheorem.Proof
+
+/-- Whether a constant of the interface module belongs to its Part III. A private name is read
+through its user-facing name, so that `private` cannot move a declaration out of Part III. -/
+def isInterfaceProof (c : Name) : Bool :=
+  interfaceProofNamespace.isPrefixOf (privateToUserName c)
+
+/-- The constants that the statement of `info` refers to, and, unless it is a theorem, also those of
+its value. A proof carries no data, so what it cites does not matter here. The cases are listed in
+full so that a new kind of constant is a compile error here. -/
+def interfaceReferences (info : ConstantInfo) : Array Name :=
+  let value := match info with
+    | .defnInfo v => v.value.getUsedConstants
+    | .opaqueInfo v => v.value.getUsedConstants
+    | .thmInfo _ | .inductInfo _ | .axiomInfo _ | .quotInfo _ | .ctorInfo _ | .recInfo _ => #[]
+  info.type.getUsedConstants ++ value
+
+/-- Whether `info` is a declaration of Parts I and II of a module, given that the module declares
+it: it is not private, it is not in Part III, and it is not a theorem that Lean generated to hold a
+proof, such as `foo._proof_1`. Such a theorem has an internal name and is not a statement: its type
+is whatever the proof it holds happened to prove, and a proof carries no data. -/
+def isInterfaceRoot (info : ConstantInfo) : Bool :=
+  !isPrivateName info.name && !isInterfaceProof info.name &&
+    !(info.isTheorem && info.name.isInternalDetail)
+
+/-- Checks Parts I and II of the module `module`, whose data is `data`, returning the problems found
+and the number of declarations checked. These are the constants of the module that
+`isInterfaceRoot` accepts, including the constructors, projections, recursors and other declarations
+that Lean generates for structures, and the private declarations that they use.
+
+Each constant that the statement of such a declaration refers to, or its value unless it is a
+theorem, must be
+
+* a theorem, from anywhere, since a proof carries no data, and a theorem is cited only as a proof;
+* a constant of a module outside the project, which means Mathlib or Lean core, since the library
+  imports nothing else (`loadLibrary`);
+* or a constant of `module` itself outside Part III. A public one is a declaration of Parts I and
+  II, checked in its own right. A private one is checked in the same way, since nothing else would
+  check it, and its problems name the declaration that uses it.
+
+Anything else, such as a definition of the library or of Part III, is a problem. -/
+def checkInterface (env : Environment) (module : Name) (data : ModuleData) :
+    Array String × Nat := Id.run do
+  let roots := data.constants.filter isInterfaceRoot
+  let mut problems := #[]
+  let mut stack := roots
+  let mut seen : NameSet := roots.foldl (·.insert ·.name) {}
+  -- For each private declaration checked, the declaration of Parts I and II that uses it.
+  let mut usedBy : NameMap Name := {}
+  repeat
+    let some info := stack.back? | break
+    stack := stack.pop
+    let user := (usedBy.find? info.name).elim s!"{info.name}" (s!"{info.name}, used by {·},")
+    for r in interfaceReferences info do
+      let some rInfo := env.find? r
+        | problems := problems.push s!"{user} refers to {r}, which is not in the environment"
+          continue
+      if rInfo.isTheorem then
+        continue
+      let some idx := env.getModuleIdxFor? r
+        | problems := problems.push s!"{user} refers to {r}, which belongs to no module"
+          continue
+      let rModule := env.header.moduleNames[idx.toNat]!
+      if rModule == module then
+        if isInterfaceProof r then
+          problems := problems.push s!"{user} refers to {r}, a declaration of Part III of {module}"
+        else if !seen.contains r then
+          seen := seen.insert r
+          usedBy := usedBy.insert r ((usedBy.find? info.name).getD info.name)
+          stack := stack.push rInfo
+      else if rootModule.isPrefixOf rModule then
+        problems := problems.push s!"{user} refers to {r}, from the library module {rModule}"
+  return (problems.qsort (· < ·), seen.size)
+
+/-- The data of `module`, if the environment imports it. -/
+def moduleData? (env : Environment) (module : Name) : Option ModuleData := do
+  let idx ← env.getModuleIdx? module
+  env.header.moduleData[idx.toNat]?
+
+/-- Checks Parts I and II of `interfaceModule`, which the library must contain, returning the
+problems found and a one-line summary. -/
+def checkLibraryInterface (library : Library) : Array String × String :=
+  match moduleData? library.env interfaceModule with
+  | none => (#[s!"the library does not import {interfaceModule}"], "")
+  | some data =>
+    let (problems, n) := checkInterface library.env interfaceModule data
+    (problems, s!"{n} declaration(s) of Parts I and II of {interfaceModule} mention only Mathlib, \
+      Lean core and {interfaceModule}")
+
+/-- Loads `module` alone, at `OLeanLevel.private`, and checks its Parts I and II as if it were the
+interface module. This is how the check is tested on a module that breaks the rule. -/
+def checkModuleInterface (module : Name) : IO (Array String × String) := do
+  initSearchPath (← findSysroot)
+  let env ← importModules #[{ module }] {} (leakEnv := true) (level := .private)
+  let some data := moduleData? env module
+    | return (#[s!"{module} was not loaded"], "")
+  let (problems, n) := checkInterface env module data
+  return (problems, s!"{n} declaration(s) of Parts I and II of {module} mention only Mathlib, \
+    Lean core and {module}")
+
 /-- The number of modules to replay at once. Each one loads its imports, about 2 GB, and a GitHub
 runner has four cores. -/
 def replayJobs : Nat := 4
@@ -473,15 +584,25 @@ end Audit
 
 open Audit in
 /-- With no arguments, runs the audit. With `--replay`, replays the library through the kernel. Both
-check the modules first. Any other arguments are an error, so that a mistyped flag cannot pass for a
-clean run. -/
+check the modules first. With `--interface`, checks only Parts I and II of the interface module, or
+of the module whose name components follow. Any other arguments are an error, so that a mistyped
+flag cannot pass for a clean run. -/
 public def main (args : List String) : IO UInt32 := do
   match args with
   | [] =>
     let (importProblems, numSources) ← checkRootImports
-    let (declarationProblems, summary) ← checkDeclarations (← loadLibrary)
-    report "audit" (importProblems ++ declarationProblems)
-      #[s!"{rootModule}.lean imports all {numSources} modules under {rootModule}/", summary]
+    let library ← loadLibrary
+    let (declarationProblems, summary) ← checkDeclarations library
+    let (interfaceProblems, interfaceSummary) := checkLibraryInterface library
+    report "audit" (importProblems ++ declarationProblems ++ interfaceProblems)
+      #[s!"{rootModule}.lean imports all {numSources} modules under {rootModule}/", summary,
+        interfaceSummary]
+  | ["--interface"] =>
+    let (problems, summary) := checkLibraryInterface (← loadLibrary)
+    report "interface" problems #[summary]
+  | "--interface" :: name@(_ :: _) =>
+    let (problems, summary) ← checkModuleInterface (name.foldl Name.mkStr .anonymous)
+    report "interface" problems #[summary]
   | ["--replay"] =>
     let (importProblems, _) ← checkRootImports
     let library ← loadLibrary
