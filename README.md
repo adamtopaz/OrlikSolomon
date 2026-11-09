@@ -25,10 +25,11 @@ details.
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-1 formalized, 0 partly formalized and 40 planned. The canonical degree-one OS basis,
+4 formalized, 0 partly formalized and 37 planned. The canonical degree-one OS basis,
 its inclusion naturality and algebra generation (A01) are proved over arbitrary commutative
-coefficient rings. The planned reconstruction studies automorphisms of marked
-degree-one/cup-kernel and diagonal graded cohomology diagrams in dimension at least two,
+coefficient rings. Pure coordinate reconstruction (C01–C03) is also proved over arbitrary
+fields, with the prescribed fixed projective frame. The planned reconstruction studies automorphisms
+of marked degree-one/cup-kernel and diagonal graded cohomology diagrams in dimension at least two,
 with nonzero local or integral-domain coefficients. The theory-level results will be conditional
 on the existing axioms, with an unconditional characteristic-zero de Rham specialization.
 The [book chapter](https://adamtopaz.github.io/OrlikSolomon/hyperplane-gt/) tracks the proved

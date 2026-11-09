@@ -1698,7 +1698,8 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design and implementation of the development. A01, the canonical
-degree-one basis and algebra generation, is formalized; the reconstruction theorem remains planned.
+degree-one basis and algebra generation, is formalized. Pure coordinate geometry C01–C03 is also
+formalized over an arbitrary field; the reconstruction theorem remains planned.
 The [parent issue #151](https://github.com/adamtopaz/OrlikSolomon/issues/151),
 [approved plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326)
 and [child-issue index](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079)
@@ -1762,7 +1763,7 @@ implementation work.
 | `HyperplaneGT/Reconstruction/Local` | L04–L05 | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
 | `HyperplaneGT/Reconstruction/Projections` | P01–P02 | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
 | `HyperplaneGT/Reconstruction/Incidence` | I01–I04 | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
-| `HyperplaneGT/Geometry/Collineation` | C01–C03, independent of the coefficient ring and cohomology | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
+| `HyperplaneGT/Geometry/Collineation`, with `Span`, `Chart`, and `Field` leaves | C01–C03, formalized: arbitrary projective spans, coordinatewise affine charts, and a unique field automorphism from the prescribed frame | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
 | `HyperplaneGT/Reconstruction/Galois` | C04, S01 | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
 | `HyperplaneGT/Diagram/GaloisAction` | S02 | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
 | `HyperplaneGT/Reconstruction/LocalRing` | S03–S04; separate classification/graded leaves as necessary | W18–W19, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170), [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
@@ -1773,6 +1774,7 @@ implementation work.
 | `HyperplaneGT`, `HyperplaneGT/Cohomology` | Pure-core facade and conditional-cohomology facade; de Rham remains an explicit import | W22–W23, [#174](https://github.com/adamtopaz/OrlikSolomon/issues/174), [#175](https://github.com/adamtopaz/OrlikSolomon/issues/175) |
 | `Examples/HyperplaneGT`, with small topic leaves | Coefficient, dimension, marking, cofinality, generator and transport acceptance consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
 | `Examples/HyperplaneGT/DegreeOne` | Formalized A01 consumers: zero coefficients, empty arrangements, dimensions zero and one, and zero new coordinates after inclusion | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
+| `Examples/HyperplaneGT/Collineation` | Formalized C01–C03 consumers: identity extraction, dimension-zero charts, characteristic-two zero sums and points at infinity | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
 
 `osDegreeOneEquiv R 𝒜 : (𝒜 →₀ R) ≃ₗ[R] OSAlgebra.degree R 𝒜 1` is the canonical finite
 linear combination of the hyperplane generators. Its inverse and `osDegreeOneBasis` expose
@@ -1784,6 +1786,19 @@ space, as does the existing generator independence theorem. Full algebra generat
 (`exists_os_word_sum`, `adjoin_range_osGenerator`) and the typed inclusion maps do not require
 finite-dimensionality. All these statements allow the zero coefficient ring and import no
 cohomology theory.
+
+`Geometry/Collineation` is a pure facade over three size leaves. `Span` defines
+`PreservesProjectiveLines` as exact image equality for the projective span of each distinct
+pair, with identity, inverse and composition lemmas; `collineation_preserves_span` derives
+image equality for arbitrary spans. `Chart` constructs the actual normalized chart permutation
+and its axis bijections without a dimension bound. `Field` retains `2 ≤ n` and the explicit
+fixed points `[eᵢ - e₀]` and `[eᵢ - eⱼ]`; the first family fixes minus one and is separate from
+the coordinate points. Sum-line calculations use an affine point and a point at infinity, so
+zero sums cause no coincident-endpoint argument. `coordinateFieldEquiv_mk` covers nonzero
+homogeneous vectors in both the affine chart and the hyperplane at infinity, and
+`existsUnique_coordinateFieldEquiv` supplies uniqueness. All leaves import only Mathlib and
+their preceding pure collineation leaves. `Examples/HyperplaneGT/Collineation` checks the
+identity extraction, dimension-zero charts, characteristic-two zero sums and infinity.
 
 The two generic helper modules use namespace `OrlikSolomon` and carry no hyperplane/cohomology
 hypotheses. Check Mathlib and existing repository lemmas before adding any helper. Split modules
@@ -1802,7 +1817,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-1 formalized, 0 partly formalized and 40 planned, separate from the other blueprints. Each
+4 formalized, 0 partly formalized and 37 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
