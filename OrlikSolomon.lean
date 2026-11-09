@@ -146,6 +146,7 @@ public import OrlikSolomon.Examples.Geometric.NonAffine.Sections
 public import OrlikSolomon.Examples.Geometric.NonAffine.SheafCech
 public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
 public import OrlikSolomon.Examples.HyperplaneGT.DegreeOne
+public import OrlikSolomon.Examples.HyperplaneGT.Dual
 public import OrlikSolomon.Examples.Moebius
 public import OrlikSolomon.Examples.Ordinary
 public import OrlikSolomon.Examples.Parallel
@@ -193,6 +194,10 @@ public import OrlikSolomon.Grading.LinearImage
 public import OrlikSolomon.Grading.Restriction
 public import OrlikSolomon.Grading.TensorProduct
 public import OrlikSolomon.HyperplaneGT.Algebra.DegreeOne
+public import OrlikSolomon.HyperplaneGT.Algebra.Dual
+public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Alternating
+public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Coordinates
+public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Primitive
 public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates
 public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Equations
 public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Graphs

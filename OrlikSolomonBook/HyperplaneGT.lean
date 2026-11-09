@@ -16,13 +16,15 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate geometry G01–G03 and degree-one algebraic input A01 are formalized; the reconstruction theorem is planned.*
+*The coordinate geometry, degree-one algebra, full-dual coordinates and local primitive criterion are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Four boxes are formalized, none is partly formalized and thirty-seven remain planned.
+Seven boxes are formalized, one is partly formalized and thirty-three remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
+U03 and U05 give the full algebraic dual, its inverse-precomposition action and the local-ring primitive-coordinate criterion for arbitrary index types.
+The determinant and explicit-relation centralizer of U04 are defined, but its geometric relation generators and diagram specialization remain pending.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
@@ -160,7 +162,7 @@ The universal automorphisms retain these stage and marking conditions.
 
 ## U03: product coordinates on the dual
 
-:::node "lem:u03"
+:::node "lem:u03" (decl := OrlikSolomon.HyperplaneGT.dualCoordinates) (decl := OrlikSolomon.HyperplaneGT.dualCoordinates_symm_apply) (decl := OrlikSolomon.HyperplaneGT.dualCoordinates_ext) (decl := OrlikSolomon.HyperplaneGT.finsupp_eq_of_dual_eval_eq) (decl := OrlikSolomon.HyperplaneGT.dualAction) (decl := OrlikSolomon.HyperplaneGT.dualAction_apply_apply)
 The algebraic dual $`P=\operatorname{Hom}_R(M,R)` is the full product $`\prod_H R`, by evaluation on basis vectors; its inverse evaluates a finite supported sum.
 Evaluation separates vectors and functionals.
 The left dual action is contragredient, $`g\lambda=\lambda\circ g^{-1}`, and satisfies $`(g\lambda)(gm)=\lambda(m)`.
@@ -169,23 +171,23 @@ No topology or double-dual equivalence is used.
 
 ## U04: commuting functionals
 
-:::node "def:u04"
+:::node "def:u04" (decl := OrlikSolomon.HyperplaneGT.dualDeterminant) (decl := OrlikSolomon.HyperplaneGT.dualDeterminant_ιMulti_apply) (decl := OrlikSolomon.HyperplaneGT.Commutes) (decl := OrlikSolomon.HyperplaneGT.centralizer)
 For $`\lambda,\mu\in P`, the determinant $`d_{\lambda,\mu}(a,b)=\lambda(a)\mu(b)-\lambda(b)\mu(a)` is alternating and descends to $`\bigwedge^2M`.
 Define $`\lambda\sim\mu` when this exterior map annihilates $`Q`, and let $`C(\lambda)` be the set of such $`\mu`.
 :::
 
-:::node "lem:u04"
+:::node "lem:u04" (decl := OrlikSolomon.HyperplaneGT.mem_centralizer_iff) (decl := OrlikSolomon.HyperplaneGT.dualDeterminant_single) (decl := OrlikSolomon.HyperplaneGT.dualDeterminant_sub_single) (decl := OrlikSolomon.HyperplaneGT.commutes_span_iff) (decl := OrlikSolomon.HyperplaneGT.commutes_dualAction_iff) (remaining := "The canonical universal relation submodule and its geometric parallel-pair/dependent-triple generator theorem, together with specialization to the induced diagram action, await U01–U02 (#159–#160). The current formulas and paired invariance are generic for an explicit relation submodule.")
 The centralizer $`C(\lambda)` is a submodule.
 Commuting is equivalent to the determinant equations on every parallel pair and every dependent triple, and is preserved in both directions by the paired universal and dual actions.
-Alternation uses cancellation, including in characteristic two.
+Alternation follows by subtracting equal terms, including in characteristic two.
 :::
 
 ## U05: primitive functionals over a local ring
 
-:::node "lem:u05"
+:::node "lem:u05" (decl := OrlikSolomon.HyperplaneGT.Primitive) (decl := OrlikSolomon.HyperplaneGT.primitive_iff_unit_coordinate) (decl := OrlikSolomon.HyperplaneGT.primitive_comp_linearEquiv_iff) (decl := OrlikSolomon.HyperplaneGT.primitive_dualAction_iff)
 Over a nonzero local ring, a functional $`M\to R` is surjective exactly when some basis coordinate is a unit.
 Surjectivity is invariant under precomposition by a linear equivalence.
-The planned definition of primitive is surjectivity, rather than a residue-field test on the infinite product.
+Primitive means surjectivity, rather than a residue-field test on the infinite product.
 :::
 
 # Traces, centralizers and local detection

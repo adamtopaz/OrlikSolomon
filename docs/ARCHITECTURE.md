@@ -1711,9 +1711,9 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G03, the coordinate geometry, and A01, the canonical degree-one basis and algebra generation,
-are formalized; the reconstruction theorem remains planned. The book records the status of the
-complete blueprint statements.
+G01–G03, A01, U03, the definition in U04 and U05 are formalized. The generic part of the U04
+lemma is implemented; its geometric relation generators and diagram specialization remain
+pending. The reconstruction theorem remains planned. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
 described under Algebra above. The A02 box remains planned: its arrangement-specific degree-two
 kernel still needs the identification of its relators.
@@ -1778,7 +1778,10 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Algebra/LowDegrees`, with a `QuadraticKernel` leaf | A02 and low-degree facade, planned | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
 | `HyperplaneGT/Diagram/Basic` | A03, marked diagrams and their automorphisms | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `HyperplaneGT/Diagram/Universal` | U01–U02 | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
-| `HyperplaneGT/Algebra/Dual` | U03–U05, with generic-index results separated from hyperplane specializations | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
+| `HyperplaneGT/Algebra/Dual` | Implemented generic U03–U05 facade; U04's geometric relation and diagram specialization remain pending | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
+| `HyperplaneGT/Algebra/Dual/Coordinates` | Full-product dual coordinates, evaluation separation and inverse-precomposition automorphism homomorphism, U03 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
+| `HyperplaneGT/Algebra/Dual/Primitive` | Surjective primitive functionals and the local-ring unit-coordinate criterion, U05 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
+| `HyperplaneGT/Algebra/Dual/Alternating` | Determinant exterior lift, explicit-Q centralizer, coordinate tests and generic paired invariance, U04 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `HyperplaneGT/Reconstruction/Trace` | L01–L03 | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
 | `HyperplaneGT/Reconstruction/Local` | L04–L05 | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
 | `HyperplaneGT/Reconstruction/Projections` | P01–P02 | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
@@ -1795,6 +1798,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT`, with small topic leaves | Coefficient, dimension, marking, cofinality, generator and transport acceptance consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
 | `Examples/HyperplaneGT/DegreeOne` | Formalized A01 consumers: zero coefficients, empty arrangements, dimensions zero and one, and zero new coordinates after inclusion | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
 | `Examples/HyperplaneGT/Coordinates` | G01–G03 consumers: dimension zero, parallel points, inverse chart and coefficient formulas, zero-ring coordinate splitting, and concurrent/empty triples over `𝔽₂` | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
+| `Examples/HyperplaneGT/Dual` | Full infinite dual coordinates, inverse action on a three-cycle, empty/zero/local/nonlocal primitive tests and characteristic-two determinant consumers | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 
 `HyperplaneGT/Geometry/Coordinates` is a facade over three leaves. `Equations` represents affine
 forms by their constant and normal coefficients, using Mathlib's affine-map decomposition,
@@ -1810,6 +1814,30 @@ nonvertical hyperplane to a unique graph. `graphProjectionEquiv` has an explicit
 strict-parallel graph wrapper. These statements have no characteristic or dimension lower bound
 and import no cohomology theory. The empty-triangle regression over `𝔽₂` tests the nonemptiness
 guard even though the conventional codimension of the empty plane subspace is two.
+
+`HyperplaneGT/Algebra/Dual` is a facade over generic leaves with coefficient, index and ambient
+module universes independent. `dualCoordinates` reverses Mathlib's `Finsupp.llift` equivalence;
+its inverse evaluates a finite sum, and the dual is the full function product. Evaluation
+separates both vectors and functionals. `dualAction` is the homomorphism sending `g` to
+`g.symm.dualMap`, so simultaneous action preserves evaluation. No reflexivity or finite-index
+assumption is used. These APIs work over commutative semirings.
+
+`Primitive` means literal surjectivity. It is invariant under precomposition by every linear
+equivalence. A unit coordinate is sufficient over any commutative semiring; the converse uses
+`IsLocalRing`, which already includes nontriviality. The proof uses only the finite support of a
+preimage of one and Mathlib's local-ring unit-sum theorem. The empty-index zero-ring consumer is
+surjective with no coordinate witness, and the nonlocal integer consumer has coordinates two
+and three and is surjective with neither coordinate a unit. No infinite-product residue-field
+criterion replaces this definition.
+
+Over commutative rings, `dualDeterminant` reuses Mathlib's alternating exterior-dual pairing.
+`Commutes Q` means that this map kills an explicit `Q : Submodule R (⋀[R]^2 M)`, and
+`centralizer Q` is the comap of its dual annihilator along the determinant map linear in the
+second functional. Pair and difference-vector formulas give the generic coordinate equations.
+`commutes_dualAction_iff` assumes equality of the exterior-square image of Q with Q and proves
+both directions, including inverse preservation. There is no new diagram or relation structure.
+The canonical universal Q and its geometric generator/diagram specialization await U01–U02,
+so the U04 lemma remains partly formalized even though its definition is covered for arbitrary Q.
 
 `osDegreeOneEquiv R 𝒜 : (𝒜 →₀ R) ≃ₗ[R] OSAlgebra.degree R 𝒜 1` is the canonical finite
 linear combination of the hyperplane generators. Its inverse and `osDegreeOneBasis` expose
@@ -1852,7 +1880,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-4 formalized, 0 partly formalized and 37 planned, separate from the other blueprints. Each
+7 formalized, 1 partly formalized and 33 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
