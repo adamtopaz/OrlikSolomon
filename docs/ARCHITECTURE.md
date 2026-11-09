@@ -1697,13 +1697,14 @@ M7 introduces no blueprint nodes.
 ## Cohomological hyperplane reconstruction (M8)
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
-This section records the approved design for the planned development; no M8 mathematical
-statements are formalized yet. The [parent issue #151](https://github.com/adamtopaz/OrlikSolomon/issues/151),
+This section records the approved design and implementation of the development. A01, the canonical
+degree-one basis and algebra generation, is formalized; the reconstruction theorem remains planned.
+The [parent issue #151](https://github.com/adamtopaz/OrlikSolomon/issues/151),
 [approved plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326)
 and [child-issue index](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079)
 track implementation. Governance is [#153](https://github.com/adamtopaz/OrlikSolomon/issues/153);
 PR [#152](https://github.com/adamtopaz/OrlikSolomon/pull/152) supplies the authoritative TeX
-and wholly planned book chapter. The TeX must remain byte-identical.
+and initial book chapter. The TeX must remain byte-identical.
 
 The reconstruction layer lives under `OrlikSolomon/HyperplaneGT/`, in namespace
 `OrlikSolomon.HyperplaneGT`. File-path components such as `Algebra` do not introduce namespaces
@@ -1742,8 +1743,9 @@ alternation from graded commutativity alone. E01–E03 transport the classified 
 these comparisons. The de Rham specialization is `k`-linear on logarithmic generators, as in the
 blueprint. The M7 `MainTheorem.lean` interface remains unchanged.
 
-The following modules are planned, relative to `OrlikSolomon/`. Their work-item IDs are those
-of the approved plan; the issue links identify the implementation work.
+The following modules are relative to `OrlikSolomon/`; they are planned except where identified
+as formalized. Their work-item IDs are those of the approved plan; the issue links identify the
+implementation work.
 
 | Module | Responsibility | Work item and issue |
 | --- | --- | --- |
@@ -1751,7 +1753,8 @@ of the approved plan; the issue links identify the implementation work.
 | `Algebra/FinsuppKernel` | Generic kernel calculation for maps that discard labels and merge equal retained labels | W10, [#162](https://github.com/adamtopaz/OrlikSolomon/issues/162) |
 | `HyperplaneGT/Geometry/Coordinates` | G01–G03; facade over smaller coordinate/incidence/chart leaves if needed | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
 | `HyperplaneGT/Geometry/Galois` | G04–G06 | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
-| `HyperplaneGT/Algebra/LowDegrees`, with `DegreeOne` and `QuadraticKernel` leaves | A01–A02 | W05–W06, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157), [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
+| `HyperplaneGT/Algebra/DegreeOne` | A01, formalized: canonical degree-one equivalence, basis, coordinates, inclusion naturality and full algebra generation | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
+| `HyperplaneGT/Algebra/LowDegrees`, with a `QuadraticKernel` leaf | A02 and low-degree facade, planned | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
 | `HyperplaneGT/Diagram/Basic` | A03, marked diagrams and their automorphisms | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `HyperplaneGT/Diagram/Universal` | U01–U02 | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
 | `HyperplaneGT/Algebra/Dual` | U03–U05, with generic-index results separated from hyperplane specializations | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
@@ -1769,6 +1772,18 @@ of the approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Cohomology/DeRham` | E03 | W23, [#175](https://github.com/adamtopaz/OrlikSolomon/issues/175) |
 | `HyperplaneGT`, `HyperplaneGT/Cohomology` | Pure-core facade and conditional-cohomology facade; de Rham remains an explicit import | W22–W23, [#174](https://github.com/adamtopaz/OrlikSolomon/issues/174), [#175](https://github.com/adamtopaz/OrlikSolomon/issues/175) |
 | `Examples/HyperplaneGT`, with small topic leaves | Coefficient, dimension, marking, cofinality, generator and transport acceptance consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
+| `Examples/HyperplaneGT/DegreeOne` | Formalized A01 consumers: zero coefficients, empty arrangements, dimensions zero and one, and zero new coordinates after inclusion | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
+
+`osDegreeOneEquiv R 𝒜 : (𝒜 →₀ R) ≃ₗ[R] OSAlgebra.degree R 𝒜 1` is the canonical finite
+linear combination of the hyperplane generators. Its inverse and `osDegreeOneBasis` expose
+coordinates without unfolding the construction. `osDegreeOneMap` restricts presentation
+inclusions to degree one, with identity, composition and generator formulas;
+`osDegreeOneEquiv_naturality` and `osDegreeOneEquiv_symm_map` identify these maps with extension
+of coefficients along the label inclusion. The equivalence assumes a finite-dimensional ambient
+space, as does the existing generator independence theorem. Full algebra generation
+(`exists_os_word_sum`, `adjoin_range_osGenerator`) and the typed inclusion maps do not require
+finite-dimensionality. All these statements allow the zero coefficient ring and import no
+cohomology theory.
 
 The two generic helper modules use namespace `OrlikSolomon` and carry no hyperplane/cohomology
 hypotheses. Check Mathlib and existing repository lemmas before adding any helper. Split modules
@@ -1786,8 +1801,8 @@ merge and decides every merge. Substantive mathematical gaps follow the existing
 process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
-each have a definition and a lemma, with separate adjacent boxes. The initial M8 count is
-0 formalized, 0 partly formalized and 41 planned, separate from the other blueprints. Each
+each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
+1 formalized, 0 partly formalized and 40 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
