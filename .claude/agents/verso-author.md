@@ -27,7 +27,11 @@ compile a native dependency, so use `nix develop --command lake ...` for them.
 
 The blueprint is your source for the mathematics. Explain it in your own words, without
 inventing new mathematics: if the exposition needs substance the blueprint lacks, follow
-the `blueprint-gap` skill.
+the `blueprint-gap` skill and report to the supervisor who launched you. Fill in routine
+detail directly, which is preferred. GPT-6-Astra writes all new mathematical blueprints
+in `blueprint/`; the Verso author does not write them or contact Astra. Only Claude gives
+Astra a precise scope and checks with Adam before committing its blueprint. Do not send
+Astra formalization work.
 
 Open a PR with the `pr-checklist` skill. Do not merge. Your final message reports the PR
 number, what was covered, and how you checked the rendered output.
