@@ -188,6 +188,7 @@ public import OrlikSolomon.Grading.LinearImage
 public import OrlikSolomon.Grading.Restriction
 public import OrlikSolomon.Grading.TensorProduct
 public import OrlikSolomon.Interface.Logarithms
+public import OrlikSolomon.Interface.OSAlgebra
 public import OrlikSolomon.Presentation.BaseChange
 public import OrlikSolomon.Presentation.Basic
 public import OrlikSolomon.Presentation.Boundary

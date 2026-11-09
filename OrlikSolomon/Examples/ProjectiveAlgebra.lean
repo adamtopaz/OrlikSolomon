@@ -7,6 +7,8 @@ module
 
 public import OrlikSolomon.Examples.CoordinatePolynomials
 public import OrlikSolomon.Examples.Presentation
+public import OrlikSolomon.Grading.Laurent
+public import OrlikSolomon.Interface.OSAlgebra
 public import OrlikSolomon.Presentation.ProjectiveAlgebra
 
 /-!
@@ -163,5 +165,32 @@ example : generator (ZMod 2) (singletonPoint (1 : ZMod 2)) (pointLabel 1) ^ 2 = 
 -- The boundary and kernel construction must allow degenerate coefficient rings.
 example (𝒜 : Arrangement k V) (h𝒜 : 𝒜.IsCentral) (x : OSAlgebra (ZMod 1) 𝒜) :
     boundary (ZMod 1) h𝒜 x = 0 := Subsingleton.elim _ _
+
+section Interface
+
+variable {𝒜 : Arrangement k V} (h𝒜 : 𝒜.IsCentral) (ι : Type*) [Nonempty ι]
+  (Dep : List ι → Prop) (σ : ι ≃ 𝒜)
+  (hDep : ∀ S : List ι, S.Nodup → (Dep S ↔ Arrangement.IsDependent (S.map σ)))
+
+/-- The projective comparison computes on differences with characteristic-two coefficients. -/
+example (i j : ι) :
+    (Interface.projectiveAlgebraEquiv (ZMod 2) ι Dep σ hDep h𝒜
+        (Interface.projectiveGenerator (ZMod 2) ι Dep i j) : OSAlgebra (ZMod 2) 𝒜) =
+      generator (ZMod 2) 𝒜 (σ i) - generator (ZMod 2) 𝒜 (σ j) := by
+  simp
+
+/-- The generic interface equivalence is available over the zero coefficient ring. -/
+example : Interface.projectiveOrlikSolomonAlgebra PUnit ι Dep ≃ₐ[PUnit]
+    projectiveAlgebra PUnit h𝒜 := Interface.projectiveAlgebraEquiv PUnit ι Dep σ hDep h𝒜
+
+/-- The main theorem's set-image formula elaborates over the canonical Laurent model over ℤ. -/
+example (i : ℤ × ℤ) :
+    Interface.projectiveAlgebraEquiv (LaurentPolynomial ℤ) ι Dep σ hDep h𝒜 ''
+        (Interface.projectiveOrlikSolomonGrading (LaurentPolynomial ℤ) ι Dep
+          (laurentGrading ℤ) i : Set _) =
+      (projectiveBigrading (LaurentPolynomial ℤ) (laurentGrading ℤ) h𝒜 i : Set _) :=
+  Interface.image_projectiveOrlikSolomonGrading _ _ _ _ _ _ _ _
+
+end Interface
 
 end OrlikSolomon.ProjectiveAlgebraExamples
