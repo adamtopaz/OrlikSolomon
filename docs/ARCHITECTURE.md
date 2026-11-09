@@ -1656,6 +1656,8 @@ and `OrdinaryTheory` resolve to the algebraic declarations, so write `Geometric.
 | ---------------------------- | ---------------- | ----- |
 | `Interface/Logarithms` | the interface's `standardDivisor` as the library pair `Interface.standardPair D`, its isomorphism `standardPairIso` with `standardPair D D.point` and the residue comparison; `τ` as the unique class of bidegree `(1, 1)` with residue `1` at the origin (`def:geo-log`); a map to `𝔾ₘ` pulling the coordinate back to `f` exists exactly when `f` is a unit, is then unique, and pulls `τ` back to `[f]` (`thm:geo-units`) | #143 |
 | `Interface/OSAlgebra` | generic RingQuot presentation, central OS comparison, projective difference subalgebra and weighted grading compatibility for M7 | #142 |
+| `Interface/ProjectiveSpace` | Mathlib projective space and linear forms; scheme-hyperplane equation uniqueness; index equivalences with the linear arrangement and its central cone; dependence agreement (`def:geo-projective`, `def:os`) | #141 |
+| `Interface/ProjectiveComplement` | actual open-complement comparison over Spec k; affineness and smoothness for nonempty arrangements; compatibility of equation ratios and global units (`def:geo-projective`, `thm:geo-projective-geometry`) | #141 |
 
 `Interface/OSAlgebra` makes library-side copies of the approved main-theorem presentation over
 an arbitrary index type and dependence predicate, with bodies identical to the skeleton's Mathlib
@@ -1667,3 +1669,14 @@ without repetitions, its algebra equivalence identifies the RingQuot presentatio
 only the algebraic presentation modules (plus Mathlib's RingQuot), not cohomology or scheme
 modules, and permits arbitrary commutative coefficient rings, including the zero ring. It does
 not import or modify `MainTheorem.lean`.
+
+`Interface/ProjectiveSpace` repeats the approved skeleton's projective space, equation predicate and
+arrangement definitions. It compares Proj of the polynomial ring with Proj of the symmetric algebra
+by the coordinate basis. Scheme-point zero loci determine the linear kernels, including in dimension
+zero and over finite fields, so the induced arrangement and its cone have canonical index
+equivalences and the same dependence predicate. `Interface/ProjectiveComplement` is a size-only leaf
+over that module. It repeats the skeleton's open complement and fraction-ratio definitions and
+identifies them with the library's actual open projective complement and ratio units. No approved
+MainTheorem statement changes. Since the two equation predicates are separately declared structures,
+the assembly uses their fieldwise logical equivalence and reindexes the hyperplane Finset,
+preserving each underlying set by rfl.

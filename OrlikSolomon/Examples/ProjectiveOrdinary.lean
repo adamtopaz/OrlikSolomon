@@ -7,7 +7,7 @@ module
 
 public import OrlikSolomon.Combinatorics.Multiplicities
 public import OrlikSolomon.Examples.Sanity
-public import OrlikSolomon.Interface.ProjectiveSpace
+public import OrlikSolomon.Interface.ProjectiveComplement
 public import OrlikSolomon.Presentation.ProjectiveOrdinary
 
 /-!
@@ -26,7 +26,8 @@ with matching counts. `exists_logMonomialBasis_decone_threePoints_zeroTheory` ch
 family in the concrete example. These regressions instantiate no nonzero theory.
 The integer example checks the documented scalar conversion for the diagonal theorem. The final
 section checks the Mathlib projective-space interface in dimension zero and over `𝔽₂`, including
-the empty scheme hyperplane of `ℙ⁰` and agreement of dependence with the central cone.
+the empty scheme hyperplane of `ℙ⁰`, agreement of dependence with the central cone, and the
+affine/smooth complement and equation-ratio APIs.
 
 Blueprint: regression example 8 and the projective form of example 7.
 -/
@@ -293,6 +294,18 @@ private def coordinateArrangement (k : Type u) [Field k] (n : ℕ) :
   classical
   exact Finset.univ.image (coordinateHyperplane k n)
 
+private theorem coordinate_mem (n : ℕ) (i : Fin (n + 1)) :
+    coordinateHyperplane k n i ∈ coordinateArrangement k n := by
+  classical
+  exact Finset.mem_image.2 ⟨i, Finset.mem_univ _, rfl⟩
+
+private instance coordinateArrangement_nonempty (n : ℕ) :
+    Nonempty (coordinateArrangement k n) := ⟨⟨_, coordinate_mem n 0⟩⟩
+
+private theorem isEquation_coordinate (n : ℕ) (i : Fin (n + 1)) :
+    Interface.IsEquation (k := k) (coordinateHyperplane k n i) (MvPolynomial.X i) :=
+  ⟨MvPolynomial.isHomogeneous_X k i, MvPolynomial.X_ne_zero i, rfl⟩
+
 /-- In projective dimension zero the unique scheme hyperplane is empty. -/
 example : (coordinateHyperplane k 0 0 : Set (projectiveSpace k 0).left) = ∅ :=
   pzero_hyperplane_empty
@@ -307,6 +320,24 @@ example (S : List (coordinateArrangement (ZMod 2) 1)) :
     Interface.IsDependent S ↔ Arrangement.IsDependent
       (S.map (Interface.coneHyperplaneEquiv (coordinateArrangement (ZMod 2) 1))) :=
   isDependent_iff_cone S
+
+/-- The actual complement of the empty hyperplane of `ℙ⁰` is affine and smooth over `𝔽₂`. -/
+example : IsAffine (Interface.complement (coordinateArrangement (ZMod 2) 0)).left ∧
+    Smooth (Interface.complement (coordinateArrangement (ZMod 2) 0)).hom :=
+  Interface.complement_isAffine_smooth _ ⟨_, coordinate_mem 0 0⟩
+
+/-- The ratio of the two coordinate equations is a unit on the actual `𝔽₂` open complement. -/
+example : IsUnit (Interface.ratio (coordinate_mem (k := ZMod 2) 1 1)
+    (MvPolynomial.isHomogeneous_X (ZMod 2) (0 : Fin 2)) (isEquation_coordinate 1 1)) :=
+  Interface.isUnit_ratio _ (coordinate_mem 1 0) (coordinate_mem 1 1)
+    (isEquation_coordinate 1 0) (isEquation_coordinate 1 1)
+
+/-- The comparison computes the coordinate divided by itself, without unfolding the fraction. -/
+example : Interface.ratio (coordinate_mem (k := k) 0 0)
+    (MvPolynomial.isHomogeneous_X k (0 : Fin 1)) (isEquation_coordinate 0 0) = 1 := by
+  rw [← Interface.complementIso_hom_appTop_projectiveRatio _ (coordinate_mem 0 0)
+    (coordinate_mem 0 0) (isEquation_coordinate 0 0) (isEquation_coordinate 0 0)]
+  simp
 
 end InterfaceGeometry
 
