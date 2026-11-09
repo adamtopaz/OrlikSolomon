@@ -1711,7 +1711,7 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G03, A01–A02, C01–C03, U03, the definition in U04 and U05 are formalized. The generic part
+G01–G06, A01–A02, C01–C03, U03, the definition in U04 and U05 are formalized. The generic part
 of the U04 lemma is implemented; its geometric relation generators and diagram specialization
 remain pending. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
 reconstruction theorem remains planned. The book records complete-statement status.
@@ -1774,7 +1774,7 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Geometry/Coordinates/Equations` | Coefficient tuples of affine forms and the coefficient-point equivalence, G01 | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
 | `HyperplaneGT/Geometry/Coordinates/Incidence` | Strict parallelism, guarded dependent triples, normal-form dichotomy, equation/point/trace criteria, G02 | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
 | `HyperplaneGT/Geometry/Coordinates/Graphs` | Equation-independent verticality, unique graph equations, affine projection equivalences and exact projected traces, G03 | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
-| `HyperplaneGT/Geometry/Galois` | G04–G06 | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
+| `HyperplaneGT/Geometry/Galois`, with `CoordinateAction`, `Action`, `Orbits`, `System`, `Markings` and `AlgebraicMaps` leaves | G04–G06, formalized: coefficient action, finite orbits, cofinal systems, tagged fixed fibers and actual marking maps | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
 | `HyperplaneGT/Algebra/DegreeOne` | A01, formalized: canonical degree-one equivalence, basis, coordinates, inclusion naturality and full algebra generation | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
 | `HyperplaneGT/Algebra/LowDegrees`, with a `QuadraticKernel` leaf | A02, formalized: exact degree-two kernel of the actual quotient, parallel-pair and guarded dependent-triple spans, generator formulas and inclusion naturality | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
 | `HyperplaneGT/Diagram/Basic` | A03, marked diagrams and their automorphisms | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
@@ -1802,6 +1802,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/Coordinates` | G01–G03 consumers: dimension zero, parallel points, inverse chart and coefficient formulas, zero-ring coordinate splitting, and concurrent/empty triples over `𝔽₂` | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
 | `Examples/HyperplaneGT/Dual` | Full infinite dual coordinates, inverse action on a three-cycle, empty/zero/local/nonlocal primitive tests and characteristic-two determinant consumers | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `Examples/HyperplaneGT/QuadraticKernel` | A02 consumers: empty and dimension-zero arrangements, zero coefficients, disjoint points, characteristic-two concurrent relations and the zero quadratic kernel of the empty triangle | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
+| `Examples/HyperplaneGT/Galois` | G04–G06 consumers: public point maps, finite stable enlargement, actual inclusions, dimension zero and characteristic-two orbits | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
 
 `HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
 the actual exterior quotient to `osExteriorSquareMap`, surjective onto the existing internal
@@ -1877,6 +1878,28 @@ homogeneous vectors in both the affine chart and the hyperplane at infinity, and
 their preceding pure collineation leaves. `Examples/HyperplaneGT/Collineation` checks the
 identity extraction, dimension-zero charts, characteristic-two zero sums and infinity.
 
+`Geometry/Galois` is a pure facade over six leaves. `CoordinateAction` transports affine
+subspaces by a coordinatewise field automorphism and proves intersection, empty-subspace and
+codimension preservation; its additive point equivalence reuses Mathlib's product equivalence
+and works without downstream inverse-pair instances. `fieldCoordinateLinearMap` exposes semilinear scalar transport without inverse-pair instances;
+a private semilinear equivalence is used only for the rank comparison. `Action` constructs the genuine Galois action on
+hyperplanes. `Orbits` bounds conjugates of a fixed equation by finite minimal-polynomial root
+sets, constructs the least stable finite enlargement and the full cofinal system. Only this
+finite-orbit construction requires algebraicity; no leaf assumes perfectness or normality.
+
+`System` permits arbitrary chosen cofinal families, not just the full family. Common upper
+stages follow from cofinality rather than union closure. `StableArrangement` and
+`CofinalSystem.Stage` are intentionally `@[reducible] def` subtype synonyms: their inherited
+inclusion order and thin-category instances require full transparency at the type head;
+`@[instance_reducible]` alone does not synthesize the stage order. `Markings` uses tagged
+coordinate translates and increasing coordinate differences, proves that every base-field
+fiber is individually fixed, and supplies ordered zero/one labels compatible with inclusions.
+`AlgebraicMaps` constructs one common `markingTarget k`, independent of the tag or stage, and
+actual `SmoothAlg.complementMap` pullbacks satisfying the inclusion square and the two unit
+formulas. These algebra maps have the variance opposite to the geometric arrows. A04 performs
+the later scheme-open and theory transport. `Examples/HyperplaneGT/Galois` exercises independent
+field universes, dimension zero, characteristic two and actual stage morphisms.
+
 The two generic helper modules use namespace `OrlikSolomon` and carry no hyperplane/cohomology
 hypotheses. Check Mathlib and existing repository lemmas before adding any helper. Split modules
 before approximately 800 lines; list size-only splits within the approved import boundaries in
@@ -1907,7 +1930,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-11 formalized, 1 partly formalized and 29 planned, separate from the other blueprints. Each
+14 formalized, 1 partly formalized and 26 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally

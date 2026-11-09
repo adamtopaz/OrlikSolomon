@@ -16,12 +16,13 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate geometry, low-degree algebra, pure coordinate reconstruction, full-dual coordinates and local primitive criterion are formalized; the reconstruction theorem is planned.*
+*The coordinate and Galois geometry, low-degree algebra, pure coordinate reconstruction, full-dual coordinates and local primitive criterion are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Eleven boxes are formalized, one is partly formalized and twenty-nine remain planned.
+Fourteen boxes are formalized, one is partly formalized and twenty-six remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
+G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
 A02 identifies the full degree-two kernel of the actual exterior quotient with the parallel-pair and guarded dependent-triple relation span, including zero coefficients and characteristic two.
 C01–C03 recover a unique field automorphism from an arbitrary projective collineation fixing the prescribed frame, over any field and in dimension at least two.
@@ -80,7 +81,7 @@ Differences of graph functions determine parallelism and the projected common tr
 
 ## G04: the coefficient action
 
-:::node "lem:g04"
+:::node "lem:g04" (decl := OrlikSolomon.HyperplaneGT.galoisAction) (decl := OrlikSolomon.HyperplaneGT.fieldAffineSubspace_iInf) (decl := OrlikSolomon.HyperplaneGT.fieldAffineSubspace_eq_bot_iff) (decl := OrlikSolomon.HyperplaneGT.codim_fieldAffineSubspace) (decl := OrlikSolomon.HyperplaneGT.isEquation_fieldAffineForm) (decl := OrlikSolomon.HyperplaneGT.coefficientPoint_galois_smul) (decl := OrlikSolomon.HyperplaneGT.parallel_galois_smul_iff) (decl := OrlikSolomon.HyperplaneGT.dependentTriple_galois_smul_iff) (decl := OrlikSolomon.HyperplaneGT.isVertical_galois_smul_iff)
 Applying a $`k_0`-automorphism of $`k` to equation coefficients defines an action on hyperplanes.
 It preserves empty intersections and their codimensions, parallel pairs, dependent triples and coordinate verticality, and agrees with the action on coefficient points.
 This is constructed from equations; a natural action on a supplied cohomology theory is not an input.
@@ -88,18 +89,20 @@ This is constructed from equations; a natural action on a supplied cohomology th
 
 ## G05: finite orbits
 
-:::node "lem:g05"
-Algebraicity of $`k/k_0` makes each hyperplane orbit finite, by normalizing one coefficient and bounding the remaining conjugates by minimal-polynomial root sets.
+:::node "lem:g05" (decl := OrlikSolomon.HyperplaneGT.finite_orbit) (decl := OrlikSolomon.HyperplaneGT.stableClosure) (decl := OrlikSolomon.HyperplaneGT.subset_galoisClosure) (decl := OrlikSolomon.HyperplaneGT.isGaloisStable_stableClosure) (decl := OrlikSolomon.HyperplaneGT.fullCofinalSystem) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.exists_ge_finset)
+Algebraicity of $`k/k_0` makes each hyperplane orbit finite: the coefficients of any one fixed equation have only finitely many simultaneous conjugates, bounded by finite minimal-polynomial root sets.
 Every finite set therefore has a finite stable enlargement, and finite stable arrangements form a cofinal directed system.
 This step itself does not use perfectness.
 :::
 
 ## G06: the finite index system and markings
 
-:::node "def:g06"
+:::node "def:g06" (decl := OrlikSolomon.HyperplaneGT.CofinalSystem) (decl := OrlikSolomon.HyperplaneGT.Marking) (decl := OrlikSolomon.HyperplaneGT.Marking.function) (decl := OrlikSolomon.HyperplaneGT.Marking.fiber) (decl := OrlikSolomon.HyperplaneGT.Marking.parallel_zero_one) (decl := OrlikSolomon.HyperplaneGT.Marking.galois_smul_fiber) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.exists_ge_markings) (decl := OrlikSolomon.HyperplaneGT.markingTarget) (decl := OrlikSolomon.HyperplaneGT.Marking.algebraicMap) (decl := OrlikSolomon.HyperplaneGT.Marking.algebraicMap_comp_inclusion)
 A cofinal system consists of finite stable arrangements such that every finite set of hyperplanes lies in some member; its morphisms are inclusions.
 The tagged markings $`x_i-s` and $`x_i-x_j` have distinct zero and one fibers, both fixed by the Galois group.
-When both fibers belong to a stage, their function defines its marked map to the common target $`T`.
+When both fibers belong to a stage, their function defines an actual localized coordinate-algebra pullback from the single two-puncture target $`T`, sending $`t` and $`t-1` to the corresponding marking units.
+The inclusion/marking square holds as an equation of actual morphisms.
+The scheme-open and cohomology comparisons are separate parts of A04.
 Cofinality supplies common upper stages; a chosen subsystem need not be closed under unions.
 :::
 
