@@ -1711,7 +1711,7 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A03, C01–C03 and U01–U05 are formalized, including U04's actual universal
+G01–G06, A01–A03, C01–C03, U01–U05 and S02 are formalized, including U04's actual universal
 configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
 reconstruction theorem remains planned. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
@@ -1748,6 +1748,16 @@ blueprint. The reconstruction theorem retains `n ≥ 2`.
 
 The Galois action is semilinear on geometric coordinates and is constructed on OS generators by
 preservation of all defining relations. It is not passed to an API for a `k`-linear affine map.
+`Diagram/GaloisAction/Stage` restricts the label permutation to a stable arrangement and checks
+both fields of `OSAlgebra.IsFamily` in every length: empty-intersection products and guarded
+dependent boundaries. `galoisOSAlgebraEquiv` is an equivalence of the actual full quotient,
+preserving every ordinary degree submodule by equality and commuting with inclusions.
+The `Diagram/GaloisAction` facade uses the existing `GradedDiagramAut` constructor to package
+these components and identity on the one common target. Its marking squares agree on both
+ordered generators and hence on the full target algebra. `galoisGradedAction` records the group
+law. No algebraicity, perfectness, dimension lower bound or nonzero-coefficient condition is
+required. The later comparison `galoisGradedAut_toGalois` belongs to
+`Reconstruction/LocalRing` and is not part of this independent construction.
 Classification first concerns the explicit quadratic diagram. Extension to full graded
 automorphisms follows classification, rather than an assumption that the OS algebra is
 quadratic. The graded diagram uses the diagonal components indexed by degree. Fraction-field
@@ -1794,7 +1804,7 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Reconstruction/Incidence` | I01–I04 | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
 | `HyperplaneGT/Geometry/Collineation`, with `Span`, `Chart`, and `Field` leaves | C01–C03, formalized: arbitrary projective spans, coordinatewise affine charts, and a unique field automorphism from the prescribed frame | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
 | `HyperplaneGT/Reconstruction/Galois` | C04, S01 | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
-| `HyperplaneGT/Diagram/GaloisAction` | S02 | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
+| `HyperplaneGT/Diagram/GaloisAction`, with a `Stage` leaf | S02, formalized: direct coefficient-linear action on full OS algebras, every-degree image equality, inclusion and marking squares, group laws and identity common target | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
 | `HyperplaneGT/Reconstruction/LocalRing` | S03–S04; separate classification/graded leaves as necessary | W18–W19, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170), [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
 | `HyperplaneGT/Reconstruction/Domain` | S05 | W20, [#172](https://github.com/adamtopaz/OrlikSolomon/issues/172) |
 | `HyperplaneGT/Cohomology/Adapter` | A04 | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
@@ -1809,6 +1819,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/QuadraticKernel` | A02 consumers: empty and dimension-zero arrangements, zero coefficients, disjoint points, characteristic-two concurrent relations and the zero quadratic kernel of the empty triangle | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
 | `Examples/HyperplaneGT/Galois` | G04–G06 consumers: public point maps, finite stable enlargement, actual inclusions, dimension zero and characteristic-two orbits | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
 | `Examples/HyperplaneGT/Universal` | U01–U02 consumers: common vector/relator stages, zero coefficients, independent-universe linear lifts and the essential common-target component in dimension zero | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
+| `Examples/HyperplaneGT/GaloisAction` | S02 consumers: all-length relators, zero coefficients, dimension zero, full marking squares, a characteristic-two cubic relation and nontrivial complex conjugation on an integral OS generator | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
 | `Examples/HyperplaneGT/Diagram` | A03 consumers: concrete constructors, zero coefficients, characteristic-two relations, Laurent-polynomial marking maps, and dimension-zero target interchange | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 
 `HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
@@ -1996,7 +2007,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-19 formalized and 22 planned, separate from the other blueprints. Each
+20 formalized and 21 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
