@@ -20,9 +20,9 @@ Fill in routine detail left implicit by an existing blueprint directly; this rem
 preferred. When substantive mathematics is missing, follow the `blueprint-gap` skill and
 report to the supervisor who launched you. Codex relays gaps from its team to Claude.
 Claude gives Astra a precise scope stating what the blueprint must cover, with repository
-pointers. No other agent writes blueprints or sends requests to Astra, and Astra receives
-no formalization work. Claude checks with Adam before committing any blueprint Astra
-writes.
+pointers. Only Astra writes new blueprints, and only Claude sends it requests. Astra
+receives no formalization work. Claude checks with Adam before committing any blueprint
+Astra writes.
 
 ## Who owns what
 
