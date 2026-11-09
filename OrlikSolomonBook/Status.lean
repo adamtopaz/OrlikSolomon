@@ -34,10 +34,12 @@ The Cartesian node retains its Tor-sheaf and conormal statements, and the statem
 
 The fourth blueprint, cohomological hyperplane reconstruction, is in progress.
 Its 38 named groups contain 41 separately labeled statements: U01, U04 and L02 each contain a definition and a lemma, which have separate boxes and statuses.
-Eight statements are formalized: G01–G03 give coordinate geometry, A01 gives the degree-one generator basis and algebra generation, A02 gives the full degree-two exterior-quotient kernel, U03 gives full-dual coordinates and the contragredient action, U04 defines the determinant and explicit-relation centralizer, and U05 proves the local-ring primitive-coordinate criterion.
+Eleven statements are formalized.
+G01–G03 give coordinate geometry, A01 gives the degree-one generator basis and algebra generation, A02 gives the full degree-two exterior-quotient kernel, U03 gives full-dual coordinates and the contragredient action, U04 defines the determinant and explicit-relation centralizer, and U05 proves the local-ring primitive-coordinate criterion.
 A02 identifies that kernel with the span of parallel-pair and guarded dependent-triple wedges, including zero coefficients and characteristic two.
+C01–C03 give projective span preservation, separate affine coordinate bijections, and, in dimension at least two, the unique field automorphism from the prescribed fixed frame, over an arbitrary field.
 One statement is partly formalized: U04's generic centralizer and coordinate calculations are proved, while its geometric relation generators and diagram specialization remain pending.
-The other thirty-two statements are planned; the reconstruction theorem is not yet formalized.
+The other twenty-nine statements are planned; the reconstruction theorem is not yet formalized.
 {ref "hyperplane-gt"}[Its chapter] explains the proposed theorem, its hypotheses and the limits of the planned applications.
 
 {statusOverview}
