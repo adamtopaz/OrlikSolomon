@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
@@ -39,6 +39,13 @@ complement of the hyperplanes of `P` in the projective space `Proj Sym(W*)`, usi
   hyperplanes (`basicOpen_coord_eq_of_ker_eq`). It is `⊤` for empty `P` (`complementOpen_eq_top`).
 * `ProjectiveArrangement.complementι_eq_awayι_of_ker_eq`: the open immersion of the complement,
   and so `complementOpenIso`, do not depend on the equations chosen to define them.
+* `OrlikSolomon.proj_map_toSpecZero_algebraMap`: a graded map fixing the base scalars induces a
+  map of projective schemes over that base.
+* `ProjectiveArrangement.complementι_eq_specMap_comp_awayι`: the complement inclusion factors
+  through the chart of every equation of a member of the arrangement.
+* `ProjectiveArrangement.complementOpenIso_hom_appTop_ratio`: the coordinate-ring ratio is the
+  restriction of the homogeneous fraction from the corresponding chart. This is used by the
+  Mathlib projective-space interface of milestone M7.
 
 ## Implementation notes
 
@@ -118,6 +125,14 @@ theorem mapId_comp_awayMap {f g : A} {d e : ι} (hf : f ∈ 𝒜 d) (hg : g ∈ 
   rw [h₁, h₂, Localization.mk_eq_mk_iff, Localization.r_iff_exists]
   exact ⟨1, by simp only [OneMemClass.coe_one, one_mul, mul_pow]; ring⟩
 
+/-- `mapId_comp_awayMap` for a product `x = f * g` that is only propositionally equal to `f * g`,
+such as a product over a finite set from which `f` is split off. -/
+theorem mapId_comp_awayMap_of_eq {f g x : A} {d e : ι} (hf : f ∈ 𝒜 d) (hg : g ∈ 𝒜 e)
+    (hx : x = f * g) (hfT : Submonoid.powers f ≤ T) (hT : Submonoid.powers x ≤ T) :
+    (mapId 𝒜 hT).comp (awayMap 𝒜 hg hx) = mapId 𝒜 hfT := by
+  subst hx
+  exact mapId_comp_awayMap 𝒜 hf hg hfT hT
+
 end MapId
 
 section GradedIso
@@ -157,6 +172,89 @@ def projIsoOfGraded (f : 𝒜 →+*ᵍ ℬ) (g : ℬ →+*ᵍ 𝒜) (hfg : f.com
     rw [← Proj.map_comp, proj_map_eq_id hgf]
 
 end GradedIso
+
+section StructureMap
+
+variable {R A B : Type u} [CommRing R] [CommRing A] [CommRing B] [Algebra R A] [Algebra R B]
+variable {𝒜 : ℕ → Submodule R A} {ℬ : ℕ → Submodule R B} [GradedAlgebra 𝒜] [GradedAlgebra ℬ]
+
+set_option backward.isDefEq.respectTransparency false in
+/-- A graded map of graded `R`-algebras that is the identity on `R` induces a map of `Proj` over
+`Spec R`: the structure maps `Proj → Spec R`, through the degree-zero parts, are compatible. -/
+theorem proj_map_toSpecZero_algebraMap (f : 𝒜 →+*ᵍ ℬ)
+    (hf : HomogeneousIdeal.irrelevant ℬ ≤ (HomogeneousIdeal.irrelevant 𝒜).map f)
+    (hfR : ∀ r : R, f (algebraMap R A r) = algebraMap R B r) :
+    Proj.map f hf ≫ Proj.toSpecZero 𝒜 ≫ Spec.map (CommRingCat.ofHom (algebraMap R (𝒜 0))) =
+      Proj.toSpecZero ℬ ≫ Spec.map (CommRingCat.ofHom (algebraMap R (ℬ 0))) := by
+  refine (Proj.mapAffineOpenCover f hf).openCover.hom_ext _ _ fun s ↦ ?_
+  simp only [Scheme.AffineOpenCover.openCover_f, Proj.mapAffineOpenCover_f]
+  rw [Proj.awayι_comp_map_assoc f hf s.1.2 _ s.2.2, Proj.awayι_toSpecZero_assoc,
+    Proj.awayι_toSpecZero_assoc, ← Spec.map_comp, ← Spec.map_comp, ← Spec.map_comp]
+  congr 1
+  ext r
+  change (HomogeneousLocalization.mk _).val = (HomogeneousLocalization.mk _).val
+  simp only [HomogeneousLocalization.val_mk]
+  change Localization.mk (f (algebraMap R A r)) _ = Localization.mk (algebraMap R B r) _
+  simp [hfR]
+
+end StructureMap
+
+section Charts
+
+/-- Restricting a global function along `g` from the open `⊤` to `⊤` is pulling it back. -/
+theorem appLE_top_eq_appTop {X Y : Scheme.{u}} (g : X ⟶ Y) (e : ⊤ ≤ g ⁻¹ᵁ ⊤) :
+    g.appLE ⊤ ⊤ e = g.appTop :=
+  g.appLE_eq_app (U := ⊤)
+
+variable {σ A : Type u} [CommRing A] [SetLike σ A] [AddSubgroupClass σ A] {𝒜 : ℕ → σ}
+variable [GradedRing 𝒜] {f : A} {m : ℕ} (f_deg : f ∈ 𝒜 m) (hm : 0 < m)
+
+/-- The chart `Spec (A_f)₀ → Proj A` lands in `D₊(f)`. -/
+theorem top_le_awayι_preimage_basicOpen :
+    ⊤ ≤ Proj.awayι 𝒜 f f_deg hm ⁻¹ᵁ Proj.basicOpen 𝒜 f := by
+  rw [← Proj.opensRange_awayι 𝒜 f f_deg hm, Scheme.Hom.preimage_opensRange]
+
+set_option backward.isDefEq.respectTransparency false in
+private theorem awayToSection_appLE_of_eq {g : Spec (.of (Away 𝒜 f)) ⟶ Proj 𝒜}
+    (hg : (Proj.basicOpenIsoSpec 𝒜 f f_deg hm).inv ≫ (Proj.basicOpen 𝒜 f).ι = g)
+    (h : ⊤ ≤ g ⁻¹ᵁ Proj.basicOpen 𝒜 f) :
+    Proj.awayToSection 𝒜 f ≫ g.appLE (Proj.basicOpen 𝒜 f) ⊤ h = (Scheme.ΓSpecIso _).inv := by
+  subst hg
+  have h₁ := Proj.basicOpenToSpec_app_top 𝒜 f
+  rw [← Proj.basicOpenIsoSpec_hom 𝒜 f f_deg hm] at h₁
+  have h' : Proj.awayToSection 𝒜 f = (Scheme.ΓSpecIso _).inv ≫
+      (Proj.basicOpenIsoSpec 𝒜 f f_deg hm).hom.appTop ≫ (Proj.basicOpen 𝒜 f).topIso.hom := by
+    rw [Scheme.Hom.appTop, h₁]
+    simp
+  rw [h']
+  simp only [Category.assoc, Scheme.Hom.comp_appLE]
+  have h₂ : (Proj.basicOpen 𝒜 f).topIso.hom ≫ (Proj.basicOpen 𝒜 f).ι.app (Proj.basicOpen 𝒜 f) =
+      (Proj.basicOpen 𝒜 f).toScheme.presheaf.map (homOfLE le_top).op := by
+    simp only [Scheme.Opens.topIso_hom, Scheme.Opens.ι_app, ← Functor.map_comp]
+    rfl
+  rw [reassoc_of% h₂, Scheme.Hom.map_appLE, appLE_top_eq_appTop, ← Scheme.Hom.comp_appTop,
+    Iso.inv_hom_id, Scheme.Hom.id_appTop, Category.comp_id]
+
+/-- The chart `Spec (A_f)₀ → Proj A` pulls the section of `D₊(f)` given by a fraction `a / f ^ n`
+back to the same fraction, as a function on `Spec (A_f)₀`. -/
+theorem awayToSection_awayι_appLE :
+    Proj.awayToSection 𝒜 f ≫ (Proj.awayι 𝒜 f f_deg hm).appLE (Proj.basicOpen 𝒜 f) ⊤
+      (top_le_awayι_preimage_basicOpen f_deg hm) = (Scheme.ΓSpecIso _).inv :=
+  awayToSection_appLE_of_eq f_deg hm rfl _
+
+/-- If `g : Y → Proj A` factors through the chart `Spec (A_f)₀ → Proj A` as `β`, then `g` pulls
+the section of `D₊(f)` given by a fraction back to the pullback along `β` of the same fraction. -/
+theorem awayToSection_appLE_of_comp_eq {Y : Scheme.{u}} {g : Y ⟶ Proj 𝒜}
+    {β : Y ⟶ Spec (.of (Away 𝒜 f))} (hβ : β ≫ Proj.awayι 𝒜 f f_deg hm = g)
+    (h : ⊤ ≤ g ⁻¹ᵁ Proj.basicOpen 𝒜 f) :
+    Proj.awayToSection 𝒜 f ≫ g.appLE (Proj.basicOpen 𝒜 f) ⊤ h =
+      (Scheme.ΓSpecIso _).inv ≫ β.appTop := by
+  subst hβ
+  have e := Scheme.Hom.appLE_comp_appLE β (Proj.awayι 𝒜 f f_deg hm) (Proj.basicOpen 𝒜 f) ⊤ ⊤
+    (top_le_awayι_preimage_basicOpen f_deg hm) (Scheme.Hom.preimage_top β).ge
+  rw [← e, reassoc_of% awayToSection_awayι_appLE, appLE_top_eq_appTop]
+
+end Charts
 
 variable {k : Type u} [Field k] {W : Type u} [AddCommGroup W] [Module k W]
 
@@ -224,6 +322,11 @@ theorem exists_mul_mem_powers_prod_coord {t : CoordinateRing k W}
 
 end Product
 
+/-- The powers of an equation of a hyperplane of `P` are products of equations. -/
+theorem powers_coord_le (hℓ : LinearMap.ker ℓ ∈ P) :
+    Submonoid.powers (coord ℓ.toAffineMap) ≤ P.cone.equationSubmonoid :=
+  Submonoid.powers_le.2 (coord_mem_equationSubmonoid_cone hℓ)
+
 /-! ### The comparison with `Away` -/
 
 namespace ComplementRing
@@ -254,6 +357,24 @@ theorem awayEquiv_mk {n : ℕ} {a : CoordinateRing k W}
   rfl
 
 end Away
+
+/-- The inclusion into `O(U_P)` of the ring `(Sym(W*)_ℓ)₀` of the chart `D₊(ℓ)`, for an equation `ℓ`
+of a hyperplane of `P`: a fraction whose denominator is a power of `ℓ` is a fraction whose
+denominator is a product of equations. -/
+def fromAway (hℓ : LinearMap.ker ℓ ∈ P) :
+    Away (symmetricGrading k (Dual k W)) (coord ℓ.toAffineMap) →+* P.ComplementRing :=
+  mapId (symmetricGrading k (Dual k W)) (powers_coord_le hℓ)
+
+/-- The ratio `ξ / ℓ` is the image of the fraction `ξ / ℓ` of the chart `D₊(ℓ)`. -/
+theorem ratio_eq_fromAway (ξ : Dual k W) (hℓ : LinearMap.ker ℓ ∈ P) :
+    ratio ξ hℓ = fromAway hℓ (Away.mk _ (coord_toAffineMap_mem ℓ) 1 (coord ξ.toAffineMap)
+      (by simpa using coord_toAffineMap_mem ξ)) := by
+  apply HomogeneousLocalization.val_injective
+  change (HomogeneousLocalization.mk _).val = (HomogeneousLocalization.mk _).val
+  simp only [HomogeneousLocalization.val_mk]
+  congr 1
+  ext
+  simp
 
 end ComplementRing
 
@@ -467,6 +588,72 @@ hyperplanes of `P`. -/
 theorem opensRange_complementι : (complementι P).opensRange = complementOpen P :=
   (Scheme.Hom.opensRange_comp_of_isIso _ _).trans (complementOpen P).opensRange_ι
 
+/-- The open immersion of the complement factors through the chart `D₊(ℓ)` of any equation `ℓ` of a
+hyperplane of `P`, by `Spec` of the inclusion `ComplementRing.fromAway` of the ring of the chart. -/
+theorem complementι_eq_specMap_comp_awayι (hℓ : LinearMap.ker ℓ ∈ P) :
+    complementι P =
+      Spec.map (CommRingCat.ofHom (ComplementRing.fromAway (P := P) hℓ)) ≫
+        Proj.awayι (symmetricGrading k (Dual k W)) (coord ℓ.toAffineMap)
+          (coord_toAffineMap_mem ℓ) one_pos := by
+  classical
+  let K : P := ⟨_, hℓ⟩
+  let F : P → Dual k W := Function.update form K ℓ
+  have hF : ∀ H : P, LinearMap.ker (F H) = H := fun H ↦ by
+    by_cases hH : H = K
+    · subst hH
+      simp [F, K]
+    · simp [F, hH]
+  have hg := SetLike.prod_mem_graded (symmetricGrading k (Dual k W))
+    (F := Finset.univ.erase K) (fun _ ↦ 1) (fun H : P ↦ coord (F H).toAffineMap)
+    fun H _ ↦ coord_toAffineMap_mem (F H)
+  have hx : ∏ H : P, coord (F H).toAffineMap =
+      coord ℓ.toAffineMap * ∏ H ∈ Finset.univ.erase K, coord (F H).toAffineMap := by
+    rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ K)]
+    simp [F]
+  -- The chart of the product does not depend on the degree in which it is taken.
+  have e : Proj.awayι (symmetricGrading k (Dual k W)) (∏ H : P, coord (F H).toAffineMap)
+      (prod_coord_mem_symmetricGrading F) (card_pos_of_nonempty P) =
+      Proj.awayι (symmetricGrading k (Dual k W)) (∏ H : P, coord (F H).toAffineMap)
+        (hx ▸ SetLike.mul_mem_graded (coord_toAffineMap_mem ℓ) hg)
+        (one_pos.trans_le (Nat.le_add_right 1 _)) := rfl
+  rw [complementι_eq_awayι_of_ker_eq P F hF, e, ← Proj.SpecMap_awayMap_awayι _
+    (coord_toAffineMap_mem ℓ) one_pos hg hx, ← Spec.map_comp_assoc, ← CommRingCat.ofHom_comp]
+  exact congrArg (fun φ ↦ Spec.map (CommRingCat.ofHom φ) ≫ _)
+    (mapId_comp_awayMap_of_eq _ (coord_toAffineMap_mem ℓ) hg hx (powers_coord_le hℓ)
+      (powers_prod_coord_le F hF))
+
+omit [Nonempty P] in
+/-- The complement lies in the chart `D₊(ℓ)` of every equation `ℓ` of a hyperplane of `P`. -/
+theorem top_le_complementOpen_ι_preimage_basicOpen (hℓ : LinearMap.ker ℓ ∈ P) :
+    ⊤ ≤ (complementOpen P).ι ⁻¹ᵁ
+      Proj.basicOpen (symmetricGrading k (Dual k W)) (coord ℓ.toAffineMap) :=
+  (Scheme.Opens.ι_preimage_self _).ge.trans
+    (Scheme.Hom.preimage_mono _ (complementOpen_le_basicOpen hℓ))
+
+/-- The function `ξ / ℓ` on the complement, pulled back along `complementOpenIso` from the element
+`ComplementRing.ratio ξ hℓ` of `O(U_P)`, is the restriction to the complement of the section
+`ξ / ℓ` of the chart `D₊(ℓ)` of `Proj Sym(W*)`. -/
+theorem complementOpenIso_hom_appTop_ratio (ξ : Dual k W) (hℓ : LinearMap.ker ℓ ∈ P) :
+    (complementOpenIso P).hom.appTop ((Scheme.ΓSpecIso (.of P.ComplementRing)).inv
+        (ComplementRing.ratio ξ hℓ)) =
+      (complementOpen P).ι.appLE
+        (Proj.basicOpen (symmetricGrading k (Dual k W)) (coord ℓ.toAffineMap)) ⊤
+        (top_le_complementOpen_ι_preimage_basicOpen P hℓ)
+        (Proj.awayToSection _ _ (Away.mk _ (coord_toAffineMap_mem ℓ) 1 (coord ξ.toAffineMap)
+          (by simpa using coord_toAffineMap_mem ξ))) := by
+  have hβ : ((complementOpenIso P).hom ≫ Spec.map (CommRingCat.ofHom
+      (ComplementRing.fromAway (P := P) hℓ))) ≫
+        Proj.awayι (symmetricGrading k (Dual k W)) (coord ℓ.toAffineMap)
+          (coord_toAffineMap_mem ℓ) one_pos = (complementOpen P).ι := by
+    rw [Category.assoc, ← complementι_eq_specMap_comp_awayι P hℓ, complementι,
+      Iso.hom_inv_id_assoc]
+  symm
+  rw [← CommRingCat.comp_apply, awayToSection_appLE_of_comp_eq _ one_pos hβ,
+    Scheme.Hom.comp_appTop, CommRingCat.comp_apply, CommRingCat.comp_apply,
+    ← CommRingCat.comp_apply (Scheme.ΓSpecIso _).inv, ← Scheme.ΓSpecIso_inv_naturality,
+    CommRingCat.comp_apply, ComplementRing.ratio_eq_fromAway]
+  rfl
+
 end Proj
 
 end ProjectiveArrangement
@@ -477,7 +664,7 @@ section Basis
 
 attribute [local instance] MvPolynomial.gradedAlgebra
 
-variable {κ : Type u} (b : Basis κ k (Dual k W))
+variable {κ : Type*} (b : Basis κ k (Dual k W))
 
 /-- A basis of `W*` identifies `Sym(W*)` with the polynomial ring, as graded rings. -/
 def symmetricGradingToMvPolynomial :
@@ -496,10 +683,23 @@ def mvPolynomialToSymmetricGrading :
     obtain ⟨y, hy, rfl⟩ := hx
     simpa using hy
 
+@[simp]
+theorem symmetricGradingToMvPolynomial_apply (x : SymmetricAlgebra k (Dual k W)) :
+    symmetricGradingToMvPolynomial b x = SymmetricAlgebra.equivMvPolynomial b x :=
+  rfl
+
+@[simp]
+theorem mvPolynomialToSymmetricGrading_apply (x : MvPolynomial κ k) :
+    mvPolynomialToSymmetricGrading b x = (SymmetricAlgebra.equivMvPolynomial b).symm x :=
+  rfl
+
 /-- `Proj Sym(W*)`, the projectivization of `W`, is the projective space `Proj k[x_i]` of the
 polynomial ring in the variables given by a basis of `W*`, with its usual grading by total degree.
-So `complementOpen P` is the complement of hyperplanes in projective space in the usual sense. -/
-def projIsoMvPolynomial :
+So `complementOpen P` is the complement of hyperplanes in projective space in the usual sense.
+
+The index type `κ` lives in the universe of `k`, as `Proj` of a graded map needs both rings in one
+universe; the graded maps above have no such restriction. -/
+def projIsoMvPolynomial {κ : Type u} (b : Basis κ k (Dual k W)) :
     Proj (symmetricGrading k (Dual k W)) ≅ Proj (MvPolynomial.homogeneousSubmodule κ k) :=
   projIsoOfGraded (mvPolynomialToSymmetricGrading b) (symmetricGradingToMvPolynomial b)
     (GradedRingHom.ext fun x ↦ (SymmetricAlgebra.equivMvPolynomial b).symm_apply_apply x)
