@@ -5,6 +5,7 @@ public import OrlikSolomon.Algebra.ComplexReduction
 public import OrlikSolomon.Algebra.Exact
 public import OrlikSolomon.Algebra.ExteriorBoundary
 public import OrlikSolomon.Algebra.ExteriorWords
+public import OrlikSolomon.Algebra.HomogeneousRelations
 public import OrlikSolomon.Algebra.RelationQuotient
 public import OrlikSolomon.Algebra.SymmetricGrading
 public import OrlikSolomon.Cohomology.Axioms
