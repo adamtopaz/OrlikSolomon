@@ -2,14 +2,27 @@
 
 ## Roles
 
-- **Supervisor:** Claude Code, in tmux pane `%93`. Owns the overall plan and is the main
-  contact with Adam, including relaying blueprint gaps.
-- **Deputy supervisor:** Codex, in tmux pane `%94`. Runs its own workstream and subagents,
+- **Supervisor:** Claude Code, in the top-left tmux pane. Owns the overall plan, is the main
+  contact with Adam, and gives GPT-6-Astra its blueprint scopes.
+- **Deputy supervisor:** Codex, in the right tmux pane. Runs its own workstream and subagents,
   reviews the Claude team's work, and takes on whatever the supervisor hands over.
+- **Blueprint author:** GPT-6-Astra, a Codex CLI session in the bottom-left tmux pane.
+  Writes all new mathematical blueprints in `blueprint/`. It does no formalization and
+  does not commit, push or open PRs. Only Claude sends it blueprint requests.
 - **Subagents:** report only to the supervisor that launched them.
 
 Adam can talk to either supervisor. If Adam instructs the deputy directly, the deputy
 tells the supervisor what changed.
+
+## Blueprint gaps
+
+Fill in routine detail left implicit by an existing blueprint directly; this remains
+preferred. When substantive mathematics is missing, follow the `blueprint-gap` skill and
+report to the supervisor who launched you. Codex relays gaps from its team to Claude.
+Claude gives Astra a precise scope stating what the blueprint must cover, with repository
+pointers. Only Astra writes new blueprints, and only Claude sends it requests. Astra
+receives no formalization work. Claude checks with Adam before committing any blueprint
+Astra writes.
 
 ## Who owns what
 
@@ -56,22 +69,34 @@ from a harness go in `.worktrees/`, which git ignores.
 
 ## Tmux protocol
 
-Only the two supervisors use tmux. Subagents do not.
+Only the two supervisors use tmux for coordination. Subagents do not. The current layout
+is Claude top-left, Astra bottom-left, and Codex on the right. Pane IDs can change: identify
+the role before sending anything, using the current project's window layout, not a stored ID.
+
+List the current window's pane IDs and positions with:
+
+```bash
+tmux list-panes -F '#{pane_id} left=#{pane_left} top=#{pane_top} width=#{pane_width} height=#{pane_height}'
+```
 
 **Sending.** Address panes by ID, in two separate commands, so that the Enter is not
 swallowed as part of the pasted text:
 
 ```bash
-tmux send-keys -t %93 -l -- '[codex] your message on one line'
-tmux send-keys -t %93 Enter
+# Replace %NN with the confirmed current ID of the other supervisor's pane.
+supervisor_pane='%NN'
+tmux send-keys -t "$supervisor_pane" -l -- '[codex] your message on one line'
+tmux send-keys -t "$supervisor_pane" Enter
 ```
 
-Then check that it arrived with `tmux capture-pane -p -t %93 | tail -20`.
+Then check that it arrived with `tmux capture-pane -p -t "$supervisor_pane" | tail -20`.
 
 **Rules:**
 
-- Send only to pane `%93` or `%94`. Other tmux panes on this machine belong to other
-  projects: never read from them or send anything to them.
+- Codex sends only to Claude. Claude may send to Codex and may send blueprint requests
+  to Astra. Do not send formalization work to Astra. Never read from or send to panes
+  belonging to other projects. If the roles are unclear after a layout change, confirm
+  them before sending.
 - Never send `Escape`, `C-c` or other control keys, which could interrupt the other agent.
   A message sent mid-turn waits in the queue, so there is no need to retry.
 - Start every message with `[claude]` or `[codex]`, keep it on one line, and keep it short.
