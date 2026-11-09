@@ -1640,10 +1640,21 @@ on the first page, the row in `Organization`, the sentence on the status page, t
 `Geometry`, `Axioms` and `Projective`, and the line in `README.md`. The build does not check this
 prose.
 
-## Interface (M7)
+## Interface
 
-| Module under `OrlikSolomon/` | Contents | Issue |
-| --------------------------- | -------- | ----- |
+`OrlikSolomon/MainTheorem.lean` (#140) states the main theorem with Mathlib terms only and imports
+the library privately. The bridge modules `Interface/*`, in the namespace `OrlikSolomon.Interface`,
+relate its terms to the library. They state their results about the same Mathlib terms, so that the
+proofs of the interface connect them by `rfl` or `exact`. Where the interface defines data that the
+library needs as one of its own terms, such as a divisor pair, the bridge module repeats the body
+of the interface's definition, and the assembly identifies the two by unfolding. Keep such bodies
+identical to the interface's. Inside `namespace OrlikSolomon.Interface`, the names `DivisorPair`
+and `OrdinaryTheory` resolve to the algebraic declarations, so write `Geometric.DivisorPair` and
+`Geometric.OrdinaryTheory`.
+
+| Module under `OrlikSolomon/` | Blueprint labels | Issue |
+| ---------------------------- | ---------------- | ----- |
+| `Interface/Logarithms` | the interface's `standardDivisor` as the library pair `Interface.standardPair D`, its isomorphism `standardPairIso` with `standardPair D D.point` and the residue comparison; `τ` as the unique class of bidegree `(1, 1)` with residue `1` at the origin (`def:geo-log`); a map to `𝔾ₘ` pulling the coordinate back to `f` exists exactly when `f` is a unit, is then unique, and pulls `τ` back to `[f]` (`thm:geo-units`) | #143 |
 | `Interface/OSAlgebra` | generic RingQuot presentation, central OS comparison, projective difference subalgebra and weighted grading compatibility for M7 | #142 |
 
 `Interface/OSAlgebra` makes library-side copies of the approved main-theorem presentation over
