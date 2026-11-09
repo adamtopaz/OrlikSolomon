@@ -47,6 +47,9 @@ jobs:
       - name: Build the book
         run: lake build OrlikSolomonBook book
 
+      - name: Test blueprint parsing
+        run: lake env lean -DmaxSynthPendingDepth=3 -DautoImplicit=false scripts/tests/book-blueprint-parser.lean
+
       - uses: actions/cache/save@v6
         if: github.ref == 'refs/heads/main' && steps.restore.outputs.cache-hit != 'true'
         with:
