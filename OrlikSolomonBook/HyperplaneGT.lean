@@ -16,17 +16,18 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers and local primitive criterion are formalized; the reconstruction theorem is planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams, universal module and diagram action, direct Galois action, pure coordinate reconstruction, full-dual coordinates, universal centralizers and local primitive criterion are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Nineteen boxes are formalized and twenty-two remain planned.
+Twenty boxes are formalized and twenty-one remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
 A02 identifies the full degree-two kernel of the actual exterior quotient with the parallel-pair and guarded dependent-triple relation span, including zero coefficients and characteristic two.
 A03 defines the marked quadratic and full graded automorphism groups, with one common target and faithful degree-one restriction, over arbitrary commutative coefficient rings.
 U01–U02 construct the universal free module, its explicit quadratic relation span and common finite-stage witnesses, and the induced diagram action retaining the common target component.
+S02 gives the direct Galois action on the full graded diagram, preserving every defining relation and acting identically on its one common target.
 C01–C03 recover a unique field automorphism from an arbitrary projective collineation fixing the prescribed frame, over any field and in dimension at least two.
 U03 and U05 give the full algebraic dual, its inverse-precomposition action and the local-ring primitive-coordinate criterion for arbitrary index types.
 U04 gives the determinant and centralizer, their exact equations on all parallel pairs and guarded dependent triples, and paired invariance under the actual diagram action.
@@ -350,7 +351,7 @@ The dimension hypothesis supplies that transverse direction.
 
 ## S02: the explicit Galois action
 
-:::node "lem:s02"
+:::node "lem:s02" (decl := OrlikSolomon.HyperplaneGT.isFamily_galoisLabelEquiv) (decl := OrlikSolomon.HyperplaneGT.galoisOSAlgebraEquiv) (decl := OrlikSolomon.HyperplaneGT.map_degree_galoisOSAlgebraEquiv) (decl := OrlikSolomon.HyperplaneGT.galoisGradedAut) (decl := OrlikSolomon.HyperplaneGT.galoisGradedAut_targetEquiv) (decl := OrlikSolomon.HyperplaneGT.galoisOSAlgebraEquiv_osMap) (decl := OrlikSolomon.HyperplaneGT.galoisGradedAction)
 For each $`\sigma\in(k\simeq_{k_0}k)`, the formula $`e_H\mapsto e_{\sigma H}` defines a natural graded $`R`-algebra automorphism of the full diagram, acting identically on $`T`.
 These maps form an action and preserve every Orlik–Solomon relator, including higher ones.
 The construction uses the presentation and does not depend on local detection or on a semilinear pullback supplied by a theory.
