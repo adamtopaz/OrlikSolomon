@@ -186,7 +186,7 @@ For $`\lambda,\mu\in P`, the determinant $`d_{\lambda,\mu}(a,b)=\lambda(a)\mu(b)
 Define $`\lambda\sim\mu` when this exterior map annihilates $`Q`, and let $`C(\lambda)` be the set of such $`\mu`.
 :::
 
-:::node "lem:u04" (decl := OrlikSolomon.HyperplaneGT.mem_centralizer_iff) (decl := OrlikSolomon.HyperplaneGT.dualDeterminant_single) (decl := OrlikSolomon.HyperplaneGT.dualDeterminant_sub_single) (decl := OrlikSolomon.HyperplaneGT.commutes_span_iff) (decl := OrlikSolomon.HyperplaneGT.commutes_dualAction_iff) (remaining := "The canonical universal relation submodule and its geometric parallel-pair/dependent-triple generator theorem, together with specialization to the induced diagram action, await U01–U02 (#159–#160). The current formulas and paired invariance are generic for an explicit relation submodule.")
+:::node "lem:u04" (decl := OrlikSolomon.HyperplaneGT.mem_centralizer_iff) (decl := OrlikSolomon.HyperplaneGT.dualDeterminant_single) (decl := OrlikSolomon.HyperplaneGT.dualDeterminant_sub_single) (decl := OrlikSolomon.HyperplaneGT.commutes_span_iff) (decl := OrlikSolomon.HyperplaneGT.commutes_dualAction_iff) (remaining := "The geometric determinant-generator theorem for the canonical universal relation submodule and specialization to the induced diagram action remain pending. The current formulas and paired invariance are generic for an explicit relation submodule.")
 The centralizer $`C(\lambda)` is a submodule.
 Commuting is equivalent to the determinant equations on every parallel pair and every dependent triple, and is preserved in both directions by the paired universal and dual actions.
 Alternation follows by subtracting equal terms, including in characteristic two.
