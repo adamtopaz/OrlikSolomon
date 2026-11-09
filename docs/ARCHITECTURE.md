@@ -1710,10 +1710,10 @@ M7 introduces no blueprint nodes.
 ## Cohomological hyperplane reconstruction (M8)
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
-This section records the approved design and implementation of the development. G01–G03, the
-coordinate geometry, and A01–A02, the canonical degree-one basis, algebra generation and exact
-degree-two kernel, are formalized;
-the reconstruction theorem remains planned.
+This section records the approved design, implemented generic helpers and blueprint statements.
+G01–G03, the coordinate geometry, and A01–A02, the canonical degree-one basis, algebra generation
+and exact degree-two kernel, are formalized; the reconstruction theorem remains planned. The book
+records the status of the complete blueprint statements.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
 described under Algebra above; `HyperplaneGT/Algebra/QuadraticKernel` applies it to the actual OS
 quotient and identifies its full degree-two kernel.
