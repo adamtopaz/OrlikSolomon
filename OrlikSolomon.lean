@@ -187,6 +187,10 @@ public import OrlikSolomon.Grading.Laurent
 public import OrlikSolomon.Grading.LinearImage
 public import OrlikSolomon.Grading.Restriction
 public import OrlikSolomon.Grading.TensorProduct
+public import OrlikSolomon.Interface.Logarithms
+public import OrlikSolomon.Interface.OSAlgebra
+public import OrlikSolomon.Interface.ProjectiveComplement
+public import OrlikSolomon.Interface.ProjectiveSpace
 public import OrlikSolomon.MainTheorem
 public import OrlikSolomon.Presentation.BaseChange
 public import OrlikSolomon.Presentation.Basic
