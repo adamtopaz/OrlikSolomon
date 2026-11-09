@@ -6,6 +6,8 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Alternating
+public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Configurations
+public import OrlikSolomon.HyperplaneGT.Algebra.Dual.DiagramAction
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Primitive
 
 /-!
@@ -14,9 +16,12 @@ public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Primitive
 This facade supplies full product coordinates on the dual of any free module, the
 contragredient linear action, literal surjectivity as primitivity and its local-ring coordinate
 criterion, and determinant centralizers for an arbitrary explicit exterior-square relation
-submodule. No diagram or cohomology theory is required.
+submodule. These generic leaves remain independent of geometry and diagrams. The specialized
+leaves give the determinant tests for the actual global hyperplane relation span and its
+contragredient diagram action, including equality of the paired centralizer images.
+No cohomology theory is imported.
 
-Blueprint: `lem:u03`, `lem:u05`, and the generic portion of `def:u04`, `lem:u04`.
+Blueprint: `lem:u03`, `def:u04`, `lem:u04`, `lem:u05`.
 -/
 
 @[expose] public section
