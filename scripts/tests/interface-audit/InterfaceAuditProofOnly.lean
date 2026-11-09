@@ -6,6 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.Geometry.Hyperplane
+public import Verso.Doc
 
 /-!
 Positive fixture: library lemmas and proof-namespace theorems occur only as proofs.
@@ -36,3 +37,8 @@ end OrlikSolomon.MainTheorem.Proof
 /-- A proof helper may be used as a proof argument outside its namespace. -/
 def proofRegionOnly : {_x : Nat // True} :=
   ⟨0, OrlikSolomon.MainTheorem.Proof.allowedProof⟩
+
+/-- Data from an unrelated dependency may occur inside a proof, without entering the interface. -/
+theorem dependencyProofOnly : True := by
+  have _h : Verso.Doc.Genre.none = Verso.Doc.Genre.none := rfl
+  trivial

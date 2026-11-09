@@ -5,7 +5,7 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-lake build --wfail audit OrlikSolomon.Geometry.Hyperplane
+lake build --wfail audit OrlikSolomon.Geometry.Hyperplane Verso.Doc
 
 fixture_tmp="$(mktemp -d /tmp/issue-140-interface-audit.XXXXXX)"
 trap 'rm -rf -- "$fixture_tmp"' EXIT
@@ -17,8 +17,10 @@ fixture_sources="scripts/tests/interface-audit"
 
 negative_fixtures=(
   TypeLeak ValueLeak PredicateLeak ProofRegionLeak PrivateLeak AuxLeak BinderLeak GeneratedAuxLeak
+  VersoLeak
 )
-all_fixtures=("${negative_fixtures[@]}" ProofOnly)
+positive_fixtures=(ProofOnly MathlibTransitive)
+all_fixtures=("${negative_fixtures[@]}" "${positive_fixtures[@]}")
 
 for fixture in "${all_fixtures[@]}"; do
   fixture_module="InterfaceAudit${fixture}"
@@ -38,7 +40,7 @@ for fixture in "${negative_fixtures[@]}"; do
     exit 1
   fi
   # A missing module, compiler error, or failed type inference is not a passing negative test.
-  if ! grep -Eq 'refers to .*(library module|Part III)' "$fixture_tmp/$fixture-audit.log"; then
+  if ! grep -Eq 'refers to .*(library module|Part III|outside the Mathlib import closure)' "$fixture_tmp/$fixture-audit.log"; then
     cat "$fixture_tmp/$fixture-audit.log"
     exit 1
   fi
@@ -51,9 +53,11 @@ if ! grep -Fq 'generatedAux._proof_1 refers to' "$fixture_tmp/GeneratedAuxLeak-a
   exit 1
 fi
 
-if ! env LEAN_PATH="$fixture_tmp:$fixture_lean_path" "$fixture_audit" \
-    --interface InterfaceAuditProofOnly > "$fixture_tmp/ProofOnly-audit.log" 2>&1; then
-  cat "$fixture_tmp/ProofOnly-audit.log"
-  exit 1
-fi
-printf 'interface audit test: accepted ProofOnly\n'
+for fixture in "${positive_fixtures[@]}"; do
+  if ! env LEAN_PATH="$fixture_tmp:$fixture_lean_path" "$fixture_audit" \
+      --interface "InterfaceAudit${fixture}" > "$fixture_tmp/$fixture-audit.log" 2>&1; then
+    cat "$fixture_tmp/$fixture-audit.log"
+    exit 1
+  fi
+  printf 'interface audit test: accepted %s\n' "$fixture"
+done

@@ -21,8 +21,9 @@ public import Lean
   generates for safe code: see `isGeneratedCtorIdxImpl` and `isGeneratedUnsafeRec`;
 * a declaration of the project depends on an axiom other than `propext`, `Classical.choice` and
   `Quot.sound`, which is how `sorry`, `admit` and `native_decide` show up;
-* Parts I and II of `OrlikSolomon.MainTheorem`, the file that states the main theorem, mention a
-  declaration of the library. See `checkInterface`.
+* Parts I and II of `OrlikSolomon.MainTheorem`, the file that states the main theorem, use data
+  outside Mathlib, its actual transitive imports, Lean/core, and this module outside its proof
+  namespace. See `checkInterface`.
 
 `lake exe audit --interface` makes only the last check. Given the components of a module name, as in
 `lake exe audit --interface OrlikSolomon MainTheorem`, it checks that module instead, loading it on
@@ -397,14 +398,62 @@ def interfaceReferences (info : ConstantInfo) : Meta.MetaM (Array Name) := do
   | some value => return refs ++ (← interfaceExprReferences value)
   | none => return refs
 
+/-- The full import closure of the given modules, read from the loaded module graph. Every
+visited module must be present: incomplete metadata cannot enlarge the allowed boundary. -/
+def interfaceImportClosure (env : Environment) (seeds : Array Name) : IO NameSet := do
+  let mut stack := seeds
+  let mut seen : NameSet := {}
+  repeat
+    let some module := stack.back? | break
+    stack := stack.pop
+    if seen.contains module then
+      continue
+    seen := seen.insert module
+    let some idx := env.getModuleIdx? module
+      | throw <| .userError s!"interface import closure: {module} is not in the environment"
+    let some data := env.header.moduleData[idx.toNat]?
+      | throw <| .userError s!"interface import closure: {module} has no module data"
+    for imp in data.imports do
+      unless seen.contains imp.module do
+        stack := stack.push imp.module
+  return seen
+
+/-- The allowed external data origins for this interface: its direct Mathlib imports and their
+full transitive import closure, together with Lean/core modules from the toolchain. The Mathlib
+seeds must actually come from the Mathlib package; the core seeds must actually come from the
+Lean installation. A namespace, or merely being somewhere under `.lake/packages`, is insufficient.
+
+Dependencies of Mathlib belong to its closure. An unrelated package such as Verso does not become
+part of the interface merely because the checked module imports it. -/
+def interfaceAllowedModules (env : Environment) (data : ModuleData) : IO NameSet := do
+  let mathlibRoot ← IO.FS.realPath ".lake/packages/mathlib"
+  let toolchainRoot ← IO.FS.realPath (← findSysroot)
+  let mut seeds := #[]
+  for imp in data.imports do
+    if (`Mathlib).isPrefixOf imp.module then
+      let origin ← IO.FS.realPath (← findOLean imp.module)
+      unless mathlibRoot.components.isPrefixOf origin.components do
+        throw <| .userError s!"interface import {imp.module} is not from the Mathlib package: {origin}"
+      seeds := seeds.push imp.module
+  -- These are the module roots shipped by Lean. Checking their actual paths prevents a module
+  -- in another package from gaining core status by choosing a name such as `Lean.Foo`.
+  for module in env.allImportedModuleNames do
+    if #[`Init, `Lean, `Std, `Lake].any (·.isPrefixOf module) then
+      let origin ← IO.FS.realPath (← findOLean module)
+      if toolchainRoot.components.isPrefixOf origin.components then
+        seeds := seeds.push module
+  interfaceImportClosure env seeds
+
 /-- Checks every stored declaration outside the proof namespace, including private declarations,
 auxiliaries, constructors, projections and recursors. Module provenance, rather than a constant's
 namespace, determines whether a reference is from the library. A data reference into Part III is
-also forbidden, although Part III is in the same module.
+also forbidden, although Part III is in the same module. Other external references must belong
+to the checked Mathlib import closure or Lean/core; unrelated dependencies are forbidden.
 
 The declarations are read from their own module data, not selected from the merged environment.
 Failed type inference or missing provenance is an error, never an exemption. -/
-def checkInterfaceM (env : Environment) (module : Name) (data : ModuleData) :
+def checkInterfaceM (env : Environment) (module : Name) (data : ModuleData)
+    (allowedModules : NameSet) :
     Meta.MetaM (Array String × Nat) := do
   let mut problems := #[]
   let mut checked := 0
@@ -430,13 +479,17 @@ def checkInterfaceM (env : Environment) (module : Name) (data : ModuleData) :
           problems := problems.push s!"{info.name} refers to {r}, a declaration of Part III of {module}"
       else if rootModule.isPrefixOf rModule then
         problems := problems.push s!"{info.name} refers to {r}, from the library module {rModule}"
+      else unless allowedModules.contains rModule do
+        problems := problems.push s!"{info.name} refers to {r}, from the module {rModule} outside \
+          the Mathlib import closure and Lean/core"
   return (problems.qsort (· < ·), checked)
 
 /-- Runs the interface boundary check on an imported module's stored data. This entry point also
 allows compiled scratch modules to exercise the same checker as the default project audit. -/
 public def checkInterface (env : Environment) (module : Name) (data : ModuleData) :
     IO (Array String × Nat) := do
-  let (result, _) ← (checkInterfaceM env module data).run'.toIO
+  let allowedModules ← interfaceAllowedModules env data
+  let (result, _) ← (checkInterfaceM env module data allowedModules).run'.toIO
     { fileName := "<interface audit>", fileMap := default } { env }
   return result
 
