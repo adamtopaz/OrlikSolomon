@@ -144,6 +144,7 @@ public import OrlikSolomon.Examples.Geometric.NonAffine.MayerVietoris
 public import OrlikSolomon.Examples.Geometric.NonAffine.Overlap
 public import OrlikSolomon.Examples.Geometric.NonAffine.Sections
 public import OrlikSolomon.Examples.Geometric.NonAffine.SheafCech
+public import OrlikSolomon.Examples.HyperplaneGT.Collineation
 public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
 public import OrlikSolomon.Examples.HyperplaneGT.DegreeOne
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
@@ -196,6 +197,10 @@ public import OrlikSolomon.Grading.TensorProduct
 public import OrlikSolomon.HyperplaneGT.Algebra.DegreeOne
 public import OrlikSolomon.HyperplaneGT.Algebra.LowDegrees
 public import OrlikSolomon.HyperplaneGT.Algebra.QuadraticKernel
+public import OrlikSolomon.HyperplaneGT.Geometry.Collineation
+public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Chart
+public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Field
+public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Span
 public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates
 public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Equations
 public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Graphs
