@@ -208,6 +208,7 @@ public import OrlikSolomon.HyperplaneGT.Diagram.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Quadratic
+public import OrlikSolomon.HyperplaneGT.Diagram.GaloisAction
 public import OrlikSolomon.HyperplaneGT.Diagram.GaloisAction.Stage
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Chart

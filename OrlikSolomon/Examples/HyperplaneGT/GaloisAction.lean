@@ -8,7 +8,7 @@ module
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
-public import OrlikSolomon.HyperplaneGT.Diagram.GaloisAction.Stage
+public import OrlikSolomon.HyperplaneGT.Diagram.GaloisAction
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.Presentation.Generators
 
@@ -150,5 +150,50 @@ theorem conjugation_moves_generator :
       (generator ℤ complexStage.val imaginaryLabel) ≠
         generator ℤ complexStage.val imaginaryLabel :=
   moved_generator complexStage Complex.conjAe imaginaryLabel conjugation_moves_label
+
+/-- The full diagram group law uses the same covariant composition at each stage. -/
+theorem diagram_group_law (C : CofinalSystem k₀ k n) (S : Set k₀)
+    (σ τ : k ≃ₐ[k₀] k) (𝒜 : C.Stage) (x : OSAlgebra R 𝒜.val.val) :
+    (galoisGradedAut R C S (σ * τ)).stageEquiv 𝒜 x =
+      (galoisGradedAut R C S σ).stageEquiv 𝒜
+        ((galoisGradedAut R C S τ).stageEquiv 𝒜 x) := by
+  rw [galoisGradedAut_mul, GradedDiagramAut.stageEquiv_mul, AlgEquiv.mul_apply]
+
+/-- One common target is fixed for all markings and stages, also in characteristic two. -/
+theorem common_target_fixed (C : CofinalSystem k₀ k n) (S : Set k₀)
+    (σ : k ≃ₐ[k₀] k) (x : OSAlgebra (ZMod 2) (twoPunctureArrangement k)) :
+    (galoisGradedAut (ZMod 2) C S σ).targetEquiv x = x := by
+  rw [galoisGradedAut_targetEquiv]
+  rfl
+
+/-- Every full marking map commutes on arbitrary algebra elements, not only basis vectors. -/
+theorem full_marking_square (C : CofinalSystem k₀ k n) (S : Set k₀) (σ : k ≃ₐ[k₀] k)
+    (𝒜 : C.Stage) (w : Marking S n) (hw : w.Available 𝒜.val.val)
+    (x : OSAlgebra R (twoPunctureArrangement k)) :
+    (galoisGradedAut R C S σ).stageEquiv 𝒜 (w.osMap R hw x) = w.osMap R hw x := by
+  rw [galoisGradedAut_stageEquiv]
+  exact DFunLike.congr_fun (galoisOSAlgebraEquiv_osMap R C S 𝒜 σ w hw) x
+
+/-- The full diagram action allows zero coefficients, including its common target component. -/
+theorem diagram_zero_coefficients (C : CofinalSystem k₀ k n) (S : Set k₀)
+    (σ : k ≃ₐ[k₀] k) : galoisGradedAut (ZMod 1) C S σ = 1 := by
+  apply GradedDiagramAut.ext
+  · intro 𝒜
+    apply AlgEquiv.ext
+    intro x
+    exact Subsingleton.elim _ _
+  · apply AlgEquiv.ext
+    intro x
+    exact Subsingleton.elim _ _
+
+/-- In dimension zero the entire diagram action is identity, even though it retains its
+common target and there are no markings. -/
+theorem diagram_dimension_zero (C : CofinalSystem k₀ k 0) (S : Set k₀)
+    (σ : k ≃ₐ[k₀] k) : galoisGradedAut R C S σ = 1 := by
+  apply GradedDiagramAut.ext
+  · intro 𝒜
+    rw [galoisGradedAut_stageEquiv, GradedDiagramAut.stageEquiv_one]
+    exact dimension_zero 𝒜.val σ
+  · rw [galoisGradedAut_targetEquiv, GradedDiagramAut.targetEquiv_one]
 
 end OrlikSolomon.HyperplaneGT.GaloisActionExamples
