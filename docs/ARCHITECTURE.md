@@ -1711,7 +1711,7 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A02, C01–C03, U03, the definition in U04 and U05 are formalized. The generic part
+G01–G06, A01–A03, C01–C03, U03, the definition in U04 and U05 are formalized. The generic part
 of the U04 lemma is implemented; its geometric relation generators and diagram specialization
 remain pending. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
 reconstruction theorem remains planned. The book records complete-statement status.
@@ -1777,7 +1777,11 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Geometry/Galois`, with `CoordinateAction`, `Action`, `Orbits`, `System`, `Markings` and `AlgebraicMaps` leaves | G04–G06, formalized: coefficient action, finite orbits, cofinal systems, tagged fixed fibers and actual marking maps | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
 | `HyperplaneGT/Algebra/DegreeOne` | A01, formalized: canonical degree-one equivalence, basis, coordinates, inclusion naturality and full algebra generation | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
 | `HyperplaneGT/Algebra/LowDegrees`, with a `QuadraticKernel` leaf | A02, formalized: exact degree-two kernel of the actual quotient, parallel-pair and guarded dependent-triple spans, generator formulas and inclusion naturality | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
-| `HyperplaneGT/Diagram/Basic` | A03, marked diagrams and their automorphisms | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
+| `HyperplaneGT/Diagram/Basic` | A03, formalized: explicit marked quadratic and full graded automorphism groups, with faithful degree-one restriction | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
+| `HyperplaneGT/Diagram/Basic/MarkingMaps` | Canonical ordered linear and full OS marking maps, target kernel and degree-one comparison | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
+| `HyperplaneGT/Diagram/Basic/Quadratic` | Whole-Q image equality, one shared target, exact arrow squares and the quadratic subgroup API | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
+| `HyperplaneGT/Diagram/Basic/Graded` | Full OS algebra subgroup preserving every degree and the inclusion/marking squares | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
+| `HyperplaneGT/Diagram/Basic/Restriction` | Faithful group homomorphism from full graded to quadratic automorphisms using A01–A02 | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `HyperplaneGT/Diagram/Universal` | U01–U02 | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
 | `HyperplaneGT/Algebra/Dual` | Implemented generic U03–U05 facade; U04's geometric relation and diagram specialization remain pending | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `HyperplaneGT/Algebra/Dual/Coordinates` | Full-product dual coordinates, evaluation separation and inverse-precomposition automorphism homomorphism, U03 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
@@ -1803,6 +1807,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/Dual` | Full infinite dual coordinates, inverse action on a three-cycle, empty/zero/local/nonlocal primitive tests and characteristic-two determinant consumers | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `Examples/HyperplaneGT/QuadraticKernel` | A02 consumers: empty and dimension-zero arrangements, zero coefficients, disjoint points, characteristic-two concurrent relations and the zero quadratic kernel of the empty triangle | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
 | `Examples/HyperplaneGT/Galois` | G04–G06 consumers: public point maps, finite stable enlargement, actual inclusions, dimension zero and characteristic-two orbits | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
+| `Examples/HyperplaneGT/Diagram` | A03 consumers: concrete constructors, zero coefficients, characteristic-two relations, Laurent-polynomial marking maps, and dimension-zero target interchange | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 
 `HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
 the actual exterior quotient to `osExteriorSquareMap`, surjective onto the existing internal
@@ -1900,6 +1905,30 @@ formulas. These algebra maps have the variance opposite to the geometric arrows.
 the later scheme-open and theory transport. `Examples/HyperplaneGT/Galois` exercises independent
 field universes, dimension zero, characteristic two and actual stage morphisms.
 
+`Diagram/Basic` is a facade over four size leaves. `MarkingMaps` reuses the ordered fiber
+labels and the one existing `twoPunctureArrangement k`. Its injective `Marking.basisMap`
+carries the entire target exterior square into `quadraticRelationSpan`; the actual ordered
+target exterior-square quotient is zero. `Marking.osMap` checks the full target presentation,
+preserves every OS degree and agrees with the linear arrow in degree one. `Quadratic` defines
+`DiagramAut` by equality of the entire Q images and exactly the inclusion/marking squares.
+`Graded` uses existing OS AlgEquivs preserving every homogeneous component by image equality.
+`Restriction` proves `GradedDiagramAut.toQuadratic` is faithful, using the actual quotient
+kernel and full generation in degree one. It claims no extension or reconstruction theorem.
+
+`QuadraticAutFamily`, `DiagramAut`, `GradedAutFamily` and `GradedDiagramAut` are named
+`@[reducible] def` product/subtype synonyms. The attempted `@[instance_reducible]` product
+synonym does not expose its carrier to the inherited product `Group` instance when forming
+the subgroup. Full transparency inherits the literal product/subgroup instances and operations
+without duplicate transport instances, matching the `StableArrangement`/`Stage` convention.
+Constructors, projections, `simp` and `ext` lemmas hide that representation from consumers.
+One target component is shared by all tags and stages and retained in extensionality;
+`Examples/HyperplaneGT/Diagram` shows that in dimension zero it can be nontrivial even when all
+stage maps are identities. Its other concrete consumers cover zero, characteristic-two and
+`LaurentPolynomial ℤ` coefficients. These APIs assume arbitrary commutative coefficient
+rings and independent field universes, with no dimension bound, condition on the marking
+constants, algebraicity/perfectness assumption or union-closure requirement on the cofinal
+family. They import no cohomology theory.
+
 The two generic helper modules use namespace `OrlikSolomon` and carry no hyperplane/cohomology
 hypotheses. Check Mathlib and existing repository lemmas before adding any helper. Split modules
 before approximately 800 lines; list size-only splits within the approved import boundaries in
@@ -1930,7 +1959,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-14 formalized, 1 partly formalized and 26 planned, separate from the other blueprints. Each
+15 formalized, 1 partly formalized and 25 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
