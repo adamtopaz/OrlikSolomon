@@ -45,7 +45,7 @@ These are the four conditions of the following structure, shown with its fields.
 The named choices are {name OrlikSolomon.MainTheorem.SmoothSchemeClass.allSmooth}`allSmooth` and {name OrlikSolomon.MainTheorem.SmoothSchemeClass.smoothAffine}`smoothAffine`.
 The theorem is quantified over every such class.
 A theory on a larger class restricts to a smaller class satisfying the same four conditions; the affine class asks the least of a theory.
-An arrangement complement is affine, so it belongs to every class.
+The complement of a nonempty projective arrangement is affine, so it belongs to every class.
 
 A principal smooth divisor is an actual pair of schemes: $`i:D\to X` is the closed subscheme cut out by one global function $`f`, and $`j:U\to X` is its open complement.
 The function is a non-zero-divisor on *every open* of $`X`.
