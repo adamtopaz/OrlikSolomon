@@ -20,6 +20,26 @@ and interpreted by hand for ℓ-adic cohomology, but not in Lean. The empty proj
 is excluded. The [book](https://adamtopaz.github.io/OrlikSolomon/) states the theorems and has the
 details.
 
+**The public theorem in one file.**
+[`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective
+interface. Its public definitions and theorem statements use Mathlib objects: hyperplanes are
+subsets of `Proj k[x₀, …, xₙ]`, and their complement is the actual open subscheme. For every
+supplied cohomology theory on a suitable class of smooth schemes, the theorem gives the
+Orlik–Solomon isomorphism, sends `e_H - e_K` to `g^*τ` for the ratio map `g`, and maps every
+bigraded piece onto the corresponding cohomology piece. The coefficients may be the zero ring.
+The theorem allows the class of all smooth schemes; the verified nonzero de Rham example is
+on smooth affine schemes in characteristic zero. No instance on all smooth schemes is
+constructed. [The book chapter](https://adamtopaz.github.io/OrlikSolomon/main-theorem/) quotes
+the interface and explains how to audit it.
+
+The file is organized as public definitions (Part I), a clearly delimited private proof region
+that readers may skip, public statements (Part II), then `#print axioms` on the five theorems.
+The proof region comes first because Lean does not allow forward references. After building,
+`lake exe audit --interface` checks the provenance of the public types and data. The logical
+axiom reports, `scripts/check.sh` and `scripts/replay.sh` give the accompanying trust checks.
+The three mathematical blueprints retain their separate status counts; this interface adds no
+blueprint nodes.
+
 **The theorems for algebraic de Rham cohomology.** For every field `k` of characteristic zero,
 every arrangement `𝒜` of affine hyperplanes in a finite-dimensional `k`-vector space `V`, and every
 nonempty arrangement `P` of hyperplanes in the projective space of `W`, there are isomorphisms of
@@ -83,6 +103,7 @@ first page shows the statements, elaborated, with the output of `#print axioms`.
   sheaf residue sequence, its local comparison, worked geometric regressions and acceptance
   consumers, formalized to the extent indicated in their book boxes:
   [`blueprint/`](blueprint/geometric_refactor_blueprint.tex)
+- Auditable public projective theorem: [`MainTheorem.lean`](OrlikSolomon/MainTheorem.lean)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)
 

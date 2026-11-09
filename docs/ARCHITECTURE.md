@@ -1654,6 +1654,7 @@ and `OrdinaryTheory` resolve to the algebraic declarations, so write `Geometric.
 
 | Module under `OrlikSolomon/` | Blueprint labels | Issue |
 | ---------------------------- | ---------------- | ----- |
+| `MainTheorem` | audited Mathlib-only projective Orlik–Solomon interface; the theorem for every smooth-scheme class and affine de Rham non-vacuity | #140 |
 | `Interface/Logarithms` | the interface's `standardDivisor` as the library pair `Interface.standardPair D`, its isomorphism `standardPairIso` with `standardPair D D.point` and the residue comparison; `τ` as the unique class of bidegree `(1, 1)` with residue `1` at the origin (`def:geo-log`); a map to `𝔾ₘ` pulling the coordinate back to `f` exists exactly when `f` is a unit, is then unique, and pulls `τ` back to `[f]` (`thm:geo-units`) | #143 |
 | `Interface/OSAlgebra` | generic RingQuot presentation, central OS comparison, projective difference subalgebra and weighted grading compatibility for M7 | #142 |
 | `Interface/ProjectiveSpace` | Mathlib projective space and linear forms; scheme-hyperplane equation uniqueness; index equivalences with the linear arrangement and its central cone; dependence agreement (`def:geo-projective`, `def:os`) | #141 |
@@ -1680,3 +1681,15 @@ identifies them with the library's actual open projective complement and ratio u
 MainTheorem statement changes. Since the two equation predicates are separately declared structures,
 the assembly uses their fieldwise logical equivalence and reindexes the hyperplane Finset,
 preserving each underlying set by rfl.
+
+`MainTheorem.lean` separates the public definitions and theorem statements from library-backed
+proofs in `OrlikSolomon.MainTheorem.Proof`. Public types and data use only Mathlib and earlier
+public declarations of the file; the library is imported privately. The physical order is Part I
+(definitions), a clearly delimited private proof region marked for readers to skip, Part II
+(public statements), then `#print axioms`. Lean requires the proofs before the statements that use
+them because it does not allow forward references. This placement does not change the audit
+boundary. `lake exe audit --interface` checks that boundary, and `#print axioms` on the public
+theorems records their logical dependencies. `OrlikSolomonBook/MainTheorem` quotes the interface
+and explains its hypotheses, the generator formula, onto grading pieces and the verified de Rham
+instance on `smoothAffine` in characteristic zero. `README.md` links to this file and chapter.
+M7 introduces no blueprint nodes.
