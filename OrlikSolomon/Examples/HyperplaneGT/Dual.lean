@@ -6,18 +6,22 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual
+public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Configurations
+public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
 public import Mathlib.RingTheory.ZMod.LocalRing
 import Mathlib.Algebra.Group.Int.Units
 
 /-!
-# Full-dual and primitive-functional regressions
+# Full-dual, primitive-functional and configuration regressions
 
 These consumers distinguish the full algebraic product from a finitely supported dual,
 check inverse precomposition on a three-cycle, and test primitive functionals over empty
 bases, the zero ring, a local ring with nilpotents and a nonlocal ring. Characteristic-two
-determinants and a centralizer calculation use the public exterior-square API.
+determinants and a centralizer calculation use the public exterior-square API. The actual
+global quadratic relation span is tested on parallel points and concurrent lines, including
+characteristic two, zero coefficients and dimension zero.
 
-Blueprint: `lem:u03`, `lem:u05`, and the generic calculations of `lem:u04`.
+Blueprint: `lem:u03`, `lem:u05`, `lem:u04`.
 -/
 
 @[expose] public section
@@ -25,6 +29,8 @@ Blueprint: `lem:u03`, `lem:u05`, and the generic calculations of `lem:u04`.
 noncomputable section
 
 namespace OrlikSolomon.HyperplaneGT.DualExamples
+
+universe u v
 
 /-- The dual contains an infinite coordinate function with every coefficient equal to one. -/
 theorem infinite_all_ones :
@@ -144,5 +150,59 @@ theorem full_relation_centralizer_action (R M : Type*) [CommRing R] [AddCommGrou
   apply commutes_dualAction_iff
   rw [Submodule.map_top]
   exact LinearMap.range_eq_top.mpr (exteriorPower.map_surjective g.surjective)
+
+/-- The zero point of the affine line over `𝔽₂`. -/
+def binaryZero : Hyperplane (ZMod 2) 1 :=
+  graphHyperplane 0 (AffineMap.const _ _ 0)
+
+/-- The one point of the affine line over `𝔽₂`. -/
+def binaryOne : Hyperplane (ZMod 2) 1 :=
+  graphHyperplane 0 (AffineMap.const _ _ 1)
+
+/-- Two actual parallel labels impose a nontrivial global determinant equation in
+characteristic two. -/
+theorem parallel_coordinate_functionals_not_commute :
+    ¬Commutes (universalQuadraticRelationSpan (ZMod 2))
+      (Finsupp.lapply binaryZero) (Finsupp.lapply binaryOne) := by
+  intro h
+  have hparallel : Parallel binaryZero binaryOne := CoordinateExamples.parallel_points
+  have hdet := (commutes_universalQuadraticRelationSpan_iff _ _).mp h |>.1 _ _ hparallel
+  simp [dualCoordinates_apply, Finsupp.lapply_apply, hparallel.1, hparallel.1.symm] at hdet
+
+/-- A genuine concurrent triple imposes its difference-coordinate relation, also in
+characteristic two. -/
+theorem concurrent_coordinate_functionals_not_commute :
+    ¬Commutes (universalQuadraticRelationSpan (ZMod 2))
+      (Finsupp.lapply (CoordinateExamples.xLine (ZMod 2)))
+      (Finsupp.lapply (CoordinateExamples.yLine (ZMod 2))) := by
+  intro h
+  have hdep : DependentTriple (CoordinateExamples.xLine (ZMod 2))
+      (CoordinateExamples.yLine (ZMod 2)) (CoordinateExamples.diagonalLine 0) :=
+    (dependentTriple_iff_trace_eq _ _ _ CoordinateExamples.xLine_ne_yLine
+      (CoordinateExamples.xLine_ne_diagonalLine 0)
+      (CoordinateExamples.yLine_ne_diagonalLine 0)).mpr CoordinateExamples.concurrent_traces
+  have hdet := (commutes_universalQuadraticRelationSpan_iff _ _).mp h |>.2 _ _ _ hdep
+  simp [dualCoordinates_apply, Finsupp.lapply_apply, CoordinateExamples.xLine_ne_yLine,
+    CoordinateExamples.xLine_ne_diagonalLine, CoordinateExamples.yLine_ne_diagonalLine,
+    ne_comm] at hdet
+
+/-- Over the zero coefficient ring the actual universal centralizer is the whole dual. -/
+theorem zero_ring_universal_centralizer (k : Type u) [Field k] (n : ℕ)
+    (φ : Module.Dual (ZMod 1) (Hyperplane k n →₀ ZMod 1)) :
+    centralizer (universalQuadraticRelationSpan (ZMod 1)) φ = ⊤ := by
+  ext ψ
+  simp only [Submodule.mem_top, iff_true]
+  rw [mem_centralizer_universalQuadraticRelationSpan_iff]
+  constructor <;> intros <;> exact Subsingleton.elim _ _
+
+/-- In dimension zero there are no geometric labels, so every universal centralizer is full.
+The geometric field and coefficient ring have independent universes. -/
+theorem dimension_zero_universal_centralizer (k : Type u) (R : Type v) [Field k] [CommRing R]
+    (φ : Module.Dual R (Hyperplane k 0 →₀ R)) :
+    centralizer (universalQuadraticRelationSpan R) φ = ⊤ := by
+  ext ψ
+  simp only [Submodule.mem_top, iff_true]
+  rw [mem_centralizer_universalQuadraticRelationSpan_iff]
+  constructor <;> intro H <;> exact ((CoordinateExamples.dimension_zero (k := k)).false H).elim
 
 end OrlikSolomon.HyperplaneGT.DualExamples

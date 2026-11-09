@@ -199,6 +199,7 @@ public import OrlikSolomon.Grading.TensorProduct
 public import OrlikSolomon.HyperplaneGT.Algebra.DegreeOne
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Alternating
+public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Configurations
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Coordinates
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Primitive
 public import OrlikSolomon.HyperplaneGT.Algebra.LowDegrees
