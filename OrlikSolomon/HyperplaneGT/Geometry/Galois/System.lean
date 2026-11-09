@@ -57,7 +57,8 @@ theorem isGaloisStable_empty : IsGaloisStable (k₀ := k₀)
 /-- A finite stable arrangement, with the existing arrangement and label types unchanged.
 
 Blueprint: G06 (`def:g06`). -/
-abbrev StableArrangement (k₀ : Type v) (k : Type u) [Field k₀] [Field k] [Algebra k₀ k]
+@[reducible]
+def StableArrangement (k₀ : Type v) (k : Type u) [Field k₀] [Field k] [Algebra k₀ k]
     (n : ℕ) :=
   {𝒜 : Arrangement k (Fin n → k) // IsGaloisStable (k₀ := k₀) 𝒜}
 
@@ -78,7 +79,8 @@ namespace CofinalSystem
 variable (C : CofinalSystem k₀ k n)
 
 /-- A stage is a member of the chosen cofinal family, ordered by arrangement inclusion. -/
-abbrev Stage := {𝒜 : StableArrangement k₀ k n // 𝒜 ∈ C.stages}
+@[reducible]
+def Stage := {𝒜 : StableArrangement k₀ k n // 𝒜 ∈ C.stages}
 
 /-- A cofinal system is determined by its selected family; the enlargement witness is a
 proposition. -/
