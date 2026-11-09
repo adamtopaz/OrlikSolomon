@@ -36,6 +36,12 @@ theorem coordinate_inverse {ι : Type*} (σ : k ≃+* k) (x : ι → k) :
     (fieldCoordinateAddEquiv σ ι).symm (fieldCoordinateAddEquiv σ ι x) = x := by
   simp
 
+/-- The public semilinear map applies and rewrites scalars without a local inverse-pair instance.
+This distinguishes its API from an equivalence whose coercion needs such instances. -/
+theorem semilinear_scalar {ι : Type*} (σ : k ≃+* k) (x : ι → k) (c : k) :
+    fieldCoordinateLinearMap σ ι (c • x) = σ c • fieldCoordinateLinearMap σ ι x := by
+  exact (fieldCoordinateLinearMap σ ι).map_smulₛₗ c x
+
 /-- Rewriting a transformed equation uses the public additive point map. -/
 theorem transformed_equation {n : ℕ} (σ : k ≃+* k) (f : (Fin n → k) →ᵃ[k] k)
     (x : Fin n → k) :

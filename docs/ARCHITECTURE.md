@@ -1881,8 +1881,8 @@ identity extraction, dimension-zero charts, characteristic-two zero sums and inf
 `Geometry/Galois` is a pure facade over six leaves. `CoordinateAction` transports affine
 subspaces by a coordinatewise field automorphism and proves intersection, empty-subspace and
 codimension preservation; its additive point equivalence reuses Mathlib's product equivalence
-and works without downstream inverse-pair instances. The semilinear companion supplies the
-rank and projective-coefficient comparisons. `Action` constructs the genuine Galois action on
+and works without downstream inverse-pair instances. `fieldCoordinateLinearMap` exposes semilinear scalar transport without inverse-pair instances;
+a private semilinear equivalence is used only for the rank comparison. `Action` constructs the genuine Galois action on
 hyperplanes. `Orbits` bounds conjugates of a fixed equation by finite minimal-polynomial root
 sets, constructs the least stable finite enlargement and the full cofinal system. Only this
 finite-orbit construction requires algebraicity; no leaf assumes perfectness or normality.
