@@ -28,7 +28,7 @@ supplied cohomology theory on a suitable class of smooth schemes, the theorem gi
 Orlik–Solomon isomorphism, sends `e_H - e_K` to `g^*τ` for the ratio map `g`, and maps every
 bigraded piece onto the corresponding cohomology piece. The coefficients may be the zero ring.
 The theorem allows the class of all smooth schemes; the verified nonzero de Rham example is
-on smooth affine schemes in characteristic zero. No instance on all smooth schemes is
+on smooth affine schemes in characteristic zero. No nonzero instance on all smooth schemes is
 constructed. [The book chapter](https://adamtopaz.github.io/OrlikSolomon/main-theorem/) quotes
 the interface and explains how to audit it.
 

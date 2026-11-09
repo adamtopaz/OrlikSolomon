@@ -27,7 +27,7 @@ The later chapters explain the proof and its affine and de Rham forms.
 There is a distinction to keep throughout.
 The theorem holds for every supplied theory on any class of smooth schemes satisfying the conditions below, including the class of all smooth schemes.
 The verified nonzero example is algebraic de Rham cohomology on *smooth affine schemes* over a field of characteristic zero.
-The project does not construct a cohomology theory on all smooth schemes.
+The project does not construct a nonzero cohomology theory on all smooth schemes.
 Singular cohomology is an intended mathematical example of the axioms in its usual setting, but no singular-cohomology instance is verified in Lean.
 
 This is an interface to the existing results, not a fourth mathematical blueprint.
