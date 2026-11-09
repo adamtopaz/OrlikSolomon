@@ -42,6 +42,12 @@ theorem semilinear_scalar {ι : Type*} (σ : k ≃+* k) (x : ι → k) (c : k) :
     fieldCoordinateLinearMap σ ι (c • x) = σ c • fieldCoordinateLinearMap σ ι x := by
   exact (fieldCoordinateLinearMap σ ι).map_smulₛₗ c x
 
+/-- Semilinear submodule images use Mathlib's existing surjectivity instance without
+installing a local inverse-pair instance. -/
+theorem direction_image {ι : Type*} (σ : k ≃+* k) (X : AffineSubspace k (ι → k)) :
+    (fieldAffineSubspace σ X).direction = X.direction.map (fieldCoordinateLinearMap σ ι) := by
+  rw [direction_fieldAffineSubspace]
+
 /-- Rewriting a transformed equation uses the public additive point map. -/
 theorem transformed_equation {n : ℕ} (σ : k ≃+* k) (f : (Fin n → k) →ᵃ[k] k)
     (x : Fin n → k) :
