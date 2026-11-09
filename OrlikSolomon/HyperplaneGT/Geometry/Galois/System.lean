@@ -55,6 +55,8 @@ theorem isGaloisStable_empty : IsGaloisStable (k₀ := k₀)
   exact (Arrangement.notMem_empty _ hH).elim
 
 /-- A finite stable arrangement, with the existing arrangement and label types unchanged.
+The subtype synonym is reducible so that its inherited inclusion order is available to
+instance search; `instance_reducible` alone does not expose this type head.
 
 Blueprint: G06 (`def:g06`). -/
 @[reducible]
@@ -78,7 +80,9 @@ namespace CofinalSystem
 
 variable (C : CofinalSystem k₀ k n)
 
-/-- A stage is a member of the chosen cofinal family, ordered by arrangement inclusion. -/
+/-- A stage is a member of the chosen cofinal family, ordered by arrangement inclusion.
+This subtype synonym is reducible so that the inherited order and thin-category instances
+remain available without transporting or duplicating them. -/
 @[reducible]
 def Stage := {𝒜 : StableArrangement k₀ k n // 𝒜 ∈ C.stages}
 
