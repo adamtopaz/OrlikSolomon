@@ -1,11 +1,11 @@
 /-
 Copyright (c) 2026 Adam Topaz. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Topaz, Claude
+Authors: Adam Topaz, Claude, Codex
 -/
 module
 
-import Lean
+public import Lean
 
 /-!
 # The project audit
@@ -70,6 +70,11 @@ at run time.
 * The library has no `partial def`, and a mathematical library has no need of one, so the audit
   rejects it. It cannot reject every partial constant, because Lean generates one to compile each
   recursive definition, and the library has several.
+* The interface boundary checks every stored declaration outside its proof namespace, including
+  private and auxiliary declarations. Every type is checked, and definition and opaque bodies are
+  checked after erasing proof subterms. A predicate returning `Prop` is data, so it is checked.
+  Bound variables are opened before asking Lean whether a subterm is a proof. References into the
+  proof namespace are forbidden as data even though they come from the same module.
 -/
 
 open Lean System
@@ -349,72 +354,91 @@ through its user-facing name, so that `private` cannot move a declaration out of
 def isInterfaceProof (c : Name) : Bool :=
   interfaceProofNamespace.isPrefixOf (privateToUserName c)
 
-/-- The constants that the statement of `info` refers to, and, unless it is a theorem, also those of
-its value. A proof carries no data, so what it cites does not matter here. The cases are listed in
-full so that a new kind of constant is a compile error here. -/
-def interfaceReferences (info : ConstantInfo) : Array Name :=
+/-- The constants in the data of an expression, with proof subterms erased. A proposition is
+itself data: `P : Prop` is scanned, whereas a term `h : P` is not. In particular, aliases of
+library predicates cannot hide behind proof irrelevance.
+
+Recursion follows the original expression, so it is structural. `opened` records the free
+variables introduced for its bound variables. Only the expression passed to type inference is
+instantiated, preventing loose-bound-variable errors beneath dependent binders. -/
+def interfaceExprReferences (e : Expr) (opened : Array Expr := #[]) : Meta.MetaM (Array Name) := do
+  if ← Meta.isProof (e.instantiateRev opened) then
+    return #[]
+  match e with
+  | .const c _ => return #[c]
+  | .app f a =>
+    return (← interfaceExprReferences f opened) ++ (← interfaceExprReferences a opened)
+  | .lam n d b bi | .forallE n d b bi =>
+    let refs ← interfaceExprReferences d opened
+    Meta.withLocalDecl n bi (d.instantiateRev opened) fun x => do
+      return refs ++ (← interfaceExprReferences b (opened.push x))
+  | .letE n t v b _ =>
+    -- A local proof's annotation belongs to that proof, not to the surrounding data. Its
+    -- proposition is still checked if exposed in the declaration's type or elsewhere as data.
+    let refs ← if ← Meta.isProof (v.instantiateRev opened) then pure #[] else
+      return (← interfaceExprReferences t opened) ++ (← interfaceExprReferences v opened)
+    Meta.withLetDecl n (t.instantiateRev opened) (v.instantiateRev opened) fun x => do
+      return refs ++ (← interfaceExprReferences b (opened.push x))
+  | .proj n _ s => return #[n] ++ (← interfaceExprReferences s opened)
+  | .mdata _ b => interfaceExprReferences b opened
+  | .mvar _ => throwError "an interface declaration contains an unresolved metavariable"
+  | .bvar _ | .fvar _ | .sort _ | .lit _ => return #[]
+
+/-- Every declaration's type is checked. Safe definitions and opaque declarations additionally
+have their values checked, with proof subterms erased. A definition returning `Prop` is a
+predicate, not a proof, and its value is checked. -/
+def interfaceReferences (info : ConstantInfo) : Meta.MetaM (Array Name) := do
+  let refs ← interfaceExprReferences info.type
   let value := match info with
-    | .defnInfo v => v.value.getUsedConstants
-    | .opaqueInfo v => v.value.getUsedConstants
-    | .thmInfo _ | .inductInfo _ | .axiomInfo _ | .quotInfo _ | .ctorInfo _ | .recInfo _ => #[]
-  info.type.getUsedConstants ++ value
+    | .defnInfo v => some v.value
+    | .opaqueInfo v => some v.value
+    | .thmInfo _ | .inductInfo _ | .axiomInfo _ | .quotInfo _ | .ctorInfo _ | .recInfo _ => none
+  match value with
+  | some value => return refs ++ (← interfaceExprReferences value)
+  | none => return refs
 
-/-- Whether `info` is a declaration of Parts I and II of a module, given that the module declares
-it: it is not private, it is not in Part III, and it is not a theorem that Lean generated to hold a
-proof, such as `foo._proof_1`. Such a theorem has an internal name and is not a statement: its type
-is whatever the proof it holds happened to prove, and a proof carries no data. -/
-def isInterfaceRoot (info : ConstantInfo) : Bool :=
-  !isPrivateName info.name && !isInterfaceProof info.name &&
-    !(info.isTheorem && info.name.isInternalDetail)
+/-- Checks every stored declaration outside the proof namespace, including private declarations,
+auxiliaries, constructors, projections and recursors. Module provenance, rather than a constant's
+namespace, determines whether a reference is from the library. A data reference into Part III is
+also forbidden, although Part III is in the same module.
 
-/-- Checks Parts I and II of the module `module`, whose data is `data`, returning the problems found
-and the number of declarations checked. These are the constants of the module that
-`isInterfaceRoot` accepts, including the constructors, projections, recursors and other declarations
-that Lean generates for structures, and the private declarations that they use.
-
-Each constant that the statement of such a declaration refers to, or its value unless it is a
-theorem, must be
-
-* a theorem, from anywhere, since a proof carries no data, and a theorem is cited only as a proof;
-* a constant of a module outside the project, which means Mathlib or Lean core, since the library
-  imports nothing else (`loadLibrary`);
-* or a constant of `module` itself outside Part III. A public one is a declaration of Parts I and
-  II, checked in its own right. A private one is checked in the same way, since nothing else would
-  check it, and its problems name the declaration that uses it.
-
-Anything else, such as a definition of the library or of Part III, is a problem. -/
-def checkInterface (env : Environment) (module : Name) (data : ModuleData) :
-    Array String × Nat := Id.run do
-  let roots := data.constants.filter isInterfaceRoot
+The declarations are read from their own module data, not selected from the merged environment.
+Failed type inference or missing provenance is an error, never an exemption. -/
+def checkInterfaceM (env : Environment) (module : Name) (data : ModuleData) :
+    Meta.MetaM (Array String × Nat) := do
   let mut problems := #[]
-  let mut stack := roots
-  let mut seen : NameSet := roots.foldl (·.insert ·.name) {}
-  -- For each private declaration checked, the declaration of Parts I and II that uses it.
-  let mut usedBy : NameMap Name := {}
-  repeat
-    let some info := stack.back? | break
-    stack := stack.pop
-    let user := (usedBy.find? info.name).elim s!"{info.name}" (s!"{info.name}, used by {·},")
-    for r in interfaceReferences info do
-      let some rInfo := env.find? r
-        | problems := problems.push s!"{user} refers to {r}, which is not in the environment"
-          continue
-      if rInfo.isTheorem then
+  let mut checked := 0
+  for info in data.constants do
+    if isInterfaceProof info.name then
+      continue
+    checked := checked + 1
+    let refs ← try interfaceReferences info catch ex =>
+      problems := problems.push s!"{info.name}: cannot inspect interface data: {← ex.toMessageData.toString}"
+      pure #[]
+    for r in refs do
+      unless (env.find? r).isSome do
+        problems := problems.push s!"{info.name} refers to {r}, which is not in the environment"
         continue
       let some idx := env.getModuleIdxFor? r
-        | problems := problems.push s!"{user} refers to {r}, which belongs to no module"
+        | problems := problems.push s!"{info.name} refers to {r}, which belongs to no module"
           continue
-      let rModule := env.header.moduleNames[idx.toNat]!
+      let some rModule := env.header.moduleNames[idx.toNat]?
+        | problems := problems.push s!"{info.name} refers to {r}, whose module index is invalid"
+          continue
       if rModule == module then
         if isInterfaceProof r then
-          problems := problems.push s!"{user} refers to {r}, a declaration of Part III of {module}"
-        else if !seen.contains r then
-          seen := seen.insert r
-          usedBy := usedBy.insert r ((usedBy.find? info.name).getD info.name)
-          stack := stack.push rInfo
+          problems := problems.push s!"{info.name} refers to {r}, a declaration of Part III of {module}"
       else if rootModule.isPrefixOf rModule then
-        problems := problems.push s!"{user} refers to {r}, from the library module {rModule}"
-  return (problems.qsort (· < ·), seen.size)
+        problems := problems.push s!"{info.name} refers to {r}, from the library module {rModule}"
+  return (problems.qsort (· < ·), checked)
+
+/-- Runs the interface boundary check on an imported module's stored data. This entry point also
+allows compiled scratch modules to exercise the same checker as the default project audit. -/
+public def checkInterface (env : Environment) (module : Name) (data : ModuleData) :
+    IO (Array String × Nat) := do
+  let (result, _) ← (checkInterfaceM env module data).run'.toIO
+    { fileName := "<interface audit>", fileMap := default } { env }
+  return result
 
 /-- The data of `module`, if the environment imports it. -/
 def moduleData? (env : Environment) (module : Name) : Option ModuleData := do
@@ -423,24 +447,24 @@ def moduleData? (env : Environment) (module : Name) : Option ModuleData := do
 
 /-- Checks Parts I and II of `interfaceModule`, which the library must contain, returning the
 problems found and a one-line summary. -/
-def checkLibraryInterface (library : Library) : Array String × String :=
+def checkLibraryInterface (library : Library) : IO (Array String × String) := do
   match moduleData? library.env interfaceModule with
-  | none => (#[s!"the library does not import {interfaceModule}"], "")
+  | none => return (#[s!"the library does not import {interfaceModule}"], "")
   | some data =>
-    let (problems, n) := checkInterface library.env interfaceModule data
-    (problems, s!"{n} declaration(s) of Parts I and II of {interfaceModule} mention only Mathlib, \
-      Lean core and {interfaceModule}")
+    let (problems, n) ← checkInterface library.env interfaceModule data
+    return (problems, s!"{n} declaration(s) of Parts I and II of {interfaceModule} use only Mathlib, \
+      Lean core and {interfaceModule} in their types and data")
 
 /-- Loads `module` alone, at `OLeanLevel.private`, and checks its Parts I and II as if it were the
 interface module. This is how the check is tested on a module that breaks the rule. -/
-def checkModuleInterface (module : Name) : IO (Array String × String) := do
+public def checkModuleInterface (module : Name) : IO (Array String × String) := do
   initSearchPath (← findSysroot)
   let env ← importModules #[{ module }] {} (leakEnv := true) (level := .private)
   let some data := moduleData? env module
     | return (#[s!"{module} was not loaded"], "")
-  let (problems, n) := checkInterface env module data
-  return (problems, s!"{n} declaration(s) of Parts I and II of {module} mention only Mathlib, \
-    Lean core and {module}")
+  let (problems, n) ← checkInterface env module data
+  return (problems, s!"{n} declaration(s) of Parts I and II of {module} use only Mathlib, \
+    Lean core and {module} in their types and data")
 
 /-- The number of modules to replay at once. Each one loads its imports, about 2 GB, and a GitHub
 runner has four cores. -/
@@ -593,12 +617,12 @@ public def main (args : List String) : IO UInt32 := do
     let (importProblems, numSources) ← checkRootImports
     let library ← loadLibrary
     let (declarationProblems, summary) ← checkDeclarations library
-    let (interfaceProblems, interfaceSummary) := checkLibraryInterface library
+    let (interfaceProblems, interfaceSummary) ← checkLibraryInterface library
     report "audit" (importProblems ++ declarationProblems ++ interfaceProblems)
       #[s!"{rootModule}.lean imports all {numSources} modules under {rootModule}/", summary,
         interfaceSummary]
   | ["--interface"] =>
-    let (problems, summary) := checkLibraryInterface (← loadLibrary)
+    let (problems, summary) ← checkLibraryInterface (← loadLibrary)
     report "interface" problems #[summary]
   | "--interface" :: name@(_ :: _) =>
     let (problems, summary) ← checkModuleInterface (name.foldl Name.mkStr .anonymous)
