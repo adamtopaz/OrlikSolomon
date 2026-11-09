@@ -7,6 +7,7 @@ module
 
 public import OrlikSolomon.Combinatorics.Multiplicities
 public import OrlikSolomon.Examples.Sanity
+public import OrlikSolomon.Interface.ProjectiveSpace
 public import OrlikSolomon.Presentation.ProjectiveOrdinary
 
 /-!
@@ -23,7 +24,9 @@ existential word family determines the count: other sizes are possible. The inte
 defines the Betti numbers, and the empty/deletion recursion in the proof supplies a word family
 with matching counts. `exists_logMonomialBasis_decone_threePoints_zeroTheory` checks this matching
 family in the concrete example. These regressions instantiate no nonzero theory.
-The integer example checks the documented scalar conversion for the diagonal theorem.
+The integer example checks the documented scalar conversion for the diagonal theorem. The final
+section checks the Mathlib projective-space interface in dimension zero and over `𝔽₂`, including
+the empty scheme hyperplane of `ℙ⁰` and agreement of dependence with the central cone.
 
 Blueprint: regression example 8 and the projective form of example 7.
 -/
@@ -241,5 +244,70 @@ example : projectiveAlgebra ℤ P.cone_isCentral ≃ₐ[ℤ]
   RingEquiv.toIntAlgEquiv (T.projectiveDiagonalEquiv P : _ ≃+* _)
 
 end Integers
+
+/-! ### The Mathlib projective-space interface -/
+
+namespace InterfaceGeometry
+
+open CategoryTheory AlgebraicGeometry Interface
+
+attribute [local instance] MvPolynomial.gradedAlgebra
+
+variable {k : Type u} [Field k]
+
+private theorem coordinate_cover (n : ℕ) :
+    ⨆ i : Fin (n + 1), Proj.basicOpen (degreeGrading k n) (MvPolynomial.X i) = ⊤ := by
+  refine Proj.iSup_basicOpen_eq_top' _ _ (fun i ↦ ⟨1, MvPolynomial.isHomogeneous_X k i⟩) ?_
+  apply top_unique
+  intro p hp
+  clear hp
+  induction p using MvPolynomial.induction_on with
+  | C a =>
+    exact (Algebra.adjoin _ _).algebraMap_mem
+      (⟨MvPolynomial.C a, MvPolynomial.isHomogeneous_C (Fin (n + 1)) a⟩ : degreeGrading k n 0)
+  | add p q hp hq => exact add_mem hp hq
+  | mul_X p i hp => exact mul_mem hp (Algebra.subset_adjoin ⟨i, rfl⟩)
+
+private theorem pzero_hyperplane_empty :
+    ProjectiveSpectrum.zeroLocus (degreeGrading k 0) {MvPolynomial.X (0 : Fin 1)} = ∅ := by
+  have ht : Proj.basicOpen (degreeGrading k 0) (MvPolynomial.X (0 : Fin 1)) = ⊤ := by
+    simpa using coordinate_cover (k := k) 0
+  ext x
+  simp only [Set.mem_empty_iff_false, iff_false, ProjectiveSpectrum.mem_zeroLocus,
+    Set.singleton_subset_iff, SetLike.mem_coe]
+  intro hx
+  have htop : x ∈ Proj.basicOpen (degreeGrading k 0) (MvPolynomial.X (0 : Fin 1)) := by
+    rw [ht]
+    trivial
+  exact htop hx
+
+/-- The scheme hyperplane cut out by a coordinate function. -/
+private def coordinateHyperplane (k : Type u) [Field k] (n : ℕ) (i : Fin (n + 1)) :
+    Hyperplane k n :=
+  ⟨ProjectiveSpectrum.zeroLocus (degreeGrading k n) {MvPolynomial.X i},
+    ⟨MvPolynomial.X i, MvPolynomial.isHomogeneous_X k i, MvPolynomial.X_ne_zero i, rfl⟩⟩
+
+/-- The arrangement of coordinate scheme hyperplanes. -/
+private def coordinateArrangement (k : Type u) [Field k] (n : ℕ) :
+    HyperplaneArrangement k n := by
+  classical
+  exact Finset.univ.image (coordinateHyperplane k n)
+
+/-- In projective dimension zero the unique scheme hyperplane is empty. -/
+example : (coordinateHyperplane k 0 0 : Set (projectiveSpace k 0).left) = ∅ :=
+  pzero_hyperplane_empty
+
+/-- Dependence still matches on the central cone over `𝔽₂` in dimension zero. -/
+example (𝒜 : HyperplaneArrangement (ZMod 2) 0) (S : List 𝒜) :
+    Interface.IsDependent S ↔ Arrangement.IsDependent (S.map (Interface.coneHyperplaneEquiv 𝒜)) :=
+  isDependent_iff_cone S
+
+/-- A concrete two-hyperplane arrangement over `𝔽₂` uses the same cone dependence. -/
+example (S : List (coordinateArrangement (ZMod 2) 1)) :
+    Interface.IsDependent S ↔ Arrangement.IsDependent
+      (S.map (Interface.coneHyperplaneEquiv (coordinateArrangement (ZMod 2) 1))) :=
+  isDependent_iff_cone S
+
+end InterfaceGeometry
 
 end OrlikSolomon.ProjectiveOrdinaryExamples
