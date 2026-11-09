@@ -207,6 +207,8 @@ public import OrlikSolomon.HyperplaneGT.Diagram.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Quadratic
+public import OrlikSolomon.HyperplaneGT.Diagram.Universal
+public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Automorphisms
 public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Lift
 public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Relations
 public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Support
