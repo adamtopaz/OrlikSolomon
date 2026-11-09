@@ -1,0 +1,1633 @@
+% Working draft explicitly requested by Adam Topaz, 9 November 2026.
+% Standalone: latexmk -pdf cohomological_hyperplane_gt_blueprint.tex
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype,enumitem,booktabs,longtable,array,xcolor,xurl,listings,needspace}
+\usepackage[colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small Cohomological hyperplane GT: formalization blueprint}
+\fancyhead[R]{\small\thepage}
+\setlength{\headheight}{14pt}
+\setlength{\emergencystretch}{3em}
+\setlist{itemsep=3pt,topsep=5pt}
+\lstset{basicstyle=\ttfamily\small,breaklines=true,columns=fullflexible,keepspaces=true,frame=single}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\A}{\mathbb A}
+\newcommand{\Pj}{\mathbb P}
+\newcommand{\Gm}{\mathbb G_m}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\C}{\mathbb C}
+\newcommand{\F}{\mathbb F}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cD}{\mathcal D}
+\newcommand{\OS}{\ensuremath{\operatorname{OS}}}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\Gal}{\operatorname{Gal}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\Ann}{\operatorname{Ann}}
+\newcommand{\Span}{\operatorname{span}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\codim}{\operatorname{codim}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\dR}{\mathrm{dR}}
+\newcommand{\code}[1]{\nolinkurl{#1}}
+\newcommand{\node}[3]{\par\Needspace{8\baselineskip}\smallskip\noindent\textbf{Node #1.}\quad
+ \textsf{Proposed:}\ \code{#2}\par\noindent
+ \textsf{Dependencies:} #3.\par\smallskip}
+\title{Cohomological hyperplane reconstruction\\
+\large A detailed Lean blueprint from the existing Orlik--Solomon library}
+\author{Working draft prepared for Adam Topaz}
+\date{9 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+We specify a formal proof that the automorphism group of the marked
+degree-one and degree-two cohomology diagram of hyperplane complements is
+$R^\times\times\Gal(k/k_0)$, for a nonzero local coefficient ring or an
+integral domain. Every new mathematical step is proved below. The only
+imported mathematical results are existing theorems of this repository
+or the pinned Mathlib. In particular the local reconstruction is proved
+by elementary equations, and projective reconstruction is proved in
+coordinates rather than delegated to an unformalized fundamental theorem.
+The output includes the C1--C5 theorem and an unconditional specialization
+to the constructed algebraic de Rham theory. Proposed Lean names and
+signatures are specifications, not elaborated declarations.
+\end{abstract}
+\tableofcontents
+\newpage
+
+\Needspace{14\baselineskip}
+\section{Exact target, scope, and existing inputs}
+\label{sec:boundary}
+
+This document formalizes the new proof in
+\code{linear_gt_draft/cohomological_hyperplane_gt.tex}. It does not require
+that manuscript or the Pop--Topaz paper as an unproved mathematical input:
+the new proofs are repeated here, with their interfaces and intermediate
+claims. Source locations refer to repository commit \code{1d89e7d}
+and Mathlib \code{6db5db0d2279846cc8fb25901bd53221d37a77d8}.
+The existing architecture remains authoritative for existing names.
+All modules under \code{OrlikSolomon/HyperplaneGT/} mentioned here are
+proposed additions; this draft changes neither Lean code nor architecture.
+
+Let $k_0\subset k$ be a perfect field and its algebraic closure, let
+$n\geq2$, and let $S\subset k_0$ contain $0$ and generate $k_0$ over
+the prime field. Let $\mathscr F$ be a cofinal family of finite
+$\Gal(k/k_0)$-stable arrangements in $\A^n_k$. Put
+$T=\A^1_k\setminus\{0,1\}$. The diagram has complements $U_A$,
+inclusions, and maps to the same object $T$ given by $x_i-s$ and
+$x_i-x_j$ ($s\in S$, $i<j$), whenever their two excluded fibers are
+in $A$. The reconstruction theorem is
+\[
+ R^\times\times(k\simeq_{k_0}k)
+ \simeq\Aut_2(E|\cD)\simeq\Aut_{\rm gr}(E|\cD),
+ \qquad (u,\sigma)e_H=u e_{\sigma H}.
+\]
+The first group consists of natural linear equivalences of degree one
+preserving the full kernel of its exterior product into degree two.
+The second consists of natural graded unital $R$-algebra equivalences
+of the diagonal $\bigoplus_{q\geq0}E^{q,q}$. Scalars act in degree $q$
+by $u^q$. Quotienting either group by this central subgroup gives
+$\Gal(k/k_0)$. These are abstract group equivalences.
+
+The purely algebraic reconstruction is stated first for the explicit
+Orlik--Solomon diagram. It assumes no cohomology theory. An existing
+structure theorem then identifies a supplied theory's diagram with
+this explicit diagram. A new structure with a field asserting the
+Orlik--Solomon theorem is neither needed nor permitted.
+
+\subsection{Cohomology hypotheses, completely specified}
+
+The supplied value of
+\code{OrlikSolomon.Geometric.OrdinaryTheory}, with parameters
+$D$ and $\mathcal B$, has the following
+data, where $D$ may be the smooth affine domain or a larger admissible
+domain, $R$ is commutative, and $B=\bigoplus_{w\in\Z}B_w$ is a
+commutative $R$-algebra with $B_0\simeq R$ through the structural map.
+\begin{enumerate}[label=\textbf{C\arabic*.},leftmargin=*]
+\item Each $C(X)$ is a unital, possibly noncommutative $B$-algebra
+internally bigraded by $R$-submodules $C(X)_{p,w}$, with central
+coefficients $B_w$ in bidegree $(0,w)$ and coherent scalar towers.
+\item Pullbacks along all morphisms in $D$ are functorial unital
+$B$-algebra maps preserving degrees. Products of homogeneous classes
+supercommute with the sign determined by the cohomological degrees.
+\item $B\to C(\operatorname{Spec}k)$ is bijective, with the point
+supported in cohomological degree zero, and
+$C(X)\to C(X\times\A^1)$ is bijective.
+\item For each certified principal smooth divisor pair
+$D'\xrightarrow{i}X\xleftarrow{j}U$ there are $B$-linear Gysin and
+residue maps of shifts $(2,1)$ and $(-1,-1)$ with
+$\im g=\ker j^*$, $\im j^*=\ker r$, $\im r=\ker g$.
+Here a certificate means a globally regular non-zero-divisor $f$,
+the closed scheme $Z(f)$, its open complement $X_f$, and smoothness
+of the three schemes.
+\item Both maps commute with the specified morphisms of pairs, for
+which the ambient pullback of the target equation is a unit times
+the source equation. The right projection formula is
+$r(\alpha j^*\beta)=r(\alpha)i^*\beta$ for
+$\alpha\in C(U)_{1,1}$ and arbitrary $\beta\in C(X)$.
+\end{enumerate}
+These are existing inputs, with all their consequences already proved
+for finite arrangements. They do not include logarithmic generation,
+freeness, a dimension bound, residue surjectivity, Gysin vanishing, or
+a short exact deletion sequence. They do not include a semilinear
+action of a field automorphism. The diagonal must not be confused
+with all weight-zero groups.
+
+The theorem is conditional on this package in exactly the same sense
+as the existing arrangement theorem. The de Rham package in
+characteristic zero is already constructed and is an unconditional
+specialization. Singular and geometric \'etale cohomology are examples
+in the paper; their foundations and C1--C5 implementations are not
+present in this checkout. Accordingly no named singular or \'etale
+Lean instance is silently assumed in the dependency graph below.
+Their applications of the new theorem are conditional on a value of
+this existing interface. This is a complete blueprint for the new
+axiomatic reconstruction proof, not a claim to have formalized the
+foundations of every named cohomology theory.
+
+\subsection{Verified repository entry points}
+
+All names in this table are existing names, not proposals. Paths in
+the first column are under \code{OrlikSolomon/}.
+\small
+\begin{longtable}{@{}p{.40\textwidth}p{.55\textwidth}@{}}
+\toprule Module and location & Existing declarations used\\\midrule\endhead
+\code{Cohomology/Geometric/Axioms.lean:49}&
+\code{Geometric.OrdinaryTheory}; its specified scalar wrappers
+\code{mapOverR}, \code{gysinOverR}, \code{residueOverR}.\\
+\code{Cohomology/Axioms.lean:156}&
+\code{OrdinaryTheory}, the equivalent algebraic interface.\\
+\code{Presentation/Geometric/Ordinary.lean:192}&
+\code{Geometric.OrdinaryTheory.degreeEquiv}; at line 221,
+\code{diagonalEquiv}; at line 253,
+\code{diagonalEquiv_generator_of_isEquation}.\\
+\code{Presentation/Geometric/Affine.lean:332}&
+\code{Geometric.OrdinaryTheory.affineEquiv_map}; at line 353,
+\code{affineEquiv_comapEquiv}.\\
+\code{Presentation/Basic.lean:71}&
+\code{osRelations}; line 89, \code{OSAlgebra}; line 129,
+\code{OSAlgebra.quotient_eq_zero_iff}.\\
+\code{Presentation/Basic.lean:176}&
+\code{OSAlgebra.generator_mul_eq_zero_of_disjoint}; line 183,
+\code{wordBoundary_eq_zero_of_isDependent}.\\
+\code{Presentation/Basic.lean:348}&
+\code{OSAlgebra.map}, \code{map_generator}, \code{map_comp};
+line 397, \code{degree}; line 430, \code{span_word_length}.\\
+\code{Presentation/Generators.lean:149}&
+\code{OSAlgebra.linearIndependent_generator}.\\
+\code{Algebra/RelationQuotient.lean:101}&
+\code{OrlikSolomon.relationSubmodule}; line 144,
+\code{relationSubmodule_le_of_span_eq_top}; line 238,
+\code{relationSubmodule_isHomogeneous}.\\
+\code{Geometry/Hyperplane.lean:227}&
+\code{IsHyperplane.exists_isEquation}; line 287,
+\code{IsEquation.existsUnique_smul}; line 455,
+\code{IsHyperplane.codim_inf_eq_two}.\\
+\code{Geometry/Hyperplane.lean:513}&
+\code{codim_iInf_of_isEquation}, the rank formula for nonempty
+intersections.\\
+\code{Geometry/Complement.lean:468}&
+\code{SmoothAlg.complementMap}, arbitrary permitted affine pullback
+of complement rings.\\
+\code{Cohomology/Logarithms.lean:315}&
+\code{OrdinaryTheory.map_logClass}; the geometric version is
+\code{Geometric.OrdinaryTheory.pull_logClass} in
+\code{Cohomology/Geometric/Logarithms.lean:309}.\\
+\code{Presentation/BaseChange.lean:116}&
+\code{OSAlgebra.baseChangeEquiv}, with its generator formula.\\
+\code{DeRham/Schemes/Instance.lean:104}&
+\code{Geometric.DeRham.ordinaryTheory}.\\
+\code{DeRham/Schemes/Corollaries.lean:81}&
+\code{Geometric.DeRham.affineEquiv}; line 124,
+\code{affineEquiv_generator_of_isEquation}; line 163,
+\code{affineDegreeEquiv}.\\\bottomrule
+\end{longtable}
+\normalsize
+
+The list does not contain a packaged canonical degree-one basis, the
+precise degree-two kernel, arbitrary infinite arrangements, or the
+projective reconstruction theorem. Those are new nodes below. Likewise
+the affine-equivalence naturality theorem is not an arbitrary-projection
+theorem; the projection wrapper is proved separately on generators.
+
+\Needspace{14\baselineskip}
+\section{Coordinates, hyperplanes, and finite index systems}
+\label{sec:geometry}
+
+Use $V=k^n$, implemented as \texttt{Fin n} $\to$ \texttt{k}, and
+\[
+ \cH_n(k)=\{H:\text{\texttt{AffineSubspace k V}}\mid\text{\texttt{IsHyperplane H}}\}.
+\]
+All incidence statements refer to these affine subspaces. Cohomology
+is evaluated on the existing scheme complements, never on their sets
+of rational points. Coefficient rings $R$ have their own universe and
+no $k$-algebra structure is required.
+
+\node{G01}{HyperplaneGT.coefficientPointEquiv}{existing hyperplane equation API and Mathlib projectivization}
+\begin{lemma}\label{lem:g01}
+Writing $f_a(x)=a_0+\sum_{i=1}^na_ix_i$, an affine hyperplane is
+represented by a tuple $a=(a_0,\ldots,a_n)$ with some $a_i\ne0$ for
+$i>0$. Two tuples represent the same hyperplane iff they differ by a
+nonzero scalar. Consequently there is a bijection
+\[
+ \cH_n(k)\simeq\Pj^n(k)\setminus\{o\},\qquad o=[1:0:\cdots:0].
+\]
+\end{lemma}
+\begin{proof}
+An affine functional on $k^n$ is its value at zero plus its linear
+part, and the latter is the sum of its values on the standard basis
+times the coordinates. The linear part is nonzero precisely when one
+of those coefficients is nonzero. Existence and uniqueness up to
+scalar are \code{exists_isEquation} and \code{existsUnique_smul}.
+A projective tuple represents $o$ exactly when all the positive-index
+coordinates vanish. The constructions in both directions now have
+the asserted formulas, with equality checked by the scalar criterion.
+\end{proof}
+\emph{Implementation.} Use
+\texttt{Projectivization k (Fin (n+1)} $\to$ \texttt{k)}, with the index-zero
+coordinate separated by \code{Fin.cases} or \code{Fin.cons}.
+\code{Projectivization.mk_eq_mk_iff} and
+\code{mk_eq_mk_iff'} in Mathlib's
+\code{LinearAlgebra/Projectivization/Basic.lean:112} give the scalar
+criterion. Build an \code{Equiv} between the two subtypes and provide
+its equation-independence and inverse computation lemmas.
+
+\node{G02}{HyperplaneGT.parallel_iff_normal_proportional}{G01 and the existing codimension/rank formulas}
+\begin{lemma}\label{lem:g02}
+For distinct hyperplanes $H,K$, either their normal vectors are
+proportional and they are disjoint, or their normals are independent
+and their intersection has codimension two. For three distinct
+hyperplanes $H,K,L$ which are not parallel in pairs, the following
+are equivalent: their intersection has codimension two; their affine
+equations are linearly dependent; their coefficient points are
+collinear. Equal nonempty traces $H\cap K=H\cap L$ are equivalent
+to the same dependent-triple condition.
+\end{lemma}
+\begin{proof}
+If the normal rows are proportional, scale them to be equal. Distinct
+hyperplanes have different constants, so their equations cannot
+vanish simultaneously. If independent, the map $k^n\to k^2$ with
+these two rows is onto: otherwise a nonzero linear functional on its
+proper image quotient would give a linear relation between the rows.
+Solving for the two negative constants gives a point of intersection;
+its direction is the joint kernel, of codimension two by rank-nullity.
+
+Translate that point to zero. The linear functionals vanishing on
+this joint kernel are exactly the span of the two rows: extend a
+basis of the kernel to a basis of $k^n$, or factor through the
+surjective two-row map. Thus an affine functional vanishes on the
+intersection precisely when it is in the span of the two original
+affine equations. For a third distinct hyperplane both coefficients
+in that span are nonzero. This proves the triple and trace statements.
+Collinearity is membership in the projective span of the two
+coefficient vectors, so it is exactly the same condition.
+\end{proof}
+Define \texttt{Parallel H K} to include $H\ne K$ and disjointness;
+define \texttt{DependentTriple H K L} to include pairwise distinctness,
+nonempty intersection and codimension two. Give permutation lemmas
+once. Do not call an empty-intersection triple dependent.
+
+\node{G03}{HyperplaneGT.vertical_graph_dichotomy}{G01--G02}
+\begin{lemma}\label{lem:g03}
+For a coordinate subset $J$, a hyperplane is vertical over $J$ iff
+its normal coefficients outside $J$ vanish. This is independent of
+its equation. If $J$ omits exactly $i$, every nonvertical hyperplane
+has a unique equation $x_i-h(z)=0$, $h$ affine linear in $z$.
+The projection from this graph to $k^J$ is an affine isomorphism.
+If $h_1-h_0$ is a nonzero constant the two graphs are parallel;
+if nonconstant they meet, and their common trace projects to
+$h_1-h_0=0$.
+\end{lemma}
+\begin{proof}
+Scalar rescaling preserves zero coefficients. Divide the equation
+by its nonzero $i$th coefficient and solve for $x_i$. Its inverse
+projection inserts $h(z)$ at coordinate $i$. Differences of the
+equations give every assertion about intersection; a nonconstant
+affine form is onto $k$, so its zero set is nonempty. The graph
+equation is unique by comparison of the coefficient at $i$.
+\end{proof}
+Model coordinate subsets by \texttt{Finset (Fin n)}. Reindex their
+coordinate spaces with the subtype of members, avoiding arbitrary
+ordered lists. The induction adds a new coordinate to a finite set.
+
+\node{G04}{HyperplaneGT.galoisAction}{G01--G02}
+\begin{lemma}\label{lem:g04}
+The group $G=(k\simeq_{k_0}k)$ acts on hyperplanes by applying an
+automorphism to all equation coefficients. It preserves empty
+intersections and their codimensions, parallel pairs, dependent
+triples, and verticality over a fixed coordinate subset. Its actions
+on equations and projective coefficient points agree.
+\end{lemma}
+\begin{proof}
+Applying $\sigma$ to a scalar multiple gives another scalar multiple,
+so G01 makes the operation well defined. Coordinatewise application
+$\sigma_V$ satisfies $f_{\sigma a}(\sigma_Vx)=\sigma(f_a(x))$.
+It is a bijection, so solutions and emptiness correspond. If
+$v_1,\ldots,v_r$ is a basis of a kernel direction, its images span
+the transformed kernel: apply $\sigma^{-1}$ to a vector and to
+its coefficients. They are independent by the same inverse
+argument. Thus dimension and codimension are unchanged. The group
+laws are coordinate identities; the remaining conclusions follow
+from their definitions.
+\end{proof}
+Construct a group action, not a postulated natural action on a theory.
+Mathlib \code{Projectivization.map} can be used for the semilinear
+coordinate map, but the elementary equation argument also suffices.
+
+\node{G05}{HyperplaneGT.finite_orbit}{G04 and finite polynomial root sets}
+\begin{lemma}\label{lem:g05}
+If $k/k_0$ is algebraic, every hyperplane has a finite $G$-orbit.
+Every finite set of hyperplanes therefore has a finite stable
+enlargement, and the collection of finite stable arrangements is
+cofinal and directed.
+\end{lemma}
+\begin{proof}
+Choose a nonzero normal coefficient and divide it to $1$. This same
+coordinate stays $1$ in every conjugate. Each other normalized
+coefficient $a$ is algebraic over $k_0$. Its images $\sigma a$ are
+roots of the nonzero minimal polynomial of $a$, so form a finite
+set. The finite tuple of coefficients ranges in the finite product
+of these root sets. Its image in hyperplanes is therefore finite.
+For a finite set take the union of its finite orbits; this contains
+it and is stable by the group law. Union of two finite stable sets
+is a finite stable upper bound.
+\end{proof}
+Use \code{minpoly.aeval_algHom} in
+\code{Mathlib/FieldTheory/Minpoly/Basic.lean:99} and
+\code{Polynomial.finite_setOfPred_isRoot} in
+\code{Mathlib/Algebra/Polynomial/Roots.lean:154}. Algebraicity implies
+integrality over a field and nonzeroness of the minimal polynomial.
+No finite normal-closure theorem is needed. The proof itself does
+not use perfectness; retain perfectness only in the public
+geometric formulation matching the original paper's descended
+arrangements.
+
+\node{G06}{HyperplaneGT.CofinalSystem}{G05}
+\begin{definition}\label{def:g06}
+A cofinal system is a subtype of finite stable arrangements with
+the property that each finite set of hyperplanes lies in a member.
+Morphisms are inclusions. Markings are the tagged set
+$\{(i,s):i<n,s\in S\}\sqcup\{(i,j):i<j<n\}$, with associated
+affine functions $x_i-s$ and $x_i-x_j$. For a marking $w$ write
+$H_{w,a}=\{w=a\}$ ($a=0,1$). These are distinct hyperplanes and
+are individually fixed by $G$.
+\end{definition}
+\begin{proof}
+The functions have nonzero linear part; their levels $0,1$ differ
+because $1\ne0$ in $k$. Their coefficients lie in $k_0$, so G04
+fixes them. Cofinality gives a member containing both and a common
+upper bound for any finitely many selected members. The diagram
+is generated by inclusions and a marking arrow $U_A\to T$ when
+both labels belong to $A$; impose the evident inclusion/marking
+commuting squares. These squares hold as actual morphisms because
+all maps are restrictions of the same affine function.
+\end{proof}
+For the first implementation, use the full type of stable arrangements.
+The later cofinal-subsystem theorem is proved by common upper bounds,
+not by an assumption that a chosen family contains every union.
+
+\Needspace{14\baselineskip}
+\section{The finite degree-one and degree-two interfaces}
+\label{sec:finite}
+
+\node{A01}{HyperplaneGT.osDegreeOneEquiv}{existing generator independence and word spanning}
+\begin{lemma}\label{lem:a01}
+For every finite arrangement $A$ over a field, and any commutative
+$R$, the map
+\[
+ R^{(A)}\longrightarrow\OS_R^1(A),\quad
+ (c_H)\longmapsto\sum_Hc_He_H
+\]
+is a linear equivalence, natural under inclusions. Every element of
+the whole \OS{} algebra is a sum of products of these generators
+and scalars.
+\end{lemma}
+\begin{proof}
+\code{OSAlgebra.linearIndependent_generator} proves injectivity.
+\code{OSAlgebra.span_word_length} at length one says that degree
+one is the span of its single-letter words, proving surjectivity.
+Both claims hold over the zero ring too. The inclusion formula is
+\code{map_generator}; a linear map out of a free module is
+determined on its basis. General word spanning gives the last claim.
+\end{proof}
+Construct the map by \code{Finsupp.linearCombination}; use the
+subtype of the degree-one submodule for its target. Package a basis
+and its coordinate inverse as corollaries. Avoid \code{finrank},
+which would unnecessarily impose field coefficients.
+
+\node{A02}{HyperplaneGT.quadraticKernel_eq_span}{A01, G02, existing relation quotient and grading}
+\begin{theorem}\label{thm:a02}
+Under A01, the kernel of
+$\bigwedge_R^2 R^{(A)}\to\OS_R^2(A)$ is the span of
+\[
+ e_H\wedge e_K\quad(H\parallel K),\qquad
+ (e_H-e_L)\wedge(e_K-e_L)\quad(H,K,L\text{ dependent}).
+\]
+\end{theorem}
+\begin{proof}
+Let $\Lambda$ be the exterior algebra on $R^{(A)}$ and let
+$J=\Span_R\{arb:r\in\mathcal R,\ a,b\in\Lambda\}$ be its
+relation submodule. The actual quotient kernel is $J$, by
+\code{OSAlgebra.quotient_eq_zero_iff}. An empty-intersection
+relator has degree at least two: the empty list intersects in the
+ambient space, and a singleton hyperplane is nonempty. A dependent
+boundary has degree at least two: list lengths zero or one are
+impossible, and distinct intersecting hyperplanes have codimension
+two by G02, ruling out a dependent list of length two. The existing
+private lemma \code{dependent_length_ge_three} in
+\code{Presentation/Generators.lean} contains the latter proof;
+expose a suitable public lemma or repeat its short list-length argument.
+
+For a finite sum of contexts $\sum a_jr_jb_j$, decompose each
+$a_j,b_j$ in the nonnegative exterior grading. Multiplication adds
+degrees. Projection to degree two has a contribution only if the
+relator has degree two and both contexts have degree zero. Degree
+zero is the scalar copy of $R$ in the exterior algebra. Hence
+$J\cap\Lambda^2$ is exactly the scalar span of degree-two relators.
+They are length-two empty words and length-three dependent
+boundaries. By G02 these are precisely the displayed configurations.
+Expand
+\[
+ (e_H-e_L)(e_K-e_L)=e_He_K-e_He_L+e_Ke_L
+\]
+using $e_L^2=0$ and $e_Le_K=-e_Ke_L$. This is the ordered triple
+boundary. The second exterior power identifies with $\Lambda^2$;
+thus the kernel is exactly as claimed. No assumption about higher
+relations being generated by degree-two relations has been made.
+\end{proof}
+\emph{Implementation detail.} Prove a generic lemma for a
+nonnegatively graded algebra with relators of degree $\geq d$:
+its relation submodule in degree $d$ is spanned by degree-$d$
+relators with degree-zero left/right contexts. Prove it by
+\code{Submodule.span_induction} on contexts and homogeneous
+projection, using the finite support of each decomposition. Apply
+it at $d=2$. Use Mathlib
+\code{exteriorPower.alternatingMapLinearEquiv} for alternating maps.
+In this Mathlib revision, \code{ExteriorAlgebra.exteriorPower} is
+definitionally the submodule
+\texttt{(LinearMap.range (ExteriorAlgebra.}$\iota$\texttt{ R)) \^{} n}
+of the exterior
+algebra (\code{LinearAlgebra/ExteriorAlgebra/Basic.lean:79}), and
+\code{ExteriorAlgebra.gradedAlgebra} uses these pieces
+(\code{ExteriorAlgebra/Grading.lean:82}). Thus the second exterior
+power already is the required degree-two submodule. The coefficient
+formula \code{exteriorPower.}$\iota$\code{Multi_apply_coe} in
+\code{ExteriorPower/Basic.lean:60} identifies its wedge with the
+same exterior word; no new comparison isomorphism is needed.
+
+\node{A03}{HyperplaneGT.finiteQuadraticDiagram}{A01--A02 and G06}
+\begin{definition}\label{def:a03}
+Set $M_A=R^{(A)}$ and let $Q_A$ be the submodule in A02. For the
+extra object $T$, set $M_T=R^{\{0,1\}}$ and $Q_T=\bigwedge^2M_T$.
+Inclusions send a basis label to the same label. Marking pullback
+sends the two ordered basis vectors to $e_{H_{w,0}},e_{H_{w,1}}$.
+The latter sends $Q_T$ into $Q_A$ because its two labels are parallel.
+A quadratic diagram automorphism consists of linear equivalences
+$g_A,g_T$ commuting with these maps and satisfying
+$(\bigwedge^2g_A)Q_A=Q_A$.
+\end{definition}
+Use the subgroup of the product of the indicated \code{LinearEquiv}
+groups cut out by these equations. Composition and inverse
+preserve the equations: for inverse naturality multiply the
+naturality square by the two inverse maps. Equality of submodule
+images is necessary; mere containment is insufficient for the
+inverse. This construction uses finite combinatorial modules and
+does not assert any cohomological conclusion as an input.
+
+\node{A04}{HyperplaneGT.degreeOneDiagramEquiv}{A01--A03 and the existing diagonal structure theorem}
+\begin{theorem}\label{thm:a04}
+For a supplied C1--C5 theory, its degree-one and cup-kernel diagram
+is isomorphic to A03. The isomorphism sends $e_H$ to $[f_H]$ and
+the ordered basis of $M_T$ to $[t]$, $[t-1]$.
+Moreover the canonical diagonal algebra equivalences form an
+isomorphism of the full graded diagrams.
+\end{theorem}
+\begin{proof}
+Compose A01 with
+\code{Geometric.OrdinaryTheory.degreeEquiv} at degree one. Since the full
+\code{diagonalEquiv} preserves products and is bijective, its
+degree-two restriction identifies the two product kernels. For
+$T$, both points are parallel and A02 says that its whole second
+exterior power is the kernel; A01 gives its stated basis.
+
+Inclusion naturality follows by the existing generator and
+\code{affineEquiv_map} formulas. For a marking $w$, the coordinate
+map to $\A^1$ restricts to a scheme map into $T$ because $w$ and
+$w-1$ are units on the source complement. This is the localization
+universal property in \code{SmoothAlg.complementMap}, transported
+by the existing geometric affine comparison. Logarithmic naturality
+gives $w^*[t-a]=[w-a]$. It proves the square on both basis vectors
+and therefore everywhere. Identity and composition follow on
+these same generators. Conjugating families by these linear
+equivalences yields a multiplicative equivalence of automorphism
+groups and carries scalar families to scalar families.
+The same generator comparison proves naturality of the full
+diagonal algebra equivalences: inclusions agree on every
+generator, and each marking agrees on both generators of the
+algebra of $T$. Since these algebras are generated in degree one,
+the comparison is an isomorphism of the full graded diagrams too.
+\end{proof}
+
+\Needspace{14\baselineskip}
+\section{The universal free module and its dual}
+\label{sec:universal}
+
+\node{U01}{HyperplaneGT.universalDegreeOne}{G06 and A03}
+\begin{definition}\label{def:u01}
+Define $M=R^{(\cH_n(k))}$, the finitely supported functions on all
+hyperplanes, with $e_H$ the standard basis. Include each $M_A$ by
+extension by zero. Its image is exactly the vectors supported on
+$A$. Define $Q\subset\bigwedge^2M$ as the span of all parallel-pair
+and dependent-triple relators.
+\end{definition}
+\begin{lemma}\label{lem:u01}
+These inclusions exhibit $M$ as the direct limit of the finite
+degree-one diagram. Every finite sum of generators of $Q$ is the
+image of an element of $Q_A$ for some $A\in\mathscr F$, and every
+image of $Q_A$ is contained in $Q$.
+\end{lemma}
+\begin{proof}
+A vector has finite support, contained in some $A$ by cofinality.
+Two representatives have the same coefficients after inclusion in
+a common upper bound, proving the direct-limit description. More
+explicitly, a compatible family of linear maps from $M_A$ to any
+module $N$ gives a function on the labels: choose a stage containing
+$H$ and evaluate its map at $e_H$. Common upper bounds make this
+independent of the stage. Extend by the finite sum
+$\sum_Hc_H f(e_H)$. This proves the universal property and uniqueness.
+For a sum of relators take a stage containing the union of the two
+or three labels in every summand. Each is then one of A02's
+relators there. Conversely those relators are among the global
+ones, so their image and its linear span lie in $Q$.
+\end{proof}
+No injectivity of degree-two restriction maps is required for this
+argument. Define the global relation module by this span, rather
+than invoking an unproved assertion about a cohomological colimit.
+
+\node{U02}{HyperplaneGT.DiagramAut.universalEquiv}{U01 and A03}
+\begin{lemma}\label{lem:u02}
+A quadratic-diagram automorphism induces a linear equivalence of
+$M$, preserving $Q$. It preserves each finite-stage submodule, and
+the marked maps from $R^2$ have the common equivariant source
+$(R^2,g_T)$. The construction is a group homomorphism. The induced
+universal map together with $g_T$ determines the original family.
+\end{lemma}
+\begin{proof}
+Use U01 on the maps $M_A\xrightarrow{g_A}M_A\to M$. Naturality
+gives compatibility. The family of inverses is compatible too;
+its universal map is an inverse because both composites fix each
+finite-stage vector. For a global relation choose a finite stage
+as in U01; its image under $g$ lies in the image of $Q_A$, hence
+in $Q$. Apply the same argument to $g^{-1}$ for equality. On the
+two marked basis vectors the equivariance is the finite-stage
+naturality equation. Group multiplication and injectivity are
+checked on vectors in finite stages.
+\end{proof}
+The auxiliary universal construction must not be declared as the
+group of all automorphisms of $M$ preserving $Q$: it also retains
+finite-stage invariance and the common marked source. Those data
+encode the arithmetic diagram.
+
+\node{U03}{HyperplaneGT.dualCoordinates}{U01 and Mathlib free-module duality}
+\begin{lemma}\label{lem:u03}
+There is an explicit linear equivalence
+\[
+ P:=\Hom_R(M,R)\simeq\prod_{H\in\cH_n(k)}R,
+ \qquad\lambda\longmapsto(\lambda(e_H))_H.
+\]
+Its inverse sends a function $a$ to
+$m\mapsto\sum_{H\in\operatorname{supp}m}m_Ha_H$.
+Evaluation separates points on both sides. A linear equivalence
+$g$ of $M$ acts on $P$ by $g\lambda=\lambda\circ g^{-1}$, and
+$(g\lambda)(gm)=\lambda(m)$.
+\end{lemma}
+\begin{proof}
+Finite support makes the formula well defined and linear. Its value
+on $e_H$ is $a_H$, and expansion of any $m$ in the basis proves
+the other composite identity. Distinct vectors are separated by
+some coordinate functional $\delta_H$; distinct functionals differ
+on some $e_H$. The inverse in the displayed group action makes it
+a left action: $(gh)\lambda=\lambda\circ h^{-1}\circ g^{-1}$,
+which equals $g(h\lambda)$. The evaluation identity is substitution.
+\end{proof}
+Use \texttt{Finsupp.llift R R R X}, where $X=\cH_n(k)$, in
+\code{Mathlib/LinearAlgebra/Finsupp/LSum.lean:157}, with
+\code{llift_symm_apply} at line 171, or the same formulas directly.
+\code{LinearEquiv.dualMap} is available in
+\code{LinearAlgebra/Dual/Defs.lean:141}; verify its direction and
+compose with the inverse as prescribed. No topology and no
+double-dual equivalence are used.
+
+\node{U04}{HyperplaneGT.Commutes}{U03 and U01}
+\begin{definition}\label{def:u04}
+For $\lambda,\mu\in P$ define the alternating form
+$d_{\lambda,\mu}(a,b)=\lambda(a)\mu(b)-\lambda(b)\mu(a)$.
+Its exterior lift is a map $\bigwedge^2M\to R$. Define
+\[
+ \lambda\sim\mu\quad\Longleftrightarrow\quad
+ Q\subseteq\ker d_{\lambda,\mu},\qquad
+ C(\lambda)=\{\mu\in P:\lambda\sim\mu\}.
+\]
+\end{definition}
+\begin{lemma}\label{lem:u04}
+$C(\lambda)$ is a submodule. The commuting relation is equivalent
+to the following equations on all the indicated configurations:
+\begin{align*}
+ \lambda_H\mu_K&=\lambda_K\mu_H&& (H\parallel K),\\
+ (\lambda_H-\lambda_L)(\mu_K-\mu_L)
+ &=(\lambda_K-\lambda_L)(\mu_H-\mu_L)
+ &&(H,K,L\text{ dependent}).
+\end{align*}
+It is preserved in both directions by the paired action in U02--U03.
+\end{lemma}
+\begin{proof}
+Alternation is $\lambda(a)\mu(a)-\lambda(a)\mu(a)=0$, so the
+exterior lift exists even in characteristic two. The formula is
+linear in $\mu$, proving the submodule assertion. Vanishing on a
+span is equivalent to vanishing on its generators, and evaluation
+on the two types of relator is precisely the display. Finally
+\[
+ d_{g\lambda,g\mu}(r)=d_{\lambda,\mu}((\bigwedge^2g^{-1})r).
+\]
+It holds on simple wedges by evaluation and hence everywhere by
+their spanning property. Preservation of $Q$ by $g$ and its inverse
+proves the equivalence.
+\end{proof}
+Use \code{exteriorPower.alternatingMapLinearEquiv} or
+\code{exteriorPower.pairingDual} and
+\code{alternatingMapToDual_apply_}$\iota$\code{Multi} in
+\code{Mathlib/LinearAlgebra/ExteriorPower/Pairing.lean:58--64}.
+The latter is a determinant pairing, not a claim that the dual of
+an infinite exterior power is a particular tensor product.
+
+\node{U05}{HyperplaneGT.primitive_iff_unit_coordinate}{U03 and local-ring arithmetic}
+\begin{lemma}\label{lem:u05}
+For a nonzero local ring $R$, a functional $\lambda:M\to R$ is
+surjective iff some $\lambda_H$ is a unit. Surjectivity is invariant
+under precomposition by any linear equivalence of $M$.
+\end{lemma}
+\begin{proof}
+A preimage of $1$ gives a finite sum
+$1=\sum_Hm_H\lambda_H$. In a local ring the nonunits form the
+maximal ideal, so at least one summand is a unit, and then its
+factor $\lambda_H$ is a unit. Conversely, if $\lambda_H=u$ is a
+unit, $u^{-1}e_H$ maps to $1$ and $ru^{-1}e_H$ maps to any $r$.
+Precomposition with a bijection has the same image.
+\end{proof}
+Use \code{IsLocalRing.exists_of_isUnit_sum} in
+\code{Mathlib/RingTheory/LocalRing/Basic.lean:58} and the fact that
+a factor of a unit product in a commutative ring is a unit. Define
+\texttt{Primitive} $\lambda$ to mean \texttt{Function.Surjective} $\lambda$. Do not
+replace it by $\lambda\notin\mathfrak mP$, which has different
+behavior for non-finitely-generated maximal ideals in an infinite
+product. This is the only use of localness in the core reconstruction.
+
+\Needspace{14\baselineskip}
+\section{Trace modules, centralizers, and local detection}
+\label{sec:local}
+
+\node{L01}{HyperplaneGT.traceMap}{G02--G03 and U03}
+\begin{lemma}\label{lem:l01}
+For $H\in\cH_n(k)$, each distinct $K$ has either empty trace on
+$H$ or a hyperplane trace. Every hyperplane of $H$ is such a trace.
+Define $U_H\subset M$ by coefficient zero at $H$, and define
+\[
+ s_H:U_H\longrightarrow R^{(\cH(H))},\qquad
+ e_K\longmapsto
+ \begin{cases}0&K\parallel H,\\ e_{H\cap K}&\text{otherwise}.
+ \end{cases}
+\]
+Then $s_H$ is onto and its kernel $U_H^1$ is spanned by
+\[
+ e_K\quad(K\parallel H),\qquad
+ e_K-e_L\quad(H,K,L\text{ a dependent triple}).
+\]
+\end{lemma}
+\begin{proof}
+The trace dichotomy is G02. Choose a point in $H$ and a vector
+transverse to its direction. The map that subtracts the transverse
+coordinate is an affine retraction $V\to H$. Pulling a nonconstant
+affine equation of a hyperplane of $H$ back along that retraction
+gives an equation of a hyperplane $K\ne H$ with exactly that trace.
+This proves surjectivity on labels and therefore on the free module.
+
+For the kernel, let $m=\sum_{K\ne H}c_Ke_K$ have finite support.
+Separate empty-trace terms. In each remaining trace fiber $J$
+choose one representative $K_J$ from the support, if the fiber is
+nonempty. Then
+\[
+ \sum_{K:\,H\cap K=J}c_Ke_K
+ =\sum_{K:\,H\cap K=J}c_K(e_K-e_{K_J})
+   +\Bigl(\sum_{K:\,H\cap K=J}c_K\Bigr)e_{K_J}.
+\]
+If $s_H(m)=0$, every final coefficient is zero because these are
+the coefficients of distinct basis vectors $e_J$. The differences
+with $K=K_J$ are zero; all other differences are from dependent
+triples by G02. This proves generation of the kernel. Each stated
+generator visibly maps to zero, proving the reverse inclusion.
+\end{proof}
+The intrinsic affine space $H$ can be represented by the existing
+chart on \code{H.direction}; do not redefine all arrangement
+machinery for torsors. The statement and subsequent maps are
+independent of that chart because they only mention trace equality.
+Factor the finite-fiber kernel argument as a general free-module
+lemma for a map of label sets with an optional discarded value.
+
+\node{L02}{HyperplaneGT.inertiaDecomposition}{L01 and U03--U04}
+\begin{definition}\label{def:l02}
+Put $I_H=R\delta_H$ and let $D_H$ consist of functions whose
+value is zero on hyperplanes parallel to $H$ and equal on any two
+distinct hyperplanes with the same nonempty trace on $H$.
+\end{definition}
+\begin{lemma}\label{lem:l02}
+With annihilators taken under the evaluation pairing,
+\[
+ I_H=\Ann(U_H),\quad D_H=\Ann(U_H^1),\quad
+ \Ann(I_H)=U_H,\quad\Ann(D_H)=U_H^1.
+\]
+There is an explicit equivalence
+$D_H\simeq R\times R^{\cH(H)}$, recording the value at $H$ and
+the value on each trace. Its second projection has kernel $I_H$.
+For a unit $u\in R^\times$, $C(u\delta_H)=D_H$.
+\end{lemma}
+\begin{proof}
+The first two annihilator statements follow by evaluation on L01's
+generators. For the product equivalence the inverse assigns value
+$a$ at $H$, zero on empty traces, and $b_J$ on trace $J$. The
+surjectivity on trace labels in L01 makes the two formulas inverse.
+The kernel of the second projection is exactly the arbitrary value
+at $H$ alone, namely $I_H$.
+
+For $\Ann(D_H)=U_H^1$, first evaluate at $\delta_H\in D_H$ to
+force the coefficient at $H$ to be zero. If $s_H(m)\ne0$, choose
+a trace with nonzero coefficient and the function in $D_H$ that
+is its indicator and has value zero at $H$. Its value on $m$ is
+that coefficient, a contradiction. Thus $s_H(m)=0$. The converse
+follows directly from the first two identities. Similarly
+$\Ann(I_H)=U_H$ is evaluation at $\delta_H$.
+
+For the centralizer formula, U04's tests with $H$ absent are zero.
+For a parallel pair containing $H$ they say $u\mu_K=0$, hence
+$\mu_K=0$. For a dependent triple containing $H$ they say
+$u(\mu_K-\mu_L)=0$, hence $\mu_K=\mu_L$. The converse is given
+by the same tests. This uses a unit cancellation, not domain
+cancellation. No reflexivity or exactness theorem for algebraic
+duals of arbitrary modules has been invoked.
+\end{proof}
+
+\node{L03}{HyperplaneGT.graph_decomposition_projection}{L02 and G03}
+\begin{lemma}\label{lem:l03}
+Let $z$ omit coordinate $i$, and let $M_z$ be the free span in
+$M$ of vertical hyperplanes over $z$. Set $P_z=\Hom_R(M_z,R)$
+and $p_z:P\to P_z$ to be restriction. If $H$ is a graph over $z$,
+then $p_z(D_H)=P_z$ and the restriction has kernel $I_H$.
+Moreover $p_z(\delta_H)=0$.
+\end{lemma}
+\begin{proof}
+The graph is affine isomorphic to $k^z$ by G03. Each hyperplane
+of $k^z$ pulls back to one vertical hyperplane of $V$, whose trace
+on $H$ is that hyperplane under the isomorphism. Conversely these
+are all hyperplanes of $H$, with no repetitions and no empty
+traces. Thus the product description in L02 identifies $p_z$
+with the projection to its second factor; its first factor is
+$I_H$. The graph label is not vertical, proving the last assertion.
+\end{proof}
+
+\node{L04}{HyperplaneGT.local_transfer}{G03, U04 and surjectivity of a centralizer projection}
+\begin{lemma}\label{lem:l04}
+Suppose $p_z\lambda=0$, $p_z:C(\lambda)\to P_z$ is onto, and
+$H_0$ is a graph with $\lambda_{H_0}$ a unit. For a graph $H_1$
+distinct and parallel to $H_0$ and a graph $H_2\ne H_0$ meeting
+$H_0$, one has $\lambda_{H_1}=\lambda_{H_2}$.
+\end{lemma}
+\begin{proof}
+Use the unique graph equations to write
+$H_0:x_i=h_0(z)$, $H_1:x_i=h_0(z)+c$, and
+$H_2:x_i=h_2(z)$, with $c\ne0$ and $h_2-h_0$ nonconstant.
+Let $V_1:h_2-h_0=0$ and $V_2:h_2-h_0=c$. They are distinct
+vertical hyperplanes. The triples $(H_0,H_2,V_1)$ and
+$(H_1,H_2,V_2)$ have nonempty codimension-two intersection:
+solve the nonconstant affine equation in $z$, then insert the
+graph coordinate. They are pairwise distinct and hence dependent.
+Choose a function on vertical labels taking values $0$ at $V_1$
+and $1$ at $V_2$; set it zero elsewhere. By surjectivity it lifts
+to $\mu\in C(\lambda)$. Put $a_j=\lambda_{H_j}$,
+$b_j=\mu_{H_j}$. Since $\lambda_{V_1}=\lambda_{V_2}=0$,
+U04 gives
+\[
+ a_0b_1=a_1b_0,\qquad a_0b_2=a_2b_0,\qquad
+ a_1(b_2-1)=a_2(b_1-1).
+\]
+Writing $b_1=a_0^{-1}a_1b_0$, $b_2=a_0^{-1}a_2b_0$ in the
+last equality cancels their common product and yields $a_1=a_2$.
+The inverse denotes the inverse of the specified unit, not a
+field inverse on $R$.
+\end{proof}
+Factor the last calculation into a commutative-ring lemma with a
+unit parameter and the three equations as hypotheses. This makes
+the local-ring and geometry proof independent of ring-tactic
+normalization details.
+
+\node{L05}{HyperplaneGT.localDetection}{U05, L02--L04 and G03}
+\begin{theorem}\label{thm:l05}
+Assume $n\geq2$ and $R$ is nonzero local. A functional $\lambda$
+is $u\delta_H$ for a unit $u$ and a graph $H$ over $z$ iff:
+\begin{enumerate}
+\item $\lambda$ is primitive;
+\item $p_z\lambda=0$;
+\item there is a graph $H'$ over $z$ with $\lambda_{H'}=0$;
+\item $p_z:C(\lambda)\to P_z$ is surjective.
+\end{enumerate}
+The graph $H$ is unique, and then $C(\lambda)=D_H$.
+\end{theorem}
+\begin{proof}
+For $u\delta_H$, primitivity follows by evaluation, vertical
+vanishing and centralizer surjectivity follow from L02--L03,
+and any different graph supplies a zero coordinate.
+
+Conversely U05 gives a unit coordinate $H_0$. Vertical vanishing
+and nonzero coefficients make it a graph. Distinct parallel graphs
+exist by replacing $h_0$ with $h_0+1$. Distinct intersecting graphs
+exist by replacing $h_0$ with $h_0+z_j$ for any remaining
+coordinate $j$; one exists because $n\geq2$.
+The zero-coordinate graph $H'$ is distinct from $H_0$. If it is
+parallel, retain it. Otherwise L04 compares it with a parallel
+graph, giving a parallel graph $H_1$ of value zero. Now L04 makes
+every graph distinct from and meeting $H_0$ have value zero.
+Any other graph parallel to $H_0$ compares with a chosen
+intersecting graph and also has value zero. Vertical labels are
+already zero. Thus $\lambda=\lambda_{H_0}\delta_{H_0}$.
+If two such unit-supported functions agree, evaluation at their
+support labels forces equality of the labels and units, proving
+uniqueness. L02 gives the centralizer assertion.
+\end{proof}
+Only surjectivity of the centralizer projection was used. The
+stronger quotient-isomorphism condition in the original paper is
+a consequence by L03, not an additional assumption here.
+
+\Needspace{14\baselineskip}
+\section{Recognizing the omitted coordinate projections}
+
+\node{P01}{HyperplaneGT.coordinateSpan_recognition}{G02--G03, U04 and L02}
+For a coordinate subset $z\subset\{1,\ldots,n\}$ let $M_z$ be
+the span of all hyperplanes whose equations use only $z$, and let
+$P_z$ be the product indexed by these hyperplanes. Restriction
+$p_z:P\to P_z$ is surjective, by extension by zero, and
+$\ker p_z=\Ann(M_z)$. For $w\notin z$ put
+$L_w=Re_{w=0}+Re_{w=1}$.
+\begin{lemma}\label{lem:p01}
+An element $a\in M$ belongs to $M_{z\cup\{w\}}$ iff
+\[
+ d_{\lambda,\mu}(a\wedge b)=0
+ \quad\text{for every }b\in L_w\text{ and every commuting }
+ \lambda,\mu\in\Ann(M_z).
+\]
+\end{lemma}
+\begin{proof}
+It suffices in the forward direction to take a basis vector $e_H$
+and $b=e_{w=t}$, $t=0,1$. If $H$ is vertical over $z$, both
+functionals vanish on $e_H$. Otherwise its equation can be normalized
+as $w+L(z)+c=0$. If $L=0$, $H$ equals or is parallel to $w=t$,
+and the determinant is zero by alternation or U04. If $L\ne0$,
+the three distinct hyperplanes
+\[
+ w+L(z)+c=0,\qquad w=t,\qquad L(z)+c+t=0
+\]
+have a common codimension-two intersection. The last is vertical
+over $z$. The triple equation of U04, with its two functional
+values zero there, is the required determinant equation.
+
+Conversely suppose $H$ is not vertical over $z\cup\{w\}$.
+It is neither equal nor parallel to $w=0$: either would supply
+an equation in $w$ alone. Thus $J=H\cap\{w=0\}$ is a hyperplane
+of $H$. This trace is different from the nonempty trace of every
+hyperplane $V$ vertical over $z$. Here is the required equation
+argument. If the traces agree, the restrictions to $H$ of $w$ and
+an equation $v$ of $V$ are nonzero affine forms with the same zero
+hyperplane, hence are scalar multiples by G01 applied on $H$.
+For some $c\ne0$, $w-cv$ vanishes on $H$. It is nonzero, since
+$v$ does not involve $w$. An affine form vanishing on $H$ is a
+multiple of its equation: translate to a point of $H$, choose a
+vector transverse to its direction, and evaluate on this direct
+sum. Therefore $H$ has equation $w-cv$, a contradiction.
+
+Take $\lambda=\delta_H$ and the element $\mu\in D_H$ whose
+coefficient at $H$ is zero, whose trace value at $J$ is one, and
+whose other trace values are zero. Both annihilate $M_z$, by the
+preceding trace assertion; they commute by L02. Moreover
+$\lambda(e_{w=0})=0$ and $\mu(e_{w=0})=1$. The displayed test
+with $b=e_{w=0}$ consequently reads $a_H=0$. Apply this to every
+label outside the coordinate span. A finitely supported vector
+with all those coefficients zero belongs to $M_{z\cup\{w\}}$,
+by its basis expansion.
+\end{proof}
+\emph{Formal details.} Prove the support characterization of $M_z$
+once using the Finsupp basis. For the equation argument on $H$, an
+affine coordinate equivalence $H\simeq\A^{n-1}$ exists by extending
+a basis of its direction subspace and translating by a point.
+Alternatively prove the affine-form restriction statement directly
+by the transverse-vector argument above; no chosen coordinate
+equivalence then escapes the lemma.
+
+\node{P02}{HyperplaneGT.coordinateSpan_invariant}{P01, U02--U04 and A03}
+\begin{proposition}\label{prop:p02}
+Every diagram automorphism preserves $M_z$ for every coordinate
+subset $z$. Its dual induces an equivalence of $P_z$ making $p_z$
+equivariant.
+\end{proposition}
+\begin{proof}
+Induct on the finite cardinality of $z$. The empty span is zero.
+Choose $w\in z$ at the induction step. The marked map $w:T$
+identifies its degree-one module with $L_w$, and naturality makes
+$L_w$ invariant. The induction hypothesis makes $M_{z\setminus\{w\}}$
+invariant. Evaluation and commuting are invariant by U03--U04,
+so P01 gives forward containment for $M_z$. Apply the same
+argument to the inverse to obtain equality.
+
+Since $\ker p_z=\Ann(M_z)$ is invariant, define the induced map on
+$P_z$ by choosing an extension, applying the dual, and restricting.
+Two extensions differ by the kernel, so the result is independent
+of the choice. The inverse construction gives an equivalence;
+the construction is linear and satisfies the equivariance equation.
+\end{proof}
+This quotient argument involves only the explicitly surjective
+restriction map. It uses no exactness of dualization.
+
+\Needspace{14\baselineskip}
+\section{Hyperplane permutation and the projective incidence structure}
+
+Throughout I01--I04, C04 and S01--S04, the coefficient ring $R$
+is nonzero and local. The intervening pure geometric lemmas
+C01--C03 only require a field $k$ and $n\ge2$. S05 separately
+extends the reconstruction theorem to integral domains.
+
+\node{I01}{HyperplaneGT.DiagramAut.hyperplanePerm}{L05 and P02}
+\begin{proposition}\label{prop:i01}
+Each diagram automorphism $g$ has a unique permutation $\pi_g$ of
+$\cH$ such that on the dual $gI_H=I_{\pi_gH}$ and
+$gD_H=D_{\pi_gH}$. On $M$ it satisfies
+$g(Re_H)=Re_{\pi_gH}$. These permutations respect composition.
+\end{proposition}
+\begin{proof}
+Choose a nonzero normal coefficient of $H$, say its $i$th, so $H$
+is a graph over the complementary coordinates $z$. The functional
+$\lambda=g\delta_H$ is primitive because $g$ is an equivalence.
+The vanishing on $M_z$ and surjectivity of its centralizer
+projection follow from L03, P02, and preservation of commuting.
+To obtain the zero-coordinate graph required in L05, first suppose
+$H\notin\{x_i=0,x_i=1\}$. Then $\delta_H$ annihilates the
+invariant plane $L_{x_i}$; so does $\lambda$, supplying two graph
+coordinates of value zero. If $H$ is one of these two hyperplanes,
+choose $j\ne i$. The common marking $x_r-x_s$, where
+$\{r,s\}=\{i,j\}$ and $r<s$, has two graph hyperplanes distinct
+from $H$. Their invariant plane is annihilated by $\delta_H$
+and hence by $\lambda$. This supplies the required zero coordinate.
+L05 gives a unique graph $K$ and a unit $u$ with
+$\lambda=u\delta_K$. The construction is independent of $i$
+because distinct coordinate inertia lines are distinct over a
+nonzero ring. Applying the construction to $g^{-1}$ proves it is
+a permutation. L02 and equivariance of centralizers give the
+assertion about $D_H$.
+
+The annihilator identity $U_H=\Ann(I_H)$ is equivariant, and
+\[
+ Re_H=\bigcap_{K\ne H}U_K.
+\]
+Indeed membership says that every coefficient other than $H$ is
+zero; a Finsupp vector then equals $a_He_H$. This proves the
+generator-line assertion. Equality of the permutations of a
+composition follows from uniqueness on inertia lines.
+\end{proof}
+The action on $M$ is $g$ and the action on $P$ is the
+contragredient $\lambda\mapsto\lambda\circ g^{-1}$. Keeping this
+convention throughout makes both permutations $\pi_g$, not inverses.
+
+\node{I02}{HyperplaneGT.DiagramAut.preserves_incidence}{I01 and L01--L02}
+\begin{lemma}\label{lem:i02}
+The permutation $\pi_g$ preserves parallel pairs and dependent
+triples, in both directions.
+\end{lemma}
+\begin{proof}
+The equality $U_H^1=\Ann(D_H)$ from L02 implies
+$gU_H^1=U_{\pi_gH}^1$. For distinct $H,K$,
+\[
+ H\parallel K\quad\Longleftrightarrow\quad Re_K\subset U_H^1.
+\]
+If the trace is empty its image is zero; otherwise its image is a
+basis vector, nonzero because $R$ is nonzero. For distinct $H,K,L$,
+dependence is equivalent to the images of $Re_K,Re_L$ in
+$U_H/U_H^1$ being equal nonzero lines. By L01 this quotient is the
+free module on traces. Two coordinate lines in a free module over
+a nonzero ring agree only if their labels agree: evaluate a basis
+vector at its own coordinate. G02 identifies equal nonempty traces
+with dependence. These characterizations are preserved by the
+equivalences and their inverses.
+\end{proof}
+
+\node{I03}{HyperplaneGT.DiagramAut.projectiveCollineation}{G01--G02 and I02}
+Identify $\cH$ with $\Pj^n(k)\setminus\{o\}$ via coefficient
+points, where $o=[1:0:\cdots:0]$. Extend $\pi_g$ to fix $o$.
+\begin{lemma}\label{lem:i03}
+This extended permutation maps each projective line onto a
+projective line, and its inverse does the same.
+\end{lemma}
+\begin{proof}
+A line through $o$ has vector space span of $e_0$ and an affine
+form with nonzero normal part. Its other points have proportional
+normal parts and arbitrary constant, exactly a parallel pencil.
+Conversely such a pencil is this line minus $o$. I02 applies.
+
+For a line not through $o$, take independent representatives $f,g$.
+Their normal parts are independent: a nontrivial dependence of
+normal parts would give a nonzero constant in their span (zero
+would contradict independence of $f,g$). The associated linear
+map $k^n\to k^2$ is surjective: if its image were proper, a
+nonzero linear functional annihilating that image, obtained by
+extending a basis, would give a dependence of the two rows.
+Thus the two affine zero sets meet in codimension two. The other
+line points have representatives $af+bg$ with $ab\ne0$, and form
+dependent triples with them. Conversely an affine form vanishing
+on their common intersection is in their span: translate to a
+common point and factor the linear form through the surjective
+map $k^n\to k^2$ by its kernel. I02 consequently preserves exactly
+the other points of this line. Applying the same argument to the
+inverse proves equality of line images.
+\end{proof}
+\emph{Mathlib interface.} Use \code{Projectivization} of
+$k^{n+1}$ and projectivizations of two-dimensional submodules.
+The existing \code{Projectivization.IsCollinear} and
+\code{Projectivization.line_unique} are in
+\code{Mathlib/LinearAlgebra/Projectivization/Collinear.lean:41,112}.
+The coefficient model also permits proving this lemma with spans
+first, then packaging the projectivization statement.
+
+\node{I04}{HyperplaneGT.marked_hyperplanes_fixed}{I01--I02 and A03}
+\begin{lemma}\label{lem:i04}
+Each marked hyperplane $w=0$ and $w=1$ is individually fixed.
+\end{lemma}
+\begin{proof}
+Invariance of the free coordinate plane $L_w$ and I01 imply that
+its two labels are permuted. In its ordered basis the matrix of
+$g$ is the same matrix $g_T$ for every $w$, by naturality and
+injectivity of the marked map. A monomial invertible two-by-two
+matrix over a nonzero ring has a unique support permutation:
+its selected entries are units and hence nonzero. Thus either
+every marked pair is fixed or every pair is exchanged. Choose
+$i<j$. The triple $x_i=0,x_j=0,x_i-x_j=0$ is dependent. A common
+exchange would send it to $x_i=1,x_j=1,x_i-x_j=1$, whose
+intersection is empty since $1-1=0\ne1$. This contradicts I02.
+The argument concerns permutations of labels, so it also works
+when $R$ or $k$ has characteristic two.
+\end{proof}
+
+\Needspace{14\baselineskip}
+\section{A coordinate proof of field reconstruction}
+
+\node{C01}{HyperplaneGT.collineation_preserves_span}{an arbitrary line-preserving bijection and finite-dimensional linear algebra}
+\begin{lemma}\label{lem:c01}
+A projective bijection preserving lines in both directions
+preserves the projective span of every finite set.
+\end{lemma}
+\begin{proof}
+The projective span is the smallest set containing the given
+points and closed under joining two distinct points by their
+entire projective line. To verify the assertion, take a nonzero
+linear combination of representatives and induct on the number
+of summands. Discard zero summands. If the partial sum is zero,
+the last summand alone represents the result. If it is nonzero
+and proportional to the last summand, a nonzero total represents
+the same already constructed point. Otherwise the two partial
+points are distinct, and the total lies on their line. This
+proves the characterization. Apply it to the bijection and its
+inverse to obtain equality of spans.
+\end{proof}
+The existing span objects are
+\code{Projectivization.Subspace.span} in
+\code{Mathlib/LinearAlgebra/Projectivization/Subspace.lean:85}
+and \code{Submodule.projectivization} at line 285. The finite
+sum proof above avoids any assumed fundamental theorem of
+projective geometry.
+
+\node{C02}{HyperplaneGT.collineation_coordinate_functions}{C01}
+\begin{lemma}\label{lem:c02}
+Suppose $F$ is a projective bijection preserving lines in both
+directions and fixes $[e_0],[e_i]$ for
+$1\le i\le n$. Then on the chart $a_0=1$ it has the form
+\[
+ F(a_1,\ldots,a_n)=(f_1(a_1),\ldots,f_n(a_n))
+\]
+with bijections $f_i:k\to k$ and $f_i(0)=0$.
+\end{lemma}
+\begin{proof}
+C01 makes the hyperplane $a_0=0$, spanned by the fixed points
+$[e_i]$, invariant. Thus the chart is invariant. Its origin
+$[e_0]$ is fixed. An affine line parallel to axis $i$ is a
+projective line with unique point at infinity $[e_i]$, so its
+image has the same direction. Consequently, changing coordinate
+$i$ of a point changes no other coordinate of its image.
+For each output coordinate $j$, change the other input
+coordinates successively to zero. Its value is unchanged and
+therefore depends only on input coordinate $j$. Define $f_j$ by
+restriction to that axis. C01 also preserves the axis itself,
+and the inverse restricts to its inverse, proving bijectivity.
+The fixed origin gives the asserted zero values.
+\end{proof}
+
+\node{C03}{HyperplaneGT.coordinateFieldEquiv}{C02, the marked frame and $n\ge2$}
+\begin{theorem}\label{thm:c03}
+If $F$ additionally fixes $[e_i-e_0]$ for every $i$ and
+$[e_i-e_j]$ for $i<j$, there is a unique field automorphism
+$\sigma$ such that $F([a])=[\sigma(a)]$ coordinatewise.
+\end{theorem}
+\begin{proof}
+The first additional fixed points are $-e_i$ in the affine
+chart, so $f_i(-1)=-1$. In the $(i,j)$ coordinate plane the
+affine lines $a_i+a_j=c$ have point at infinity $[e_i-e_j]$;
+the plane is invariant by C01 and their direction is fixed.
+For $c\ne0$, the two distinct points $ce_i,ce_j$ on such a
+line have images $f_i(c)e_i,f_j(c)e_j$, and constancy of the
+coordinate sum along the image line gives $f_i(c)=f_j(c)$.
+For $c=0$ both values are zero by C02. Thus all $f_i$ are a
+single bijection $\sigma$. Every point $ae_i+be_j$ on the
+line with $c=a+b$ has image coordinate sum $\sigma(a+b)$,
+so $\sigma(a)+\sigma(b)=\sigma(a+b)$. This also holds when
+$c=0$, since that line maps to the line of the same direction
+through the fixed origin. Additivity and $\sigma(-1)=-1$
+give $\sigma(1)=1$.
+
+The line through $0$ and $e_i+be_j$ has points
+$ae_i+abe_j$. Its image passes through $0$ and
+$e_i+\sigma(b)e_j$, so comparison of its two coordinates gives
+$\sigma(ab)=\sigma(a)\sigma(b)$. Package these identities and
+bijectivity as a ring equivalence of $k$ with itself.
+
+For $v\ne0$, the projective line through $[1:0]$ and $[1:v]$
+has unique point at infinity $[0:v]$. The image line has
+unique point at infinity $[0:\sigma(v)]$, which therefore
+equals $F([0:v])$. For $a_0\ne0$, normalize by $a_0$; the
+chart formula and multiplicativity give the homogeneous
+formula. Its restriction to $[1:a:0:\cdots:0]$ determines
+$\sigma(a)$, proving uniqueness.
+\end{proof}
+All chart identities are identities of normalized representatives.
+Use \code{Projectivization.mk_eq_mk_iff} to convert equality of
+points to a scalar multiple and then compare a coordinate equal
+to one. This avoids any choice of compatible representatives.
+The case $c=0$ above must be separated; one cannot invoke the
+uniqueness of a line through two coincident points.
+
+\node{C04}{HyperplaneGT.DiagramAut.toGalois}{I03--I04 and C03}
+\begin{proposition}\label{prop:c04}
+There is a group homomorphism
+$\eta:\Aut_2\to(k\simeq_{k_0}k)$ whose underlying field
+automorphism induces $\pi_g$.
+\end{proposition}
+\begin{proof}
+The fixed coefficient points of $x_i=0,x_i=1,x_i-x_j=0$
+and the deliberately fixed $o$ supply exactly the frame needed
+in C03. For $s\in S$, the fixed hyperplane $x_i=s$ has
+coefficient point $[-s:0:\cdots:1:\cdots:0]$. Apply the
+homogeneous formula and compare the coordinate equal to one:
+$\sigma(s)=s$. A field automorphism fixes the prime field.
+Its fixed elements form a subfield, since they are closed under
+the field operations. Therefore it fixes the subfield generated
+by $S$ and the prime field, namely $k_0$. This packages it as
+a $k_0$-algebra equivalence. Uniqueness in C03 and the
+composition assertion in I01 prove the group law.
+\end{proof}
+For the generated-subfield step use
+\code{RingHom.eqOn_field_closure} in
+\code{Mathlib/Algebra/Field/Subfield/Basic.lean:505}, or use
+subfield closure induction with the operations just listed.
+
+\Needspace{14\baselineskip}
+\section{The scalar kernel, splitting, and full graded algebra}
+
+\node{S01}{HyperplaneGT.DiagramAut.scalar_of_toGalois_eq_one}{C04, I01--I02 and L01}
+\begin{lemma}\label{lem:s01}
+If $\eta(g)=1$, a unique unit $u\in R^\times$ acts as $g$ on
+every degree-one object, including $T$.
+\end{lemma}
+\begin{proof}
+I01 and C04 imply $g(e_H)=u_He_H$. The restriction of $g$ to
+each generator line is an equivalence, so $u_H$ is a unit:
+write its inverse on that line as multiplication by $v_H$ and
+evaluate both composites at $e_H$ to get $u_Hv_H=1$.
+If $H,K,L$ form a dependent triple, then $e_K-e_L\in U_H^1$.
+Its image also lies there by I02's annihilator proof. Apply
+the trace map; the result is
+$(u_K-u_L)e_{H\cap K}=0$. Evaluation at that label gives
+$u_K=u_L$. Permute the triple to equate all three multipliers.
+
+Two distinct intersecting hyperplanes have independent affine
+equations $f,g$ and independent normal parts by G02. The third
+equation $f+g$ defines a different hyperplane through their
+codimension-two intersection, so their multipliers agree. If
+two distinct hyperplanes are parallel, choose a normal vector
+independent of their common normal; the normal-vector space
+has dimension $n\ge2$. The resulting hyperplane meets each,
+and the preceding argument equates both multipliers to its
+multiplier. Thus all $u_H$ equal one unit $u$. Finite basis
+expansion gives $g=u\id$ on $M$. Its finite-stage restrictions
+give the same equality by U02. There is a marking in some stage
+by cofinality; its pullback from $T$ is injective, so naturality
+gives $g_T=u\id$. Evaluation at any generator proves uniqueness.
+\end{proof}
+
+\node{S02}{HyperplaneGT.galoisGradedAut}{G04, G06 and the explicit OS presentation}
+\begin{lemma}\label{lem:s02}
+For each $\sigma\in G$, $e_H\mapsto e_{\sigma H}$ gives a
+natural graded $R$-algebra automorphism $P_\sigma$ of the full
+diagram. These automorphisms form an action, act identically
+on $T$.
+\end{lemma}
+\begin{proof}
+The permutation is defined at each stage because its arrangement
+is $G$-stable. Its linear extension on the free generator module
+extends to the exterior algebra by its universal property.
+G04 preserves empty intersections and the codimensions of all
+nonempty intersections; hence it carries every empty-intersection
+word and every dependent boundary relator to another such
+relator. It descends to the OS quotient. Use $\sigma^{-1}$ for
+its inverse. Inclusion naturality and the group law hold on
+each generator and hence on the algebra generated by them.
+All marked equations have coefficients in $k_0$, so both of
+their labels are fixed. Define the map at $T$ to be the identity;
+agreement on its two generators proves marking naturality.
+\end{proof}
+This construction must check \emph{all} OS relators, not just the
+quadratic ones. The quotient universal property already used in
+\code{Presentation/Basic.lean} provides the implementation pattern.
+Semilinear changes of the geometric coordinates give $R$-linear
+maps of this presentation; they are not $k$-morphisms to which a
+theory's ordinary pullback can be applied.
+
+After C04, prove the separate comparison lemma
+\code{HyperplaneGT.galoisGradedAut_toGalois}:
+$\eta(P_\sigma)=\sigma$. Its proof is that the contragredient
+of $P_\sigma$ sends $\delta_H$ to $\delta_{\sigma H}$;
+C03's uniqueness therefore identifies its extracted field
+automorphism with $\sigma$. Place this comparison in
+\code{Reconstruction/LocalRing.lean}, not in the independent
+\code{Diagram/GaloisAction.lean} module.
+
+\node{S03}{HyperplaneGT.quadraticAutEquiv}{C04 and S01--S02}
+\begin{theorem}\label{thm:s03}
+For a nonzero commutative local ring there is a group equivalence
+\[
+ R^\times\times G\simeq\Aut_2,\qquad
+ (u,\sigma)\longmapsto uP_\sigma.
+\]
+\end{theorem}
+\begin{proof}
+Multiplication by a unit preserves every quadratic relation span
+and commutes with all diagram maps. It commutes with every
+$R$-linear automorphism, so the displayed map is a homomorphism.
+For $g$, let $\sigma=\eta(g)$. Then $gP_\sigma^{-1}$ is in the
+kernel of $\eta$; S01 writes it uniquely as $u\id$. This proves
+surjectivity. If $uP_\sigma=vP_\tau$, applying $\eta$ gives
+$\sigma=\tau$, and evaluation at a generator gives $u=v$.
+It also gives an explicit inverse and both inverse equations.
+\end{proof}
+Use a \code{MulEquiv}, not a bare bijection or an equivalence
+of types. The scalar embedding is an injective group homomorphism.
+
+\node{S04}{HyperplaneGT.gradedAutEquiv}{S02--S03 and full OS generation}
+\begin{theorem}\label{thm:s04}
+Restriction to degree one is a group equivalence
+$\Aut_{\rm gr}\simeq\Aut_2$. Consequently both groups modulo
+the central scalar subgroup are canonically $G$.
+\end{theorem}
+\begin{proof}
+A graded algebra automorphism preserves the product kernel,
+and its inverse proves equality of the kernels, so restriction
+lands in $\Aut_2$. An $R$-algebra homomorphism of an OS algebra
+is determined by its generators, because the exterior algebra
+is generated by them and the quotient is onto. Equivalently
+use \code{OSAlgebra.span_word_length} degree by degree and
+multiplicativity. This proves injectivity of restriction.
+By S03 every quadratic automorphism is $uP_\sigma$. On a word
+of length $q$, multiplication by $u^q$ preserves the homogeneous
+relator ideal; it gives a graded automorphism with inverse
+defined using $u^{-1}$. Composing with S02 extends $uP_\sigma$,
+proving surjectivity. These are group homomorphisms by their
+generator formulas. For the quotient, the composite with
+projection $R^\times\times G\to G$ is onto with kernel exactly
+the scalar subgroup. The group quotient universal property and
+the section $\sigma\mapsto[(1,\sigma)]$ give explicit mutually
+inverse homomorphisms to $G$.
+\end{proof}
+No statement that the OS algebra is quadratic is used or true
+in this generality. Extension becomes available only after the
+entire marked diagram has forced the form $uP_\sigma$.
+
+\node{S05}{HyperplaneGT.coefficientDomainAutEquiv}{A02--A03 and S02--S04 over a field}
+\begin{theorem}\label{thm:s05}
+The conclusions of S03--S04 hold over every integral domain $R$.
+\end{theorem}
+\begin{proof}
+Let $K$ be its fraction field. Define the base-changed diagram
+directly as the free $K$-module on each stage's labels, with the
+same quadratic generators and the same marking matrices.
+Extend the finite matrix of each component of $g$ along
+$R\hookrightarrow K$. Extending the inverse matrix proves
+invertibility, and extending the naturality matrix equations
+proves naturality. For each quadratic relator $q$, its image
+under $\bigwedge^2g$ is a finite $R$-linear combination of the
+quadratic generators by A02 and the hypothesis on $g$. Extend
+this equality along $R\to K$. Since those same generators
+span the quadratic relation submodule over $K$, it proves
+preservation over $K$; apply the inverse for equality. This
+constructs $g_K\in\Aut_2(K)$ without an exactness assumption
+on a new cohomology theory or on its scalar extension.
+
+The field $K$ is local, so S03 gives $g_K=cP_\sigma$.
+Choose a finite stable stage containing one hyperplane $H$;
+it also contains $\sigma H$. The matrix entry at row
+$\sigma H$, column $H$ is an element $r\in R$ with image
+$c$. For the inverse matrix choose column $\sigma H$, row
+$H$, obtaining $s\in R$ with image $c^{-1}$. Injectivity of
+$R\to K$ gives $rs=1$ and $sr=1$, so $r$ defines a unit $u$.
+Every entry of $g$ equals the corresponding entry of
+$uP_\sigma$, because their images in $K$ agree. This applies
+at all finite stages and at $T$. Thus $g=uP_\sigma$ over $R$.
+Uniqueness follows over $K$, or by the same generator argument.
+S02 constructs the graded extension, and S04's generation proof
+is valid over every coefficient ring.
+\end{proof}
+\emph{Implementation.} Use the explicit Finsupp bases to define
+matrix scalar extension. This avoids needing any new theorem on
+localization of cohomology kernels. Existing
+\code{IsFractionRing.injective}, in
+\code{Mathlib/RingTheory/Localization/FractionRing.lean:144},
+justifies every descent of an equality. If a full algebra base-change
+comparison is desired, use \code{OSAlgebra.baseChangeEquiv} and
+\code{OSAlgebra.map_baseChangeEquiv} in
+\code{Presentation/BaseChange.lean:116,146}; their generator
+formulas identify the same construction.
+
+\Needspace{14\baselineskip}
+\section{Transport to the theory and examples}
+
+\node{E01}{HyperplaneGT.OrdinaryTheory.reconstruction}{A04 and S03--S05}
+\begin{theorem}\label{thm:e01}
+For an existing geometric ordinary theory satisfying C1--C5,
+the marked diagonal cohomology diagram has the group equivalences
+stated in Section~\ref{sec:boundary}. They carry $(u,\sigma)$
+to $[H]\mapsto u[\sigma H]$ and act by $u$ on degree one of $T$.
+\end{theorem}
+\begin{proof}
+A04 identifies the entire marked cohomology diagram, its
+degree-one modules, and its full degree-two kernels with the
+explicit OS diagram. Conjugate every component of an
+automorphism by these equivalences. Naturality and preservation
+of kernels are preserved under conjugation, and the inverse
+conjugation proves a group equivalence of automorphism groups.
+The same argument with the diagonal algebra equivalences gives
+the graded group equivalence. Their generator formulas identify
+scalars and the action in the statement. Apply S03--S05.
+\end{proof}
+This is the only point, after A04, where cohomology enters the
+reconstruction. Keep the preceding statements independent of
+theory universes, grading implementations and divisor pairs.
+
+\node{E02}{HyperplaneGT.cofinalRestrictionEquiv}{E01 and G06}
+\begin{corollary}\label{cor:e02}
+Restriction to any cofinal subsystem of the chosen stable
+arrangements induces an isomorphism of either automorphism
+group. Two eligible realizations with the same coefficient
+ring have canonically isomorphic marked diagonal diagrams.
+\end{corollary}
+\begin{proof}
+For the first assertion the restriction homomorphism carries
+the family $uP_\sigma$ to the family with the same formula.
+Both groups are classified by E01, so the map is the identity
+on $R^\times\times G$ and is an equivalence. Do not claim that
+arbitrary diagram automorphisms extend from a cofinal subsystem
+before proving reconstruction.
+
+For the second assertion, at every stage compose one theory's
+canonical OS equivalence with the inverse of the other's, in
+the appropriate order. A04 makes these maps natural for every
+marking and inclusion. They send $[H]$ to $[H]$, and generation
+proves uniqueness. They therefore identify the classified
+actions, independently of any comparison theorem between the
+two realizations.
+\end{proof}
+
+\node{E03}{HyperplaneGT.deRham_reconstruction}{E01 and the constructed de Rham instance}
+\begin{corollary}\label{cor:e03}
+If $\operatorname{char}k=0$, the ordinary algebraic de Rham
+cohomology diagram of the complements has
+\[
+ \Aut_{\rm gr}\simeq\Aut_2\simeq
+ k^\times\times\Gal(k/k_0),
+ \qquad [df_H/f_H]\longmapsto u[df_{\sigma H}/f_{\sigma H}].
+\]
+\end{corollary}
+\begin{proof}
+Take \code{Geometric.DeRham.ordinaryTheory}. Its coefficients
+are the Laurent weight extension of $k$, with weight-zero
+coefficient ring $k$. The existing diagonal and degree
+identifications in \code{DeRham/Schemes/Corollaries.lean}
+identify its diagonal with the usual graded de Rham algebra
+and its logarithmic class with $df/f$. A field is a nonzero
+local ring. Apply E01 and transport through these equivalences.
+\end{proof}
+This action is $k$-linear. The usual transport of differential
+forms by $\sigma$ is $\sigma$-semilinear on scalar coefficients.
+The theorem constructs the former from the logarithmic
+presentation and must not label it the latter.
+
+For singular cohomology, the desired future input is the
+Laurent weight package
+$E^{p,w}(X)=H^p(X_\iota(\C),R)t^w$ for a fixed embedding
+$\iota:k\hookrightarrow\C$, with complex-oriented residues.
+For geometric \'etale cohomology the desired input is
+$E^{p,w}(X)=H^p_{\mathrm{\acute et}}(X,R(w))$,
+$R=\Z/\ell^m,\Z_\ell$ or $\Q_\ell$ and
+$\ell\ne\operatorname{char}k$. Each is an instance of E01
+\emph{once} its C1--C5 data have been constructed. Neither is
+an imported theorem or a new Lean axiom in this blueprint.
+Their ordinary mathematical realizations and verification of
+the hypotheses are discussed in the paper. Implementing their
+foundations is separate from formalizing this new reconstruction
+argument. In particular the blueprint's unconditional named
+realization theorem is E03, using only the existing instance.
+
+\Needspace{14\baselineskip}
+\section{Lean organization, dependency order, and completion criteria}
+
+The following module names are proposals under
+\code{OrlikSolomon/HyperplaneGT/}; every public declaration should
+document its node ID. They do not replace the existing
+\code{docs/ARCHITECTURE.md}. Split files further if they approach
+the repository's 800-line limit.
+\small
+\begin{longtable}{@{}p{.30\textwidth}p{.13\textwidth}p{.50\textwidth}@{}}
+\toprule Proposed module & Nodes & Output and immediate dependencies\\\midrule\endhead
+\code{Geometry/Coordinates.lean}&G01--G03&Affine equation, graph, trace and incidence API; existing hyperplane geometry.\\
+\code{Geometry/Galois.lean}&G04--G06&Coefficient action, finite orbits, stable finite systems and markings.\\
+\code{Algebra/LowDegrees.lean}&A01--A02&Canonical generator basis and exact quadratic kernel; existing presentation and grading.\\
+\code{Diagram/Basic.lean}&A03&Explicit finite quadratic and graded diagrams; automorphism groups.\\
+\code{Diagram/Universal.lean}&U01--U02&Free universal module, finite-stage embeddings and induced equivalences.\\
+\code{Algebra/Dual.lean}&U03--U05&Product coordinates, commuting, primitive vectors over local rings.\\
+\code{Reconstruction/Trace.lean}&L01--L03&Trace kernel, inertia, decomposition and coordinate restrictions.\\
+\code{Reconstruction/Local.lean}&L04--L05&Local transfer calculation and unit-supported detection.\\
+\code{Reconstruction/Projections.lean}&P01--P02&Intrinsic coordinate-span recognition and invariance.\\
+\code{Reconstruction/Incidence.lean}&I01--I04&Hyperplane permutation, collineation and fixed markings.\\
+\code{Geometry/Collineation.lean}&C01--C03&Pure coordinate field-reconstruction theorem, independent of cohomology and $R$.\\
+\code{Reconstruction/Galois.lean}&C04, S01&Extracted Galois homomorphism and scalar kernel.\\
+\code{Diagram/GaloisAction.lean}&S02&Action on full OS algebras; independent of local detection.\\
+\code{Reconstruction/LocalRing.lean}&S03--S04&Local coefficient classification and extension to the graded algebra.\\
+\code{Reconstruction/Domain.lean}&S05&Matrix extension to a fraction field and descent.\\
+\code{Cohomology/Adapter.lean}&A04&Logarithm naturality and finite diagram comparison; existing ordinary theory.\\
+\code{Cohomology/Main.lean}&E01--E02&Theory-level classification and cofinal/realization independence.\\
+\code{Cohomology/DeRham.lean}&E03&Application to the existing de Rham construction.\\\bottomrule
+\end{longtable}
+\normalsize
+
+The main dependency chain is
+\[
+ \begin{gathered}
+ (G01\text{--}G06,A01\text{--}A03)\longrightarrow
+ U01\text{--}U05\longrightarrow L01\text{--}L05\longrightarrow
+ P01\text{--}P02\longrightarrow I01\text{--}I04,\\
+ (C01\longrightarrow C02\longrightarrow C03,\ I03\text{--}I04)
+ \longrightarrow C04\longrightarrow S01,
+ \qquad (S01,S02)\longrightarrow S03\text{--}S05,\\
+ (A04,S03\text{--}S05)\longrightarrow E01\longrightarrow E02\text{--}E03.
+ \end{gathered}
+\]
+The pure C01--C03 theorem should take an arbitrary field and a
+line-preserving permutation with the stated fixed frame; its
+proof does not depend on the construction of I03. Similarly
+U03's dual-coordinate equivalence and U05's local-ring lemma
+should be stated for an arbitrary index type, not hyperplanes.
+S02 is built directly from G04 and the OS presentation, so it
+does not depend on the reconstructed homomorphism; only its
+last identification with $\eta$ depends on C04.
+
+\subsection{Suggested public interfaces}
+
+The following is schematic Lean, not checked code. Names of
+existing declarations retain their current namespaces; proposed
+structures must not add geometric or cohomological conclusions
+as fields. In particular \code{QuadraticDiagram} stores the
+explicit free modules and relation spans of A03; it is not an
+axiom package asserting reconstruction.
+\par\smallskip
+\noindent\begin{minipage}{\linewidth}
+\begin{lstlisting}
+-- Pure geometry: arbitrary field k, finite dimension n >= 2.
+-- Its conclusion is a uniquely determined ring equivalence of k.
+HyperplaneGT.coordinateFieldEquiv
+
+-- The core diagram is explicit, so no cohomology is assumed.
+-- R is a nonzero commutative local ring; F is cofinal and G-stable.
+HyperplaneGT.quadraticAutEquiv :
+  MulEquiv (Prod (Units R) (AlgEquiv k0 k k))
+    (QuadraticDiagram.Aut R F S)
+
+-- Same conclusion with R an integral domain.
+HyperplaneGT.coefficientDomainAutEquiv
+
+-- T is an existing Geometric.OrdinaryTheory, not a new weaker theory.
+HyperplaneGT.OrdinaryTheory.reconstruction
+
+-- Unconditional in characteristic zero via the existing instance.
+HyperplaneGT.deRham_reconstruction
+\end{lstlisting}
+\end{minipage}
+\par\smallskip
+The actual declarations will quantify the fields, algebra maps,
+finite dimension, coefficient ring, generating set and cofinal
+system explicitly. Use \texttt{[Nontrivial R]} with
+\texttt{[IsLocalRing R]}, and \texttt{[IsDomain R]} in the second
+version. The group $(k\simeq_{k_0}k)$ exists for any field
+extension; require algebraicity for G05, and the perfect-field
+algebraic-closure hypotheses at the public geometric theorem
+matching the paper. No theorem in the pure algebra layer should
+carry these latter unused assumptions. Give the public
+equivalences \code{apply_generator}, \code{apply_marked},
+\code{symm_apply_toGalois} and scalar-kernel lemmas.
+
+\subsection{Regression statements and mathematical limits}
+
+These are mathematically meaningful checks of the generality,
+not additional hypotheses to help a proof succeed.
+\begin{enumerate}
+\item \textbf{Characteristic two and nilpotents.} Instantiate the
+local coefficient theorem at $\F_2$ and at
+$\F_2[\epsilon]/(\epsilon^2)$. Exterior squares are alternating
+by the existing OS theorem; no step divides by $2$. The only
+division in L04 is by a coordinate proved to be a unit. In
+I04, distinguish the two-label permutation combinatorially.
+The residue-field criterion alone must never replace the
+surjectivity definition of primitive over an infinite product.
+\item \textbf{Dimension.} The new theorem assumes $n\ge2$,
+exactly where L05 needs an intersecting graph, I01 a second
+coordinate marking, C03 a coordinate plane, and S01 a transverse
+normal. Do not weaken this to $n\ge1$. Degree computations A01--A02
+remain valid in dimensions zero and one and for the empty
+arrangement, with their evident empty bases.
+\item \textbf{Zero coefficient ring.} All purely algebraic OS,
+trace-map and diagram definitions can be made over the zero ring.
+The reconstruction theorem cannot: then every module and every
+automorphism group is trivial. The hypotheses
+\texttt{[Nontrivial R]} enter U05, uniqueness of inertia labels,
+and detection of distinct trace coordinate lines. Do not add
+nontriviality to the earlier structure theorem.
+\item \textbf{Disconnected coefficients.} Over $R=F\times F$,
+the idempotents split every finite diagram into two copies over
+$F$. Choose distinct $\sigma,\tau\in G$. The action
+$(P_\sigma,P_\tau)$ preserves every full OS relation and every
+marking. It cannot equal a common $uP_\rho$, since projecting to
+each factor and comparing generator labels forces
+$\rho=\sigma=\tau$. Thus a theorem over arbitrary commutative
+rings is false whenever $G$ has two elements. For
+$k_0=\Q,k=\overline\Q$ such automorphisms exist, for example
+by extending the two roots of $X^2-2$ to the algebraic closure
+using Mathlib's normal-extension lifting API. No such example
+needs to be imported for the theorem; the conditional
+counterexample just proved already identifies the obstruction.
+\item \textbf{Geometric points.} The argument uses affine
+hyperplanes over $k$ and actual smooth scheme complements for
+cohomology. It never requires a rational point of a complement
+or a descended complement over $k_0$. Existing structure-theorem
+coverage of complements without rational points must be retained.
+\item \textbf{Finite stage compatibility.} A relation witness,
+a marking, or a selected list of hyperplanes may be moved to a
+common stage using G06. Do not postulate that the cofinal
+family is closed under unions. U02 must prove independence of
+stage and preserve the full quadratic relation submodule.
+\item \textbf{No extra naturality.} Recover coordinate subspace
+spans by P01--P02; do not add arbitrary projections as diagram
+arrows. There must be one common target $T$ for all markings;
+separate targets would invalidate I04's common permutation.
+\item \textbf{No dual or quadratic shortcuts.} The dual is the
+full algebraic product, with maps induced from the free module.
+Use the explicit annihilator and trace calculations rather than
+an unproved reflexivity assertion. The graded extension must
+come after S03. S05 can use matrices and relation spans rather
+than unproved localization theorems about an arbitrary theory.
+\end{enumerate}
+
+Completion means that all proposed modules elaborate without
+new axioms or placeholders, the generator formulas and group
+equivalence laws are proved, and the theorem is instantiated
+with the existing de Rham theory. Existing repository build and
+review rules apply at that implementation stage. This document
+itself is a mathematical specification; it does not
+claim that these new declarations have already been formalized.
+\end{document}
