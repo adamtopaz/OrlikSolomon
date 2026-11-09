@@ -147,6 +147,7 @@ public import OrlikSolomon.Examples.Geometric.NonAffine.SheafCech
 public import OrlikSolomon.Examples.HyperplaneGT.Collineation
 public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
 public import OrlikSolomon.Examples.HyperplaneGT.DegreeOne
+public import OrlikSolomon.Examples.HyperplaneGT.Diagram
 public import OrlikSolomon.Examples.HyperplaneGT.Dual
 public import OrlikSolomon.Examples.HyperplaneGT.Galois
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
@@ -203,6 +204,11 @@ public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Coordinates
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Primitive
 public import OrlikSolomon.HyperplaneGT.Algebra.LowDegrees
 public import OrlikSolomon.HyperplaneGT.Algebra.QuadraticKernel
+public import OrlikSolomon.HyperplaneGT.Diagram.Basic
+public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
+public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
+public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Quadratic
+public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Restriction
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Chart
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Field
