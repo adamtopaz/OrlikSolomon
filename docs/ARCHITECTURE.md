@@ -25,6 +25,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Algebra/ExteriorWords`        | `lem:exterior-words`, `lem:boundary-expansion` |
 | `Algebra/ExteriorBoundary`     | the exterior-algebra operator and signed Leibniz rule of `lem:central-boundary` |
 | `Algebra/Exact`                | `lem:basis-ses`, `lem:comparison` |
+| `Algebra/FinsuppKernel`        | the generic discard-and-merge kernel calculation used in `lem:l01`, without its trace geometry |
 | `Algebra/ComplexReduction`     | cocycle and primitive reduction through a contractible quotient, for arbitrary-shaped complexes and square-zero total operators; `lem:dr-filtration-reduction` |
 | `Algebra/SymmetricGrading`     | the degree grading of `O(W)`, used by `def:projective` |
 | `Geometry/Hyperplane`          | hyperplanes and equations of `def:arrangement`, `lem:equations` |
@@ -141,6 +142,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Examples/DeRhamSmoothPair`  | unit, zero-algebra and disconnected one-form consumers for `DeRham/SmoothPair`; a disconnected equation for which no derivation has value one globally |
 | `Examples/Degenerate`        | coefficient cohomology of empty complements and nonunique zero-ring basis sizes |
 | `Examples/Exterior`          | full exterior algebras for singletons and coordinate arrangements |
+| `Examples/FinsuppKernel`     | empty retained labels, discarded and merged labels, characteristic two and zero coefficients for the generic trace-kernel helper |
 | `Examples/Ordinary`            | the structure theorem at `R = ℤ`, `ZMod 2`, two points over `F₂`, dimension zero, zero coefficients and `R = B` |
 | `Examples/Polynomials`         | polynomial regression examples |
 | `Examples/Moebius`             | Möbius sums for concurrent lines, the triangle and parallel lines, including the odd-degree sign |
@@ -1697,8 +1699,8 @@ M7 introduces no blueprint nodes.
 ## Cohomological hyperplane reconstruction (M8)
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
-This section records the approved design for the planned development; no M8 mathematical
-statements are formalized yet. The [parent issue #151](https://github.com/adamtopaz/OrlikSolomon/issues/151),
+This section records the approved design and the implemented generic helpers; the book records
+the status of the complete blueprint statements. The [parent issue #151](https://github.com/adamtopaz/OrlikSolomon/issues/151),
 [approved plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326)
 and [child-issue index](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079)
 track implementation. Governance is [#153](https://github.com/adamtopaz/OrlikSolomon/issues/153);
@@ -1742,8 +1744,9 @@ alternation from graded commutativity alone. E01–E03 transport the classified 
 these comparisons. The de Rham specialization is `k`-linear on logarithmic generators, as in the
 blueprint. The M7 `MainTheorem.lean` interface remains unchanged.
 
-The following modules are planned, relative to `OrlikSolomon/`. Their work-item IDs are those
-of the approved plan; the issue links identify the implementation work.
+The following table records planned modules and implemented generic helpers, relative to
+`OrlikSolomon/`. Their work-item IDs are those of the approved plan; the issue links identify
+the implementation work.
 
 | Module | Responsibility | Work item and issue |
 | --- | --- | --- |
@@ -1777,6 +1780,19 @@ the PR body. Public named objects follow the existing transparency conventions, 
 `ext` and generator lemmas so consumers do not rely on unfolding. Each PR names its blueprint
 labels, proves strict downstream consumers and adds new library modules to the sorted root
 import list.
+
+`Algebra/FinsuppKernel` (#162) implements the optional-label map `finsuppOptionMap` as Mathlib's
+domain pushforward followed by restriction to `some` labels. The map, its `simp` formula on
+single vectors and its surjectivity theorem work over any semiring. Over any ring,
+`ker_finsuppOptionMap` identifies the kernel with `finsuppOptionRelationSpan`: discarded basis
+vectors and differences of basis vectors with the same retained label. Commutativity,
+nontriviality, finite label types and surjectivity are not assumptions of that identity.
+`ker_finsuppOptionMap_le_iff` and `ker_finsuppOptionMap_le_ker_iff` let consumers test containment
+and annihilation of this kernel without unfolding the relation span. Representatives are chosen
+only inside the proof, not in the public API. `Examples/FinsuppKernel` exercises an empty target,
+discarded and duplicate labels, characteristic two and zero coefficients through these APIs.
+The affine trace geometry and geometric surjectivity of L01 remain unproved, so its book box
+remains planned.
 
 The [supervisor's statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
 requires Claude's approval before proofs are finalized only for S03–S05, E01–E03 and statements
