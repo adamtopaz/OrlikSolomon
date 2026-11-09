@@ -25,10 +25,11 @@ details.
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-7 formalized, 1 partly formalized and 33 planned. Coefficient points, hyperplane incidence
+8 formalized, 1 partly formalized and 32 planned. Coefficient points, hyperplane incidence
 and coordinate graphs (G01–G03) are proved over arbitrary fields. The canonical degree-one OS basis,
-its inclusion naturality and algebra generation (A01) are proved over arbitrary commutative
-coefficient rings. Full-dual coordinates and the local primitive-coordinate criterion
+its inclusion naturality and algebra generation (A01), and the exact degree-two quotient kernel
+(A02), are proved over arbitrary commutative coefficient rings, including zero coefficients.
+Full-dual coordinates and the local primitive-coordinate criterion
 (U03, U05) are proved for arbitrary index types. The determinant and centralizer are defined
 for an explicit relation submodule; U04's geometric configuration and diagram specialization
 are still pending. The planned reconstruction studies automorphisms of marked
