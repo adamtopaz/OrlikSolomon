@@ -16,16 +16,17 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams, pure coordinate reconstruction, full-dual coordinates and local primitive criterion are formalized; the reconstruction theorem is planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates and local primitive criterion are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Fifteen boxes are formalized, one is partly formalized and twenty-five remain planned.
+Eighteen boxes are formalized, one is partly formalized and twenty-two remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
 A02 identifies the full degree-two kernel of the actual exterior quotient with the parallel-pair and guarded dependent-triple relation span, including zero coefficients and characteristic two.
 A03 defines the marked quadratic and full graded automorphism groups, with one common target and faithful degree-one restriction, over arbitrary commutative coefficient rings.
+U01–U02 construct the universal free module, its explicit quadratic relation span and common finite-stage witnesses, and the induced diagram action retaining the common target component.
 C01–C03 recover a unique field automorphism from an arbitrary projective collineation fixing the prescribed frame, over any field and in dimension at least two.
 U03 and U05 give the full algebraic dual, its inverse-precomposition action and the local-ring primitive-coordinate criterion for arbitrary index types.
 The determinant and explicit-relation centralizer of U04 are defined, but its geometric relation generators and diagram specialization remain pending.
@@ -149,13 +150,13 @@ Marking naturality is proved on generators using logarithmic pullback, rather th
 
 ## U01: finite support and the relation span
 
-:::node "def:u01"
+:::node "def:u01" (decl := OrlikSolomon.HyperplaneGT.finiteStageMap) (decl := OrlikSolomon.HyperplaneGT.range_finiteStageMap) (decl := OrlikSolomon.HyperplaneGT.universalQuadraticRelationSpan)
 Let $`M=R^{(\mathcal H)}` be the free module on all hyperplanes, with basis $`e_H`.
 Each finite-stage module embeds by extension by zero, with image exactly the vectors supported on that stage.
 Define $`Q\subseteq\bigwedge^2M` to be the span of all parallel-pair and dependent-triple relators.
 :::
 
-:::node "lem:u01"
+:::node "lem:u01" (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.exists_stage_vectors) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.finiteStageMap_eq_iff) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.universalLift) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.universalLift_unique) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.mem_universalQuadraticRelationSpan_iff) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.exists_stage_relations) (decl := OrlikSolomon.HyperplaneGT.map_quadraticRelationSpan_finiteStageMap_le)
 The finite-stage embeddings exhibit $`M` as the direct limit of the degree-one diagram.
 Every finite sum of generators of $`Q` comes from some $`Q_A`, and every image of $`Q_A` lies in $`Q`.
 This uses finite support and common upper stages, without an injectivity claim about degree-two cohomology maps.
@@ -163,7 +164,7 @@ This uses finite support and common upper stages, without an injectivity claim a
 
 ## U02: the induced universal equivalence
 
-:::node "lem:u02"
+:::node "lem:u02" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.universalEquiv) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_universalQuadraticRelationSpan) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_range_finiteStageMap) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.universalEquiv_marking) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.universalAction) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.ext_of_universalEquiv)
 A quadratic-diagram automorphism induces an equivalence of $`M` preserving $`Q` and every finite-stage submodule, with the common marked source still equivariant.
 This construction is a group homomorphism, and its universal map together with the component at $`T` determines the original family.
 The universal automorphisms retain these stage and marking conditions.

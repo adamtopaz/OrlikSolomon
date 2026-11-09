@@ -151,6 +151,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Diagram
 public import OrlikSolomon.Examples.HyperplaneGT.Dual
 public import OrlikSolomon.Examples.HyperplaneGT.Galois
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
+public import OrlikSolomon.Examples.HyperplaneGT.Universal
 public import OrlikSolomon.Examples.Moebius
 public import OrlikSolomon.Examples.Ordinary
 public import OrlikSolomon.Examples.Parallel
