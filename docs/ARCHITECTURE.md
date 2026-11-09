@@ -1711,9 +1711,8 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A03, C01–C03, U01–U03, the definition in U04 and U05 are formalized. The generic part
-of the U04 lemma is implemented; its geometric relation generators and diagram specialization
-remain pending. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
+G01–G06, A01–A03, C01–C03 and U01–U05 are formalized, including U04's actual universal
+configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
 reconstruction theorem remains planned. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
 described under Algebra above; `HyperplaneGT/Algebra/QuadraticKernel` applies it to the actual OS
@@ -1783,10 +1782,12 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Diagram/Basic/Graded` | Full OS algebra subgroup preserving every degree and the inclusion/marking squares | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `HyperplaneGT/Diagram/Basic/Restriction` | Faithful group homomorphism from full graded to quadratic automorphisms using A01–A02 | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `HyperplaneGT/Diagram/Universal`, with `Support`, `Lift`, `Relations`, and `Automorphisms` leaves | U01–U02, formalized: literal universal Finsupp module, supported stage images and universal lift, global relation span and common stage witnesses, and induced diagram action retaining its common target | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
-| `HyperplaneGT/Algebra/Dual` | Implemented generic U03–U05 facade; U04's geometric relation and diagram specialization remain pending | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
+| `HyperplaneGT/Algebra/Dual` | U03–U05 facade: generic dual and primitive APIs, actual universal-Q configuration tests and paired diagram action | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `HyperplaneGT/Algebra/Dual/Coordinates` | Full-product dual coordinates, evaluation separation and inverse-precomposition automorphism homomorphism, U03 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `HyperplaneGT/Algebra/Dual/Primitive` | Surjective primitive functionals and the local-ring unit-coordinate criterion, U05 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `HyperplaneGT/Algebra/Dual/Alternating` | Determinant exterior lift, explicit-Q centralizer, coordinate tests and generic paired invariance, U04 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
+| `HyperplaneGT/Algebra/Dual/Configurations` | U04: determinant tests for the literal global parallel-pair/guarded-triple relation span, without cofinal-system hypotheses | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
+| `HyperplaneGT/Algebra/Dual/DiagramAction` | U04: actual DiagramAut contragredient homomorphism, paired commuting invariance and centralizer image equality | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `HyperplaneGT/Reconstruction/Trace` | L01–L03 | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
 | `HyperplaneGT/Reconstruction/Local` | L04–L05 | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
 | `HyperplaneGT/Reconstruction/Projections` | P01–P02 | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
@@ -1804,7 +1805,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/DegreeOne` | Formalized A01 consumers: zero coefficients, empty arrangements, dimensions zero and one, and zero new coordinates after inclusion | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
 | `Examples/HyperplaneGT/Collineation` | Formalized C01–C03 consumers: identity extraction, dimension-zero charts, characteristic-two zero sums and points at infinity | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
 | `Examples/HyperplaneGT/Coordinates` | G01–G03 consumers: dimension zero, parallel points, inverse chart and coefficient formulas, zero-ring coordinate splitting, and concurrent/empty triples over `𝔽₂` | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
-| `Examples/HyperplaneGT/Dual` | Full infinite dual coordinates, inverse action on a three-cycle, empty/zero/local/nonlocal primitive tests and characteristic-two determinant consumers | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
+| `Examples/HyperplaneGT/Dual` | Full infinite dual coordinates, primitive edge tests, actual universal-Q characteristic-two configurations, zero/dimension-zero centralizers and non-involutive scalar DiagramAut action over ZMod 5 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `Examples/HyperplaneGT/QuadraticKernel` | A02 consumers: empty and dimension-zero arrangements, zero coefficients, disjoint points, characteristic-two concurrent relations and the zero quadratic kernel of the empty triangle | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
 | `Examples/HyperplaneGT/Galois` | G04–G06 consumers: public point maps, finite stable enlargement, actual inclusions, dimension zero and characteristic-two orbits | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
 | `Examples/HyperplaneGT/Universal` | U01–U02 consumers: common vector/relator stages, zero coefficients, independent-universe linear lifts and the essential common-target component in dimension zero | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
@@ -1836,8 +1837,11 @@ strict-parallel graph wrapper. These statements have no characteristic or dimens
 and import no cohomology theory. The empty-triangle regression over `𝔽₂` tests the nonemptiness
 guard even though the conventional codimension of the empty plane subspace is two.
 
-`HyperplaneGT/Algebra/Dual` is a facade over generic leaves with coefficient, index and ambient
-module universes independent. `dualCoordinates` reverses Mathlib's `Finsupp.llift` equivalence;
+`Dual/Coordinates`, `Dual/Primitive` and `Dual/Alternating` supply generic APIs with
+coefficient, index and ambient-module universes independent. Their imports remain free of
+hyperplane geometry and diagrams. The `Algebra/Dual` facade also re-exports the specialized
+`Configurations` and `DiagramAction` leaves described below.
+`dualCoordinates` reverses Mathlib's `Finsupp.llift` equivalence;
 its inverse evaluates a finite sum, and the dual is the full function product. Evaluation
 separates both vectors and functionals. `dualAction` is the homomorphism sending `g` to
 `g.symm.dualMap`, so simultaneous action preserves evaluation. No reflexivity or finite-index
@@ -1857,9 +1861,25 @@ Over commutative rings, `dualDeterminant` reuses Mathlib's alternating exterior-
 second functional. Pair and difference-vector formulas give the generic coordinate equations.
 `commutes_dualAction_iff` assumes equality of the exterior-square image of Q with Q and proves
 both directions, including inverse preservation. There is no new diagram or relation structure.
-The canonical universal Q and induced diagram action are constructed in `Diagram/Universal`.
-Their geometric determinant-generator and paired-action specialization remains pending, so the
-U04 lemma remains partly formalized even though its definition is covered for arbitrary Q.
+`Dual/Configurations` uses exactly `Diagram/Universal/Relations`'s
+`universalQuadraticRelationSpan` on the literal free module `Hyperplane k n →₀ R`. Its
+commuting and centralizer membership tests are the determinant equations on all strict
+parallel pairs and guarded dependent triples, reusing the generic determinant and
+span-annihilation APIs. `Dual/DiagramAction` composes the generic contragredient homomorphism
+with `DiagramAut.universalAction`. Its map is inverse precomposition through `universalEquiv`;
+equality preserving the entire global relation span gives paired commuting invariance in both
+directions and equality of the centralizer images. These specialization leaves introduce no
+second relation module, universal module or diagram structure. They require only commutative
+coefficient rings and the existing field/cofinal-system parameters, with no nonzero, local,
+perfect, algebraic or dimension assumption.
+
+`Configurations` imports only the specific generic `Dual/Alternating` and
+`Diagram/Universal/Relations` leaves. `DiagramAction` imports it and
+`Diagram/Universal/Automorphisms`. The generic leaves do not import either specialization or a
+diagram facade, and `Diagram/Universal/*` does not import the `Algebra/Dual` facade. This keeps
+the dependency graph acyclic and adds no cohomology or de Rham import. Durable consumers test
+actual parallel points and a guarded concurrent triple over `𝔽₂`, zero coefficients, dimension
+zero and a scalar-two marked diagram over `ℤ/5`, whose dual scalar is three.
 
 `HyperplaneGT/Diagram/Universal` uses the literal module `Hyperplane k n →₀ R`.
 `Support` includes every finite arrangement by `finiteStageMap`, exactly extension by zero
@@ -1976,7 +1996,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-18 formalized, 1 partly formalized and 22 planned, separate from the other blueprints. Each
+19 formalized and 22 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally

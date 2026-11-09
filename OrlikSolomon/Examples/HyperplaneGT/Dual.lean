@@ -6,8 +6,9 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual
-public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Configurations
+public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
+public import Mathlib.Algebra.Module.Equiv.Basic
 public import Mathlib.RingTheory.ZMod.LocalRing
 import Mathlib.Algebra.Group.Int.Units
 
@@ -19,7 +20,9 @@ check inverse precomposition on a three-cycle, and test primitive functionals ov
 bases, the zero ring, a local ring with nilpotents and a nonlocal ring. Characteristic-two
 determinants and a centralizer calculation use the public exterior-square API. The actual
 global quadratic relation span is tested on parallel points and concurrent lines, including
-characteristic two, zero coefficients and dimension zero.
+characteristic two, zero coefficients and dimension zero. A scalar diagram over `ℤ/5`
+checks that the actual contragredient action uses the inverse scalar and carries the full
+universal centralizer onto its image.
 
 Blueprint: `lem:u03`, `lem:u05`, `lem:u04`.
 -/
@@ -204,5 +207,101 @@ theorem dimension_zero_universal_centralizer (k : Type u) (R : Type v) [Field k]
   simp only [Submodule.mem_top, iff_true]
   rw [mem_centralizer_universalQuadraticRelationSpan_iff]
   constructor <;> intro H <;> exact ((CoordinateExamples.dimension_zero (k := k)).false H).elim
+
+/-- The scalar two is a unit with inverse three in `ℤ/5`. -/
+def scalarTwoUnit : (ZMod 5)ˣ := ⟨2, 3, by decide, by decide⟩
+
+/-- Scalar multiplication by two acts by four on the exterior square over `ℤ/5`. -/
+theorem exterior_scalar_two (M : Type*) [AddCommGroup M] [Module (ZMod 5) M] :
+    exteriorPower.map 2 (LinearEquiv.smulOfUnit (M := M) scalarTwoUnit).toLinearMap =
+      (4 : ZMod 5) • (LinearMap.id : (⋀[ZMod 5]^2 M) →ₗ[ZMod 5] ⋀[ZMod 5]^2 M) := by
+  apply exteriorPower.linearMap_ext
+  apply AlternatingMap.ext
+  intro v
+  simp only [LinearMap.compAlternatingMap_apply, exteriorPower.map_apply_ιMulti,
+    LinearMap.smul_apply, LinearMap.id_apply]
+  change exteriorPower.ιMulti (ZMod 5) 2 (fun i ↦ (2 : ZMod 5) • v i) =
+    (4 : ZMod 5) • exteriorPower.ιMulti (ZMod 5) 2 v
+  rw [AlternatingMap.map_smul_univ]
+  norm_num
+
+/-- Multiplication by four is invertible, so the scalar-two exterior map preserves every
+relation submodule by equality. -/
+theorem scalar_two_exterior_preserves (M : Type*) [AddCommGroup M] [Module (ZMod 5) M]
+    (Q : Submodule (ZMod 5) (⋀[ZMod 5]^2 M)) :
+    Q.map (exteriorPower.map 2
+      (LinearEquiv.smulOfUnit (M := M) scalarTwoUnit).toLinearMap) = Q := by
+  rw [exterior_scalar_two]
+  apply le_antisymm
+  · rintro q ⟨p, hp, rfl⟩
+    exact Q.smul_mem 4 hp
+  · intro q hq
+    refine ⟨4 • q, Q.smul_mem 4 hq, ?_⟩
+    change (4 : ZMod 5) • ((4 : ZMod 5) • q) = q
+    rw [smul_smul, show (4 : ZMod 5) * 4 = 1 from by decide, one_smul]
+
+variable {k : Type u} {k₀ : Type v} [Field k] [Field k₀] [Algebra k₀ k] {n : ℕ}
+
+/-- Scalar multiplication by two gives an actual marked diagram automorphism over `ℤ/5`.
+All finite-stage, common-target and marking squares are retained. -/
+def scalarTwoDiagram (C : CofinalSystem k₀ k n) (S : Set k₀) : DiagramAut (ZMod 5) C S := by
+  refine DiagramAut.ofEquivs (fun _ ↦ LinearEquiv.smulOfUnit scalarTwoUnit)
+    (LinearEquiv.smulOfUnit scalarTwoUnit)
+    (fun A ↦ scalar_two_exterior_preserves _ (quadraticRelationSpan (ZMod 5) A.val.val)) ?_ ?_
+  · intro A B h
+    apply LinearMap.ext
+    intro x
+    change (2 : ZMod 5) • Finsupp.lmapDomain (ZMod 5) (ZMod 5) (Arrangement.inclusion h) x =
+      Finsupp.lmapDomain (ZMod 5) (ZMod 5) (Arrangement.inclusion h) ((2 : ZMod 5) • x)
+    exact (map_smul _ _ _).symm
+  · intro A w hw
+    apply LinearMap.ext
+    intro x
+    change (2 : ZMod 5) • w.basisMap (ZMod 5) hw x =
+      w.basisMap (ZMod 5) hw ((2 : ZMod 5) • x)
+    exact (map_smul _ _ _).symm
+
+/-- The universal map induced by the scalar diagram has the same scalar on every label. -/
+theorem scalarTwoDiagram_universal_apply (C : CofinalSystem k₀ k n) (S : Set k₀)
+    (m : Hyperplane k n →₀ ZMod 5) :
+    (scalarTwoDiagram C S).universalEquiv m = (2 : ZMod 5) • m := by
+  obtain ⟨A, a, rfl⟩ := C.exists_stage_vector (ZMod 5) m
+  rw [DiagramAut.universalEquiv_finiteStageMap]
+  change finiteStageMap (ZMod 5) A.val.val ((2 : ZMod 5) • a) =
+    (2 : ZMod 5) • finiteStageMap (ZMod 5) A.val.val a
+  exact map_smul _ _ _
+
+/-- The actual contragredient diagram action uses the inverse scalar, which is three rather
+than two in `ℤ/5`. This distinguishes inverse precomposition from direct precomposition. -/
+theorem scalarTwo_dual_coordinate (C : CofinalSystem k₀ k n) (S : Set k₀)
+    (H : Hyperplane k n) :
+    DiagramAut.dualAction (scalarTwoDiagram C S) (Finsupp.lapply H)
+      (Finsupp.single H 1) = 3 := by
+  rw [DiagramAut.dualAction_apply]
+  have hinv : (scalarTwoDiagram C S).universalEquiv.symm (Finsupp.single H 1) =
+      (3 : ZMod 5) • Finsupp.single H 1 := by
+    apply (scalarTwoDiagram C S).universalEquiv.injective
+    rw [LinearEquiv.apply_symm_apply, scalarTwoDiagram_universal_apply]
+    rw [smul_smul, show (2 : ZMod 5) * 3 = 1 from by decide, one_smul]
+  rw [hinv]
+  simp
+
+/-- A concrete characteristic-two geometric label with `ℤ/5` coefficients detects the
+inverse action through a nonempty set of marking constants. -/
+theorem binary_scalar_two_inverse_action :
+    DiagramAut.dualAction
+      (scalarTwoDiagram (fullCofinalSystem (ZMod 2) (ZMod 2) 1) {0, 1})
+      (Finsupp.lapply binaryZero) (Finsupp.single binaryZero 1) = 3 :=
+  scalarTwo_dual_coordinate _ _ _
+
+/-- The actual scalar diagram maps the whole universal centralizer onto the transformed
+centralizer. This consumes the submodule equality, rather than only one implication. -/
+theorem scalar_two_centralizer_image (C : CofinalSystem k₀ k n) (S : Set k₀)
+    (φ : Module.Dual (ZMod 5) (Hyperplane k n →₀ ZMod 5)) :
+    (centralizer (universalQuadraticRelationSpan (ZMod 5)) φ).map
+        (DiagramAut.dualAction (scalarTwoDiagram C S)).toLinearMap =
+      centralizer (universalQuadraticRelationSpan (ZMod 5))
+        (DiagramAut.dualAction (scalarTwoDiagram C S) φ) :=
+  DiagramAut.map_centralizer_dualAction _ _
 
 end OrlikSolomon.HyperplaneGT.DualExamples
