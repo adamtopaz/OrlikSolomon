@@ -16,20 +16,22 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers and local primitive criterion are formalized; the reconstruction theorem is planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers and local primitive criterion are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Nineteen boxes are formalized and twenty-two remain planned.
+Twenty-four boxes are formalized and seventeen remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
 A02 identifies the full degree-two kernel of the actual exterior quotient with the parallel-pair and guarded dependent-triple relation span, including zero coefficients and characteristic two.
 A03 defines the marked quadratic and full graded automorphism groups, with one common target and faithful degree-one restriction, over arbitrary commutative coefficient rings.
+S02 gives the direct Galois action on the full graded diagram, preserving every defining relation and acting identically on its one common target.
 U01–U02 construct the universal free module, its explicit quadratic relation span and common finite-stage witnesses, and the induced diagram action retaining the common target component.
 C01–C03 recover a unique field automorphism from an arbitrary projective collineation fixing the prescribed frame, over any field and in dimension at least two.
 U03 and U05 give the full algebraic dual, its inverse-precomposition action and the local-ring primitive-coordinate criterion for arbitrary index types.
 U04 gives the determinant and centralizer, their exact equations on all parallel pairs and guarded dependent triples, and paired invariance under the actual diagram action.
+L01–L03 give the surjective trace map and its full kernel, inertia and decomposition with all four annihilator identities, and restriction from a graph to the actual vertical free span.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
@@ -206,7 +208,7 @@ Primitive means surjectivity, rather than a residue-field test on the infinite p
 
 ## L01: the trace map and its kernel
 
-:::node "lem:l01"
+:::node "lem:l01" (decl := OrlikSolomon.HyperplaneGT.traceLabel_eq_none_iff) (decl := OrlikSolomon.HyperplaneGT.traceLabel_eq_some_iff) (decl := OrlikSolomon.HyperplaneGT.traceLabel_surjective) (decl := OrlikSolomon.HyperplaneGT.traceMap) (decl := OrlikSolomon.HyperplaneGT.traceMap_surjective) (decl := OrlikSolomon.HyperplaneGT.traceKernel_eq_span)
 For a fixed hyperplane $`H`, let $`U_H` consist of vectors whose coefficient at $`H` vanishes.
 The trace map sends $`e_K` to zero for a parallel hyperplane and to the basis vector of $`H\cap K` otherwise.
 It is onto the free module on hyperplanes of $`H`, and its kernel $`U_H^1` is spanned by empty-trace labels and differences of labels with the same nonempty trace.
@@ -215,21 +217,22 @@ The latter are precisely the dependent-triple differences from G02.
 
 ## L02: inertia and decomposition
 
-:::node "def:l02"
+:::node "def:l02" (decl := OrlikSolomon.HyperplaneGT.inertia) (decl := OrlikSolomon.HyperplaneGT.decomposition)
 Define $`I_H=R\delta_H`.
 Let $`D_H` consist of functions zero on hyperplanes parallel to $`H` and constant on each nonempty trace fiber; the value at $`H` is unrestricted.
 :::
 
-:::node "lem:l02"
+:::node "lem:l02" (decl := OrlikSolomon.HyperplaneGT.traceDomain_dualAnnihilator) (decl := OrlikSolomon.HyperplaneGT.traceKernel_dualAnnihilator) (decl := OrlikSolomon.HyperplaneGT.inertia_dualCoannihilator) (decl := OrlikSolomon.HyperplaneGT.decomposition_dualCoannihilator) (decl := OrlikSolomon.HyperplaneGT.decompositionEquiv) (decl := OrlikSolomon.HyperplaneGT.ker_decompositionTrace) (decl := OrlikSolomon.HyperplaneGT.centralizer_unit_smul_delta)
 Under evaluation, $`I_H=\operatorname{Ann}(U_H)` and $`D_H=\operatorname{Ann}(U_H^1)`, with reverse annihilators $`U_H` and $`U_H^1` respectively.
 There is an explicit equivalence $`D_H\simeq R\times R^{\mathcal H(H)}`, whose second projection has kernel $`I_H`.
 For every unit $`u`, one has $`C(u\delta_H)=D_H`.
 These identities are proved directly from trace coordinates.
+The trace-coordinate factor is a full function space, and the identities hold over arbitrary commutative coefficient rings, including the zero ring.
 :::
 
 ## L03: projection from a graph
 
-:::node "lem:l03"
+:::node "lem:l03" (decl := OrlikSolomon.HyperplaneGT.verticalTraceEquiv) (decl := OrlikSolomon.HyperplaneGT.verticalRestriction) (decl := OrlikSolomon.HyperplaneGT.map_decomposition_verticalRestriction) (decl := OrlikSolomon.HyperplaneGT.ker_verticalRestriction_inf_decomposition) (decl := OrlikSolomon.HyperplaneGT.verticalRestriction_delta)
 Let $`z` omit one coordinate, and restrict dual functions to the hyperplanes vertical over $`z` by $`p_z:P\to P_z`.
 For a graph $`H` over $`z`, the restriction $`D_H\to P_z` is onto with kernel $`I_H`, and $`p_z(\delta_H)=0`.
 The graph identifies each hyperplane of its base with exactly one vertical trace.
@@ -350,7 +353,7 @@ The dimension hypothesis supplies that transverse direction.
 
 ## S02: the explicit Galois action
 
-:::node "lem:s02"
+:::node "lem:s02" (decl := OrlikSolomon.HyperplaneGT.isFamily_galoisLabelEquiv) (decl := OrlikSolomon.HyperplaneGT.galoisOSAlgebraEquiv) (decl := OrlikSolomon.HyperplaneGT.map_degree_galoisOSAlgebraEquiv) (decl := OrlikSolomon.HyperplaneGT.galoisGradedAut) (decl := OrlikSolomon.HyperplaneGT.galoisGradedAut_targetEquiv) (decl := OrlikSolomon.HyperplaneGT.galoisOSAlgebraEquiv_osMap) (decl := OrlikSolomon.HyperplaneGT.galoisGradedAction)
 For each $`\sigma\in(k\simeq_{k_0}k)`, the formula $`e_H\mapsto e_{\sigma H}` defines a natural graded $`R`-algebra automorphism of the full diagram, acting identically on $`T`.
 These maps form an action and preserve every Orlik–Solomon relator, including higher ones.
 The construction uses the presentation and does not depend on local detection or on a semilinear pullback supplied by a theory.
