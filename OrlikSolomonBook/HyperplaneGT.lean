@@ -16,11 +16,11 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams, universal module and diagram action, direct Galois action, pure coordinate reconstruction, full-dual coordinates and local primitive criterion are formalized; the reconstruction theorem is planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams, universal module and diagram action, direct Galois action, pure coordinate reconstruction, full-dual coordinates, universal centralizers and local primitive criterion are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Nineteen boxes are formalized, one is partly formalized and twenty-one remain planned.
+Twenty boxes are formalized and twenty-one remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
@@ -30,7 +30,7 @@ U01–U02 construct the universal free module, its explicit quadratic relation s
 S02 gives the direct Galois action on the full graded diagram, preserving every defining relation and acting identically on its one common target.
 C01–C03 recover a unique field automorphism from an arbitrary projective collineation fixing the prescribed frame, over any field and in dimension at least two.
 U03 and U05 give the full algebraic dual, its inverse-precomposition action and the local-ring primitive-coordinate criterion for arbitrary index types.
-The determinant and explicit-relation centralizer of U04 are defined, but its geometric relation generators and diagram specialization remain pending.
+U04 gives the determinant and centralizer, their exact equations on all parallel pairs and guarded dependent triples, and paired invariance under the actual diagram action.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
@@ -187,9 +187,11 @@ For $`\lambda,\mu\in P`, the determinant $`d_{\lambda,\mu}(a,b)=\lambda(a)\mu(b)
 Define $`\lambda\sim\mu` when this exterior map annihilates $`Q`, and let $`C(\lambda)` be the set of such $`\mu`.
 :::
 
-:::node "lem:u04" (decl := OrlikSolomon.HyperplaneGT.mem_centralizer_iff) (decl := OrlikSolomon.HyperplaneGT.dualDeterminant_single) (decl := OrlikSolomon.HyperplaneGT.dualDeterminant_sub_single) (decl := OrlikSolomon.HyperplaneGT.commutes_span_iff) (decl := OrlikSolomon.HyperplaneGT.commutes_dualAction_iff) (remaining := "The geometric determinant-generator theorem for the canonical universal relation submodule and specialization to the induced diagram action remain pending. The current formulas and paired invariance are generic for an explicit relation submodule.")
+:::node "lem:u04" (decl := OrlikSolomon.HyperplaneGT.centralizer) (decl := OrlikSolomon.HyperplaneGT.commutes_universalQuadraticRelationSpan_iff) (decl := OrlikSolomon.HyperplaneGT.mem_centralizer_universalQuadraticRelationSpan_iff) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.dualAction) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.commutes_dualAction_iff) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_centralizer_dualAction)
 The centralizer $`C(\lambda)` is a submodule.
 Commuting is equivalent to the determinant equations on every parallel pair and every dependent triple, and is preserved in both directions by the paired universal and dual actions.
+The relation submodule is the literal universal quadratic span from U01, and the action is the induced diagram action from U02 composed with U03's inverse precomposition.
+The paired dual equivalence carries the entire centralizer onto the transformed centralizer.
 Alternation follows by subtracting equal terms, including in characteristic two.
 :::
 
