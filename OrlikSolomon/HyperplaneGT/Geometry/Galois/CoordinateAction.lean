@@ -39,12 +39,8 @@ local instance (σ : k ≃+* k) : RingHomInvPair σ.toRingHom σ.symm.toRingHom 
 
 /-- Coordinatewise application of a field automorphism as an additive equivalence. This point
 map requires no auxiliary inverse-pair instances in downstream consumers. -/
-def fieldCoordinateAddEquiv (σ : k ≃+* k) (ι : Type v) : (ι → k) ≃+ (ι → k) where
-  toFun x i := σ (x i)
-  invFun x i := σ.symm (x i)
-  left_inv x := by ext i; simp
-  right_inv x := by ext i; simp
-  map_add' x y := by ext i; simp
+def fieldCoordinateAddEquiv (σ : k ≃+* k) (ι : Type v) : (ι → k) ≃+ (ι → k) :=
+  AddEquiv.piCongrRight fun _ ↦ σ.toAddEquiv
 
 @[simp]
 theorem fieldCoordinateAddEquiv_apply (σ : k ≃+* k) (x : ι → k) (i : ι) :
@@ -56,13 +52,9 @@ theorem fieldCoordinateAddEquiv_symm_apply (σ : k ≃+* k) (x : ι → k) (i : 
 
 /-- Coordinatewise application of a field automorphism is a semilinear equivalence. -/
 def fieldCoordinateEquiv (σ : k ≃+* k) (ι : Type v) :
-    (ι → k) ≃ₛₗ[σ.toRingHom] (ι → k) where
-  toFun x i := σ (x i)
-  invFun x i := σ.symm (x i)
-  left_inv x := by ext i; simp
-  right_inv x := by ext i; simp
-  map_add' x y := by ext i; simp
-  map_smul' c x := by ext i; simp
+    (ι → k) ≃ₛₗ[σ.toRingHom] (ι → k) :=
+  { fieldCoordinateAddEquiv σ ι with
+    map_smul' c x := by ext i; simp }
 
 @[simp]
 theorem fieldCoordinateEquiv_apply (σ : k ≃+* k) (x : ι → k) (i : ι) :
