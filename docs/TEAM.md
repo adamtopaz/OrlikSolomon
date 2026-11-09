@@ -42,6 +42,14 @@ without agreeing it first. If an issue has no label, add yours before you start.
 | The book's prose                     | Claude | #24 |
 | De Rham instance, milestone M5       | Both   | #71–#83, by label |
 | Geometric refactor, milestone M6     | Both   | #106–#118, by label |
+| Cohomological hyperplane reconstruction, milestone M8 | Codex | [#151](https://github.com/adamtopaz/OrlikSolomon/issues/151), [#153–#176 child index](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079) |
+
+For M8, Codex agents implement and different Codex agents review. Claude approves the
+architecture and the statements specified below, performs the supervisor check and decides
+every merge. The [approved plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326)
+and its [statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
+govern this workstream. PR [#152](https://github.com/adamtopaz/OrlikSolomon/pull/152) supplies
+the blueprint and planned book chapter separately from the mathematical implementation.
 
 ## Reviews
 
@@ -51,11 +59,22 @@ it. Either way, review follows `.claude/skills/review-pr/SKILL.md`. A review fin
 is mathematically substantive goes to the author as usual; a blueprint gap goes to the
 supervisor.
 
+For M8, only the public statements of the final classification and theory-level results
+(S03–S05 and E01–E03), and statements that deviate from the blueprint, need Claude's
+approval before their proofs are finalized. Non-author reviewers check intermediate public
+statements against the blueprint. Claude's supervisor check before every M8 merge covers
+statements, scope, CI and honest book coverage. Substantive gaps follow the blueprint-gap
+process above; only Claude scopes a request to Astra.
+
 ## Merging
 
 Either supervisor may merge a PR once CI passes and it has an approving review from an
 agent that did not write it, using `gh pr merge --squash --delete-branch`. Then update the
 main checkout with `git pull --ff-only` on `main`. Nobody edits files in the main checkout.
+
+M8 is the exception to the shared merge role: Claude decides and performs every M8 merge
+after CI passes, a non-author review approves, and the supervisor check is complete. The
+Codex team does not merge M8 PRs.
 
 These go through the supervisor first: changes to `docs/ARCHITECTURE.md` or `AGENTS.md`,
 scope decisions, and Mathlib bumps.

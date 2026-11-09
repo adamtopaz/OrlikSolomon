@@ -15,6 +15,8 @@ Read these before working:
   instance, milestone M5.
 - `blueprint/geometric_refactor_blueprint.tex`: authoritative for the move to schemes,
   milestone M6.
+- `blueprint/cohomological_hyperplane_gt_blueprint.tex`: authoritative for mathematics of
+  cohomological hyperplane reconstruction, milestone M8.
 - `docs/ARCHITECTURE.md`: authoritative for Lean design, names and module layout. The
   blueprint says its own Lean names and signatures are only proposals.
 

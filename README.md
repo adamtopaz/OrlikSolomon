@@ -20,6 +20,18 @@ and interpreted by hand for ℓ-adic cohomology, but not in Lean. The empty proj
 is excluded. The [book](https://adamtopaz.github.io/OrlikSolomon/) states the theorems and has the
 details.
 
+**Planned milestone M8:** cohomological hyperplane reconstruction is tracked by
+[#151](https://github.com/adamtopaz/OrlikSolomon/issues/151) and its
+[child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
+under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
+Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
+0 formalized, 0 partly formalized and 41 planned. It studies automorphisms of marked
+degree-one/cup-kernel and diagonal graded cohomology diagrams in dimension at least two,
+with nonzero local or integral-domain coefficients. The theory-level results will be conditional
+on the existing axioms, with an unconditional characteristic-zero de Rham specialization.
+PR [#152](https://github.com/adamtopaz/OrlikSolomon/pull/152) supplies the planned book chapter;
+the reconstruction mathematics has not yet been formalized.
+
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective
 interface. Its public definitions and theorem statements use Mathlib objects: hyperplanes are
@@ -37,7 +49,7 @@ that readers may skip, public statements (Part II), then `#print axioms` on the 
 The proof region precedes Part II because Lean does not allow forward references. After building,
 `lake exe audit --interface` checks the provenance of the public types and data. The logical
 axiom reports, `scripts/check.sh` and `scripts/replay.sh` give the accompanying trust checks.
-The three mathematical blueprints retain their separate status counts; this interface adds no
+The mathematical blueprints retain their separate status counts; this interface adds no
 blueprint nodes.
 
 **The theorems for algebraic de Rham cohomology.** For every field `k` of characteristic zero,
@@ -104,6 +116,8 @@ first page shows the statements, elaborated, with the output of `#print axioms`.
   consumers, formalized to the extent indicated in their book boxes:
   [`blueprint/`](blueprint/geometric_refactor_blueprint.tex)
 - Auditable public projective theorem: [`MainTheorem.lean`](OrlikSolomon/MainTheorem.lean)
+- Planned milestone M8, cohomological hyperplane reconstruction:
+  [`blueprint/`](blueprint/cohomological_hyperplane_gt_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)
 
