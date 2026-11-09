@@ -1711,7 +1711,7 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A03, C01–C03, U03, the definition in U04, U05 and S02 are formalized. The generic part
+G01–G06, A01–A03, C01–C03, U01–U03, the definition in U04, U05 and S02 are formalized. The generic part
 of the U04 lemma is implemented; its geometric relation generators and diagram specialization
 remain pending. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
 reconstruction theorem remains planned. The book records complete-statement status.
@@ -1792,7 +1792,7 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Diagram/Basic/Quadratic` | Whole-Q image equality, one shared target, exact arrow squares and the quadratic subgroup API | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `HyperplaneGT/Diagram/Basic/Graded` | Full OS algebra subgroup preserving every degree and the inclusion/marking squares | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `HyperplaneGT/Diagram/Basic/Restriction` | Faithful group homomorphism from full graded to quadratic automorphisms using A01–A02 | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
-| `HyperplaneGT/Diagram/Universal` | U01–U02 | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
+| `HyperplaneGT/Diagram/Universal`, with `Support`, `Lift`, `Relations`, and `Automorphisms` leaves | U01–U02, formalized: literal universal Finsupp module, supported stage images and universal lift, global relation span and common stage witnesses, and induced diagram action retaining its common target | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
 | `HyperplaneGT/Algebra/Dual` | Implemented generic U03–U05 facade; U04's geometric relation and diagram specialization remain pending | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `HyperplaneGT/Algebra/Dual/Coordinates` | Full-product dual coordinates, evaluation separation and inverse-precomposition automorphism homomorphism, U03 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `HyperplaneGT/Algebra/Dual/Primitive` | Surjective primitive functionals and the local-ring unit-coordinate criterion, U05 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
@@ -1817,6 +1817,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/Dual` | Full infinite dual coordinates, inverse action on a three-cycle, empty/zero/local/nonlocal primitive tests and characteristic-two determinant consumers | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `Examples/HyperplaneGT/QuadraticKernel` | A02 consumers: empty and dimension-zero arrangements, zero coefficients, disjoint points, characteristic-two concurrent relations and the zero quadratic kernel of the empty triangle | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
 | `Examples/HyperplaneGT/Galois` | G04–G06 consumers: public point maps, finite stable enlargement, actual inclusions, dimension zero and characteristic-two orbits | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
+| `Examples/HyperplaneGT/Universal` | U01–U02 consumers: common vector/relator stages, zero coefficients, independent-universe linear lifts and the essential common-target component in dimension zero | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
 | `Examples/HyperplaneGT/GaloisAction` | S02 consumers: all-length relators, zero coefficients, dimension zero, full marking squares, a characteristic-two cubic relation and nontrivial complex conjugation on an integral OS generator | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
 | `Examples/HyperplaneGT/Diagram` | A03 consumers: concrete constructors, zero coefficients, characteristic-two relations, Laurent-polynomial marking maps, and dimension-zero target interchange | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 
@@ -1867,8 +1868,24 @@ Over commutative rings, `dualDeterminant` reuses Mathlib's alternating exterior-
 second functional. Pair and difference-vector formulas give the generic coordinate equations.
 `commutes_dualAction_iff` assumes equality of the exterior-square image of Q with Q and proves
 both directions, including inverse preservation. There is no new diagram or relation structure.
-The canonical universal Q and its geometric generator/diagram specialization await U01–U02,
-so the U04 lemma remains partly formalized even though its definition is covered for arbitrary Q.
+The canonical universal Q and induced diagram action are constructed in `Diagram/Universal`.
+Their geometric determinant-generator and paired-action specialization remains pending, so the
+U04 lemma remains partly formalized even though its definition is covered for arbitrary Q.
+
+`HyperplaneGT/Diagram/Universal` uses the literal module `Hyperplane k n →₀ R`.
+`Support` includes every finite arrangement by `finiteStageMap`, exactly extension by zero
+along the existing `arrangementHyperplane` label map. Its range is Mathlib's supported
+submodule, and cofinality supplies simultaneous representatives and common-stage equality
+witnesses for any chosen family. `Lift` gives the explicit linear direct-limit universal
+property for compatible stage maps into any coefficient module; it stores no second diagram.
+`Relations` defines `universalQuadraticRelationSpan` as the span of all parallel-pair and
+guarded dependent-triple wedges. It proves containment of each actual finite relation-span
+image and finite-stage witnesses for every global relation and finite family of relations,
+without degree-two injectivity. `Automorphisms` applies this universal property to the existing
+`DiagramAut`, preserving the whole global span and each stage image by equality. Its universal
+action and one common target action jointly determine the original family. No union closure,
+perfectness, algebraicity, positive dimension or nonzero coefficients are assumed here.
+The generic Dual leaves remain independent of this layer.
 
 `osDegreeOneEquiv R 𝒜 : (𝒜 →₀ R) ≃ₗ[R] OSAlgebra.degree R 𝒜 1` is the canonical finite
 linear combination of the hyperplane generators. Its inverse and `osDegreeOneBasis` expose
@@ -1970,7 +1987,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-16 formalized, 1 partly formalized and 24 planned, separate from the other blueprints. Each
+19 formalized, 1 partly formalized and 21 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally

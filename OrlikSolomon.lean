@@ -152,6 +152,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Dual
 public import OrlikSolomon.Examples.HyperplaneGT.Galois
 public import OrlikSolomon.Examples.HyperplaneGT.GaloisAction
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
+public import OrlikSolomon.Examples.HyperplaneGT.Universal
 public import OrlikSolomon.Examples.Moebius
 public import OrlikSolomon.Examples.Ordinary
 public import OrlikSolomon.Examples.Parallel
@@ -212,6 +213,11 @@ public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Quadratic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Restriction
 public import OrlikSolomon.HyperplaneGT.Diagram.GaloisAction
 public import OrlikSolomon.HyperplaneGT.Diagram.GaloisAction.Stage
+public import OrlikSolomon.HyperplaneGT.Diagram.Universal
+public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Automorphisms
+public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Lift
+public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Relations
+public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Support
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Chart
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Field
