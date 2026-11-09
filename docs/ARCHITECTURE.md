@@ -564,8 +564,8 @@ The `Book` workflow runs all of this on pull requests and deploys `main` to
 ## Scope
 
 In scope: the ordinary affine and projective theorems, their combinatorial corollaries,
-the bridge from a standard degreewise theory, the de Rham instance, the geometric refactor, and the
-exposition.
+the bridge from a standard degreewise theory, the de Rham instance, the geometric refactor,
+the planned cohomological hyperplane reconstruction (M8), and the exposition.
 
 The de Rham instance has its own blueprint, `blueprint/de_rham_instance_blueprint.tex`, and is
 tracked by the GitHub milestone "M5 De Rham instance". See the next section.
@@ -1693,3 +1693,102 @@ theorems records their logical dependencies. `OrlikSolomonBook/MainTheorem` quot
 and explains its hypotheses, the generator formula, onto grading pieces and the verified de Rham
 instance on `smoothAffine` in characteristic zero. `README.md` links to this file and chapter.
 M7 introduces no blueprint nodes.
+
+## Cohomological hyperplane reconstruction (M8)
+
+`blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
+This section records the approved design for the planned development; no M8 mathematical
+statements are formalized yet. The [parent issue #151](https://github.com/adamtopaz/OrlikSolomon/issues/151),
+[approved plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326)
+and [child-issue index](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079)
+track implementation. Governance is [#153](https://github.com/adamtopaz/OrlikSolomon/issues/153);
+PR [#152](https://github.com/adamtopaz/OrlikSolomon/pull/152) supplies the authoritative TeX
+and wholly planned book chapter. The TeX must remain byte-identical.
+
+The reconstruction layer lives under `OrlikSolomon/HyperplaneGT/`, in namespace
+`OrlikSolomon.HyperplaneGT`. File-path components such as `Algebra` do not introduce namespaces
+that shadow Mathlib names. The layer reuses the existing affine-hyperplane type, finite
+arrangements, OS algebra and grading. It introduces no new cohomology theory and adds no fields
+to the existing one.
+
+The core stores explicit finite free modules, exterior-square relation spans, cofinal stable
+arrangements and tagged marking arrows. There is one common target for all markings.
+Automorphisms preserve the entire quadratic relation submodule by equality and commute with
+the specified arrows. Arbitrary coordinate projections are derived using P01–P02, not added
+as arrows. The universal module is a Finsupp module; its algebraic dual is the full product.
+The left action on the dual uses the inverse linear equivalence. Finite-stage and annihilator
+calculations provide the required identifications without a reflexivity assumption.
+
+Pure algebra is stated over arbitrary commutative coefficient rings where valid, including the
+zero ring. Nontriviality/locality or the integral-domain hypothesis enters where reconstruction
+uses it. The coefficient ring and geometric fields have independent universes, and the core
+requires no field-algebra structure on the coefficient ring. Pure coordinate reconstruction
+takes an arbitrary field and the specified frame. Algebraicity is used for finite Galois orbits;
+perfect-field/algebraic-closure assumptions appear at the public geometric theorem matching the
+blueprint. The reconstruction theorem retains `n ≥ 2`.
+
+The Galois action is semilinear on geometric coordinates and is constructed on OS generators by
+preservation of all defining relations. It is not passed to an API for a `k`-linear affine map.
+Classification first concerns the explicit quadratic diagram. Extension to full graded
+automorphisms follows classification, rather than an assumption that the OS algebra is
+quadratic. The graded diagram uses the diagonal components indexed by degree. Fraction-field
+descent uses finite free modules and relation spans, not an unproved localization property of
+a cohomology theory.
+
+Only the `HyperplaneGT/Cohomology/*` leaves import the geometric ordinary theory, its structure
+theorem or the de Rham instance. A04 compares generator bases and the complete cup-product kernel,
+including alternation in characteristic two, through the existing OS theorem. It does not infer
+alternation from graded commutativity alone. E01–E03 transport the classified diagrams through
+these comparisons. The de Rham specialization is `k`-linear on logarithmic generators, as in the
+blueprint. The M7 `MainTheorem.lean` interface remains unchanged.
+
+The following modules are planned, relative to `OrlikSolomon/`. Their work-item IDs are those
+of the approved plan; the issue links identify the implementation work.
+
+| Module | Responsibility | Work item and issue |
+| --- | --- | --- |
+| `Algebra/HomogeneousRelations` | Generic lowest-degree relation-span lemma, with explicit degree-zero assumptions | W02, [#154](https://github.com/adamtopaz/OrlikSolomon/issues/154) |
+| `Algebra/FinsuppKernel` | Generic kernel calculation for maps that discard labels and merge equal retained labels | W10, [#162](https://github.com/adamtopaz/OrlikSolomon/issues/162) |
+| `HyperplaneGT/Geometry/Coordinates` | G01–G03; facade over smaller coordinate/incidence/chart leaves if needed | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
+| `HyperplaneGT/Geometry/Galois` | G04–G06 | W04, [#156](https://github.com/adamtopaz/OrlikSolomon/issues/156) |
+| `HyperplaneGT/Algebra/LowDegrees`, with `DegreeOne` and `QuadraticKernel` leaves | A01–A02 | W05–W06, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157), [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
+| `HyperplaneGT/Diagram/Basic` | A03, marked diagrams and their automorphisms | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
+| `HyperplaneGT/Diagram/Universal` | U01–U02 | W08, [#160](https://github.com/adamtopaz/OrlikSolomon/issues/160) |
+| `HyperplaneGT/Algebra/Dual` | U03–U05, with generic-index results separated from hyperplane specializations | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
+| `HyperplaneGT/Reconstruction/Trace` | L01–L03 | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
+| `HyperplaneGT/Reconstruction/Local` | L04–L05 | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
+| `HyperplaneGT/Reconstruction/Projections` | P01–P02 | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
+| `HyperplaneGT/Reconstruction/Incidence` | I01–I04 | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
+| `HyperplaneGT/Geometry/Collineation` | C01–C03, independent of the coefficient ring and cohomology | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
+| `HyperplaneGT/Reconstruction/Galois` | C04, S01 | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
+| `HyperplaneGT/Diagram/GaloisAction` | S02 | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
+| `HyperplaneGT/Reconstruction/LocalRing` | S03–S04; separate classification/graded leaves as necessary | W18–W19, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170), [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
+| `HyperplaneGT/Reconstruction/Domain` | S05 | W20, [#172](https://github.com/adamtopaz/OrlikSolomon/issues/172) |
+| `HyperplaneGT/Cohomology/Adapter` | A04 | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
+| `HyperplaneGT/Cohomology/Main` | E01–E02 | W22, [#174](https://github.com/adamtopaz/OrlikSolomon/issues/174) |
+| `HyperplaneGT/Cohomology/DeRham` | E03 | W23, [#175](https://github.com/adamtopaz/OrlikSolomon/issues/175) |
+| `HyperplaneGT`, `HyperplaneGT/Cohomology` | Pure-core facade and conditional-cohomology facade; de Rham remains an explicit import | W22–W23, [#174](https://github.com/adamtopaz/OrlikSolomon/issues/174), [#175](https://github.com/adamtopaz/OrlikSolomon/issues/175) |
+| `Examples/HyperplaneGT`, with small topic leaves | Coefficient, dimension, marking, cofinality, generator and transport acceptance consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
+
+The two generic helper modules use namespace `OrlikSolomon` and carry no hyperplane/cohomology
+hypotheses. Check Mathlib and existing repository lemmas before adding any helper. Split modules
+before approximately 800 lines; list size-only splits within the approved import boundaries in
+the PR body. Public named objects follow the existing transparency conventions, with `simp`,
+`ext` and generator lemmas so consumers do not rely on unfolding. Each PR names its blueprint
+labels, proves strict downstream consumers and adds new library modules to the sorted root
+import list.
+
+The [supervisor's statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
+requires Claude's approval before proofs are finalized only for S03–S05, E01–E03 and statements
+that deviate from the blueprint. Non-author Codex reviewers check intermediate statements
+against the blueprint. Claude checks statements, scope, CI and book honesty before every M8
+merge and decides every merge. Substantive mathematical gaps follow the existing blueprint-gap
+process; only Claude scopes a request to Astra.
+
+The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
+each have a definition and a lemma, with separate adjacent boxes. The initial M8 count is
+0 formalized, 0 partly formalized and 41 planned, separate from the other blueprints. Each
+mathematical PR names declarations only on the boxes it actually covers and records remaining
+work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
+versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
+and completes the final exposition checks.
