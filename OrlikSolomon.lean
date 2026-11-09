@@ -236,6 +236,8 @@ public import OrlikSolomon.HyperplaneGT.Geometry.Galois.CoordinateAction
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Markings
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.System
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections.Geometry
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections.Recognition
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Annihilators
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Decomposition
