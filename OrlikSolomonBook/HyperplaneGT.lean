@@ -16,11 +16,12 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The degree-one algebraic input A01 is formalized; the reconstruction theorem is planned.*
+*The coordinate geometry G01–G03 and degree-one algebraic input A01 are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-One box is formalized, none is partly formalized and forty remain planned.
+Four boxes are formalized, none is partly formalized and thirty-seven remain planned.
+G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
@@ -50,15 +51,15 @@ Singular and geometric étale cohomology remain conditional applications until t
 
 ## G01: coefficient points
 
-:::node "lem:g01"
+:::node "lem:g01" (decl := OrlikSolomon.HyperplaneGT.coefficientPointEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientForm_apply) (decl := OrlikSolomon.HyperplaneGT.zeroLocus_coefficientForm_eq_iff) (decl := OrlikSolomon.HyperplaneGT.coefficientPoint_eq_mk) (decl := OrlikSolomon.HyperplaneGT.hyperplaneOfCoefficientPoint_mk) (decl := OrlikSolomon.HyperplaneGT.coefficientForm_linear_ne_zero_iff)
 An affine hyperplane in $`k^n` has an equation $`a_0+\sum_i a_i x_i=0` with nonzero normal part, unique up to nonzero scalar.
 Its coefficient point identifies the set of hyperplanes with $`\mathbb P^n(k)\setminus\{[1:0:\cdots:0]\}`.
-The planned equivalence includes equation independence and formulas for its inverse.
+The equivalence includes equation independence and formulas for its inverse.
 :::
 
 ## G02: parallel pairs and dependent triples
 
-:::node "lem:g02"
+:::node "lem:g02" (decl := OrlikSolomon.HyperplaneGT.Parallel) (decl := OrlikSolomon.HyperplaneGT.DependentTriple) (decl := OrlikSolomon.HyperplaneGT.parallel_iff_normal_proportional) (decl := OrlikSolomon.HyperplaneGT.normals_linearIndependent_of_not_parallel) (decl := OrlikSolomon.HyperplaneGT.codim_inf_eq_two_of_not_parallel) (decl := OrlikSolomon.HyperplaneGT.dependentTriple_iff_equations_dependent) (decl := OrlikSolomon.HyperplaneGT.dependentTriple_iff_coefficientPoints_collinear) (decl := OrlikSolomon.HyperplaneGT.dependentTriple_iff_trace_eq)
 Distinct hyperplanes with proportional normals are disjoint; otherwise they meet in codimension two.
 For three distinct hyperplanes that are not parallel in pairs, codimension-two intersection, dependence of affine equations and collinearity of coefficient points are equivalent.
 Equal nonempty traces on one hyperplane give the same dependent-triple condition.
@@ -67,7 +68,7 @@ An empty-intersection triple is excluded from this definition of dependence.
 
 ## G03: vertical hyperplanes and graphs
 
-:::node "lem:g03"
+:::node "lem:g03" (decl := OrlikSolomon.HyperplaneGT.isVertical_iff_of_isEquation) (decl := OrlikSolomon.HyperplaneGT.existsUnique_graph_of_omits_coordinate) (decl := OrlikSolomon.HyperplaneGT.graphProjectionEquiv) (decl := OrlikSolomon.HyperplaneGT.parallel_graphHyperplane_of_sub_eq_const) (decl := OrlikSolomon.HyperplaneGT.map_graphSubspace_inf) (decl := OrlikSolomon.HyperplaneGT.graphSubspace_inf_ne_bot_of_sub_linear_ne_zero)
 Verticality over a coordinate subset means that all normal coefficients outside that subset vanish, independently of the chosen equation.
 When precisely one coordinate is omitted, every nonvertical hyperplane has a unique graph equation, and projection identifies the graph with the remaining affine space.
 Differences of graph functions determine parallelism and the projected common trace.

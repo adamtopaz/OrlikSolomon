@@ -141,6 +141,7 @@ public import OrlikSolomon.Examples.Geometric.NonAffine.MayerVietoris
 public import OrlikSolomon.Examples.Geometric.NonAffine.Overlap
 public import OrlikSolomon.Examples.Geometric.NonAffine.Sections
 public import OrlikSolomon.Examples.Geometric.NonAffine.SheafCech
+public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
 public import OrlikSolomon.Examples.HyperplaneGT.DegreeOne
 public import OrlikSolomon.Examples.Moebius
 public import OrlikSolomon.Examples.Ordinary
@@ -189,6 +190,10 @@ public import OrlikSolomon.Grading.LinearImage
 public import OrlikSolomon.Grading.Restriction
 public import OrlikSolomon.Grading.TensorProduct
 public import OrlikSolomon.HyperplaneGT.Algebra.DegreeOne
+public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates
+public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Equations
+public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Graphs
+public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Incidence
 public import OrlikSolomon.Interface.Logarithms
 public import OrlikSolomon.Interface.OSAlgebra
 public import OrlikSolomon.Interface.ProjectiveComplement
