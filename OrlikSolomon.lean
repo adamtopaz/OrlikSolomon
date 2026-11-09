@@ -203,6 +203,10 @@ public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Coordinates
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Primitive
 public import OrlikSolomon.HyperplaneGT.Algebra.LowDegrees
 public import OrlikSolomon.HyperplaneGT.Algebra.QuadraticKernel
+public import OrlikSolomon.HyperplaneGT.Diagram.Basic
+public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
+public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
+public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Quadratic
 public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Lift
 public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Relations
 public import OrlikSolomon.HyperplaneGT.Diagram.Universal.Support
