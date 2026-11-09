@@ -80,7 +80,9 @@ theorem generator_sub_ne_zero_of_pairwise_disjoint [Nontrivial B]
 
 /-! ### All degree-one generators in finite dimension -/
 
-private theorem dependent_length_ge_three [FiniteDimensional k V] {I : List 𝒜}
+/-- A dependent list of distinct affine hyperplanes has at least three members. The
+nonempty-intersection guard rules out parallel pairs. -/
+theorem dependent_length_ge_three [FiniteDimensional k V] {I : List 𝒜}
     (hI : I.Nodup) (hdep : Arrangement.IsDependent I) : 3 ≤ I.length := by
   cases I with
   | nil => exact (Arrangement.isDependent_nil 𝒜 hdep).elim
