@@ -152,6 +152,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Dual
 public import OrlikSolomon.Examples.HyperplaneGT.Galois
 public import OrlikSolomon.Examples.HyperplaneGT.GaloisAction
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
+public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
 public import OrlikSolomon.Examples.Moebius
 public import OrlikSolomon.Examples.Ordinary
@@ -235,6 +236,13 @@ public import OrlikSolomon.HyperplaneGT.Geometry.Galois.CoordinateAction
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Markings
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.System
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Annihilators
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Decomposition
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Geometry
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Kernel
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Map
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Projection
 public import OrlikSolomon.Interface.Logarithms
 public import OrlikSolomon.Interface.OSAlgebra
 public import OrlikSolomon.Interface.ProjectiveComplement

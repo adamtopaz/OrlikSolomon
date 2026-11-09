@@ -25,7 +25,7 @@ details.
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-20 formalized and 21 planned. Coefficient points, hyperplane incidence
+24 formalized and 17 planned. Coefficient points, hyperplane incidence
 and coordinate graphs (G01–G03) are proved over arbitrary fields. G04–G06 construct the
 coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal
 systems with actual marking maps to one common target. The canonical degree-one OS basis,
@@ -33,17 +33,19 @@ its inclusion naturality and algebra generation (A01), and the exact degree-two 
 (A02), are proved over arbitrary commutative coefficient rings, including zero coefficients.
 A03 defines the marked quadratic and full graded automorphism groups, with one common target
 and faithful degree-one restriction, over those same coefficient rings.
-U01–U02 give the universal free module, its finite-stage universal property and quadratic
-relation witnesses, and the induced diagram action retaining the common target component.
 S02 constructs the direct Galois action on the full graded diagram using all defining OS
 relations, with identity on its one common target.
+U01–U02 give the universal free module, its finite-stage universal property and quadratic
+relation witnesses, and the induced diagram action retaining the common target component.
 Pure coordinate reconstruction (C01–C03) is also proved over arbitrary fields in dimension at least
 two, with the prescribed fixed projective frame.
 Full-dual coordinates and the local primitive-coordinate criterion
 (U03, U05) are proved for arbitrary index types. The determinant and centralizer are defined
 for any explicit relation submodule. U04 gives the exact universal parallel-pair and guarded
 dependent-triple equations and paired diagram invariance, including equality of centralizer
-images. The planned reconstruction studies automorphisms of marked
+images. L01–L03 prove the surjective trace map and its full kernel, the explicit decomposition
+product and annihilator identities, the unit-delta centralizer, and graph restriction to the
+actual vertical module with inertia kernel. The planned reconstruction studies automorphisms of marked
 degree-one/cup-kernel and diagonal graded cohomology diagrams in dimension at least two,
 with nonzero local or integral-domain coefficients. The theory-level results will be conditional
 on the existing axioms, with an unconditional characteristic-zero de Rham specialization.
