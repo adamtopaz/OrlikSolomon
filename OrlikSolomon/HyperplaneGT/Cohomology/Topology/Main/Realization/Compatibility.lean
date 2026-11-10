@@ -5,7 +5,8 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Cofinal.Restriction
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Basic
 
 /-!
@@ -399,5 +400,334 @@ theorem domainGradedKrullContinuousReconstructionOfIsAlgebraic_realization
   exact realizationGradedContinuousEquiv_domainGradedReconstruction T₁ T₂ C S hS hgen hn x
 
 end AlgebraicRealizationCompatibility
+
+
+section PointwiseQuotientRealizationCompatibility
+
+open scoped DiscreteCoefficientUnits GaloisPointwise
+
+/-- The pointwise scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem DiagramAut.localScalarQuotientContinuousEquiv_realization
+    [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (DiagramAut.localScalarQuotientContinuousEquiv T₂ C S hS hgen hn) =
+      DiagramAut.localScalarQuotientContinuousEquiv T₁ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change DiagramAut.localScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    DiagramAut.localScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationQuadraticScalarQuotientContinuousEquiv_localScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+/-- The pointwise scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem GradedDiagramAut.localScalarQuotientContinuousEquiv_realization
+    [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (GradedDiagramAut.localScalarQuotientContinuousEquiv T₂ C S hS hgen hn) =
+      GradedDiagramAut.localScalarQuotientContinuousEquiv T₁ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change GradedDiagramAut.localScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    GradedDiagramAut.localScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationGradedScalarQuotientContinuousEquiv_localScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+/-- The pointwise scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem DiagramAut.domainScalarQuotientContinuousEquiv_realization
+    [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (DiagramAut.domainScalarQuotientContinuousEquiv T₂ C S hS hgen hn) =
+      DiagramAut.domainScalarQuotientContinuousEquiv T₁ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change DiagramAut.domainScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    DiagramAut.domainScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationQuadraticScalarQuotientContinuousEquiv_domainScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+/-- The pointwise scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem GradedDiagramAut.domainScalarQuotientContinuousEquiv_realization
+    [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (GradedDiagramAut.domainScalarQuotientContinuousEquiv T₂ C S hS hgen hn) =
+      GradedDiagramAut.domainScalarQuotientContinuousEquiv T₁ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change GradedDiagramAut.domainScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    GradedDiagramAut.domainScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationGradedScalarQuotientContinuousEquiv_domainScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+end PointwiseQuotientRealizationCompatibility
+
+
+section KrullQuotientRealizationCompatibility
+
+open scoped DiscreteCoefficientUnits
+
+/-- The krull scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem DiagramAut.localScalarQuotientKrullContinuousEquiv_realization
+    [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (hK : KrullFixingCondition k₀ k) :
+    (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (DiagramAut.localScalarQuotientKrullContinuousEquiv T₂ C S hS hgen hn hK) =
+      DiagramAut.localScalarQuotientKrullContinuousEquiv T₁ C S hS hgen hn hK := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change DiagramAut.localScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    DiagramAut.localScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationQuadraticScalarQuotientContinuousEquiv_localScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+/-- The krull scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem GradedDiagramAut.localScalarQuotientKrullContinuousEquiv_realization
+    [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (hK : KrullFixingCondition k₀ k) :
+    (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (GradedDiagramAut.localScalarQuotientKrullContinuousEquiv T₂ C S hS hgen hn hK) =
+      GradedDiagramAut.localScalarQuotientKrullContinuousEquiv T₁ C S hS hgen hn hK := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change GradedDiagramAut.localScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    GradedDiagramAut.localScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationGradedScalarQuotientContinuousEquiv_localScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+/-- The krull scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem DiagramAut.domainScalarQuotientKrullContinuousEquiv_realization
+    [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (hK : KrullFixingCondition k₀ k) :
+    (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (DiagramAut.domainScalarQuotientKrullContinuousEquiv T₂ C S hS hgen hn hK) =
+      DiagramAut.domainScalarQuotientKrullContinuousEquiv T₁ C S hS hgen hn hK := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change DiagramAut.domainScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    DiagramAut.domainScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationQuadraticScalarQuotientContinuousEquiv_domainScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+/-- The krull scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem GradedDiagramAut.domainScalarQuotientKrullContinuousEquiv_realization
+    [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (hK : KrullFixingCondition k₀ k) :
+    (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (GradedDiagramAut.domainScalarQuotientKrullContinuousEquiv T₂ C S hS hgen hn hK) =
+      GradedDiagramAut.domainScalarQuotientKrullContinuousEquiv T₁ C S hS hgen hn hK := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change GradedDiagramAut.domainScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    GradedDiagramAut.domainScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationGradedScalarQuotientContinuousEquiv_domainScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+end KrullQuotientRealizationCompatibility
+
+
+section AlgebraicQuotientRealizationCompatibility
+
+open scoped DiscreteCoefficientUnits
+
+/-- The algebraic scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem DiagramAut.localScalarQuotientKrullContinuousEquivOfIsAlgebraic_realization
+    [IsLocalRing R] [Algebra.IsAlgebraic k₀ k]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (DiagramAut.localScalarQuotientKrullContinuousEquivOfIsAlgebraic T₂ C S hS hgen hn) =
+      DiagramAut.localScalarQuotientKrullContinuousEquivOfIsAlgebraic T₁ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change DiagramAut.localScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    DiagramAut.localScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationQuadraticScalarQuotientContinuousEquiv_localScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+/-- The algebraic scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem GradedDiagramAut.localScalarQuotientKrullContinuousEquivOfIsAlgebraic_realization
+    [IsLocalRing R] [Algebra.IsAlgebraic k₀ k]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (GradedDiagramAut.localScalarQuotientKrullContinuousEquivOfIsAlgebraic T₂ C S hS hgen hn) =
+      GradedDiagramAut.localScalarQuotientKrullContinuousEquivOfIsAlgebraic T₁ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change GradedDiagramAut.localScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    GradedDiagramAut.localScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationGradedScalarQuotientContinuousEquiv_localScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+/-- The algebraic scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem DiagramAut.domainScalarQuotientKrullContinuousEquivOfIsAlgebraic_realization
+    [IsDomain R] [Algebra.IsAlgebraic k₀ k]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (DiagramAut.domainScalarQuotientKrullContinuousEquivOfIsAlgebraic T₂ C S hS hgen hn) =
+      DiagramAut.domainScalarQuotientKrullContinuousEquivOfIsAlgebraic T₁ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change DiagramAut.domainScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    DiagramAut.domainScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationQuadraticScalarQuotientContinuousEquiv_domainScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+/-- The algebraic scalar-quotient classifier preserves its Galois coordinate under
+canonical realization comparison, on the original literal quotient topologies. -/
+theorem GradedDiagramAut.domainScalarQuotientKrullContinuousEquivOfIsAlgebraic_realization
+    [IsDomain R] [Algebra.IsAlgebraic k₀ k]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (GradedDiagramAut.domainScalarQuotientKrullContinuousEquivOfIsAlgebraic T₂ C S hS hgen hn) =
+      GradedDiagramAut.domainScalarQuotientKrullContinuousEquivOfIsAlgebraic T₁ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change GradedDiagramAut.domainScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S x) =
+    GradedDiagramAut.domainScalarQuotientEquiv T₁ C S hS hgen hn x
+  exact realizationGradedScalarQuotientContinuousEquiv_domainScalarQuotientEquiv
+    T₁ T₂ C S hS hgen hn x
+
+end AlgebraicQuotientRealizationCompatibility
+
+/-- Literal scalar-quotient stage selection commutes with realization comparison over
+every commutative coefficient ring and in every dimension. -/
+theorem DiagramAut.restrictStagesScalarQuotient_realization
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (q : DiagramAut T₁ C S ⧸ DiagramAut.scalarSubgroup T₁ C S) :
+    realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C' S
+        (DiagramAut.restrictStagesScalarQuotient T₁ C C' S hC q) =
+      DiagramAut.restrictStagesScalarQuotient T₂ C C' S hC
+        (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S q) := by
+  refine QuotientGroup.induction_on q ?_
+  intro g
+  change realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C' S
+      (DiagramAut.restrictStagesScalarQuotient T₁ C C' S hC
+        (DiagramAut.scalarQuotientMap T₁ C S g)) =
+    DiagramAut.restrictStagesScalarQuotient T₂ C C' S hC
+      (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S
+        (DiagramAut.scalarQuotientMap T₁ C S g))
+  exact (congrArg (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C' S)
+    (DiagramAut.restrictStagesScalarQuotient_map T₁ C C' S hC g)).trans
+    ((realizationQuadraticScalarQuotientContinuousEquiv_map T₁ T₂ C' S
+      (DiagramAut.restrictStages T₁ C C' S hC g)).trans
+      ((congrArg (DiagramAut.scalarQuotientMap T₂ C' S)
+        (realizationQuadraticContinuousEquiv_restrictStages T₁ T₂ C S C' hC g)).trans
+        ((DiagramAut.restrictStagesScalarQuotient_map T₂ C C' S hC
+          (realizationQuadraticContinuousEquiv T₁ T₂ C S g)).symm.trans
+          (congrArg (DiagramAut.restrictStagesScalarQuotient T₂ C C' S hC)
+            (realizationQuadraticScalarQuotientContinuousEquiv_map T₁ T₂ C S g)).symm)))
+
+/-- Classified literal cofinal restriction commutes with realization comparison, as an
+equality of the unchanged continuous group equivalences. -/
+theorem cofinalRestrictionContinuousEquiv_realization [IsLocalRing R]
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationQuadraticContinuousEquiv T₁ T₂ C S).trans
+        (cofinalRestrictionContinuousEquiv T₂ C C' S hC hS hgen hn) =
+      (cofinalRestrictionContinuousEquiv T₁ C C' S hC hS hgen hn).trans
+        (realizationQuadraticContinuousEquiv T₁ T₂ C' S) := by
+  apply ContinuousMulEquiv.ext
+  intro g
+  simp only [ContinuousMulEquiv.trans_apply, cofinalRestrictionContinuousEquiv_apply]
+  exact (realizationQuadraticContinuousEquiv_restrictStages T₁ T₂ C S C' hC g).symm
+
+/-- Classified literal cofinal restriction commutes with realization comparison, as an
+equality of the unchanged continuous group equivalences. -/
+theorem domainCofinalRestrictionContinuousEquiv_realization [IsDomain R]
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationQuadraticContinuousEquiv T₁ T₂ C S).trans
+        (domainCofinalRestrictionContinuousEquiv T₂ C C' S hC hS hgen hn) =
+      (domainCofinalRestrictionContinuousEquiv T₁ C C' S hC hS hgen hn).trans
+        (realizationQuadraticContinuousEquiv T₁ T₂ C' S) := by
+  apply ContinuousMulEquiv.ext
+  intro g
+  simp only [ContinuousMulEquiv.trans_apply, domainCofinalRestrictionContinuousEquiv_apply]
+  exact (realizationQuadraticContinuousEquiv_restrictStages T₁ T₂ C S C' hC g).symm
+
+/-- Literal scalar-quotient stage selection commutes with realization comparison over
+every commutative coefficient ring and in every dimension. -/
+theorem GradedDiagramAut.restrictStagesScalarQuotient_realization
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (q : GradedDiagramAut T₁ C S ⧸ GradedDiagramAut.scalarSubgroup T₁ C S) :
+    realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C' S
+        (GradedDiagramAut.restrictStagesScalarQuotient T₁ C C' S hC q) =
+      GradedDiagramAut.restrictStagesScalarQuotient T₂ C C' S hC
+        (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S q) := by
+  refine QuotientGroup.induction_on q ?_
+  intro g
+  change realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C' S
+      (GradedDiagramAut.restrictStagesScalarQuotient T₁ C C' S hC
+        (GradedDiagramAut.scalarQuotientMap T₁ C S g)) =
+    GradedDiagramAut.restrictStagesScalarQuotient T₂ C C' S hC
+      (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S
+        (GradedDiagramAut.scalarQuotientMap T₁ C S g))
+  exact (congrArg (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C' S)
+    (GradedDiagramAut.restrictStagesScalarQuotient_map T₁ C C' S hC g)).trans
+    ((realizationGradedScalarQuotientContinuousEquiv_map T₁ T₂ C' S
+      (GradedDiagramAut.restrictStages T₁ C C' S hC g)).trans
+      ((congrArg (GradedDiagramAut.scalarQuotientMap T₂ C' S)
+        (realizationGradedContinuousEquiv_restrictStages T₁ T₂ C S C' hC g)).trans
+        ((GradedDiagramAut.restrictStagesScalarQuotient_map T₂ C C' S hC
+          (realizationGradedContinuousEquiv T₁ T₂ C S g)).symm.trans
+          (congrArg (GradedDiagramAut.restrictStagesScalarQuotient T₂ C C' S hC)
+            (realizationGradedScalarQuotientContinuousEquiv_map T₁ T₂ C S g)).symm)))
+
+/-- Classified literal cofinal restriction commutes with realization comparison, as an
+equality of the unchanged continuous group equivalences. -/
+theorem gradedCofinalRestrictionContinuousEquiv_realization [IsLocalRing R]
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationGradedContinuousEquiv T₁ T₂ C S).trans
+        (gradedCofinalRestrictionContinuousEquiv T₂ C C' S hC hS hgen hn) =
+      (gradedCofinalRestrictionContinuousEquiv T₁ C C' S hC hS hgen hn).trans
+        (realizationGradedContinuousEquiv T₁ T₂ C' S) := by
+  apply ContinuousMulEquiv.ext
+  intro g
+  simp only [ContinuousMulEquiv.trans_apply, gradedCofinalRestrictionContinuousEquiv_apply]
+  exact (realizationGradedContinuousEquiv_restrictStages T₁ T₂ C S C' hC g).symm
+
+/-- Classified literal cofinal restriction commutes with realization comparison, as an
+equality of the unchanged continuous group equivalences. -/
+theorem domainGradedCofinalRestrictionContinuousEquiv_realization [IsDomain R]
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationGradedContinuousEquiv T₁ T₂ C S).trans
+        (domainGradedCofinalRestrictionContinuousEquiv T₂ C C' S hC hS hgen hn) =
+      (domainGradedCofinalRestrictionContinuousEquiv T₁ C C' S hC hS hgen hn).trans
+        (realizationGradedContinuousEquiv T₁ T₂ C' S) := by
+  apply ContinuousMulEquiv.ext
+  intro g
+  simp only [ContinuousMulEquiv.trans_apply, domainGradedCofinalRestrictionContinuousEquiv_apply]
+  exact (realizationGradedContinuousEquiv_restrictStages T₁ T₂ C S C' hC g).symm
 
 end OrlikSolomon.HyperplaneGT.Cohomology
