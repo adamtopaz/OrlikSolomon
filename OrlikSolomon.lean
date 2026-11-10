@@ -321,6 +321,8 @@ public import OrlikSolomon.HyperplaneGT.Topology.Compact.Finite
 public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact
 public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact.FiniteOrbits
 public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact.Stages
+public import OrlikSolomon.HyperplaneGT.Topology.Krull
+public import OrlikSolomon.HyperplaneGT.Topology.Krull.Comparison
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Hyperplanes
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Pointwise
 public import OrlikSolomon.HyperplaneGT.Topology.Restriction
