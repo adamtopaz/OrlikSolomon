@@ -249,6 +249,7 @@ public import OrlikSolomon.HyperplaneGT.Geometry.Galois.CoordinateAction
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Markings
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.System
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Descent
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Diagram
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.LinearExtension
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Relations
