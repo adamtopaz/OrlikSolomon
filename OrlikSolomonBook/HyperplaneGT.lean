@@ -39,6 +39,7 @@ I01–I04 recover the unique hyperplane permutation, transport actual incidence 
 C04 extracts the base-field Galois homomorphism from that frame and generation by the marked constants; S01 identifies its kernel with one unique common primal scalar on every stage and the common target.
 S03 classifies the actual quadratic diagram over a nonzero local coefficient ring, with an explicit primal-scalar/Galois inverse and both inverse equations, retaining the common target.
 S04 proves that the existing degree-one restriction is a multiplicative equivalence with the full graded group, gives every-degree scalar powers, and identifies both literal scalar quotients with the Galois group through explicit sections and inverse laws.
+S05 extends these classifications and scalar quotients to arbitrary integral domains by descending the fraction-field scalar from original matrix entries.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
