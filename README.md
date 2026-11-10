@@ -99,6 +99,17 @@ scalar/Galois factorization: classification fails over disconnected coefficients
 local/domain hypotheses cannot be omitted. Existing zero-ring, low-dimensional, empty-arrangement
 and point-free-complement coverage is retained.
 
+**Milestone M9:** [topological hyperplane reconstruction](blueprint/topological_reconstruction_blueprint.tex)
+is tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
+Its 17 separately labelled statements T01–T17 are all planned, counted separately from the
+four existing blueprints. The [planned chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
+describes finite-stage convergence, discrete coefficient units, and the pointwise Galois factor.
+The Krull version requires the stated fixing condition; algebraicity suffices, while a supplied
+cofinal system alone does not. Classification upgrades retain M8's local/domain, dimension and
+marking hypotheses. Actual theory-level assertions stay conditional on a supplied eligible theory;
+the de Rham upgrade specializes the constructed characteristic-zero theory. This bootstrap
+formalizes no topology statement and makes no adic-coefficient claim.
+
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective
 interface. Its public definitions and theorem statements use Mathlib objects: hyperplanes are
@@ -185,6 +196,8 @@ first page shows the statements, elaborated, with the output of `#print axioms`.
 - Auditable public projective theorem: [`MainTheorem.lean`](OrlikSolomon/MainTheorem.lean)
 - Milestone M8, cohomological hyperplane reconstruction and regression coverage:
   [`blueprint/`](blueprint/cohomological_hyperplane_gt_blueprint.tex)
+- Milestone M9, planned topological reconstruction:
+  [`blueprint/`](blueprint/topological_reconstruction_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)
 

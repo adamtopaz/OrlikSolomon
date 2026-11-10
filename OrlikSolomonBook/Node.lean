@@ -532,15 +532,17 @@ def blueprintName (source : String) : String :=
   | "de_rham_instance_blueprint.tex" => "De Rham instance"
   | "geometric_refactor_blueprint.tex" => "Geometric refactor"
   | "cohomological_hyperplane_gt_blueprint.tex" => "Cohomological hyperplane reconstruction"
+  | "topological_reconstruction_blueprint.tex" => "Topological hyperplane reconstruction"
   | other => other
 
 /--
-The nodes of each blueprint file, with the four project blueprints in their historical order.
+The nodes of each blueprint file, with the five project blueprints in their historical order.
 Other sources follow in their order of occurrence, so a new source is never omitted.
 -/
 def nodesByBlueprint (nodes : Array NodeData) : List (String × Array NodeData) :=
   let known := ["arrangement_cohomology_lean_blueprint.tex", "de_rham_instance_blueprint.tex",
-    "geometric_refactor_blueprint.tex", "cohomological_hyperplane_gt_blueprint.tex"]
+    "geometric_refactor_blueprint.tex", "cohomological_hyperplane_gt_blueprint.tex",
+    "topological_reconstruction_blueprint.tex"]
   let sources := (nodes.toList.map (·.node.source)).eraseDups
   let ordered := known.filter sources.contains ++ sources.filter (!known.contains ·)
   ordered.map fun source =>
