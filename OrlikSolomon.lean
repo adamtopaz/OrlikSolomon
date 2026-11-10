@@ -166,6 +166,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
 public import OrlikSolomon.Examples.HyperplaneGT.TheoryReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Coefficients
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.Realizations
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Systems
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
@@ -244,6 +245,10 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification.Compatibility
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Cofinal
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Realization
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Basic
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Comparison
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Quotient
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
