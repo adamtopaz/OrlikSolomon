@@ -260,6 +260,7 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull.Domain
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull.Local
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Cofinal.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
