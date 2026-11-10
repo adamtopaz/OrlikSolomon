@@ -101,7 +101,7 @@ and point-free-complement coverage is retained.
 
 **Milestone M9:** [topological hyperplane reconstruction](blueprint/topological_reconstruction_blueprint.tex)
 is tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
-Its 17 separately labelled statements T01–T17 include **2 formalized, 2 partly formalized and 13 planned**,
+Its 17 separately labelled statements T01–T17 include **3 formalized, 2 partly formalized and 12 planned**,
 counted separately from the four existing blueprints. The [chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
 describes finite-stage convergence, discrete coefficient units, and the pointwise Galois factor.
 T05 proves the pointwise group topology, finite normalized affine coefficient tests and, for
@@ -112,6 +112,8 @@ marking hypotheses. Actual theory-level assertions stay conditional on a supplie
 the de Rham upgrade specializes the constructed characteristic-zero theory. Pure quadratic
 and graded component topologies, group and separation properties, and stage-and-target
 neighborhood bases are proved; their actual-theory and ordinary clauses remain planned.
+Both pure diagram groups are closed in the original ambient products for every commutative
+coefficient ring and compact for finite coefficients, without classification or algebraicity.
 The existing degree-one restriction is a topological embedding for arbitrary coefficients
 and dimensions, and any actual inverse is continuous. Reconstruction homeomorphisms are
 planned. No adic-coefficient claim is made.

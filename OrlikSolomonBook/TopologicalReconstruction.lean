@@ -16,8 +16,9 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Two statements are formalized, two are partly formalized and thirteen remain planned.*
+*Three statements are formalized, two are partly formalized and twelve remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
+The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
 The actual-theory and ordinary de Rham clauses of T01–T02 remain planned.
 T05 proves the pointwise Galois topology and its exact finite-equation, geometric-fiber and selected-stage kernel descriptions.
@@ -63,7 +64,7 @@ Cofinal enlargement controls finitely many stage conditions; union closure and c
 
 ## T03: closedness and finite coefficients
 
-:::node "prop:t03"
+:::node "prop:t03" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.isClosed_subgroup) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.isClosed_subgroup) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.isClosedEmbedding_subtype) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.isClosedEmbedding_subtype) (decl := OrlikSolomon.HyperplaneGT.osGradedAutSubgroup_degreeOne_injective) (decl := OrlikSolomon.HyperplaneGT.finite_osGradedAutSubgroup) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.compactSpace) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.compactSpace)
 The pure quadratic and graded diagram groups are closed subgroups of their ambient products for every commutative coefficient ring.
 For finite coefficients they are compact and therefore profinite, without classification or algebraicity.
 The graded argument uses generation to make each degree-preserving factor finite; it does not claim that every unrestricted algebra-automorphism group is finite.
