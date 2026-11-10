@@ -1712,7 +1712,7 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A04, C01–C03, U01–U05, L01–L05, P01–P02, I01–I04 and S02 are formalized, including U04's actual universal
+G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04 and S01–S02 are formalized, including U04's actual universal
 configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
 reconstruction theorem remains planned. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
@@ -1822,7 +1822,10 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Reconstruction/Incidence/Projective` | Arbitrary-field coefficient-point extension, exact line images and the actual projective group action | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
 | `HyperplaneGT/Reconstruction/Incidence/Markings` | One common target excludes uniform exchange, fixes each marked fiber and supplies all basis/difference frame points | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
 | `HyperplaneGT/Geometry/Collineation`, with `Span`, `Chart`, and `Field` leaves | C01–C03, formalized: arbitrary projective spans, coordinatewise affine charts, and a unique field automorphism from the prescribed frame | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
-| `HyperplaneGT/Reconstruction/Galois` | C04, S01 | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
+| `HyperplaneGT/Reconstruction/Galois` | C04, S01, formalized: actual Galois extraction and its unique common primal scalar kernel | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
+| `HyperplaneGT/Reconstruction/Galois/Geometry` | Pure intersecting-triple and transverse-parallel-pair witnesses, guarded connectivity over arbitrary fields | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
+| `HyperplaneGT/Reconstruction/Galois/Extraction` | Actual fixed-frame field extraction, marked-constant and field-generation descent, Galois homomorphism and recovered action | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
+| `HyperplaneGT/Reconstruction/Galois/Scalar` | Actual trace-kernel unit equality, connectivity, all-stage/common-target scalar identities and uniqueness | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
 | `HyperplaneGT/Diagram/GaloisAction`, with a `Stage` leaf | S02, formalized: direct coefficient-linear action on full OS algebras, every-degree image equality, inclusion and marking squares, group laws and identity common target | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
 | `HyperplaneGT/Reconstruction/LocalRing` | S03–S04; separate classification/graded leaves as necessary | W18–W19, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170), [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
 | `HyperplaneGT/Reconstruction/Domain` | S05 | W20, [#172](https://github.com/adamtopaz/OrlikSolomon/issues/172) |
@@ -1840,6 +1843,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT`, with small topic leaves | Coefficient, dimension, marking, cofinality, generator and transport acceptance consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
 | `Examples/HyperplaneGT/DegreeOne` | Formalized A01 consumers: zero coefficients, empty arrangements, dimensions zero and one, and zero new coordinates after inclusion | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
 | `Examples/HyperplaneGT/Collineation` | Formalized C01–C03 consumers: identity extraction, dimension-zero charts, characteristic-two zero sums and points at infinity | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
+| `Examples/HyperplaneGT/GaloisReconstruction` | C04/S01 consumers: guarded binary connectivity, actual scalar kernels over `ZMod 5`/`ZMod 4`, composition and necessary field generation | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
 | `Examples/HyperplaneGT/Coordinates` | G01–G03 consumers: dimension zero, parallel points, inverse chart and coefficient formulas, zero-ring coordinate splitting, and concurrent/empty triples over `𝔽₂` | W03, [#155](https://github.com/adamtopaz/OrlikSolomon/issues/155) |
 | `Examples/HyperplaneGT/Dual` | Full infinite dual coordinates, primitive edge tests, actual universal-Q characteristic-two configurations, zero/dimension-zero centralizers and non-involutive scalar DiagramAut action over ZMod 5 | W09, [#161](https://github.com/adamtopaz/OrlikSolomon/issues/161) |
 | `Examples/HyperplaneGT/QuadraticKernel` | A02 consumers: empty and dimension-zero arrangements, zero coefficients, disjoint points, characteristic-two concurrent relations and the zero quadratic kernel of the empty triangle | W06, [#158](https://github.com/adamtopaz/OrlikSolomon/issues/158) |
@@ -2149,6 +2153,24 @@ and `0 ∈ S` hypotheses, with independent coefficient/field universes. No field
 scalar-kernel classification, arbitrary-projection arrow or cohomology/de Rham import enters.
 The facade reexports the five approved leaves; no preceding leaf imports it.
 
+`Reconstruction/Galois` derives its field equivalence by applying C03 to the actual incidence
+permutation and the fixed frame already proved in I04. `Extraction` compares actual coordinate
+fibers to fix every element of `S` and uses Mathlib's field-closure equality to descend to `k₀`;
+the all-point projective formula gives the group homomorphism. No extracted field equivalence
+is stored in diagram data. `Geometry` supplies the two pure connectivity witnesses with exact
+nonempty/distinctness guards and arbitrary-codomain constancy along guarded dependent triples.
+It imports only pure coordinate and local geometry, without diagram or cohomology dependencies.
+`Scalar` uses I02's actual trace-kernel transport and its unit-weighted retained-trace test to
+equate generator units, then the proved universal/stage/marking squares to include every stage
+and the original common target. The common scalar is primal; I01's dual unit is its inverse.
+The local/nonzero coefficient, `2 ≤ n`, `0 ∈ S` and subfield-generation hypotheses remain
+explicit, with independent coefficient/field universes. These leaves construct neither a
+splitting nor a cohomology realization and import no cohomology or de Rham module. The facade
+reexports the three leaves; no earlier leaf imports it. Durable examples use the genuine
+scalar-two and scalar-three diagrams over `ZMod 5` and the nonfield local ring `ZMod 4`,
+characteristic-two guarded connectivity with a point-free complement, and complex conjugation
+fixing `{0}` without fixing the entire base field, so field generation cannot be dropped.
+
 The [supervisor's statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
 requires Claude's approval before proofs are finalized only for S03–S05, E01–E03 and statements
 that deviate from the blueprint. Non-author Codex reviewers check intermediate statements
@@ -2158,7 +2180,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-33 formalized and 8 planned, separate from the other blueprints. Each
+35 formalized and 6 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally

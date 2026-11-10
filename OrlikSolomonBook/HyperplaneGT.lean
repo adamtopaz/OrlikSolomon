@@ -16,11 +16,11 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame are formalized; the reconstruction theorem is planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame, Galois extraction and its common scalar kernel are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Thirty-three boxes are formalized and eight remain planned.
+Thirty-five boxes are formalized and six remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
@@ -36,6 +36,7 @@ L01–L03 give the surjective trace map and its full kernel, inertia and decompo
 L04 transfers graph coefficients over any commutative ring by cancelling a specified unit; L05 detects the unique unit-supported graph functional over a nonzero local ring in dimension at least two.
 P01–P02 recognize every supported coordinate span using commuting functionals, derive its diagram invariance from the marking squares, and give the actual equivariant restriction to its full dual.
 I01–I04 recover the unique hyperplane permutation, transport actual incidence and projective lines, and fix every marked fiber and the full projective frame, over nonzero local coefficients with dimension at least two and zero among the marking constants.
+C04 extracts the base-field Galois homomorphism from that frame and generation by the marked constants; S01 identifies its kernel with one unique common primal scalar on every stage and the common target.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
@@ -354,8 +355,8 @@ Sum lines are described using an affine point and their fixed direction point at
 
 ## C04: the Galois homomorphism
 
-:::node "prop:c04"
-The reconstructed field automorphism fixes each $`s\in S` by the fixed marked coefficient points, and therefore fixes $`k_0`.
+:::node "prop:c04" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.fieldEquiv) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.projectivePerm_eq_fieldCoefficientPoint) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.hyperplanePerm_eq_fieldHyperplaneEquiv) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.fieldEquiv_algebraMap_of_mem) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.fieldEquiv_algebraMap) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.fieldEquiv_mul) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.toGalois) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.hyperplanePerm_toGalois)
+The reconstructed field automorphism fixes each $`s\in S` by the fixed marked coefficient points, and therefore fixes $`k_0` when $`S` generates it together with its prime field.
 Uniqueness and composition give a group homomorphism $`\eta:\operatorname{Aut}_2\to(k\simeq_{k_0}k)` inducing the recovered hyperplane permutation.
 :::
 
@@ -363,10 +364,11 @@ Uniqueness and composition give a group homomorphism $`\eta:\operatorname{Aut}_2
 
 ## S01: the scalar kernel
 
-:::node "lem:s01"
+:::node "lem:s01" (decl := OrlikSolomon.HyperplaneGT.exists_dependentTriple_of_inf_ne_bot) (decl := OrlikSolomon.HyperplaneGT.exists_hyperplane_meeting_parallel_pair) (decl := OrlikSolomon.HyperplaneGT.eq_of_eq_on_dependentTriples) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.scalar_of_hyperplanePerm_eq_one) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.scalar_of_toGalois_eq_one) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.toGalois_eq_one_iff_scalar)
 If $`\eta(g)=1`, a unique unit $`u\in R^\times` acts as $`g` on every degree-one object, including $`T`.
 Trace differences equate the multipliers in a dependent triple; a transverse hyperplane equates those of a parallel pair.
 The dimension hypothesis supplies that transverse direction.
+The scalar is the primal unit, inverse to the dual inertia unit; the actual marking square forces that same unit on the common target.
 :::
 
 ## S02: the explicit Galois action

@@ -34,7 +34,7 @@ The Cartesian node retains its Tor-sheaf and conormal statements, and the statem
 
 The fourth blueprint, cohomological hyperplane reconstruction, is in progress.
 Its 38 named groups contain 41 separately labeled statements: U01, U04 and L02 each contain a definition and a lemma, which have separate boxes and statuses.
-Thirty-three statements are formalized.
+Thirty-five statements are formalized.
 G01–G03 give coordinate geometry, A01 gives the degree-one generator basis and algebra generation, A02 gives the full degree-two exterior-quotient kernel, U03 gives full-dual coordinates and the contragredient action, U04 gives the determinant and universal centralizer with its configuration equations and paired diagram invariance, and U05 proves the local-ring primitive-coordinate criterion.
 A02 identifies that kernel with the span of parallel-pair and guarded dependent-triple wedges, including zero coefficients and characteristic two.
 A03 defines the marked quadratic and full graded automorphism groups and their faithful degree-one restriction, with one common target.
@@ -49,7 +49,8 @@ L04 transfers graph coefficients over every commutative coefficient ring by canc
 L05 detects a unique unit-supported graph functional from the four stated conditions over a nonzero local ring in dimension at least two; its centralizer is the actual decomposition submodule.
 P01–P02 recognize every coordinate-supported span intrinsically, derive its diagram invariance from the actual marking squares, and make restriction to its full dual equivariant.
 I01–I04 recover the unique inertia permutation, preserve the actual trace kernels and affine/projective incidence, and fix each marked zero/one fiber and the full projective frame, with the explicit local/nonzero, dimension and zero-marking hypotheses.
-The remaining eight statements are planned; the reconstruction theorem is not yet formalized.
+C04 extracts the Galois homomorphism after descent from the generating marking constants; S01 gives its unique common primal scalar kernel on every stage and the common target.
+The remaining six statements are planned; the reconstruction theorem is not yet formalized.
 {ref "hyperplane-gt"}[Its chapter] explains the proposed theorem, its hypotheses and the limits of the planned applications.
 
 {statusOverview}
