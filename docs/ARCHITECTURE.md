@@ -2436,7 +2436,7 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | `H/Topology/Classification/Quadratic`, `Classification/Graded`, facade `Classification` | Exact local/domain quadratic and graded upgrades; W09–W10, [#213](https://github.com/adamtopaz/OrlikSolomon/issues/213), [#214](https://github.com/adamtopaz/OrlikSolomon/issues/214) |
 | `H/Topology/Quotient/Local`, `Quotient/Domain`, facade `Quotient` | Exact local/domain scalar quotient homeomorphisms, literal degree-one quotient restriction and closedness/profiniteness; W11, [#215](https://github.com/adamtopaz/OrlikSolomon/issues/215) |
 | `H/Topology/Cofinal/Restriction`, `Cofinal/Quotient`, facade `Cofinal` | Literal cofinal maps, inverse continuity and scalar quotients; W12, [#216](https://github.com/adamtopaz/OrlikSolomon/issues/216) |
-| `H/Topology/Consequences` | Compactness and local compactness; W13, [#217](https://github.com/adamtopaz/OrlikSolomon/issues/217) |
+| `H/Topology/Consequences` | Implemented local compactness and exact finite-unit compactness criterion; W13, [#217](https://github.com/adamtopaz/OrlikSolomon/issues/217) |
 | `H/Cohomology/Topology/Adapter/Basic`, `Adapter/Comparison`, `Adapter/Quotient`, facade `Adapter` | Direct actual topologies, both adapter directions and quotient comparison; W14, [#218](https://github.com/adamtopaz/OrlikSolomon/issues/218). Quotient imports the existing Main scalar APIs without classification hypotheses |
 | `H/Cohomology/Topology/Main/Classification`, `Main/Cofinal`, `Main/Realization`, facade `Main` | Actual reconstruction/cofinality and two-realization comparisons; W15–W16, [#219](https://github.com/adamtopaz/OrlikSolomon/issues/219), [#220](https://github.com/adamtopaz/OrlikSolomon/issues/220) |
 | `H/Cohomology/DeRham/Topology/Basic`, `Topology/Comparison`, `Topology/Actions`, `Topology/Cofinal`, `Topology/Reconstruction`, facade `H/Cohomology/DeRham/Topology` | Direct ordinary topology, twist comparisons, new algebraic scalar/cofinal wrappers and final ordinary upgrades; W17–W18, [#221](https://github.com/adamtopaz/OrlikSolomon/issues/221), [#222](https://github.com/adamtopaz/OrlikSolomon/issues/222) |
@@ -2622,6 +2622,24 @@ numbers on the original target before its quotient class becomes one, genuine bi
 conjugation classes under the Krull maps and degree-one restriction, and scalar minus one
 over nonlocal `ℤ`.
 
+W13 implements the approved single pure leaf `Topology/Consequences`.
+`Topology/Consequences` derives T13 from the four existing pointwise classifier
+homeomorphisms. The parameter topology remains the literal product of discrete coefficient
+units and the compact pointwise Galois group supplied by T07 from C and positive dimension.
+The original local/domain, dimension and generating-marking hypotheses remain explicit;
+no Krull fixing condition or algebraicity is added. A private Mathlib AlexandrovDiscrete
+import supplies its existing discrete-space local-compactness instance, and the existing
+product/homeomorphism API transfers local compactness. The continuous surjective unit
+projection proves the converse compactness criterion; compact discrete units are finite.
+Finite-unit and infinite-unit consequences are named theorems, not new instances.
+T02's separation results and T11's profinite scalar quotients are reused without duplicate
+classified copies. The core is one pure leaf with no cohomology or Examples import and no
+new topology, generic helper, old facade or simp change. Durable Coefficients consumers use
+actual integer compact groups with finite units and an infinite coefficient ring, rational
+locally compact noncompact groups with a proved infinite unit family and compact scalar
+quotients, binary/dual-number compact groups, and T03's stronger zero-ring/dimension-zero
+compactness outside classification.
+
 ### Hypotheses, review and book coverage
 
 Claude approves the exact public statements of **T09–T12 and T15–T17**, and the
@@ -2642,12 +2660,12 @@ retain zero coefficients and dimension zero; ordinary specializations retain the
 existing field and characteristic-zero parameters. Literal restriction/cofinal upgrades
 do not acquire algebraicity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **9 formalized /
-2 partial / 6 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **10 formalized /
+2 partial / 5 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **9 formalized / 2 partial / 6 planned**; T03–T09, T11 and T14
+unchanged. The current M9 count is **10 formalized / 2 partial / 5 planned**; T03–T09, T11, T13 and T14
 are complete. T01–T02 cover the pure and actual supplied-theory diagrams; their ordinary de Rham
 clauses remain planned.
 

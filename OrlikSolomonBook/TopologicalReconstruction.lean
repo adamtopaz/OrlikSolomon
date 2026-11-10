@@ -16,7 +16,7 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Nine statements are formalized, two are partly formalized and six remain planned.*
+*Ten statements are formalized, two are partly formalized and five remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
@@ -32,6 +32,7 @@ The four earlier blueprints retain their separate counts.
 The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic inputs.
 T09 upgrades the exact local/domain quadratic classifiers for pointwise convergence and for Krull under the precise fixing condition or algebraicity.
 T11 proves the exact scalar quotient homeomorphisms, closedness and profiniteness; the remaining graded, cofinal and actual/ordinary reconstruction upgrades remain planned.
+T13 proves local compactness and the exact finite-unit compactness criterion, including integral coefficients and noncompact rational-coefficient groups with compact scalar quotients.
 
 # The intended topology and hypotheses
 
@@ -186,10 +187,15 @@ No algebraicity or union closure is required, and bijectivity comes from M8 rath
 
 ## T13: separation and compactness
 
-:::node "cor:t13"
+:::node "cor:t13" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.locallyCompactSpace) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.locallyCompactSpace_of_isDomain) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.locallyCompactSpace) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.locallyCompactSpace_of_isDomain) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.compactSpace_iff_finite_units) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.compactSpace_iff_finite_units_of_isDomain) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.compactSpace_iff_finite_units) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.compactSpace_iff_finite_units_of_isDomain) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.scalarQuotient_compactSpace) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.domainScalarQuotient_compactSpace) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.scalarQuotient_compactSpace) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.domainScalarQuotient_compactSpace)
 Under the classification hypotheses, both diagram groups are locally compact, Hausdorff and totally separated.
 They are compact, equivalently profinite, exactly when the discrete coefficient-unit group is finite; this includes integral coefficients $`\mathbb Z` as well as finite coefficients.
 Their scalar quotients are always profinite in the pointwise topology, including when the Krull comparison condition fails.
+The local-ring and integral-domain hypotheses are exactly those of the pointwise classifiers; no algebraicity, Krull fixing condition or finiteness of the coefficient ring is needed.
+T02 supplies Hausdorffness and total separation in the existing scope, while T11 supplies the closed scalar ranges and the literal quotients' Hausdorff, compact and totally separated structures.
+The continuous surjective projection to discrete coefficient units proves the converse compactness criterion.
+The durable consumers {name OrlikSolomon.HyperplaneGT.CompactnessTopologyExamples.integer_compact_groups}`integer_compact_groups` and {name OrlikSolomon.HyperplaneGT.CompactnessTopologyExamples.rational_groups_and_quotients}`rational_groups_and_quotients` distinguish finite units in an infinite ring from actual infinite units.
+Binary and dual-number coefficients give compact classified groups; zero coefficients in dimension zero use T03's stronger unclassified compactness theorem.
 :::
 
 # Actual cohomology and de Rham
