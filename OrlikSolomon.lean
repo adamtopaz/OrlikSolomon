@@ -256,6 +256,7 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Basic
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Comparison
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Quotient
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
