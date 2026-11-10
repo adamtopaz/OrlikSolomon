@@ -6,7 +6,7 @@ Authors: Adam Topaz, Codex
 import OrlikSolomonBook.Node
 import OrlikSolomon
 
-open Verso.Genre Manual
+open Verso.Genre Manual InlineLean
 open OrlikSolomonBook
 
 #doc (Manual) "Topological hyperplane reconstruction" =>
@@ -16,7 +16,7 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Seven statements are formalized, two are partly formalized and eight remain planned.*
+*Eight statements are formalized, two are partly formalized and seven remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
@@ -28,7 +28,8 @@ T08 constructs the actual rational-function counterexample and proves noncontinu
 This chapter follows the [fifth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/topological_reconstruction_blueprint.tex), for milestone M9, tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
 Its seventeen named nodes T01–T17 each have one labelled statement and one separate box below.
 The four earlier blueprints retain their separate counts.
-The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic inputs, and their reconstruction homeomorphisms remain planned.
+The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic inputs.
+T09 upgrades the exact local/domain quadratic classifiers for pointwise convergence and for Krull under the precise fixing condition or algebraicity. T12 upgrades literal cofinal restrictions and their actual scalar quotients without a field-extension condition; the other reconstruction upgrades remain planned.
 
 # The intended topology and hypotheses
 
@@ -139,10 +140,15 @@ No topology instance is replaced and no cohomology theory is asserted to exist.
 
 ## T09: quadratic reconstruction
 
-:::node "thm:t09"
-Under the classification hypotheses, upgrade each existing local-ring or integral-domain quadratic equivalence to a topological group isomorphism from discrete coefficient units times the pointwise group.
+:::node "thm:t09" (decl := OrlikSolomon.HyperplaneGT.quadraticAutContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.quadraticAutKrullContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutKrullContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.quadraticAutKrullContinuousEquivOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutKrullContinuousEquivOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.quadraticAutContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.quadraticAutKrullContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutKrullContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.quadraticAutKrullContinuousEquivOfIsAlgebraic_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutKrullContinuousEquivOfIsAlgebraic_toMulEquiv)
+Under the classification hypotheses, each existing local-ring or integral-domain quadratic equivalence is a topological group isomorphism from discrete coefficient units times the pointwise group.
 Under the exact Krull comparison condition, in particular under algebraicity, use Mathlib's Krull topology instead.
-Both directions must be continuous, and the underlying multiplicative equivalence must be the existing M8 map.
+Both directions are continuous, and each displayed forgetful equality identifies the underlying multiplicative equivalence with the exact existing M8 map.
+The source uses the independently defined literal products {name OrlikSolomon.HyperplaneGT.coefficientGaloisPointwiseTopology}`coefficientGaloisPointwiseTopology` and {name OrlikSolomon.HyperplaneGT.coefficientGaloisKrullTopology}`coefficientGaloisKrullTopology`; the diagram keeps its direct component topology.
+The exact basis preimages are {name OrlikSolomon.HyperplaneGT.quadraticAutEquiv_preimage_stageKernel}`quadraticAutEquiv_preimage_stageKernel` and {name OrlikSolomon.HyperplaneGT.coefficientDomainAutEquiv_preimage_stageKernel}`coefficientDomainAutEquiv_preimage_stageKernel`.
+The common target forces the primal scalar to be one before the stage basis detects fixed geometric labels; the target remains present even at an empty stage.
+No algebraicity is required for the pointwise upgrades. The coefficient hypotheses, dimension bound and generating marking constants are exactly those of M8.
+Forward and inverse expansions are plain rewrites, preserving both bare inverse cancellations.
 :::
 
 ## T10: graded reconstruction
@@ -170,9 +176,9 @@ Under the classification hypotheses, each existing local/domain quadratic/graded
 No algebraicity or union closure is required, and bijectivity comes from M8 rather than from cofinality alone.
 For arbitrary coefficients and dimensions, the original direct topology is exactly induced by literal subsystem restriction: a selected stage containing any old finite arrangement controls agreement at that old stage, while retaining the single target.
 The four group homeomorphisms keep the exact M8 maps and inverses, including their selected-stage, target and scalar/Galois coordinate formulas.
-Their underlying-map identities are {name OrlikSolomon.HyperplaneGT.cofinalRestrictionContinuousEquiv_toMulEquiv}, {name OrlikSolomon.HyperplaneGT.gradedCofinalRestrictionContinuousEquiv_toMulEquiv}, {name OrlikSolomon.HyperplaneGT.domainCofinalRestrictionContinuousEquiv_toMulEquiv} and {name OrlikSolomon.HyperplaneGT.domainGradedCofinalRestrictionContinuousEquiv_toMulEquiv}.
+Their underlying-map identities are {name OrlikSolomon.HyperplaneGT.cofinalRestrictionContinuousEquiv_toMulEquiv}`cofinalRestrictionContinuousEquiv_toMulEquiv`, {name OrlikSolomon.HyperplaneGT.gradedCofinalRestrictionContinuousEquiv_toMulEquiv}`gradedCofinalRestrictionContinuousEquiv_toMulEquiv`, {name OrlikSolomon.HyperplaneGT.domainCofinalRestrictionContinuousEquiv_toMulEquiv}`domainCofinalRestrictionContinuousEquiv_toMulEquiv` and {name OrlikSolomon.HyperplaneGT.domainGradedCofinalRestrictionContinuousEquiv_toMulEquiv}`domainGradedCofinalRestrictionContinuousEquiv_toMulEquiv`.
 The scalar quotients use the actual Mathlib quotient topologies; both directions descend by the quotient universal property.
-These new quotient wrappers expose exactly the induced old group equivalences through {name OrlikSolomon.HyperplaneGT.cofinalScalarQuotientContinuousEquiv_toMulEquiv}, {name OrlikSolomon.HyperplaneGT.gradedCofinalScalarQuotientContinuousEquiv_toMulEquiv}, {name OrlikSolomon.HyperplaneGT.domainCofinalScalarQuotientContinuousEquiv_toMulEquiv} and {name OrlikSolomon.HyperplaneGT.domainGradedCofinalScalarQuotientContinuousEquiv_toMulEquiv}.
+These new quotient wrappers expose exactly the induced old group equivalences through {name OrlikSolomon.HyperplaneGT.cofinalScalarQuotientContinuousEquiv_toMulEquiv}`cofinalScalarQuotientContinuousEquiv_toMulEquiv`, {name OrlikSolomon.HyperplaneGT.gradedCofinalScalarQuotientContinuousEquiv_toMulEquiv}`gradedCofinalScalarQuotientContinuousEquiv_toMulEquiv`, {name OrlikSolomon.HyperplaneGT.domainCofinalScalarQuotientContinuousEquiv_toMulEquiv}`domainCofinalScalarQuotientContinuousEquiv_toMulEquiv` and {name OrlikSolomon.HyperplaneGT.domainGradedCofinalScalarQuotientContinuousEquiv_toMulEquiv}`domainGradedCofinalScalarQuotientContinuousEquiv_toMulEquiv`.
 Local/domain overlaps and actual degree-one squares commute. Unrelated supplied families compare through the union of their selected families, without assuming either family contains unions of arrangements.
 The forward and inverse expansion equations are plain rewrites, preserving ordinary inverse cancellation.
 Examples use the actual non-union-closed subsystem, nonfield local and integer coefficients, a nonidentity complex-conjugation scalar class, and zero-coefficient/dimension-zero literal continuity.
