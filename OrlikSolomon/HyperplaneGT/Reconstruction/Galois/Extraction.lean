@@ -187,21 +187,37 @@ theorem hyperplanePerm_toGalois (g : DiagramAut R C S) (hS : (0 : k₀) ∈ S)
     g.hyperplanePerm hS hn H = (toGalois R C S hS hgen hn g) • H :=
   g.hyperplanePerm_eq_fieldHyperplaneEquiv hS hn H
 
+/-- Equality with any Galois automorphism is detected by its actual action on hyperplanes.
+The coordinate hyperplanes prove faithfulness, with no additional classification hypothesis.
+Blueprint: the recovered-action clause of C04 (`prop:c04`). -/
+theorem toGalois_eq_iff_hyperplanePerm (g : DiagramAut R C S)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) (σ : k ≃ₐ[k₀] k) :
+    toGalois R C S hS hgen hn g = σ ↔ ∀ H, g.hyperplanePerm hS hn H = σ • H := by
+  constructor
+  · intro he H
+    rw [g.hyperplanePerm_toGalois hS hgen hn, he]
+  · intro he
+    ext a
+    let i : Fin n := ⟨0, lt_of_lt_of_le (by decide : 0 < 2) hn⟩
+    have hh := he (coordinateHyperplane i a)
+    change g.hyperplanePerm hS hn (coordinateHyperplane i a) =
+      fieldHyperplaneEquiv σ.toRingEquiv (coordinateHyperplane i a) at hh
+    rw [g.hyperplanePerm_eq_fieldHyperplaneEquiv, fieldHyperplaneEquiv_coordinateHyperplane,
+      fieldHyperplaneEquiv_coordinateHyperplane] at hh
+    exact coordinateHyperplane_injective i hh
+
 /-- Trivial extracted Galois action is equivalent to trivial recovered label permutation.
 This uses the actual coordinate hyperplanes, so no faithfulness hypothesis is added. -/
 theorem toGalois_eq_one_iff_hyperplanePerm_eq_one (g : DiagramAut R C S)
     (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
     toGalois R C S hS hgen hn g = 1 ↔ g.hyperplanePerm hS hn = 1 := by
+  rw [g.toGalois_eq_iff_hyperplanePerm hS hgen hn]
   constructor
   · intro he
     ext H
-    rw [g.hyperplanePerm_toGalois hS hgen hn, he, one_smul, Equiv.Perm.one_apply]
-  · intro he
-    ext a
-    let i : Fin n := ⟨0, lt_of_lt_of_le (by decide : 0 < 2) hn⟩
-    have hh := g.hyperplanePerm_eq_fieldHyperplaneEquiv hS hn (coordinateHyperplane i a)
-    rw [he, Equiv.Perm.one_apply, fieldHyperplaneEquiv_coordinateHyperplane] at hh
-    exact coordinateHyperplane_injective i hh.symm
+    simpa using he H
+  · intro he H
+    rw [he, Equiv.Perm.one_apply, one_smul]
 
 end DiagramAut
 
