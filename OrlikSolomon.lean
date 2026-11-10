@@ -264,8 +264,10 @@ public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Detection
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Geometry
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Transfer
 public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing
+public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.Graded
 public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.GradedScalar
 public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.Quadratic
+public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.Quotient
 public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.Scalar
 public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.Splitting
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections
