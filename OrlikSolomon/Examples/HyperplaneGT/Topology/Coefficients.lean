@@ -7,9 +7,10 @@ module
 
 public import OrlikSolomon.Examples.HyperplaneGT.Diagram
 public import OrlikSolomon.HyperplaneGT.Topology.Basic
-public import OrlikSolomon.HyperplaneGT.Topology.Classification.Quadratic
+public import OrlikSolomon.HyperplaneGT.Topology.Classification
 public import OrlikSolomon.Examples.HyperplaneGT.LocalClassification
 public import OrlikSolomon.Examples.HyperplaneGT.DomainClassification
+public import OrlikSolomon.Examples.HyperplaneGT.GradedClassification
 public import Mathlib.FieldTheory.KrullTopology
 
 /-!
@@ -26,7 +27,11 @@ squares. Existing actual scalar-two/dual-three, nilpotent-local, complex-conjuga
 integer-domain fixtures are consumed through the new continuous equivalences. Pure
 zero-coefficient and dimension-zero checks do not extend classification beyond its hypotheses.
 
-Blueprint: T01 (`def:t01`), T02 (`lem:t02`) and T09 (`thm:t09`).
+The graded consumers retain all sixteen bare inverse cancellations, whole-degree actions,
+literal restriction and actual full marking/inclusion squares. Concrete fixtures use the
+same original scalar and Galois families through the full-algebra homeomorphisms.
+
+Blueprint: T01 (`def:t01`), T02 (`lem:t02`), T09 (`thm:t09`) and T10 (`cor:t10`).
 -/
 
 @[expose] public section
@@ -263,3 +268,224 @@ theorem domain_algebraic_cancellation [IsDomain R] [Algebra.IsAlgebraic k₀ k]
   simp
 
 end OrlikSolomon.HyperplaneGT.QuadraticTopologyExamples
+
+namespace OrlikSolomon.HyperplaneGT.GradedTopologyExamples
+
+open scoped DiscreteCoefficientUnits FiniteStageTopology
+
+universe u v r
+
+variable {k₀ : Type u} {k : Type v} [Field k₀] [Field k] [Algebra k₀ k]
+  {n : ℕ} {R : Type r} [CommRing R] (C : CofinalSystem k₀ k n) (S : Set k₀)
+  (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+
+/-- Importing the optional classification facade keeps actual global Krull inference. -/
+theorem global_krull_preserved :
+    (inferInstance : TopologicalSpace (k ≃ₐ[k₀] k)) = krullTopology k₀ k := rfl
+
+/-- The exact local restriction retains both bare cancellations without any field condition.
+-/
+theorem local_restriction_cancellation [IsLocalRing R]
+    (g : GradedDiagramAut R C S) (q : DiagramAut R C S) :
+    (gradedAutContinuousEquiv R C S hS hgen hn).symm
+        (gradedAutContinuousEquiv R C S hS hgen hn g) = g ∧
+      gradedAutContinuousEquiv R C S hS hgen hn
+        ((gradedAutContinuousEquiv R C S hS hgen hn).symm q) = q := by simp
+
+/-- The exact domain restriction retains both bare cancellations without any field condition.
+-/
+theorem domain_restriction_cancellation [IsDomain R]
+    (g : GradedDiagramAut R C S) (q : DiagramAut R C S) :
+    (coefficientDomainGradedAutContinuousEquiv R C S hS hgen hn).symm
+        (coefficientDomainGradedAutContinuousEquiv R C S hS hgen hn g) = g ∧
+      coefficientDomainGradedAutContinuousEquiv R C S hS hgen hn
+        ((coefficientDomainGradedAutContinuousEquiv R C S hS hgen hn).symm q) = q := by simp
+
+section Pointwise
+
+open scoped GaloisPointwise
+
+/-- The local product classifier retains both ordinary inverse cancellations. -/
+theorem local_classification_cancellation [IsLocalRing R]
+    (p : Rˣ × (k ≃ₐ[k₀] k)) (g : GradedDiagramAut R C S) :
+    (gradedClassificationContinuousEquiv R C S hS hgen hn).symm
+        (gradedClassificationContinuousEquiv R C S hS hgen hn p) = p ∧
+      gradedClassificationContinuousEquiv R C S hS hgen hn
+        ((gradedClassificationContinuousEquiv R C S hS hgen hn).symm g) = g := by simp
+
+/-- The domain product classifier retains both ordinary inverse cancellations. -/
+theorem domain_classification_cancellation [IsDomain R]
+    (p : Rˣ × (k ≃ₐ[k₀] k)) (g : GradedDiagramAut R C S) :
+    (coefficientDomainGradedClassificationContinuousEquiv R C S hS hgen hn).symm
+        (coefficientDomainGradedClassificationContinuousEquiv R C S hS hgen hn p) = p ∧
+      coefficientDomainGradedClassificationContinuousEquiv R C S hS hgen hn
+        ((coefficientDomainGradedClassificationContinuousEquiv R C S hS hgen hn).symm g) = g := by
+          simp
+
+/-- Whole homogeneous components use the scalar degree power at a covariant Galois label;
+the common target uses the same power, including degree zero. -/
+theorem whole_degree_and_target [IsLocalRing R] (a : Rˣ) (σ : k ≃ₐ[k₀] k)
+    (A : C.Stage) (q : ℕ) (x : OSAlgebra R A.val.val)
+    (hx : x ∈ OSAlgebra.degree R A.val.val q)
+    (y : OSAlgebra R (twoPunctureArrangement k))
+    (hy : y ∈ OSAlgebra.degree R (twoPunctureArrangement k) q) :
+    (gradedClassificationContinuousEquiv R C S hS hgen hn (a, σ)).stageEquiv A x =
+        (a : R) ^ q • galoisOSAlgebraEquiv R A.val σ x ∧
+      (gradedClassificationContinuousEquiv R C S hS hgen hn (a, σ)).targetEquiv y =
+        (a : R) ^ q • y :=
+  ⟨gradedClassificationContinuousEquiv_stage_apply_of_mem_degree R C S hS hgen hn a σ A q x hx,
+    gradedClassificationContinuousEquiv_target_apply_of_mem_degree R C S hS hgen hn a σ q y hy⟩
+
+/-- The actual whole-algebra marking and inclusion equations retain the same single target.
+-/
+theorem full_arrow_squares [IsDomain R] (a : Rˣ) (σ : k ≃ₐ[k₀] k)
+    {A B : C.Stage} (h : A ≤ B) (w : Marking S n) (hw : w.Available A.val.val) :
+    let e := coefficientDomainGradedClassificationContinuousEquiv R C S hS hgen hn (a, σ)
+    (e.stageEquiv B).toAlgHom.comp (OSAlgebra.map R h) =
+        (OSAlgebra.map R h).comp (e.stageEquiv A).toAlgHom ∧
+      (e.stageEquiv A).toAlgHom.comp (w.osMap R hw) =
+        (w.osMap R hw).comp e.targetEquiv.toAlgHom :=
+  ⟨GradedDiagramAut.inclusion_naturality _ h, GradedDiagramAut.marking_naturality _ A w hw⟩
+
+/-- The topological restriction square is an equality of bundled maps, including both targets.
+-/
+theorem literal_restriction_square [IsDomain R] :
+    (coefficientDomainGradedClassificationContinuousEquiv R C S hS hgen hn).trans
+        (coefficientDomainGradedAutContinuousEquiv R C S hS hgen hn) =
+      coefficientDomainAutContinuousEquiv R C S hS hgen hn :=
+  coefficientDomainGradedClassificationContinuousEquiv_trans_restriction R C S hS hgen hn
+
+local instance : Fact (Nat.Prime 5) := ⟨by decide⟩
+local instance : IsLocalRing (ZMod 4) := by
+  change IsLocalRing (ZMod (2 ^ 2))
+  infer_instance
+
+/-- A genuine full scalar-two family restricts to the existing primal-two/dual-three
+fixture, with the same common target and exact product inverse. -/
+theorem scalar_two_inverse_three :
+    let C := fullCofinalSystem (ZMod 2) (ZMod 2) 2
+    let S : Set (ZMod 2) := {0}
+    let e := gradedClassificationContinuousEquiv (ZMod 5) C S
+      (by simp [S]) (Subsingleton.elim _ _) (by decide)
+    let g := e (DualExamples.scalarTwoUnit, 1)
+    let q := GradedDiagramAut.toQuadratic (ZMod 5) C S g
+    let H := coordinateHyperplane (0 : Fin 2) (0 : ZMod 2)
+    e.symm g = (DualExamples.scalarTwoUnit, 1) ∧
+      q.universalEquiv (Finsupp.single H 1) H = 2 ∧
+      DiagramAut.dualAction q (Finsupp.lapply H) (Finsupp.single H 1) = 3 ∧
+      q.targetEquiv (Finsupp.single 0 1) 0 = 2 := by
+  dsimp only
+  refine ⟨by simp, ?_⟩
+  rw [toQuadratic_gradedClassificationContinuousEquiv]
+  exact ⟨QuadraticTopologyExamples.scalar_two_inverse_three.2.1,
+    QuadraticTopologyExamples.scalar_two_inverse_three.2.2.1,
+    QuadraticTopologyExamples.scalar_two_inverse_three.2.2.2.1⟩
+
+/-- Over nonfield local ZMod4, the exact topological restriction inverse retains the full
+scalar extension and the nonzero nilpotent coefficient from the original fixture. -/
+theorem mod_four_full_extension :
+    let C := fullCofinalSystem (ZMod 2) (ZMod 2) 2
+    let S : Set (ZMod 2) := {0}
+    let hgen : Subfield.closure S = ⊤ := Subsingleton.elim _ _
+    let g := (gradedAutContinuousEquiv (ZMod 4) C S (by simp [S]) hgen (by decide)).symm
+      (scalarQuadraticAut (ZMod 4) C S LocalExamples.modFourUnit)
+    g = scalarGradedAut (ZMod 4) C S LocalExamples.modFourUnit ∧
+      (GradedDiagramAut.toQuadratic (ZMod 4) C S g).targetEquiv (Finsupp.single 0 1) 0 = 3 ∧
+      g ≠ 1 ∧ (2 : ZMod 4) ≠ 0 ∧ (2 : ZMod 4) * 2 = 0 :=
+  GradedClassificationExamples.mod_four_full_extension
+
+/-- The integral-domain full classifier is genuinely nonidentity over the nonlocal ring ℤ.
+Its target restriction has the original negative scalar. -/
+theorem integer_full_nonidentity :
+    let C := fullCofinalSystem (ZMod 2) (ZMod 2) 2
+    let S : Set (ZMod 2) := {0}
+    let hgen : Subfield.closure S = ⊤ := Subsingleton.elim _ _
+    let g := coefficientDomainGradedClassificationContinuousEquiv ℤ C S
+      (by simp [S]) hgen (by decide) (-1, 1)
+    (GradedDiagramAut.toQuadratic ℤ C S g).targetEquiv (Finsupp.single 0 1) 0 = -1 ∧
+      g ≠ 1 := by
+  dsimp only
+  constructor
+  · rw [toQuadratic_coefficientDomainGradedClassificationContinuousEquiv]
+    exact QuadraticTopologyExamples.integer_scalar_nonidentity.1
+  · intro hg
+    have hq := congrArg (GradedDiagramAut.toQuadratic _ _ _) hg
+    rw [toQuadratic_coefficientDomainGradedClassificationContinuousEquiv, map_one] at hq
+    exact QuadraticTopologyExamples.integer_scalar_nonidentity.2 hq
+
+/-- A genuine full graded family has a nonidentity complex-conjugation field coordinate,
+independent of its nonfield ZMod4 coefficients and with the original scalar target. -/
+theorem conjugation_mod_four :
+    let C := fullCofinalSystem ℝ ℂ 2
+    let S : Set ℝ := Set.univ
+    let e := gradedClassificationContinuousEquiv (ZMod 4) C S
+      (by simp [S]) (by simp [S]) (by decide)
+    let g := e (IncidenceExamples.scalarThreeUnit, Complex.conjAe)
+    let q := GradedDiagramAut.toQuadratic (ZMod 4) C S g
+    e.symm g = (IncidenceExamples.scalarThreeUnit, Complex.conjAe) ∧
+      DiagramAut.toGalois (ZMod 4) C S (by simp [S]) (by simp [S]) (by decide) q
+        Complex.I = -Complex.I ∧
+      DiagramAut.toGalois (ZMod 4) C S (by simp [S]) (by simp [S]) (by decide) q ≠ 1 ∧
+      q.targetEquiv (Finsupp.single 0 1) 0 = 3 := by
+  dsimp only
+  refine ⟨by simp, ?_⟩
+  rw [toQuadratic_gradedClassificationContinuousEquiv]
+  exact QuadraticTopologyExamples.conjugation_mod_four.2
+
+end Pointwise
+
+/-- The local krull wrapper retains both bare cancellations with its exact named topology.
+-/
+theorem local_krull_cancellation [IsLocalRing R] (hK : KrullFixingCondition k₀ k)
+    (p : Rˣ × (k ≃ₐ[k₀] k)) (g : GradedDiagramAut R C S) :
+    (gradedClassificationKrullContinuousEquiv R C S hS hgen hn hK).symm
+        (gradedClassificationKrullContinuousEquiv R C S hS hgen hn hK p) = p ∧
+      gradedClassificationKrullContinuousEquiv R C S hS hgen hn hK
+        ((gradedClassificationKrullContinuousEquiv R C S hS hgen hn hK).symm g) = g := by simp
+
+/-- The domain krull wrapper retains both bare cancellations with its exact named topology.
+-/
+theorem domain_krull_cancellation [IsDomain R] (hK : KrullFixingCondition k₀ k)
+    (p : Rˣ × (k ≃ₐ[k₀] k)) (g : GradedDiagramAut R C S) :
+    (coefficientDomainGradedClassificationKrullContinuousEquiv R C S hS hgen hn hK).symm
+        (coefficientDomainGradedClassificationKrullContinuousEquiv R C S hS hgen hn hK p) = p ∧
+      coefficientDomainGradedClassificationKrullContinuousEquiv R C S hS hgen hn hK
+        ((coefficientDomainGradedClassificationKrullContinuousEquiv R C S hS hgen hn hK).symm g) =
+          g := by simp
+
+/-- The local algebraic wrapper retains both bare cancellations with its exact named topology.
+-/
+theorem local_algebraic_cancellation [IsLocalRing R] [Algebra.IsAlgebraic k₀ k]
+    (p : Rˣ × (k ≃ₐ[k₀] k)) (g : GradedDiagramAut R C S) :
+    (gradedClassificationKrullContinuousEquivOfIsAlgebraic R C S hS hgen hn).symm
+        (gradedClassificationKrullContinuousEquivOfIsAlgebraic R C S hS hgen hn p) = p ∧
+      gradedClassificationKrullContinuousEquivOfIsAlgebraic R C S hS hgen hn
+        ((gradedClassificationKrullContinuousEquivOfIsAlgebraic R C S hS hgen hn).symm g) = g :=
+          by simp
+
+/-- The domain algebraic wrapper retains both bare cancellations with its exact named topology.
+-/
+theorem domain_algebraic_cancellation [IsDomain R] [Algebra.IsAlgebraic k₀ k]
+    (p : Rˣ × (k ≃ₐ[k₀] k)) (g : GradedDiagramAut R C S) :
+    (coefficientDomainGradedClassificationKrullContinuousEquivOfIsAlgebraic R C S hS hgen hn).symm
+        (coefficientDomainGradedClassificationKrullContinuousEquivOfIsAlgebraic R C S hS hgen hn
+          p) = p ∧
+      coefficientDomainGradedClassificationKrullContinuousEquivOfIsAlgebraic R C S hS hgen hn
+        ((coefficientDomainGradedClassificationKrullContinuousEquivOfIsAlgebraic R C S hS hgen
+          hn).symm g) = g := by simp
+
+/-- The literal Krull classifier obeys the original all-degree formula and actual marking
+square; the scalar and covariant label action are independent of the topology wrapper. -/
+theorem krull_degree_and_marking [IsLocalRing R] (hK : KrullFixingCondition k₀ k)
+    (a : Rˣ) (σ : k ≃ₐ[k₀] k) (A : C.Stage) (q : ℕ) (x : OSAlgebra R A.val.val)
+    (hx : x ∈ OSAlgebra.degree R A.val.val q) (w : Marking S n)
+    (hw : w.Available A.val.val) (y : OSAlgebra R (twoPunctureArrangement k)) :
+    let g := gradedClassificationKrullContinuousEquiv R C S hS hgen hn hK (a, σ)
+    g.stageEquiv A x = (a : R) ^ q • galoisOSAlgebraEquiv R A.val σ x ∧
+      g.stageEquiv A (w.osMap R hw y) = w.osMap R hw (g.targetEquiv y) := by
+  dsimp only
+  rw [gradedClassificationKrullContinuousEquiv_apply]
+  exact ⟨gradedClassificationEquiv_stage_apply_of_mem_degree R C S hS hgen hn a σ A q x hx,
+    gradedClassificationEquiv_marking R C S hS hgen hn a σ A w hw y⟩
+
+end OrlikSolomon.HyperplaneGT.GradedTopologyExamples
