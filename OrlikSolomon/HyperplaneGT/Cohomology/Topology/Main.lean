@@ -7,6 +7,7 @@ module
 
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Cofinal
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization
 
 /-!
 # Topological reconstruction for actual supplied cohomology theories
@@ -18,7 +19,10 @@ results and cofinality require no field-extension condition; Krull classifiers s
 precise fixing condition or algebraicity separately. This optional facade activates no
 scope and imports no ordinary de Rham instance or Examples.
 
-Blueprint: T15 (`thm:t15`). T16 supplies the separate two-theory realization interfaces.
+The canonical two-theory realization comparisons preserve their exact old maps, whole
+stages and common target, including classifier, cofinal and scalar-quotient squares.
+
+Blueprint: T15 (`thm:t15`) and T16 (`thm:t16`).
 -/
 
 @[expose] public section
