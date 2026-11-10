@@ -2486,7 +2486,25 @@ uses only the supplied cofinality, and the induced product uses whole discrete s
 permutations. The pure M8 `Diagram/GaloisAction/Stage` import reuses the existing
 `galoisLabelEquiv` rather than duplicating it; no reconstruction or cohomology is imported.
 The stage-permutation application formula remains a plain rewrite to preserve both inverse
-cancellation simp forms. `Krull/Comparison` and its exact comparison criterion remain W06.
+cancellation simp forms.
+
+W06 implements `Krull/Comparison` and the optional `Krull` facade.
+`KrullFixingCondition` is the approved ordinary proposition asserting that every scalar
+fixer contains the fixer of a finite-dimensional intermediate field. The actual global
+Mathlib Krull topology equals the named pointwise topology exactly under this condition;
+pointwise is always finer, and algebraicity supplies a wrapper without normality or
+separability. Finite intermediate-field fixers are tested on a vector-space basis by
+comparing maps from that intermediate field into the ambient field; no invariance of the
+intermediate field is assumed. `hyperplaneCoefficientField` is the actual intermediate
+field adjoined from all normalized affine coefficients, including constants. Its fixing
+subgroup equals the hyperplane fixer without algebraicity; algebraicity supplies finite
+dimensionality. For `1 ≤ n`, arbitrary chosen cofinal families contain a stage whose kernel
+lies inside each finite intermediate-field fixer, with no union-closure, algebraicity or
+comparison-condition premise. The stage-to-Krull equality then uses the exact condition or
+its algebraic wrapper. The facade activates no scope and preserves the global Krull and
+field topology instances. `Examples/HyperplaneGT/Topology/Systems` tests these boundaries,
+including trivial automorphism groups without an algebraicity premise, dimension-zero
+coefficient fields, and a nonreal coefficient field whose fixer excludes conjugation.
 
 ### Hypotheses, review and book coverage
 
@@ -2508,12 +2526,12 @@ retain zero coefficients and dimension zero; ordinary specializations retain the
 existing field and characteristic-zero parameters. Literal restriction/cofinal upgrades
 do not acquire algebraicity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **3 formalized /
-2 partial / 12 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **4 formalized /
+2 partial / 11 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **3 formalized / 2 partial / 12 planned**; T03–T05 are
+unchanged. The current M9 count is **4 formalized / 2 partial / 11 planned**; T03–T06 are
 complete, and T01–T02 cover the pure diagrams while their actual-theory and ordinary clauses
 remain planned.
 
