@@ -43,7 +43,8 @@ C01–C03 give projective span preservation, separate affine coordinate bijectio
 U01–U02 give the literal universal free module, its finite-stage universal property and quadratic relation witnesses, and the induced diagram action preserving the common target component.
 S02 constructs the direct Galois action on the full graded diagram from every defining OS relation, with identity on the one common target.
 L01–L03 give the surjective trace map with exact kernel, the explicit decomposition product and all four annihilator identities, the unit-delta centralizer, and surjective restriction from a graph to the actual vertical module with inertia kernel.
-The remaining seventeen statements are planned; the reconstruction theorem is not yet formalized.
+P01–P02 recognize every coordinate-supported span intrinsically, derive its diagram invariance from the actual marking squares, and make restriction to its full dual equivariant.
+The remaining fifteen statements are planned; the reconstruction theorem is not yet formalized.
 {ref "hyperplane-gt"}[Its chapter] explains the proposed theorem, its hypotheses and the limits of the planned applications.
 
 {statusOverview}

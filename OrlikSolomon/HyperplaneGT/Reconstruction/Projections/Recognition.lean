@@ -14,7 +14,7 @@ public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Projection
 
 Restriction to an arbitrary supported coordinate span is surjective by Mathlib's explicit
 supported-function retraction. Its kernel is the evaluation annihilator. Coordinate planes
-are the actual two-dimensional spans of their zero and one level labels. Trace functionals
+are the actual two-generator spans of their zero and one level labels. Trace functionals
 give coefficient detectors outside an enlarged coordinate set.
 
 Blueprint: P01 (`lem:p01`).
