@@ -11,6 +11,8 @@ public import OrlikSolomon.HyperplaneGT.Topology.Classification
 public import OrlikSolomon.Examples.HyperplaneGT.LocalClassification
 public import OrlikSolomon.Examples.HyperplaneGT.DomainClassification
 public import OrlikSolomon.Examples.HyperplaneGT.GradedClassification
+public import OrlikSolomon.Examples.HyperplaneGT.FinalCoefficients
+public import OrlikSolomon.HyperplaneGT.Topology.Quotient
 public import Mathlib.FieldTheory.KrullTopology
 
 /-!
@@ -31,7 +33,12 @@ The graded consumers retain all sixteen bare inverse cancellations, whole-degree
 literal restriction and actual full marking/inclusion squares. Concrete fixtures use the
 same original scalar and Galois families through the full-algebra homeomorphisms.
 
-Blueprint: T01 (`def:t01`), T02 (`lem:t02`), T09 (`thm:t09`) and T10 (`cor:t10`).
+The literal scalar quotient consumers detect the nonidentity unit `1 + ε` over dual numbers
+before taking the quotient, and retain complex conjugation afterwards. They test both actual
+quotient topologies, degree-one restriction and the nonlocal integer-domain case.
+
+Blueprint: T01 (`def:t01`), T02 (`lem:t02`), T09 (`thm:t09`), T10 (`cor:t10`) and
+T11 (`thm:t11`).
 -/
 
 @[expose] public section
@@ -489,3 +496,114 @@ theorem krull_degree_and_marking [IsLocalRing R] (hK : KrullFixingCondition k₀
     gradedClassificationEquiv_marking R C S hS hgen hn a σ A w hw y⟩
 
 end OrlikSolomon.HyperplaneGT.GradedTopologyExamples
+
+namespace OrlikSolomon.HyperplaneGT.QuotientTopologyExamples
+
+open scoped FiniteStageTopology
+
+local instance : Fact (Nat.Prime 2) := ⟨by decide⟩
+
+section Pointwise
+
+open scoped GaloisPointwise
+
+/-- The actual common target detects the nonidentity unit `1 + ε` over the nonfield
+local ring of characteristic-two dual numbers, with `ε ≠ 0` and `ε² = 0`. Both scalar
+quotients kill it, and both new quotient homeomorphisms send its class to the identity. -/
+theorem dual_number_scalar_quotients :
+    let C := fullCofinalSystem ℝ ℂ 2
+    let a := LocalExamples.dualNumberUnit
+    let q := DiagramAut.scalarQuotientMap (DualNumber (ZMod 2)) C Set.univ
+      (scalarQuadraticAut (DualNumber (ZMod 2)) C Set.univ a)
+    let t := GradedDiagramAut.scalarQuotientMap (DualNumber (ZMod 2)) C Set.univ
+      (scalarGradedAut (DualNumber (ZMod 2)) C Set.univ a)
+    (scalarQuadraticAut (DualNumber (ZMod 2)) C Set.univ a).targetEquiv
+        (Finsupp.single (0 : Fin 2) 1) 0 = (a : DualNumber (ZMod 2)) ∧
+      (a : DualNumber (ZMod 2)) ≠ 1 ∧
+      (DualNumber.eps : DualNumber (ZMod 2)) ≠ 0 ∧
+      (DualNumber.eps : DualNumber (ZMod 2)) ^ 2 = 0 ∧ q = 1 ∧ t = 1 ∧
+      DiagramAut.scalarQuotientContinuousEquiv (DualNumber (ZMod 2)) C Set.univ
+        (by trivial) (by simp) (by decide) q = 1 ∧
+      GradedDiagramAut.scalarQuotientContinuousEquiv (DualNumber (ZMod 2)) C Set.univ
+        (by trivial) (by simp) (by decide) t = 1 := by
+  dsimp only
+  have hq : DiagramAut.scalarQuotientMap (DualNumber (ZMod 2))
+      (fullCofinalSystem ℝ ℂ 2) Set.univ
+      (scalarQuadraticAut (DualNumber (ZMod 2)) (fullCofinalSystem ℝ ℂ 2) Set.univ
+        LocalExamples.dualNumberUnit) = 1 := by
+    apply (QuotientGroup.eq_one_iff _).mpr
+    exact ⟨LocalExamples.dualNumberUnit, rfl⟩
+  have ht : GradedDiagramAut.scalarQuotientMap (DualNumber (ZMod 2))
+      (fullCofinalSystem ℝ ℂ 2) Set.univ
+      (scalarGradedAut (DualNumber (ZMod 2)) (fullCofinalSystem ℝ ℂ 2) Set.univ
+        LocalExamples.dualNumberUnit) = 1 := by
+    apply (QuotientGroup.eq_one_iff _).mpr
+    exact ⟨LocalExamples.dualNumberUnit, rfl⟩
+  refine ⟨?_, LocalExamples.dualNumberUnit_ne_one,
+    LocalExamples.binary_dual_number_nilpotent.1,
+    LocalExamples.binary_dual_number_nilpotent.2, hq, ht, ?_, ?_⟩
+  · simp only [scalarQuadraticAut_targetEquiv_apply, Finsupp.smul_apply,
+      Finsupp.single_eq_same, smul_eq_mul, mul_one]
+  · rw [hq, map_one]
+  · rw [ht, map_one]
+
+/-- Scalar minus one remains visible on the integral common target, while the actual
+domain scalar quotients kill it. Neither quotient homeomorphism needs a local-ring
+instance on the nonlocal coefficient ring ℤ. -/
+theorem integer_scalar_quotients :
+    let C := fullCofinalSystem ℝ ℂ 2
+    let q := DiagramAut.scalarQuotientMap ℤ C Set.univ
+      (scalarQuadraticAut ℤ C Set.univ (-1))
+    let t := GradedDiagramAut.scalarQuotientMap ℤ C Set.univ
+      (scalarGradedAut ℤ C Set.univ (-1))
+    (scalarQuadraticAut ℤ C Set.univ (-1)).targetEquiv
+        (Finsupp.single (0 : Fin 2) 1) 0 = -1 ∧ (-1 : ℤ) ≠ 1 ∧ q = 1 ∧ t = 1 ∧
+      DiagramAut.domainScalarQuotientContinuousEquiv ℤ C Set.univ
+        (by trivial) (by simp) (by decide) q = 1 ∧
+      GradedDiagramAut.domainScalarQuotientContinuousEquiv ℤ C Set.univ
+        (by trivial) (by simp) (by decide) t = 1 := by
+  dsimp only
+  have hq : DiagramAut.scalarQuotientMap ℤ (fullCofinalSystem ℝ ℂ 2) Set.univ
+      (scalarQuadraticAut ℤ (fullCofinalSystem ℝ ℂ 2) Set.univ (-1)) = 1 := by
+    apply (QuotientGroup.eq_one_iff _).mpr
+    exact ⟨-1, rfl⟩
+  have ht : GradedDiagramAut.scalarQuotientMap ℤ (fullCofinalSystem ℝ ℂ 2) Set.univ
+      (scalarGradedAut ℤ (fullCofinalSystem ℝ ℂ 2) Set.univ (-1)) = 1 := by
+    apply (QuotientGroup.eq_one_iff _).mpr
+    exact ⟨-1, rfl⟩
+  refine ⟨?_, by decide, hq, ht, ?_, ?_⟩
+  · simp only [scalarQuadraticAut_targetEquiv_apply, Units.val_neg, Units.val_one,
+      Finsupp.smul_apply, Finsupp.single_eq_same, smul_eq_mul, mul_one]
+  · rw [hq, map_one]
+  · rw [ht, map_one]
+
+end Pointwise
+
+/-- Complex conjugation survives both binary scalar quotients and the new algebraic
+Krull homeomorphisms recover exactly that automorphism. Their literal degree-one
+restriction commutes on its actual representatives, whose common target is identity. -/
+theorem binary_conjugation_quotients :
+    let C := fullCofinalSystem ℝ ℂ 2
+    let q := DiagramAut.scalarQuotientSection (ZMod 2) C Set.univ Complex.conjAe
+    let t := GradedDiagramAut.scalarQuotientSection (ZMod 2) C Set.univ Complex.conjAe
+    DiagramAut.scalarQuotientKrullContinuousEquivOfIsAlgebraic (ZMod 2) C Set.univ
+        (by trivial) (by simp) (by decide) q = Complex.conjAe ∧
+      GradedDiagramAut.scalarQuotientKrullContinuousEquivOfIsAlgebraic (ZMod 2) C Set.univ
+        (by trivial) (by simp) (by decide) t = Complex.conjAe ∧
+      q ≠ 1 ∧ t ≠ 1 ∧
+      scalarQuotientRestrictionContinuousEquiv (ZMod 2) C Set.univ
+        (by trivial) (by simp) (by decide) t = q ∧
+      (galoisQuadraticAut (ZMod 2) C Set.univ Complex.conjAe).targetEquiv = 1 := by
+  dsimp only
+  refine ⟨?_, ?_, FinalCoefficientExamples.binary_conjugation_quotients.1,
+    FinalCoefficientExamples.binary_conjugation_quotients.2, ?_, ?_⟩
+  · rw [DiagramAut.scalarQuotientKrullContinuousEquivOfIsAlgebraic_apply]
+    exact DiagramAut.scalarQuotientEquiv_section _ _ _ _ _ _ _
+  · rw [GradedDiagramAut.scalarQuotientKrullContinuousEquivOfIsAlgebraic_apply]
+    exact GradedDiagramAut.scalarQuotientEquiv_section _ _ _ _ _ _ _
+  · rw [GradedDiagramAut.scalarQuotientSection_apply,
+      scalarQuotientRestrictionContinuousEquiv_map]
+    rfl
+  · exact galoisQuadraticAut_targetEquiv _ _ _ _
+
+end OrlikSolomon.HyperplaneGT.QuotientTopologyExamples
