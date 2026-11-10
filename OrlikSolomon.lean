@@ -155,6 +155,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.GaloisAction
 public import OrlikSolomon.Examples.HyperplaneGT.GaloisReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.Incidence
 public import OrlikSolomon.Examples.HyperplaneGT.Local
+public import OrlikSolomon.Examples.HyperplaneGT.LocalClassification
 public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
@@ -263,6 +264,10 @@ public import OrlikSolomon.HyperplaneGT.Reconstruction.Local
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Detection
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Geometry
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Transfer
+public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing
+public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.Quadratic
+public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.Scalar
+public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.Splitting
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections.Geometry
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections.Invariance
