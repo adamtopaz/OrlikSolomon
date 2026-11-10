@@ -254,6 +254,10 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstructio
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Cofinal.Basic
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Cofinal.Quotient
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Cofinal.Restriction
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Full
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Full.Cofinal
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Full.Groups
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Full.Quotient
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Krull
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Quotient
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Quotient.Basic
