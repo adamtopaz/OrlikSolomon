@@ -34,7 +34,7 @@ The Cartesian node retains its Tor-sheaf and conormal statements, and the statem
 
 The fourth blueprint, cohomological hyperplane reconstruction, is in progress.
 Its 38 named groups contain 41 separately labeled statements: U01, U04 and L02 each contain a definition and a lemma, which have separate boxes and statuses.
-Twenty-five statements are formalized.
+Twenty-seven statements are formalized.
 G01–G03 give coordinate geometry, A01 gives the degree-one generator basis and algebra generation, A02 gives the full degree-two exterior-quotient kernel, U03 gives full-dual coordinates and the contragredient action, U04 gives the determinant and universal centralizer with its configuration equations and paired diagram invariance, and U05 proves the local-ring primitive-coordinate criterion.
 A02 identifies that kernel with the span of parallel-pair and guarded dependent-triple wedges, including zero coefficients and characteristic two.
 A03 defines the marked quadratic and full graded automorphism groups and their faithful degree-one restriction, with one common target.
@@ -45,7 +45,9 @@ C01–C03 give projective span preservation, separate affine coordinate bijectio
 U01–U02 give the literal universal free module, its finite-stage universal property and quadratic relation witnesses, and the induced diagram action preserving the common target component.
 S02 constructs the direct Galois action on the full graded diagram from every defining OS relation, with identity on the one common target.
 L01–L03 give the surjective trace map with exact kernel, the explicit decomposition product and all four annihilator identities, the unit-delta centralizer, and surjective restriction from a graph to the actual vertical module with inertia kernel.
-The remaining sixteen statements are planned; the reconstruction theorem is not yet formalized.
+L04 transfers graph coefficients over every commutative coefficient ring by cancelling only a specified unit.
+L05 detects a unique unit-supported graph functional from the four stated conditions over a nonzero local ring in dimension at least two; its centralizer is the actual decomposition submodule.
+The remaining fourteen statements are planned; the reconstruction theorem is not yet formalized.
 {ref "hyperplane-gt"}[Its chapter] explains the proposed theorem, its hypotheses and the limits of the planned applications.
 
 {statusOverview}
