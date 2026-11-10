@@ -397,7 +397,7 @@ All of these are outputs of the proof.
  * In the projective case the empty arrangement is excluded. There is no hyperplane to put at infinity, the space is $`\mathbb{P}^n` itself, and its cohomology needs a projective bundle formula that the axioms do not provide.
 
 *How this book is tied to the code.*
-Each blueprint result appears in a box that shows a status and its label in one of four blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the refactor on schemes, or the [fourth](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for the planned cohomological reconstruction application:
+Each blueprint result appears in a box that shows a status and its label in one of four blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the refactor on schemes, or the [fourth](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for the cohomological reconstruction application:
  * *Planned* means that the result is in scope and no Lean declaration is attached to it yet. The text describes what is intended, and nothing has been checked.
  * *Deferred* means that the result is in the blueprint but outside the current scope of the project.
  * *Partly formalized* means that the box names Lean declarations for part of the result, shows their statements with links to their source, and says what is missing.
@@ -445,18 +445,20 @@ Worked geometric regressions include complements without rational points, unit a
 {ref "geometric"}[Its chapter] presents it, and its nodes are counted separately above.
 The algebraic structure theorems and their algebraic de Rham corollaries do not depend on this refactor.
 
-*A reconstruction application.*
-The fourth blueprint proposes recovering the Galois group of a perfect field from the marked degree-one and degree-two cohomology diagram of hyperplane complements over its algebraic closure, up to a central scalar subgroup.
+*Cohomological reconstruction and ordinary de Rham reconstruction.*
+The fourth blueprint recovers the Galois group of a perfect field from the marked degree-one and degree-two cohomology diagram of hyperplane complements over its algebraic closure, up to a central scalar subgroup.
 The coefficient ring is required to be nonzero and local, or an integral domain, and the ambient dimension is at least two.
 The proof first classifies automorphisms of an explicit Orlik–Solomon diagram, then uses the existing structure theorem to pass to a supplied theory satisfying the axioms.
-Its characteristic-zero de Rham specialization is formalized on actual ordinary cohomology. General supplied-theory transport and independence remain planned.
-The blueprint has 38 named groups containing 41 separately labeled statements: thirty-nine are formalized and two remain planned in {ref "hyperplane-gt"}[the new chapter], counted separately above.
-The completed statements cover G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04, S01–S05 and E03, including the actual universal configuration equations and paired centralizer invariance in U04.
+The actual theory-level reconstruction and cofinal/realization independence are formalized. The characteristic-zero de Rham specialization is unconditional on a supplied theory and acts on actual ordinary cohomology.
+The blueprint has 38 named groups containing 41 separately labeled statements: all forty-one are formalized and none remain planned in {ref "hyperplane-gt"}[the new chapter], counted separately above.
+The completed statements cover G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04, S01–S05 and E01–E03, including the actual universal configuration equations and paired centralizer invariance in U04.
 C04 extracts the base-field Galois homomorphism from the fixed marking frame and field generation; S01 proves its unique common primal scalar kernel, including the original common target.
 S03 classifies the actual local quadratic diagram by a canonical multiplicative equivalence with coefficient units times base-field automorphisms and both explicit inverse equations.
 S04 proves that actual degree-one restriction is a group equivalence with the full graded diagram, and identifies both groups modulo their central scalar ranges with the Galois group through explicit direct Galois sections.
 S05 gives the same quadratic and full graded classifications and both scalar quotients over integral domains, by descending original matrix coefficients from the fraction field.
 A04 compares the actual cohomology diagrams with their presentations for a supplied full theory; it constructs no new nonzero theory instance.
+E01 transports the local/domain classifications and both scalar quotients, with the actual logarithmic, marking, degree-power and common-target formulas.
+E02 proves invertible literal restriction to a cofinal subsystem after classification, and the unique generator-preserving marked-diagram comparison between eligible realizations with the same coefficient ring.
 L04 uses only unit cancellation over a commutative ring; L05 detects a unique graph delta over a nonzero local ring, using the actual centralizer restriction and the explicit dimension bound.
 
 {include 1 OrlikSolomonBook.MainTheorem}

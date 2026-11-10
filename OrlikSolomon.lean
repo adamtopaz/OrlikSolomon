@@ -161,6 +161,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Local
 public import OrlikSolomon.Examples.HyperplaneGT.LocalClassification
 public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
+public import OrlikSolomon.Examples.HyperplaneGT.TheoryReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
 public import OrlikSolomon.Examples.Moebius
@@ -209,6 +210,7 @@ public import OrlikSolomon.Grading.Laurent
 public import OrlikSolomon.Grading.LinearImage
 public import OrlikSolomon.Grading.Restriction
 public import OrlikSolomon.Grading.TensorProduct
+public import OrlikSolomon.HyperplaneGT
 public import OrlikSolomon.HyperplaneGT.Algebra.DegreeOne
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Alternating
@@ -218,6 +220,7 @@ public import OrlikSolomon.HyperplaneGT.Algebra.Dual.DiagramAction
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Primitive
 public import OrlikSolomon.HyperplaneGT.Algebra.LowDegrees
 public import OrlikSolomon.HyperplaneGT.Algebra.QuadraticKernel
+public import OrlikSolomon.HyperplaneGT.Cohomology
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Comparison
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.CupKernel
@@ -230,6 +233,7 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Diagram
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Reconstruction
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Untwist
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Actions
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification.Compatibility

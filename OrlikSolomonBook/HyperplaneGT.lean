@@ -16,11 +16,11 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame, Galois extraction, local quadratic and full graded classification and both scalar quotients, including integral-domain descent and unconditional ordinary de Rham reconstruction, are formalized; the general supplied-theory transport remains planned.*
+*All 41 blueprint statements are formalized: coordinate and Galois geometry, the actual marked diagrams, universal modules and full duals, trace and incidence reconstruction, local and domain classification, supplied-theory transport and independence, and unconditional ordinary de Rham reconstruction.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Thirty-nine boxes are formalized and two remain planned.
+All forty-one boxes are formalized; none remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
@@ -40,20 +40,20 @@ C04 extracts the base-field Galois homomorphism from that frame and generation b
 S03 classifies the actual quadratic diagram over a nonzero local coefficient ring, with an explicit primal-scalar/Galois inverse and both inverse equations, retaining the common target.
 S04 proves that the existing degree-one restriction is a multiplicative equivalence with the full graded group, gives every-degree scalar powers, and identifies both literal scalar quotients with the Galois group through explicit sections and inverse laws.
 S05 extends these classifications and scalar quotients to arbitrary integral domains by descending the fraction-field scalar from original matrix entries.
-The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
+The reconstruction proofs use the existing structure theorems and de Rham instance as inputs.
 
-# The proposed theorem and its inputs
+# The theorem and its inputs
 
 Let $`k_0` be a perfect field, let $`k` be an algebraic closure of $`k_0`, and assume $`n\ge2`.
 Choose $`S\subseteq k_0` containing zero and generating $`k_0` over its prime field.
 The diagram consists of complements of a cofinal system of finite Galois-stable hyperplane arrangements in $`\mathbb A_k^n`, their inclusions, and marked maps to one common object $`T=\mathbb A_k^1\setminus\{0,1\}`.
 The markings are the functions $`x_i-s` and $`x_i-x_j`, whenever their zero and one fibers have both been removed.
 
-For a nonzero commutative local coefficient ring $`R`, or an integral domain $`R`, the proposed group equivalences are
+For a nonzero commutative local coefficient ring $`R`, or an integral domain $`R`, the proved group equivalences are
 $$`R^\times\times(k\simeq_{k_0}k)\simeq\operatorname{Aut}_2\simeq\operatorname{Aut}_{\mathrm{gr}},\qquad (u,\sigma)e_H=u e_{\sigma H}.`
 Here $`\operatorname{Aut}_2` consists of natural degree-one linear equivalences preserving the full kernel of the exterior product into degree two.
 The graded group consists of natural graded unital $`R`-algebra equivalences of the diagonal $`\bigoplus_{q\ge0}E^{q,q}`.
-The scalar $`u` acts in degree $`q` by $`u^q`, and the proposed quotient by the central scalar subgroup is $`k\simeq_{k_0}k`.
+The scalar $`u` acts in degree $`q` by $`u^q`, and the quotient by the central scalar subgroup is $`k\simeq_{k_0}k`.
 These are abstract group equivalences; the blueprint supplies no topology on the groups.
 
 The local quadratic classification is proved first for an explicit Orlik–Solomon diagram, with no cohomology theory as an input; the full graded extension follows from that classification.
@@ -419,17 +419,26 @@ Pure coefficient extension itself also works along noninjective coefficient maps
 
 ## E01: reconstruction for the supplied theory
 
-:::node "thm:e01"
-Under the stated geometric, marking and coefficient hypotheses, the marked diagonal diagram of an existing geometric ordinary theory has the proposed quadratic and graded automorphism group equivalences.
+:::node "thm:e01" (decl := OrlikSolomon.HyperplaneGT.Cohomology.localQuadraticReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.localGradedReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainQuadraticReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainGradedReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.localRestrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainRestrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.localQuadraticReconstruction_stage_generator) (decl := OrlikSolomon.HyperplaneGT.Cohomology.localQuadraticReconstruction_target) (decl := OrlikSolomon.HyperplaneGT.Cohomology.localQuadraticReconstruction_marking) (decl := OrlikSolomon.HyperplaneGT.Cohomology.localGradedReconstruction_stage_degree) (decl := OrlikSolomon.HyperplaneGT.Cohomology.localGradedReconstruction_target_degree) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainGradedReconstruction_stage_degree) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.localScalarQuotientEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.localScalarQuotientEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.domainScalarQuotientEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.domainScalarQuotientEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.localScalarQuotientEquiv_symm_apply) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.domainScalarQuotientEquiv_symm_apply) (decl := OrlikSolomon.HyperplaneGT.Cohomology.localScalarQuotientEquiv_restriction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainScalarQuotientEquiv_restriction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainQuadraticReconstruction_eq_localQuadraticReconstruction)
+For a supplied C1–C5 ordinary theory and cofinal system, the actual degree-one/cup-kernel and full ordinary diagonal diagram groups have the proved quadratic and graded automorphism group equivalences.
+The coefficient ring is nonzero local or an integral domain; the dimension is at least two, and the marking constants contain zero and generate the base field.
 They send $`[H]` to $`u[\sigma H]` and act by $`u` on degree one of $`T`.
-Conjugating by A04 transports the classification; the theory is a supplied C1–C5 value, not a new structure with a reconstruction field.
+Conjugating by A04 transports both classifications, both literal central-scalar quotients, their explicit inverses, and the actual generator and marking formulas.
+On a whole ordinary degree-$`q` summand the scalar is $`u^q`; the local and domain constructions agree on their overlap.
+For a supplied cofinal system the displayed field and algebra hypotheses suffice; no automatic existence of such a system for an arbitrary extension is asserted.
+The theory is a supplied C1–C5 value, not a new structure with a reconstruction field, and the Galois action is coefficient-linear presentation transport.
 :::
 
 ## E02: cofinal and realization independence
 
-:::node "cor:e02"
-Restriction to any cofinal subsystem induces an isomorphism of either automorphism group, by its classified generator formulas.
-Two eligible realizations with the same coefficient ring have canonically isomorphic marked diagonal diagrams, by their canonical comparisons with the Orlik–Solomon diagram.
+:::node "cor:e02" (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.stageInclusion) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.restrictStages) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.restrictStages) (decl := OrlikSolomon.HyperplaneGT.cofinalRestrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.gradedCofinalRestrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.domainCofinalRestrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.domainGradedCofinalRestrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.restrictStages_targetEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.cofinalRestrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.cofinalRestrictionEquiv_apply) (decl := OrlikSolomon.HyperplaneGT.Cohomology.cofinalRestrictionEquiv_left_inv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.gradedCofinalRestrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainCofinalRestrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainGradedCofinalRestrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainGradedCofinalRestrictionEquiv_right_inv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationStageEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationDegreeOneEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationStageEquiv_unique) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationStageEquiv_inclusion) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationStageEquiv_marking) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationStageEquiv_degree) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationDegreeOneEquiv_cupKernel) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationQuadraticAutEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationGradedAutEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationGradedAutEquiv_stage) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationGradedAutEquiv_trans) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationQuadraticAutEquiv_localQuadraticReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationGradedAutEquiv_domainGradedReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationAutEquiv_toQuadratic)
+Literal stage restriction retains every actual component and the same common target, over arbitrary commutative coefficients.
+After classification, restriction to any chosen cofinal subsystem induces an isomorphism of either automorphism group with both explicit inverse equations and unchanged unit/Galois coordinates.
+Cofinality does not require union closure; a binary subsystem excluding one two-label arrangement provides a durable example.
+Two eligible realizations with the same coefficient ring have canonically isomorphic marked diagonal diagrams, through their canonical OS comparisons.
+The generator-preserving comparison is unique, preserves whole degrees and cup kernels, commutes with every actual inclusion and marking, and satisfies the inverse and cocycle laws.
+The two theories may have independently sized weight algebras and cohomology universes; no morphism of theories is required.
+Their classified actions, actual restriction and literal scalar quotients commute with these comparisons.
 The blueprint does not assume that arbitrary diagram automorphisms extend from a cofinal subsystem before reconstruction is proved.
 :::
 
@@ -455,7 +464,7 @@ For a product $`F\times F` and two distinct Galois automorphisms, the two coeffi
 The proof must also preserve the existing coverage of scheme complements without rational points.
 
 Further checks concern finite-stage compatibility without union closure, the single common marked target, recovery of coordinate spans without adding projection arrows, the full algebraic dual without a reflexivity shortcut, and extension to the graded algebra only after classification.
-The completed pure-core steps prove these properties. The completed domain descent and the planned theory-level applications retain the same requirements.
+The completed pure-core steps, integral-domain descent and conditional theory-level reconstruction prove these properties. The de Rham specialization retains the same requirements.
 
 Completion requires proved public declarations for every statement, generator and marking formulas, the inverse and group laws of the equivalences, the existing repository checks and independent coverage review, and the application to the constructed de Rham instance.
-The remaining E01–E02 boxes record the general supplied-theory transport and independence work.
+Every blueprint statement now has public formalized declarations. Final exposition and acceptance checks remain tracked by W24.

@@ -34,7 +34,7 @@ The Cartesian node retains its Tor-sheaf and conormal statements, and the statem
 
 The fourth blueprint, cohomological hyperplane reconstruction, is in progress.
 Its 38 named groups contain 41 separately labeled statements: U01, U04 and L02 each contain a definition and a lemma, which have separate boxes and statuses.
-Thirty-nine statements are formalized.
+All forty-one statements are formalized.
 G01–G03 give coordinate geometry, A01 gives the degree-one generator basis and algebra generation, A02 gives the full degree-two exterior-quotient kernel, U03 gives full-dual coordinates and the contragredient action, U04 gives the determinant and universal centralizer with its configuration equations and paired diagram invariance, and U05 proves the local-ring primitive-coordinate criterion.
 A02 identifies that kernel with the span of parallel-pair and guarded dependent-triple wedges, including zero coefficients and characteristic two.
 A03 defines the marked quadratic and full graded automorphism groups and their faithful degree-one restriction, with one common target.
@@ -53,8 +53,9 @@ C04 extracts the Galois homomorphism after descent from the generating marking c
 S03 gives the canonical multiplicative equivalence between coefficient units times base-field automorphisms and the actual quadratic diagram, with both explicit inverse equations and the original common target.
 S04 upgrades the same degree-one restriction to a multiplicative equivalence with the full graded group, acts by the scalar degree powers, and identifies both actual scalar quotients with the Galois group using explicit sections and inverse laws.
 S05 proves the same quadratic and full graded classifications and both scalar quotients over arbitrary integral domains, with actual coefficient descent and agreement with the local constructions.
+E01 transports both coefficient cases and scalar quotients to actual cohomology diagrams, with the logarithmic, whole-degree and common-target formulas.
+E02 proves literal cofinal restriction is invertible after classification and gives the unique generator-preserving comparison between two eligible realizations, including all actual arrow, degree and cup-kernel squares.
 E03 gives unconditional reconstruction for the actual ordinary de Rham diagram in characteristic zero, including both inverse laws, the k-linear covariant dlog formula, all ordinary degrees and one actual common target. Its comparisons untwist only the diagonal E^(q,q); no semilinear geometric pullback is asserted.
-The remaining E01–E02 statements concern general supplied-theory transport and independence and are planned.
-{ref "hyperplane-gt"}[Its chapter] explains the proposed theorem, its hypotheses and the limits of the planned applications.
+{ref "hyperplane-gt"}[Its chapter] explains the proved conditional reconstruction, the unconditional de Rham application and their precise hypotheses.
 
 {statusOverview}
