@@ -25,7 +25,7 @@ details.
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-24 formalized and 17 planned. Coefficient points, hyperplane incidence
+25 formalized and 16 planned. Coefficient points, hyperplane incidence
 and coordinate graphs (G01–G03) are proved over arbitrary fields. G04–G06 construct the
 coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal
 systems with actual marking maps to one common target. The canonical degree-one OS basis,
@@ -33,6 +33,11 @@ its inclusion naturality and algebra generation (A01), and the exact degree-two 
 (A02), are proved over arbitrary commutative coefficient rings, including zero coefficients.
 A03 defines the marked quadratic and full graded automorphism groups, with one common target
 and faithful degree-one restriction, over those same coefficient rings.
+A04 identifies these diagrams with actual degree-one cup-kernel and full diagonal cohomology
+for a supplied full geometric ordinary theory, preserving all actual arrows, scalar families
+and faithful degree-one restriction, including characteristic-two alternation through OS transport.
+Its characteristic-two and point-free-target consumers are conditional on the supplied theory;
+no new nonzero mod-2 realization is constructed.
 S02 constructs the direct Galois action on the full graded diagram using all defining OS
 relations, with identity on its one common target.
 U01–U02 give the universal free module, its finite-stage universal property and quadratic

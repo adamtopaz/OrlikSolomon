@@ -1813,7 +1813,14 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Diagram/GaloisAction`, with a `Stage` leaf | S02, formalized: direct coefficient-linear action on full OS algebras, every-degree image equality, inclusion and marking squares, group laws and identity common target | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
 | `HyperplaneGT/Reconstruction/LocalRing` | S03–S04; separate classification/graded leaves as necessary | W18–W19, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170), [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
 | `HyperplaneGT/Reconstruction/Domain` | S05 | W20, [#172](https://github.com/adamtopaz/OrlikSolomon/issues/172) |
-| `HyperplaneGT/Cohomology/Adapter` | A04 | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
+| `HyperplaneGT/Cohomology/Adapter` | A04, formalized: facade comparing actual degree-one/cup-kernel and full diagonal-cohomology diagrams with A03 | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
+| `HyperplaneGT/Cohomology/Adapter/Maps` | One actual scheme target, tagged scheme marking maps, localization and unit/logarithm squares, actual component and diagonal pullbacks | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
+| `HyperplaneGT/Cohomology/Adapter/DegreeOne` | Canonical actual logarithmic bases and ordered target coordinates, with actual inclusion/marking comparison squares | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
+| `HyperplaneGT/Cohomology/Adapter/CupKernel` | Actual multiplication, OS-derived alternation including characteristic two, complete cup-kernel equality and whole target kernel | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
+| `HyperplaneGT/Cohomology/Adapter/Quadratic` | Actual H11 automorphism subgroup preserving whole cup-kernel images and all actual inclusion/marking arrows | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
+| `HyperplaneGT/Cohomology/Adapter/Graded` | Actual diagonal-cohomology automorphism subgroup preserving every actual summand by equality and all actual arrows | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
+| `HyperplaneGT/Cohomology/Adapter/Comparison` | Two-way quadratic/full graded group equivalences, full diagonal naturality, scalar transport and faithful literal degree-one restriction | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
+| `HyperplaneGT/Cohomology/Adapter/Examples` | Supplied-theory zero/characteristic-two, dimension-zero target and point-free binary-target consumers, plus inherited carrier-instance pins | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
 | `HyperplaneGT/Cohomology/Main` | E01–E02 | W22, [#174](https://github.com/adamtopaz/OrlikSolomon/issues/174) |
 | `HyperplaneGT/Cohomology/DeRham` | E03 | W23, [#175](https://github.com/adamtopaz/OrlikSolomon/issues/175) |
 | `HyperplaneGT`, `HyperplaneGT/Cohomology` | Pure-core facade and conditional-cohomology facade; de Rham remains an explicit import | W22–W23, [#174](https://github.com/adamtopaz/OrlikSolomon/issues/174), [#175](https://github.com/adamtopaz/OrlikSolomon/issues/175) |
@@ -1983,6 +1990,43 @@ stage maps are identities. Its other concrete consumers cover zero, characterist
 rings and independent field universes, with no dimension bound, condition on the marking
 constants, algebraicity/perfectness assumption or union-closure requirement on the cofinal
 family. They import no cohomology theory.
+
+`Cohomology/Adapter` is a facade over six size leaves, with all theory imports confined
+inside the existing cohomology boundary. `Maps` uses the actual `D.complementMap` and
+`D.complementInclusion` morphisms; its localization square compares a tagged scheme marking
+with the existing `Marking.algebraicMap`. The two ordered target units pull back to the actual
+fiber equations. `DegreeOne` composes A01 coordinates with the existing `T.degreeEquiv` and
+proves both actual arrow squares. `CupKernel` transports square-zero from the full OS algebra,
+so alternation holds in characteristic two without cancelling 2. Its whole kernel is exactly
+the image of A02's parallel-pair/guarded-triple span; the whole target exterior square is kernel.
+
+The actual `Cohomology.DiagramAut` and `Cohomology.GradedDiagramAut` are subgroups on actual
+H11 modules and actual diagonal direct sums. They are not defined as normalized presentation
+models. `Comparison` proves membership in the actual subgroups equivalent to membership in
+A03's subgroups under canonical conjugation, giving two-way `MulEquiv`s and forward/inverse
+component formulas. The existing `T.diagonalEquiv` commutes with all actual inclusion and
+tagged marking pullbacks. Restriction is constructed through those canonical comparisons and
+then identified with literal action on both actual degree-one summands. It is faithful.
+Scalar transport characterizes multiplication by the same fixed unit in degree one and its
+q-th power in every degree, at stages and the common target, without assuming classification.
+
+The four actual product/subgroup carriers use the same named `@[reducible] def` exception
+as their A03 counterparts, solely to inherit literal group instances and operations.
+The actual `diagonal` carrier is also `@[reducible] def`: a strict probe with
+`@[instance_reducible]` failed to inherit even `AddCommMonoid`, `Module`, `Ring` and `Algebra`
+from its direct-sum carrier, while the transparent synonym inherited all four. No duplicate
+transport instances are introduced. The definition docstrings and committed instance
+consumers record this approved exception. The other actual degree-one and degree-two
+submodule definitions retain ordinary transparency.
+
+`Adapter/Examples` stays within the same import boundary and imports no de Rham instance.
+Its zero-coefficient, characteristic-two, dimension-zero nonidentity-target and binary-target
+basis consumers are conditional statements with a supplied full `Geometric.OrdinaryTheory`.
+They do not construct or assert the existence of a nonzero mod-2 realization. The binary
+coordinate target has no rational point, and its ordered cohomology basis still follows
+from a supplied theory. A04 adds no theory record, axiom or extra coefficient/field/cofinality
+hypothesis, and constructs no new nonzero theory instance. The reconstruction conclusions
+and the de Rham specialization remain separate later work.
 
 The two generic helper modules use namespace `OrlikSolomon` and carry no hyperplane/cohomology
 hypotheses. Check Mathlib and existing repository lemmas before adding any helper. Split modules
