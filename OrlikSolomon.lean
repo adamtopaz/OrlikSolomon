@@ -323,6 +323,7 @@ public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact.FiniteOrbits
 public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact.Stages
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Hyperplanes
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Pointwise
+public import OrlikSolomon.HyperplaneGT.Topology.Restriction
 public import OrlikSolomon.Interface.Logarithms
 public import OrlikSolomon.Interface.OSAlgebra
 public import OrlikSolomon.Interface.ProjectiveComplement
