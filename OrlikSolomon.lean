@@ -166,6 +166,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
 public import OrlikSolomon.Examples.HyperplaneGT.TheoryReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Coefficients
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.Systems
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
 public import OrlikSolomon.Examples.Moebius
@@ -314,6 +315,8 @@ public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Projection
 public import OrlikSolomon.HyperplaneGT.Topology.Basic
 public import OrlikSolomon.HyperplaneGT.Topology.Basic.Components
 public import OrlikSolomon.HyperplaneGT.Topology.Basic.Neighborhoods
+public import OrlikSolomon.HyperplaneGT.Topology.Krull.Hyperplanes
+public import OrlikSolomon.HyperplaneGT.Topology.Krull.Pointwise
 public import OrlikSolomon.Interface.Logarithms
 public import OrlikSolomon.Interface.OSAlgebra
 public import OrlikSolomon.Interface.ProjectiveComplement
