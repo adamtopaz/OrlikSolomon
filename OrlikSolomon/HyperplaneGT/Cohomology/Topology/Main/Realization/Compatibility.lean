@@ -6,7 +6,7 @@ Authors: Adam Topaz, Codex
 module
 
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification
-public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Cofinal.Restriction
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Cofinal.Quotient
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Basic
 
 /-!
@@ -729,5 +729,65 @@ theorem domainGradedCofinalRestrictionContinuousEquiv_realization [IsDomain R]
   intro g
   simp only [ContinuousMulEquiv.trans_apply, domainGradedCofinalRestrictionContinuousEquiv_apply]
   exact (realizationGradedContinuousEquiv_restrictStages T₁ T₂ C S C' hC g).symm
+
+/-- Literal cofinal scalar quotients commute with canonical realization comparison. -/
+theorem cofinalScalarQuotientContinuousEquiv_realization [IsLocalRing R]
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (cofinalScalarQuotientContinuousEquiv T₂ C C' S hC hS hgen hn) =
+      (cofinalScalarQuotientContinuousEquiv T₁ C C' S hC hS hgen hn).trans
+        (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C' S) := by
+  apply ContinuousMulEquiv.ext
+  intro q
+  simp only [ContinuousMulEquiv.trans_apply,
+    cofinalScalarQuotientContinuousEquiv_apply]
+  exact (DiagramAut.restrictStagesScalarQuotient_realization
+    T₁ T₂ C S C' hC q).symm
+
+/-- Literal cofinal scalar quotients commute with canonical realization comparison. -/
+theorem domainCofinalScalarQuotientContinuousEquiv_realization [IsDomain R]
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (domainCofinalScalarQuotientContinuousEquiv T₂ C C' S hC hS hgen hn) =
+      (domainCofinalScalarQuotientContinuousEquiv T₁ C C' S hC hS hgen hn).trans
+        (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C' S) := by
+  apply ContinuousMulEquiv.ext
+  intro q
+  simp only [ContinuousMulEquiv.trans_apply,
+    domainCofinalScalarQuotientContinuousEquiv_apply]
+  exact (DiagramAut.restrictStagesScalarQuotient_realization
+    T₁ T₂ C S C' hC q).symm
+
+/-- Literal cofinal scalar quotients commute with canonical realization comparison. -/
+theorem gradedCofinalScalarQuotientContinuousEquiv_realization [IsLocalRing R]
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (gradedCofinalScalarQuotientContinuousEquiv T₂ C C' S hC hS hgen hn) =
+      (gradedCofinalScalarQuotientContinuousEquiv T₁ C C' S hC hS hgen hn).trans
+        (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C' S) := by
+  apply ContinuousMulEquiv.ext
+  intro q
+  simp only [ContinuousMulEquiv.trans_apply,
+    gradedCofinalScalarQuotientContinuousEquiv_apply]
+  exact (GradedDiagramAut.restrictStagesScalarQuotient_realization
+    T₁ T₂ C S C' hC q).symm
+
+/-- Literal cofinal scalar quotients commute with canonical realization comparison. -/
+theorem domainGradedCofinalScalarQuotientContinuousEquiv_realization [IsDomain R]
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (domainGradedCofinalScalarQuotientContinuousEquiv T₂ C C' S hC hS hgen hn) =
+      (domainGradedCofinalScalarQuotientContinuousEquiv T₁ C C' S hC hS hgen hn).trans
+        (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C' S) := by
+  apply ContinuousMulEquiv.ext
+  intro q
+  simp only [ContinuousMulEquiv.trans_apply,
+    domainGradedCofinalScalarQuotientContinuousEquiv_apply]
+  exact (GradedDiagramAut.restrictStagesScalarQuotient_realization
+    T₁ T₂ C S C' hC q).symm
 
 end OrlikSolomon.HyperplaneGT.Cohomology
