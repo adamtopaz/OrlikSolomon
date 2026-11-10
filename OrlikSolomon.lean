@@ -165,6 +165,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.LocalClassification
 public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
 public import OrlikSolomon.Examples.HyperplaneGT.TheoryReconstruction
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.Coefficients
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Systems
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
@@ -311,6 +312,9 @@ public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Geometry
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Kernel
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Map
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Projection
+public import OrlikSolomon.HyperplaneGT.Topology.Basic
+public import OrlikSolomon.HyperplaneGT.Topology.Basic.Components
+public import OrlikSolomon.HyperplaneGT.Topology.Basic.Neighborhoods
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Hyperplanes
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Pointwise
 public import OrlikSolomon.Interface.Logarithms
@@ -340,6 +344,7 @@ public import OrlikSolomon.Presentation.ProjectiveOrdinary
 public import OrlikSolomon.Presentation.Realization
 public import OrlikSolomon.Presentation.RepresentativeRelations
 public import OrlikSolomon.Presentation.Structure
+public import OrlikSolomon.Topology.DiscreteFamily
 
 /-!
 # OrlikSolomon

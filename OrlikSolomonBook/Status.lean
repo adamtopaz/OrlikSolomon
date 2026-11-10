@@ -17,7 +17,7 @@ file := "status"
 
 These tables are generated when the book is built, from the same boxes that appear in the chapters, and they list every labeled statement of the five blueprints.
 Each blueprint is counted separately.
-The main theorem does not depend on the de Rham instance, neither of them depends on the geometric refactor, and the algebraic and planned topological reconstruction layers build on these results.
+The main theorem does not depend on the de Rham instance, neither of them depends on the geometric refactor, and the algebraic and topological reconstruction layers build on these results.
 A node is listed as formalized only if its box names Lean declarations.
 For each of those, the build checks only that it exists, and that it depends on no `sorry` and on no axiom other than `propext`, `Classical.choice` and `Quot.sound`.
 That the declarations cover the node's statement, and that the prose around them is accurate, are checked by human or agent review, not by the build.
@@ -59,11 +59,12 @@ E03 gives unconditional reconstruction for the actual ordinary de Rham diagram i
 Final regression consumers pin binary and nilpotent local coefficients, actual common targets and both scalar quotients. A full disconnected-coefficient counterexample proves that the coefficient hypotheses cannot be replaced by an arbitrary commutative ring.
 {ref "hyperplane-gt"}[Its chapter] explains the proved conditional reconstruction, the unconditional de Rham application and their precise hypotheses.
 
-The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: one formalized and sixteen planned.
+The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: one formalized, two partly formalized and fourteen planned.
 It proposes direct finite-stage topologies and upgrades of the existing reconstruction maps, scalar quotients, cofinal and realization comparisons, and the ordinary de Rham specialization.
 Coefficient units are discrete; the Krull topology replaces pointwise convergence under the stated fixing condition, in particular for algebraic field extensions.
+The pure diagram topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved.
 T05 proves the arrangement-free pointwise topological group and separation properties, exact normalized affine coefficient tests and the finite hyperplane/stage-kernel comparisons for $`n\geq1`.
-The classification upgrades remain planned, and the four earlier blueprint counts are unchanged.
+The actual-theory and ordinary clauses and the reconstruction homeomorphisms remain planned; the four earlier blueprint counts are unchanged.
 {ref "topological-reconstruction"}[Its chapter] records the topology, hypothesis and realization boundaries.
 
 {statusOverview}

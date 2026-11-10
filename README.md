@@ -101,16 +101,18 @@ and point-free-complement coverage is retained.
 
 **Milestone M9:** [topological hyperplane reconstruction](blueprint/topological_reconstruction_blueprint.tex)
 is tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
-Its 17 separately labelled statements T01–T17 have **1 formalized and 16 planned**, counted
-separately from the four existing blueprints. T05 proves the pointwise Galois group topology,
-finite normalized affine coefficient tests and, for `n ≥ 1`, the actual selected-stage
-permutation-kernel comparison. The [chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
+Its 17 separately labelled statements T01–T17 include **1 formalized, 2 partly formalized and 14 planned**,
+counted separately from the four existing blueprints. The [chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
 describes finite-stage convergence, discrete coefficient units, and the pointwise Galois factor.
+T05 proves the pointwise group topology, finite normalized affine coefficient tests and, for
+`n ≥ 1`, the actual selected-stage permutation-kernel comparison.
 The Krull version requires the stated fixing condition; algebraicity suffices, while a supplied
 cofinal system alone does not. Classification upgrades retain M8's local/domain, dimension and
 marking hypotheses. Actual theory-level assertions stay conditional on a supplied eligible theory;
-the de Rham upgrade specializes the constructed characteristic-zero theory. These upgrades
-remain planned; coefficient units are discrete, with no adic-coefficient claim.
+the de Rham upgrade specializes the constructed characteristic-zero theory. Pure quadratic
+and graded component topologies, group and separation properties, and stage-and-target
+neighborhood bases are proved; their actual-theory and ordinary clauses remain planned.
+Reconstruction homeomorphisms are planned. No adic-coefficient claim is made.
 
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective
@@ -198,7 +200,7 @@ first page shows the statements, elaborated, with the output of `#print axioms`.
 - Auditable public projective theorem: [`MainTheorem.lean`](OrlikSolomon/MainTheorem.lean)
 - Milestone M8, cohomological hyperplane reconstruction and regression coverage:
   [`blueprint/`](blueprint/cohomological_hyperplane_gt_blueprint.tex)
-- Milestone M9, topological reconstruction (T05 proved; further upgrades planned):
+- Milestone M9, topological reconstruction in progress:
   [`blueprint/`](blueprint/topological_reconstruction_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)

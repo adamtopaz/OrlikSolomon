@@ -2494,8 +2494,9 @@ The fifth blueprint has 17 separately labelled nodes T01–T17, initially **0 fo
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **1 formalized / 0 partial / 16 planned**; only
-T05 is complete.
+unchanged. The current M9 count is **1 formalized / 2 partial / 14 planned**; T05 is
+complete, and T01–T02 cover the pure diagrams while their actual-theory and ordinary clauses
+remain planned.
 
 Book coverage is incremental and clause-complete. T01–T02 remain partial until pure,
 actual-theory and ordinary specializations are all present; T14 includes scalar-quotient

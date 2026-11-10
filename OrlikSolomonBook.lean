@@ -398,7 +398,7 @@ All of these are outputs of the proof.
  * In the projective case the empty arrangement is excluded. There is no hyperplane to put at infinity, the space is $`\mathbb{P}^n` itself, and its cohomology needs a projective bundle formula that the axioms do not provide.
 
 *How this book is tied to the code.*
-Each blueprint result appears in a box that shows a status and its label in one of five blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the refactor on schemes, the [fourth](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for cohomological reconstruction, or the [fifth](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/topological_reconstruction_blueprint.tex), for its planned topological upgrades:
+Each blueprint result appears in a box that shows a status and its label in one of five blueprints: the [first](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/arrangement_cohomology_lean_blueprint.tex), for the main theorem, the [second](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/de_rham_instance_blueprint.tex), for the de Rham instance, the [third](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/geometric_refactor_blueprint.tex), for the refactor on schemes, the [fourth](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for cohomological reconstruction, or the [fifth](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/topological_reconstruction_blueprint.tex), for its topological upgrades:
  * *Planned* means that the result is in scope and no Lean declaration is attached to it yet. The text describes what is intended, and nothing has been checked.
  * *Deferred* means that the result is in the blueprint but outside the current scope of the project.
  * *Partly formalized* means that the box names Lean declarations for part of the result, shows their statements with links to their source, and says what is missing.
@@ -464,9 +464,10 @@ L04 uses only unit cancellation over a commutative ring; L05 detects a unique gr
 Final regression consumers retain binary and nilpotent local coefficients, the original common target and both scalar quotients. A concrete full diagram over disconnected binary coefficients has no common scalar/Galois factorization, demonstrating the need for the local/domain hypothesis.
 The chapter records each of the 41 labelled statements separately and explains the coefficient, dimension and realization limits.
 
-*Topological reconstruction.*
+*Topological reconstruction in progress.*
 The fifth blueprint proposes the finite-stage convergence topology on the existing quadratic, graded and actual cohomology diagram groups, retaining the single common target.
-Its seventeen statements T01–T17 have one formalized and sixteen planned in {ref "topological-reconstruction"}[a separate chapter], counted independently of the four earlier blueprints.
+Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: one formalized, two partly formalized and fourteen planned.
+The direct pure quadratic and graded topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved; the corresponding actual-theory and ordinary clauses remain planned.
 T05 proves the pointwise topological group and separation properties, normalized affine coefficient stabilizers, arbitrary geometric coordinate fibers and actual finite-stage kernel topology comparison for $`n\geq1`.
 Coefficient units are discrete, and the Galois factor has pointwise convergence topology.
 The Krull version needs the exact finite-intermediate-field fixing condition; algebraicity suffices, without normality or separability.
