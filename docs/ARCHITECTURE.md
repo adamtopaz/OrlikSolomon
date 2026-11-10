@@ -1712,9 +1712,9 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04 and S01–S05 are formalized, including U04's actual universal
+G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04, S01–S05 and E03 are formalized, including U04's actual universal
 configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields.
-Cohomological reconstruction remains planned. The book records complete-statement status.
+General supplied-theory transport and independence remain planned; unconditional ordinary de Rham reconstruction is formalized. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
 described under Algebra above; `HyperplaneGT/Algebra/QuadraticKernel` applies it to the actual OS
 quotient and identifies its full degree-two kernel.
@@ -1850,7 +1850,11 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Cohomology/Adapter/Comparison` | Two-way quadratic/full graded group equivalences, full diagonal naturality, scalar transport and faithful literal degree-one restriction | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
 | `HyperplaneGT/Cohomology/Adapter/Examples` | Supplied-theory zero/characteristic-two, dimension-zero target and point-free binary-target consumers, plus inherited carrier-instance pins | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
 | `HyperplaneGT/Cohomology/Main` | E01–E02 | W22, [#174](https://github.com/adamtopaz/OrlikSolomon/issues/174) |
-| `HyperplaneGT/Cohomology/DeRham` | E03 | W23, [#175](https://github.com/adamtopaz/OrlikSolomon/issues/175) |
+| `HyperplaneGT/Cohomology/DeRham/Untwist` | Actual ordinary H¹/H² and cup map, diagonal E^(q,q) untwisting, whole-kernel image equality, actual pullback/marking squares and ordered target dlogs | W23, #175 |
+| `HyperplaneGT/Cohomology/DeRham/Diagram` | Actual ordinary H¹/cup-kernel and full graded diagram subgroups, one actual target, two-way A04 comparisons and literal degree-one restriction | W23, #175 |
+| `HyperplaneGT/Cohomology/DeRham/Reconstruction` | Unconditional E03 classifiers, explicit inverses, k-linear covariant dlogs, all-degree/target/marking formulas and algebraic full-family corollaries | W23, #175 |
+| `HyperplaneGT/Cohomology/DeRham` | E03 explicit realization facade; excluded from the conditional cohomology facade | W23, [#175](https://github.com/adamtopaz/OrlikSolomon/issues/175) |
+| `Examples/HyperplaneGT/DeRhamReconstruction` | Actual ordinary inverse/group/restriction and marking consumers, nonzero target dlogs, degree-zero/two and dimension-zero boundaries, moved complex-conjugate hyperplane and nonzero k-linear-versus-semilinear detector | W23, #175 |
 | `HyperplaneGT`, `HyperplaneGT/Cohomology` | Pure-core facade and conditional-cohomology facade; de Rham remains an explicit import | W22–W23, [#174](https://github.com/adamtopaz/OrlikSolomon/issues/174), [#175](https://github.com/adamtopaz/OrlikSolomon/issues/175) |
 | `Examples/HyperplaneGT`, with small topic leaves | Coefficient, dimension, marking, cofinality, generator and transport acceptance consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
 | `Examples/HyperplaneGT/DegreeOne` | Formalized A01 consumers: zero coefficients, empty arrangements, dimensions zero and one, and zero new coordinates after inclusion | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
@@ -2057,6 +2061,38 @@ from its direct-sum carrier, while the transparent synonym inherited all four. N
 transport instances are introduced. The definition docstrings and committed instance
 consumers record this approved exception. The other actual degree-one and degree-two
 submodule definitions retain ordinary transparency.
+
+`Cohomology/DeRham` is the explicit realization facade for E03. Its `Untwist` leaf
+identifies E^(q,q) with actual ordinary H^q_dR and the diagonal direct sum with the
+ordinary total algebra. Evaluation at t=1 is an equivalence only on this diagonal, not
+on the whole Laurent-weighted algebra. The comparisons preserve actual scheme pullbacks,
+actual multiplication, the entire exterior cup kernel and the one common marking target.
+`Diagram` defines the specialized actual ordinary subgroups by comap under these natural
+comparisons and exposes exactly the ordinary degree/cup-kernel and actual arrow predicates.
+Its four named product/subgroup type synonyms use `@[reducible] def` under the approved
+A03/A04 exception solely to inherit existing product and subgroup instances. They add no
+data or transported instances; the module and declaration docstrings retain this rationale.
+
+`Reconstruction` uses E01's local-field specialization with coefficient ring literally k,
+without a theory or auxiliary coefficient-algebra parameter in its final statements. Both
+classifiers have explicit inverse equations; actual ordinary degree-one restriction is a
+`MulEquiv`. The primal unit acts by u^q on every degree at every stage and the single target,
+and the logarithmic formula is dlog(f_H) ↦ u·dlog(f_(σH)) for arbitrary equation choices.
+The label is covariant and the action is k-linear. It is not identified with semilinear
+transport of forms or pullback along a k-morphism induced by σ. Supplied cofinal systems
+need no algebraicity or perfectness hypothesis; only canonical full-family construction
+uses algebraicity. The paper's algebraic-closure case specializes this result.
+
+E03 reuses the existing A04 `map_conjugate_eq_iff`, `exterior_conjugate_iff`,
+`linear_conjugate_arrow_iff` and `algebra_conjugate_arrow_iff` by exposing their existing
+statements and proofs with public mathematical docstrings. This changes visibility only.
+The ordinary `restrictionEquiv_apply` is a plain rewrite lemma: declaring a forward-map
+expansion as simp would hide the inner equivalence application and defeat ordinary
+`e.symm (e x)` cancellation. Durable consumers pin both inverse simplifications. The
+conditional `HyperplaneGT/Cohomology` facade imports no de Rham realization, and M7's public
+interface is unchanged. The concrete complex-conjugation fixture moves x₀=I and acts on a
+nonzero actual logarithmic class; the coefficient I distinguishes k-linearity from
+semilinear transport. Both nonzero target dlogs detect the same scalar two.
 
 `Adapter/Examples` stays within the same import boundary and imports no de Rham instance.
 Its zero-coefficient, characteristic-two, dimension-zero nonidentity-target and binary-target
@@ -2267,7 +2303,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-38 formalized and 3 planned, separate from the other blueprints. Each
+39 formalized and 2 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally

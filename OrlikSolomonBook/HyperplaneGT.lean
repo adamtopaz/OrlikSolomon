@@ -16,11 +16,11 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame, Galois extraction, local quadratic and full graded classification and both scalar quotients, including integral-domain descent, are formalized; cohomological reconstruction remains planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame, Galois extraction, local quadratic and full graded classification and both scalar quotients, including integral-domain descent and unconditional ordinary de Rham reconstruction, are formalized; the general supplied-theory transport remains planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Thirty-eight boxes are formalized and three remain planned.
+Thirty-nine boxes are formalized and two remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
@@ -61,7 +61,7 @@ The existing geometric structure theorem then identifies the diagram of a suppli
 Its hypotheses remain exactly C1–C5: products and grading, functorial pullbacks, the point and affine-line axioms, localization with residue and Gysin, and pair naturality with the right projection formula.
 No field may assume reconstruction, the Orlik–Solomon theorem, logarithmic generation or an action of field automorphisms on a theory.
 
-The final de Rham application is planned to use the already constructed characteristic-zero instance.
+The de Rham application uses the already constructed characteristic-zero instance and removes Laurent weights only on its diagonal.
 Singular and geometric étale cohomology remain conditional applications until their own C1–C5 data are constructed in Lean.
 
 # Coordinates and finite stable systems
@@ -415,7 +415,7 @@ The domain and local constructions agree on their overlap. No localness or coeff
 Pure coefficient extension itself also works along noninjective coefficient maps and maps to zero. This construction assumes no localization theorem for the kernels of a new cohomology theory.
 :::
 
-# Transport and the planned de Rham application
+# Transport and ordinary de Rham reconstruction
 
 ## E01: reconstruction for the supplied theory
 
@@ -435,10 +435,13 @@ The blueprint does not assume that arbitrary diagram automorphisms extend from a
 
 ## E03: algebraic de Rham reconstruction
 
-:::node "cor:e03"
-In characteristic zero, the existing de Rham instance is planned to give the unconditional equivalences $`\operatorname{Aut}_{\mathrm{gr}}\simeq\operatorname{Aut}_2\simeq k^\times\times(k\simeq_{k_0}k)` for the ordinary de Rham diagram.
-The generator formula is $`[df_H/f_H]\mapsto u[df_{\sigma H}/f_{\sigma H}]`.
-The constructed action is $`k`-linear; ordinary transport of differential forms by $`\sigma` is semilinear on coefficients and must be distinguished from it.
+:::node "cor:e03" (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.quadraticReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.gradedReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.restrictionEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.gradedReconstruction_dlog) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.gradedReconstruction_stage_degree) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.gradedReconstruction_target_degree) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.fullQuadraticReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.fullGradedReconstruction)
+For fields $`k_0\to k` of characteristic zero, a supplied cofinal stable system and generating marking constants containing zero, in dimension at least two, the actual ordinary de Rham diagram has unconditional equivalences $`\operatorname{Aut}_{\mathrm{gr}}\simeq\operatorname{Aut}_2\simeq k^\times\times(k\simeq_{k_0}k)`.
+There is no theory value or auxiliary coefficient algebra in these statements. The quadratic group acts on actual ordinary $`H^1` and preserves its entire exterior cup kernel; the graded group acts on actual ordinary total cohomology and preserves every ordinary degree. Both commute with the actual inclusion and tagged marking pullbacks, using one actual two-puncture target.
+The constructed de Rham instance identifies ordinary $`H^q` with its component $`E^{q,q}`. Untwisting is an equivalence on this diagonal, rather than on the whole Laurent-weighted algebra. Conjugation through these natural comparisons gives both explicit inverse laws and literal degree-one restriction.
+For any equations of the two hyperplanes, the generator formula is $`[df_H/f_H]\mapsto u[df_{\sigma H}/f_{\sigma H}]`, with covariant label $`\sigma H`. The same primal unit acts by $`u^q` on every degree and on the common target; in particular both ordered target dlogs are scaled by $`u`.
+The action fixes scalar coefficients and is $`k`-linear. It is distinct from the usual $`\sigma`-semilinear transport of differential forms; no pullback along a $`k`-morphism induced by $`\sigma` is asserted. A concrete complex-conjugation fixture moves a hyperplane and uses a nonzero logarithmic class with coefficient $`I` to test this distinction.
+For a supplied cofinal system no algebraicity or perfectness hypothesis is needed. The canonical full-family corollaries add algebraicity only to construct that system, and include the algebraic-closure case.
 :::
 
 # Regressions, limits and completion
@@ -455,4 +458,4 @@ Further checks concern finite-stage compatibility without union closure, the sin
 The completed pure-core steps prove these properties. The completed domain descent and the planned theory-level applications retain the same requirements.
 
 Completion requires proved public declarations for every statement, generator and marking formulas, the inverse and group laws of the equivalences, the existing repository checks and independent coverage review, and the application to the constructed de Rham instance.
-The three remaining theory-level boxes record planned work.
+The remaining E01–E02 boxes record the general supplied-theory transport and independence work.
