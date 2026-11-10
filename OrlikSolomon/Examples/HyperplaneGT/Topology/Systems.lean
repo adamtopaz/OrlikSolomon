@@ -9,7 +9,7 @@ public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import Mathlib.FieldTheory.KrullTopology
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
-public import OrlikSolomon.HyperplaneGT.Topology.Krull.Hyperplanes
+public import OrlikSolomon.HyperplaneGT.Topology.Krull
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -21,7 +21,11 @@ stage-kernel bases work in independent field universes. Actual geometric fibers 
 complex conjugation at a nonreal scalar and the two binary scalars. Dimension zero retains
 the field-group topology but every stage permutation kernel is the whole group.
 
-Blueprint: T05 (`lem:t05`).
+The Krull consumers retain finite-dimensional intermediate fields and use (K) as an ordinary
+proposition. Actual normalized coefficient fields detect nonreal geometry, while dimension
+zero and trivial automorphism groups expose the hypothesis boundaries.
+
+Blueprint: T05–T06 (`lem:t05`, `thm:t06`).
 -/
 
 @[expose] public section
@@ -168,3 +172,110 @@ theorem conjugation_excluded_at_stage :
     _ (hA _ (by simp))
 
 end OrlikSolomon.HyperplaneGT.PointwiseExamples
+
+namespace OrlikSolomon.HyperplaneGT.KrullExamples
+
+open Filter Topology
+
+variable {k₀ : Type u} {k : Type v} [Field k₀] [Field k] [Algebra k₀ k]
+
+/-- The optional facade preserves inference of Mathlib's actual global Krull topology. -/
+theorem facade_preserves_global_krull :
+    (inferInstance : TopologicalSpace (k ≃ₐ[k₀] k)) = krullTopology k₀ k := rfl
+
+/-- The comparison iff is usable as an ordinary proposition, with no inferred condition or
+algebraicity premise. -/
+theorem criterion_from_equality
+    (h : krullTopology k₀ k = galoisPointwiseTopology k₀ k) :
+    KrullFixingCondition k₀ k := by
+  rw [← krull_eq_pointwise_iff]
+  exact h
+
+/-- Trivial automorphism groups satisfy (K) without any algebraicity hypothesis. The finite
+intermediate field can be the base field. -/
+theorem criterion_of_trivial_galois [Subsingleton (k ≃ₐ[k₀] k)] :
+    KrullFixingCondition k₀ k := by
+  intro a
+  refine ⟨⊥, inferInstance, ?_⟩
+  intro σ _
+  have hσ : σ = 1 := Subsingleton.elim _ _
+  rw [hσ]
+  exact Subgroup.one_mem _
+
+/-- Equality of the two topologies follows from a trivial group without assuming the
+ambient extension algebraic. This does not claim an algebraicity converse. -/
+theorem equality_of_trivial_galois [Subsingleton (k ≃ₐ[k₀] k)] :
+    krullTopology k₀ k = galoisPointwiseTopology k₀ k :=
+  (krull_eq_pointwise_iff k₀ k).mpr criterion_of_trivial_galois
+
+/-- The actual identity maps are continuous in both directions over an algebraic extension.
+The geometric and base fields may inhabit independent universes. -/
+theorem algebraic_identity_both [Algebra.IsAlgebraic k₀ k] :
+    Continuous[galoisPointwiseTopology k₀ k, krullTopology k₀ k]
+      (id : (k ≃ₐ[k₀] k) → (k ≃ₐ[k₀] k)) ∧
+    Continuous[krullTopology k₀ k, galoisPointwiseTopology k₀ k]
+      (id : (k ≃ₐ[k₀] k) → (k ≃ₐ[k₀] k)) := by
+  rw [krull_eq_pointwise_of_isAlgebraic]
+  exact ⟨@continuous_id _ (galoisPointwiseTopology k₀ k),
+    @continuous_id _ (galoisPointwiseTopology k₀ k)⟩
+
+/-- A finite intermediate field has an exact finite scalar test even if it is not known
+stable under any of the ambient automorphisms. -/
+theorem finite_field_test (E : IntermediateField k₀ k) [FiniteDimensional k₀ E] :
+    ∃ s : Finset k, (s : Set k) ⊆ (E : Set k) ∧
+      fixingSubgroup (k ≃ₐ[k₀] k) (s : Set k) = E.fixingSubgroup :=
+  exists_finset_fixingIntermediateField k₀ k E
+
+/-- A chosen stage controls every given finite intermediate field already in dimension one;
+the ambient extension need not be algebraic and (K) is not a hypothesis. -/
+theorem finite_field_stage (C : CofinalSystem k₀ k 1) (E : IntermediateField k₀ k)
+    [FiniteDimensional k₀ E] :
+    ∃ A : C.Stage, C.galoisStageKernel A ≤ E.fixingSubgroup :=
+  C.exists_stageKernel_le_fixingSubgroup (by decide) E
+
+/-- The literal selected-stage topology agrees with Krull under the explicit criterion,
+without replacing it by an algebraicity assumption. -/
+theorem chosen_stage_krull (C : CofinalSystem k₀ k 1) (hK : KrullFixingCondition k₀ k) :
+    C.galoisStagePermutationTopology = krullTopology k₀ k := by
+  rw [C.galoisStagePermutationTopology_eq_krull (by decide) hK]
+
+/-- The exact coefficient-field fixer equality is available without ambient algebraicity. -/
+theorem coefficient_fixer {n : ℕ} (s : Finset (Hyperplane k n)) :
+    (hyperplaneCoefficientField k₀ s).fixingSubgroup =
+      fixingSubgroup (k ≃ₐ[k₀] k) (s : Set (Hyperplane k n)) := by
+  rw [fixingHyperplanes_eq_coefficientField]
+
+/-- Dimension zero produces the base coefficient field, for arbitrary extensions. -/
+theorem dimension_zero_field (s : Finset (Hyperplane k 0)) :
+    hyperplaneCoefficientField k₀ s = ⊥ := by
+  have hs : s = ∅ := by
+    apply Finset.eq_empty_iff_forall_notMem.mpr
+    intro H _
+    exact not_isHyperplane_of_subsingleton H.val H.property
+  rw [hs, hyperplaneCoefficientField_empty]
+
+/-- The empty collection has a finite coefficient field without any ambient algebraicity. -/
+theorem empty_field_finite {n : ℕ} :
+    FiniteDimensional k₀
+      (hyperplaneCoefficientField k₀ (∅ : Finset (Hyperplane k n))) := by
+  rw [hyperplaneCoefficientField_empty]
+  infer_instance
+
+/-- The nonreal geometric fiber gives a genuine finite coefficient field over the reals. -/
+theorem nonreal_coefficient_field_finite :
+    FiniteDimensional ℝ
+      (hyperplaneCoefficientField ℝ {coordinateFiber (0 : Fin 1) Complex.I}) :=
+  finiteDimensional_hyperplaneCoefficientField ℝ _
+
+/-- The coefficient field really sees a scalar moved by conjugation; the affine constant
+has not disappeared from the normalized equation test. -/
+theorem conjugation_not_in_coefficient_fixer :
+    Complex.conjAe ∉
+      (hyperplaneCoefficientField ℝ {coordinateFiber (0 : Fin 1) Complex.I}).fixingSubgroup := by
+  classical
+  rw [← fixingHyperplanes_eq_coefficientField]
+  intro h
+  exact PointwiseExamples.conjugation_moves_geometric_fiber
+    ((mem_fixingSubgroup_iff (ℂ ≃ₐ[ℝ] ℂ)).mp h _ (by simp))
+
+end OrlikSolomon.HyperplaneGT.KrullExamples
