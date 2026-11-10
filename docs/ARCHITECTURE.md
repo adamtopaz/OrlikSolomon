@@ -2570,6 +2570,22 @@ zero-ring parameter topology and dimension-zero raw target test do not extend th
 classification to those boundary parameters. W10 will assemble the separate optional
 Classification facade; no additional leaf split was needed for W09.
 
+`Cohomology/Topology/Adapter/Basic` defines the actual quadratic and graded topologies
+directly from their existing complete component products and original common target. Named
+`instance_reducible` topology values expose inherited product/subgroup instances; the
+existing `FiniteStageTopology` scope activates both pure and actual diagram instances.
+Actual simultaneous stage-and-target kernels are normal and clopen, and the identity basis
+uses only a supplied cofinal upper stage. Existing generator comparisons prove that
+component equality descends; no injectivity of a full OS inclusion or classification
+hypothesis is added. `Comparison` identifies the exact old quadratic and graded adapters as
+topological group isomorphisms by their matching complete-component kernels and neighborhood
+bases. Their underlying maps, inverses and whole-stage/target formulas are unchanged.
+`Quotient` upgrades both old scalar quotient comparisons for Mathlib's literal quotient
+topologies, using the two quotient-map universal properties and the old scalar
+representative squares. The approved import of the general scalar comparisons in
+`Cohomology/Main/Classification` adds no local/domain hypothesis to these results. The
+optional facade activates no scope and imports no concrete de Rham instance.
+
 ### Hypotheses, review and book coverage
 
 Claude approves the exact public statements of **T09–T12 and T15–T17**, and the
@@ -2590,14 +2606,14 @@ retain zero coefficients and dimension zero; ordinary specializations retain the
 existing field and characteristic-zero parameters. Literal restriction/cofinal upgrades
 do not acquire algebraicity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **7 formalized /
-2 partial / 8 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **8 formalized /
+2 partial / 7 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **7 formalized / 2 partial / 8 planned**; T03–T09 are
-complete, and T01–T02 cover the pure diagrams while their actual-theory and ordinary clauses
-remain planned.
+unchanged. The current M9 count is **8 formalized / 2 partial / 7 planned**; T03–T09 and T14
+are complete. T01–T02 cover the pure and actual supplied-theory diagrams; their ordinary de Rham
+clauses remain planned.
 
 Book coverage is incremental and clause-complete. T01–T02 remain partial until pure,
 actual-theory and ordinary specializations are all present; T14 includes scalar-quotient
