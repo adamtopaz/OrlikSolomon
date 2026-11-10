@@ -242,6 +242,10 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Quadratic
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Diagram
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Reconstruction
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Actions
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Basic
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Cofinal
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Comparison
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Untwist
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Actions
