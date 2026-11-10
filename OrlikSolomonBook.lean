@@ -466,7 +466,7 @@ The chapter records each of the 41 labelled statements separately and explains t
 
 *Topological reconstruction in progress.*
 The fifth blueprint proposes the finite-stage convergence topology on the existing quadratic, graded and actual cohomology diagram groups, retaining the single common target.
-Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: eight formalized, two partly formalized and seven planned.
+Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: ten formalized, two partly formalized and five planned.
 The direct pure quadratic and graded topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved; the actual supplied-theory clauses are also proved, and the ordinary de Rham clauses remain planned.
 T05 proves the pointwise topological group and separation properties, normalized affine coefficient stabilizers, arbitrary geometric coordinate fibers and actual finite-stage kernel topology comparison for $`n\geq1`.
 T04 proves that the existing degree-one restriction is a topological embedding and that its inverse, whenever available, is continuous.
@@ -478,9 +478,11 @@ It identifies actual normalized coefficient-field fixers with hyperplane fixers 
 A supplied cofinal system alone does not imply that comparison, as T08's actual rational-function counterexample proves.
 Its binary quadratic diagram is nontrivial, finite and discrete, while the actual direct Galois action and forward M8 classification are noncontinuous for Mathlib's Krull topology.
 T09 upgrades the exact existing local/domain quadratic classifiers in both directions for pointwise convergence and, under the fixing condition or algebraicity, for Krull.
+T10 proves the exact full graded restriction homeomorphisms without a field-extension hypothesis and the unchanged graded product classifiers for pointwise convergence, with separate fixing-condition and algebraic Krull wrappers.
+T12 upgrades the literal cofinal restrictions and their actual scalar quotients without algebraicity, retaining the original common target.
 The classification upgrades retain M8's local/domain, dimension and marking hypotheses; the basic and adapter topologies have broader scope.
 The de Rham upgrade is planned for the already constructed characteristic-zero realization, while arbitrary theory-level assertions remain conditional on a supplied eligible theory.
-The full graded, scalar-to-Galois quotient, cofinal and actual-cohomology/ordinary reconstruction upgrades remain planned. No adic-coefficient result is claimed.
+T11 and the actual-cohomology/ordinary reconstruction upgrades remain planned. No adic-coefficient result is claimed.
 
 {include 1 OrlikSolomonBook.MainTheorem}
 
