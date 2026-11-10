@@ -9,7 +9,7 @@ public import Mathlib.FieldTheory.KrullTopology
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Coefficients
 public import OrlikSolomon.Examples.Sanity
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter
-public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Compatibility
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 
 /-!
@@ -35,7 +35,9 @@ when the deliberate finite-stage scope and an unrelated geometric-field topology
 The realization consumers retain independent theories and all four bare inverse pairs,
 whole-stage/common-target formulas and the three-theory cocycle. A conditional binary
 example proves that target detection survives comparison in dimension zero; the concrete
-zero theory supplies the separate zero-coefficient boundary case.
+zero theory supplies the separate zero-coefficient boundary case. Classified consumers
+then recover the original inverse coordinates and actual representative classes after
+comparison, and commute both group and scalar-quotient subsystem restrictions.
 
 Blueprint: acceptance consumers for T01–T02, T14 and T16
 (`def:t01`, `lem:t02`, `thm:t14`, `thm:t16`).
@@ -294,5 +296,162 @@ theorem target_swap_survives_realization
     have h := realizationQuadraticContinuousEquiv_target U₁ U₂ C S g x
     rw [ht] at h
     exact h.symm
+
+
+section ClassifiedRealizationConsumers
+
+open scoped DiscreteCoefficientUnits GaloisPointwise
+
+/-- Actual inverse coordinates and the Galois coordinate of each actual representative
+survive comparison of independently sized eligible realizations. -/
+theorem local_realization_inverse_coordinates [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (g : DiagramAut T₁ C S) (h : GradedDiagramAut T₁ C S) :
+    (localQuadraticContinuousReconstruction T₂ C S hS hgen hn).symm
+        (realizationQuadraticContinuousEquiv T₁ T₂ C S g) =
+      (localQuadraticContinuousReconstruction T₁ C S hS hgen hn).symm g ∧
+    DiagramAut.localScalarQuotientContinuousEquiv T₂ C S hS hgen hn
+        (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S
+          (DiagramAut.scalarQuotientMap T₁ C S g)) =
+      ((localQuadraticContinuousReconstruction T₁ C S hS hgen hn).symm g).2 ∧
+    (localGradedContinuousReconstruction T₂ C S hS hgen hn).symm
+        (realizationGradedContinuousEquiv T₁ T₂ C S h) =
+      (localGradedContinuousReconstruction T₁ C S hS hgen hn).symm h ∧
+    GradedDiagramAut.localScalarQuotientContinuousEquiv T₂ C S hS hgen hn
+        (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S
+          (GradedDiagramAut.scalarQuotientMap T₁ C S h)) =
+      ((localGradedContinuousReconstruction T₁ C S hS hgen hn).symm h).2 := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · change (localQuadraticReconstruction T₂ C S hS hgen hn).symm
+      (realizationQuadraticContinuousEquiv T₁ T₂ C S g) = _
+    exact realizationQuadraticContinuousEquiv_localQuadraticReconstruction_symm
+      T₁ T₂ C S hS hgen hn g
+  · change DiagramAut.localScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S
+        (DiagramAut.scalarQuotientMap T₁ C S g)) = _
+    exact (realizationQuadraticScalarQuotientContinuousEquiv_localScalarQuotientEquiv
+      T₁ T₂ C S hS hgen hn (DiagramAut.scalarQuotientMap T₁ C S g)).trans
+        (DiagramAut.localScalarQuotientEquiv_map T₁ C S hS hgen hn g)
+  · change (localGradedReconstruction T₂ C S hS hgen hn).symm
+      (realizationGradedContinuousEquiv T₁ T₂ C S h) = _
+    exact realizationGradedContinuousEquiv_localGradedReconstruction_symm
+      T₁ T₂ C S hS hgen hn h
+  · change GradedDiagramAut.localScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S
+        (GradedDiagramAut.scalarQuotientMap T₁ C S h)) = _
+    exact (realizationGradedScalarQuotientContinuousEquiv_localScalarQuotientEquiv
+      T₁ T₂ C S hS hgen hn (GradedDiagramAut.scalarQuotientMap T₁ C S h)).trans
+        (GradedDiagramAut.localScalarQuotientEquiv_map T₁ C S hS hgen hn h)
+
+/-- Actual inverse coordinates and the Galois coordinate of each actual representative
+survive comparison of independently sized eligible realizations. -/
+theorem domain_realization_inverse_coordinates [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (g : DiagramAut T₁ C S) (h : GradedDiagramAut T₁ C S) :
+    (domainQuadraticContinuousReconstruction T₂ C S hS hgen hn).symm
+        (realizationQuadraticContinuousEquiv T₁ T₂ C S g) =
+      (domainQuadraticContinuousReconstruction T₁ C S hS hgen hn).symm g ∧
+    DiagramAut.domainScalarQuotientContinuousEquiv T₂ C S hS hgen hn
+        (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S
+          (DiagramAut.scalarQuotientMap T₁ C S g)) =
+      ((domainQuadraticContinuousReconstruction T₁ C S hS hgen hn).symm g).2 ∧
+    (domainGradedContinuousReconstruction T₂ C S hS hgen hn).symm
+        (realizationGradedContinuousEquiv T₁ T₂ C S h) =
+      (domainGradedContinuousReconstruction T₁ C S hS hgen hn).symm h ∧
+    GradedDiagramAut.domainScalarQuotientContinuousEquiv T₂ C S hS hgen hn
+        (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S
+          (GradedDiagramAut.scalarQuotientMap T₁ C S h)) =
+      ((domainGradedContinuousReconstruction T₁ C S hS hgen hn).symm h).2 := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · change (domainQuadraticReconstruction T₂ C S hS hgen hn).symm
+      (realizationQuadraticContinuousEquiv T₁ T₂ C S g) = _
+    exact realizationQuadraticContinuousEquiv_domainQuadraticReconstruction_symm
+      T₁ T₂ C S hS hgen hn g
+  · change DiagramAut.domainScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S
+        (DiagramAut.scalarQuotientMap T₁ C S g)) = _
+    exact (realizationQuadraticScalarQuotientContinuousEquiv_domainScalarQuotientEquiv
+      T₁ T₂ C S hS hgen hn (DiagramAut.scalarQuotientMap T₁ C S g)).trans
+        (DiagramAut.domainScalarQuotientEquiv_map T₁ C S hS hgen hn g)
+  · change (domainGradedReconstruction T₂ C S hS hgen hn).symm
+      (realizationGradedContinuousEquiv T₁ T₂ C S h) = _
+    exact realizationGradedContinuousEquiv_domainGradedReconstruction_symm
+      T₁ T₂ C S hS hgen hn h
+  · change GradedDiagramAut.domainScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S
+        (GradedDiagramAut.scalarQuotientMap T₁ C S h)) = _
+    exact (realizationGradedScalarQuotientContinuousEquiv_domainScalarQuotientEquiv
+      T₁ T₂ C S hS hgen hn (GradedDiagramAut.scalarQuotientMap T₁ C S h)).trans
+        (GradedDiagramAut.domainScalarQuotientEquiv_map T₁ C S hS hgen hn h)
+
+/-- Literal classified subsystem selection commutes on actual group elements and
+actual scalar-quotient classes after changing the eligible realization. -/
+theorem local_cofinal_realization_values [IsLocalRing R]
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (g : DiagramAut T₁ C S) (h : GradedDiagramAut T₁ C S)
+    (q : DiagramAut T₁ C S ⧸ DiagramAut.scalarSubgroup T₁ C S)
+    (t : GradedDiagramAut T₁ C S ⧸ GradedDiagramAut.scalarSubgroup T₁ C S) :
+    cofinalRestrictionContinuousEquiv T₂ C C' S hC hS hgen hn
+        (realizationQuadraticContinuousEquiv T₁ T₂ C S g) =
+      realizationQuadraticContinuousEquiv T₁ T₂ C' S
+        (cofinalRestrictionContinuousEquiv T₁ C C' S hC hS hgen hn g) ∧
+    gradedCofinalRestrictionContinuousEquiv T₂ C C' S hC hS hgen hn
+        (realizationGradedContinuousEquiv T₁ T₂ C S h) =
+      realizationGradedContinuousEquiv T₁ T₂ C' S
+        (gradedCofinalRestrictionContinuousEquiv T₁ C C' S hC hS hgen hn h) ∧
+    cofinalScalarQuotientContinuousEquiv T₂ C C' S hC hS hgen hn
+        (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S q) =
+      realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C' S
+        (cofinalScalarQuotientContinuousEquiv T₁ C C' S hC hS hgen hn q) ∧
+    gradedCofinalScalarQuotientContinuousEquiv T₂ C C' S hC hS hgen hn
+        (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S t) =
+      realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C' S
+        (gradedCofinalScalarQuotientContinuousEquiv T₁ C C' S hC hS hgen hn t) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · exact congrArg (fun e => e g)
+      (cofinalRestrictionContinuousEquiv_realization T₁ T₂ C S C' hC hS hgen hn)
+  · exact congrArg (fun e => e h)
+      (gradedCofinalRestrictionContinuousEquiv_realization T₁ T₂ C S C' hC hS hgen hn)
+  · exact congrArg (fun e => e q)
+      (cofinalScalarQuotientContinuousEquiv_realization T₁ T₂ C S C' hC hS hgen hn)
+  · exact congrArg (fun e => e t)
+      (gradedCofinalScalarQuotientContinuousEquiv_realization T₁ T₂ C S C' hC hS hgen hn)
+
+/-- Literal classified subsystem selection commutes on actual group elements and
+actual scalar-quotient classes after changing the eligible realization. -/
+theorem domain_cofinal_realization_values [IsDomain R]
+    (C' : CofinalSystem k₀ k n) (hC : C'.stages ⊆ C.stages)
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (g : DiagramAut T₁ C S) (h : GradedDiagramAut T₁ C S)
+    (q : DiagramAut T₁ C S ⧸ DiagramAut.scalarSubgroup T₁ C S)
+    (t : GradedDiagramAut T₁ C S ⧸ GradedDiagramAut.scalarSubgroup T₁ C S) :
+    domainCofinalRestrictionContinuousEquiv T₂ C C' S hC hS hgen hn
+        (realizationQuadraticContinuousEquiv T₁ T₂ C S g) =
+      realizationQuadraticContinuousEquiv T₁ T₂ C' S
+        (domainCofinalRestrictionContinuousEquiv T₁ C C' S hC hS hgen hn g) ∧
+    domainGradedCofinalRestrictionContinuousEquiv T₂ C C' S hC hS hgen hn
+        (realizationGradedContinuousEquiv T₁ T₂ C S h) =
+      realizationGradedContinuousEquiv T₁ T₂ C' S
+        (domainGradedCofinalRestrictionContinuousEquiv T₁ C C' S hC hS hgen hn h) ∧
+    domainCofinalScalarQuotientContinuousEquiv T₂ C C' S hC hS hgen hn
+        (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S q) =
+      realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C' S
+        (domainCofinalScalarQuotientContinuousEquiv T₁ C C' S hC hS hgen hn q) ∧
+    domainGradedCofinalScalarQuotientContinuousEquiv T₂ C C' S hC hS hgen hn
+        (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S t) =
+      realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C' S
+        (domainGradedCofinalScalarQuotientContinuousEquiv T₁ C C' S hC hS hgen hn t) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · exact congrArg (fun e => e g)
+      (domainCofinalRestrictionContinuousEquiv_realization T₁ T₂ C S C' hC hS hgen hn)
+  · exact congrArg (fun e => e h)
+      (domainGradedCofinalRestrictionContinuousEquiv_realization T₁ T₂ C S C' hC hS hgen hn)
+  · exact congrArg (fun e => e q)
+      (domainCofinalScalarQuotientContinuousEquiv_realization T₁ T₂ C S C' hC hS hgen hn)
+  · exact congrArg (fun e => e t)
+      (domainGradedCofinalScalarQuotientContinuousEquiv_realization T₁ T₂ C S C' hC hS hgen hn)
+
+end ClassifiedRealizationConsumers
 
 end OrlikSolomon.HyperplaneGT.Cohomology.RealizationTopologyExamples
