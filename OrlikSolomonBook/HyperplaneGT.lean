@@ -16,11 +16,11 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers and local primitive criterion are formalized; the reconstruction theorem is planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, trace modules, local detection and intrinsic coordinate spans are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Twenty-four boxes are formalized and seventeen remain planned.
+Twenty-eight boxes are formalized and thirteen remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
@@ -32,6 +32,8 @@ C01–C03 recover a unique field automorphism from an arbitrary projective colli
 U03 and U05 give the full algebraic dual, its inverse-precomposition action and the local-ring primitive-coordinate criterion for arbitrary index types.
 U04 gives the determinant and centralizer, their exact equations on all parallel pairs and guarded dependent triples, and paired invariance under the actual diagram action.
 L01–L03 give the surjective trace map and its full kernel, inertia and decomposition with all four annihilator identities, and restriction from a graph to the actual vertical free span.
+L04 transfers graph coefficients over any commutative ring by cancelling a specified unit; L05 detects the unique unit-supported graph functional over a nonzero local ring in dimension at least two.
+P01–P02 recognize every supported coordinate span using commuting functionals, derive its diagram invariance from the marking squares, and give the actual equivariant restriction to its full dual.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
@@ -240,36 +242,41 @@ The graph identifies each hyperplane of its base with exactly one vertical trace
 
 ## L04: the local transfer calculation
 
-:::node "lem:l04"
+:::node "lem:l04" (decl := OrlikSolomon.eq_of_unit_transfer) (decl := OrlikSolomon.HyperplaneGT.exists_vertical_transfer_pair) (decl := OrlikSolomon.HyperplaneGT.centralizerVerticalRestriction) (decl := OrlikSolomon.HyperplaneGT.local_transfer)
 Suppose $`p_z\lambda=0`, the map $`C(\lambda)\to P_z` is onto, and $`\lambda_{H_0}` is a unit for a graph $`H_0`.
 Then a graph distinct and parallel to $`H_0` has the same value under $`\lambda` as any graph distinct from and meeting $`H_0`.
-The calculation uses two vertical trace labels and division only by the specified unit coordinate.
+The calculation derives two distinct actual vertical trace labels and cancels only the specified unit coordinate.
+The coefficient ring may be zero and need not be local or a domain; the projection target is the full dual of the actual supported vertical module.
 :::
 
 ## L05: detecting one supported coordinate
 
-:::node "thm:l05"
+:::node "thm:l05" (decl := OrlikSolomon.HyperplaneGT.local_detection_iff) (decl := OrlikSolomon.HyperplaneGT.existsUnique_unit_delta_of_local_detection) (decl := OrlikSolomon.HyperplaneGT.unit_smul_lapply_eq_iff)
 For $`n\ge2` and nonzero local $`R`, a functional is $`u\delta_H` for a unit $`u` and a graph $`H` exactly when it is primitive, vanishes under $`p_z`, vanishes at some graph coordinate, and has surjective centralizer projection to $`P_z`.
 The graph and unit are unique, and its centralizer is $`D_H`.
 No stronger quotient-isomorphism hypothesis is added.
+Primitivity is literal surjectivity of the functional, and the centralizer uses the actual universal quadratic relation span.
+The dimension bound is necessary: over geometric $`\mathbb{F}_3` in dimension one and coefficient $`\mathbb{F}_2`, a sum of two distinct point deltas satisfies all four conditions but has two nonzero support coordinates.
 :::
 
 # Recognizing the coordinate spans
 
 ## P01: intrinsic recognition
 
-:::node "lem:p01"
+:::node "lem:p01" (decl := OrlikSolomon.HyperplaneGT.coordinatePlane) (decl := OrlikSolomon.HyperplaneGT.verticalRestriction_surjective) (decl := OrlikSolomon.HyperplaneGT.ker_verticalRestriction) (decl := OrlikSolomon.HyperplaneGT.exists_coordinateSpan_detector) (decl := OrlikSolomon.HyperplaneGT.coordinateSpan_recognition)
 Let $`M_z` be the span of hyperplanes using only coordinates in $`z`, and let $`L_w=Re_{w=0}+Re_{w=1}` for $`w\notin z`.
 A vector $`a` lies in $`M_{z\cup\{w\}}` exactly when $`d_{\lambda,\mu}(a\wedge b)=0` for every $`b\in L_w` and every commuting pair in $`\operatorname{Ann}(M_z)`.
-This recovers coordinate spans from the given relation and marking data.
+This recovers coordinate spans from the given relation and marking data, over any commutative coefficient ring, including the zero ring.
+Restriction to every supported coordinate span is surjective, with its actual evaluation annihilator as kernel.
 :::
 
 ## P02: invariance and the dual quotient
 
-:::node "prop:p02"
-Every diagram automorphism preserves $`M_z` for every coordinate subset $`z`.
+:::node "prop:p02" (decl := OrlikSolomon.HyperplaneGT.Marking.plane) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_markingPlane) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_verticalModule) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_verticalAnnihilator) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.verticalAction) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.verticalDualAction) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.verticalRestriction_dualAction)
+Assume that the marking constants contain zero. Every diagram automorphism preserves $`M_z` for every coordinate subset $`z`.
 Its dual therefore induces an equivalence on $`P_z` making restriction $`p_z` equivariant.
-The proof uses P01 and the explicit surjectivity of restriction, without an exactness assertion about arbitrary dualization.
+The proof uses P01 and the actual common-target marking squares. Restricting the universal equivalence to the invariant supported module gives the induced inverse-precomposition action on its full dual and the restriction square.
+This agrees with the explicit surjective-restriction quotient construction and uses no exactness assertion about arbitrary dualization.
 :::
 
 # Hyperplane permutation and incidence

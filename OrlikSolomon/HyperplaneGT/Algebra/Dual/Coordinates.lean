@@ -59,6 +59,27 @@ theorem dualCoordinates_ext {φ μ : Module.Dual R (ι →₀ R)}
     (h : ∀ i, φ (Finsupp.single i 1) = μ (Finsupp.single i 1)) : φ = μ :=
   dualCoordinates.injective (funext h)
 
+/-- Unit multiples of coordinate functionals agree exactly when both their coordinate labels
+and units agree. Nontrivial coefficients distinguish the coordinate lines, for arbitrary index
+types. Blueprint: the unit-delta uniqueness in L05 (`thm:l05`), also used in I01. -/
+theorem unit_smul_lapply_eq_iff [Nontrivial R] (u v : Rˣ) (i j : ι) :
+    (u : R) • (Finsupp.lapply i : Module.Dual R (ι →₀ R)) =
+      (v : R) • Finsupp.lapply j ↔ i = j ∧ u = v := by
+  constructor
+  · intro he
+    classical
+    have hij : i = j := by
+      by_contra hij
+      have hv := congrArg (fun φ : Module.Dual R (ι →₀ R) ↦ φ (Finsupp.single i 1)) he
+      simp [hij, ne_comm] at hv
+    subst j
+    have huv : (u : R) = (v : R) := by
+      have hv := congrArg (fun φ : Module.Dual R (ι →₀ R) ↦ φ (Finsupp.single i 1)) he
+      simpa using hv
+    exact ⟨rfl, Units.ext huv⟩
+  · rintro ⟨rfl, rfl⟩
+    rfl
+
 /-- Evaluation against the full algebraic dual separates finitely supported vectors.
 Blueprint: `lem:u03`. -/
 theorem finsupp_eq_of_dual_eval_eq {m m' : ι →₀ R}

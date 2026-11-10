@@ -9,6 +9,7 @@ public import OrlikSolomon.Algebra.FinsuppKernel
 public import OrlikSolomon.Algebra.HomogeneousRelations
 public import OrlikSolomon.Algebra.RelationQuotient
 public import OrlikSolomon.Algebra.SymmetricGrading
+public import OrlikSolomon.Algebra.UnitTransfer
 public import OrlikSolomon.Cohomology.Axioms
 public import OrlikSolomon.Cohomology.Bridge
 public import OrlikSolomon.Cohomology.BridgeData.Basic
@@ -151,6 +152,8 @@ public import OrlikSolomon.Examples.HyperplaneGT.Diagram
 public import OrlikSolomon.Examples.HyperplaneGT.Dual
 public import OrlikSolomon.Examples.HyperplaneGT.Galois
 public import OrlikSolomon.Examples.HyperplaneGT.GaloisAction
+public import OrlikSolomon.Examples.HyperplaneGT.Local
+public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
@@ -236,6 +239,14 @@ public import OrlikSolomon.HyperplaneGT.Geometry.Galois.CoordinateAction
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Markings
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.System
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Local
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Detection
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Geometry
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Transfer
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections.Geometry
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections.Invariance
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections.Recognition
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Annihilators
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Decomposition
