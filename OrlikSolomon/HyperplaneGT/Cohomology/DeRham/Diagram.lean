@@ -22,6 +22,14 @@ or generic diagram structure is introduced. The four named product/subgroup type
 are `@[reducible] def`s under the approved A03/A04 exception: inherited product and subgroup
 instances require their literal type heads. They add no data or transported instances.
 
+## Main definitions and results
+
+* `DiagramAut` and `GradedDiagramAut` are the actual ordinary quadratic and full groups.
+* `quadraticTwistEquiv` and `gradedTwistEquiv` compare them with A04 in both directions,
+  retaining the actual stage and common-target actions.
+* `GradedDiagramAut.toQuadratic` is literal ordinary H¹ restriction, with stage and target
+  equations and injectivity, before any classification theorem is invoked.
+
 Blueprint: the actual ordinary marked diagram in E03 (`cor:e03`).
 -/
 

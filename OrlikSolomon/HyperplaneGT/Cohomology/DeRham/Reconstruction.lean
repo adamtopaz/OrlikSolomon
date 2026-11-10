@@ -25,6 +25,16 @@ Supplied cofinal systems need no algebraicity or perfectness hypothesis. The can
 full-family wrappers use algebraicity solely to construct that system. Every marking uses
 one actual two-puncture target, with the same scalar as every stage.
 
+## Main definitions and results
+
+* `quadraticReconstruction` and `gradedReconstruction` classify the actual ordinary
+  diagrams, with explicit inverse formulas and both inverse laws.
+* `restrictionEquiv` upgrades literal ordinary H¹ restriction to a `MulEquiv`.
+* `gradedReconstruction_dlog` gives the equation-independent, covariant, `k`-linear dlog
+  formula; the stage and target degree theorems give the whole degree-power action.
+* `fullQuadraticReconstruction` and `fullGradedReconstruction` specialize to the canonical
+  full stable family when the geometric extension is algebraic.
+
 Blueprint: E03 (`cor:e03`).
 -/
 
