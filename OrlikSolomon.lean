@@ -314,6 +314,7 @@ public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Projection
 public import OrlikSolomon.HyperplaneGT.Topology.Basic
 public import OrlikSolomon.HyperplaneGT.Topology.Basic.Components
 public import OrlikSolomon.HyperplaneGT.Topology.Basic.Neighborhoods
+public import OrlikSolomon.HyperplaneGT.Topology.Restriction
 public import OrlikSolomon.Interface.Logarithms
 public import OrlikSolomon.Interface.OSAlgebra
 public import OrlikSolomon.Interface.ProjectiveComplement
