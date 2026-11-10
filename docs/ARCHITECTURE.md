@@ -2429,7 +2429,7 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | --- | --- |
 | Optional small `Topology/DiscreteFamily`, namespace `OrlikSolomon` | Only reusable discrete-product/induced-topology helpers missing from Mathlib; W02, [#206](https://github.com/adamtopaz/OrlikSolomon/issues/206) |
 | `H/Topology/Basic/Components`, `Basic/Neighborhoods`, facade `Basic` | Direct pure topologies, component APIs, group/separation and stage/target bases; W02, #206 |
-| `H/Topology/Compact/Closed`, `Compact/Finite`, facade `Compact` | Closed constraints and finite-coefficient compactness; W03, [#207](https://github.com/adamtopaz/OrlikSolomon/issues/207) |
+| `H/Topology/Compact/Closed`, `Compact/Finite`, facade `Compact` | Implemented T03: closed constraints and finite-coefficient compactness; W03, [#207](https://github.com/adamtopaz/OrlikSolomon/issues/207) |
 | `H/Topology/Restriction` | Degree-one embedding and inverse-continuity API; W04, [#208](https://github.com/adamtopaz/OrlikSolomon/issues/208) |
 | `H/Topology/Krull/Pointwise`, `Krull/Hyperplanes`, `Krull/Comparison`, facade `Krull` | Generic pointwise topology, normalized geometric tests and exact Krull comparison; W05–W06, [#209](https://github.com/adamtopaz/OrlikSolomon/issues/209), [#210](https://github.com/adamtopaz/OrlikSolomon/issues/210) |
 | `H/Topology/GaloisCompact/FiniteOrbits`, `GaloisCompact/Stages`, facade `GaloisCompact` | Arrangement-free finite-orbit compactness and system/algebraicity corollaries; W07, [#211](https://github.com/adamtopaz/OrlikSolomon/issues/211) |
@@ -2454,6 +2454,17 @@ the sorted root import list as implementation lands. W08 and W20 stay separate f
 positive classifiers and from each other; their example support never becomes an assumed
 conclusion of a core theorem.
 
+`Topology/Compact/Closed` proves closedness of both original subgroup carriers and their
+literal subtype embeddings by arbitrary intersections of discrete coordinate cylinders.
+`Compact/Finite` proves quadratic compactness from finite free-module factors. For the full
+graded group it forms `osGradedAutSubgroup` from Mathlib stabilizers of every existing degree
+submodule; canonical degree-one restriction is injective by algebra generation. These factor
+subgroups are finite for finite coefficients. Their product is a compact subset of the
+original ambient full-automorphism product, containing the closed diagram. No finiteness of
+unrestricted algebra-automorphism factors or replacement topology is used. Compactness is
+exposed by named theorems and instances only in `FiniteStageTopology`, retaining zero
+coefficients, dimension zero and the single original common target.
+
 W05 implements `Krull/Pointwise` and `Krull/Hyperplanes`, together with the T05
 consumers in `Examples/HyperplaneGT/Topology/Systems`. `Pointwise` imports only Mathlib,
 works without a dimension or cofinal family, and defines the actual evaluation-induced
@@ -2467,7 +2478,25 @@ uses only the supplied cofinality, and the induced product uses whole discrete s
 permutations. The pure M8 `Diagram/GaloisAction/Stage` import reuses the existing
 `galoisLabelEquiv` rather than duplicating it; no reconstruction or cohomology is imported.
 The stage-permutation application formula remains a plain rewrite to preserve both inverse
-cancellation simp forms. `Krull/Comparison` and its exact comparison criterion remain W06.
+cancellation simp forms.
+
+W06 implements `Krull/Comparison` and the optional `Krull` facade.
+`KrullFixingCondition` is the approved ordinary proposition asserting that every scalar
+fixer contains the fixer of a finite-dimensional intermediate field. The actual global
+Mathlib Krull topology equals the named pointwise topology exactly under this condition;
+pointwise is always finer, and algebraicity supplies a wrapper without normality or
+separability. Finite intermediate-field fixers are tested on a vector-space basis by
+comparing maps from that intermediate field into the ambient field; no invariance of the
+intermediate field is assumed. `hyperplaneCoefficientField` is the actual intermediate
+field adjoined from all normalized affine coefficients, including constants. Its fixing
+subgroup equals the hyperplane fixer without algebraicity; algebraicity supplies finite
+dimensionality. For `1 ≤ n`, arbitrary chosen cofinal families contain a stage whose kernel
+lies inside each finite intermediate-field fixer, with no union-closure, algebraicity or
+comparison-condition premise. The stage-to-Krull equality then uses the exact condition or
+its algebraic wrapper. The facade activates no scope and preserves the global Krull and
+field topology instances. `Examples/HyperplaneGT/Topology/Systems` tests these boundaries,
+including trivial automorphism groups without an algebraicity premise, dimension-zero
+coefficient fields, and a nonreal coefficient field whose fixer excludes conjugation.
 
 W08 implements the approved three rational-function leaves and small facade entirely
 within `Examples`. `Field` and `Automorphisms` import only Mathlib and prove that every
@@ -2505,12 +2534,12 @@ retain zero coefficients and dimension zero; ordinary specializations retain the
 existing field and characteristic-zero parameters. Literal restriction/cofinal upgrades
 do not acquire algebraicity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, initially **0 formalized /
-0 partial / 17 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **4 formalized /
+2 partial / 11 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **2 formalized / 2 partial / 13 planned**; T05 and T08 are
+unchanged. The current M9 count is **4 formalized / 2 partial / 11 planned**; T03, T05–T06 and T08 are
 complete, and T01–T02 cover the pure diagrams while their actual-theory and ordinary clauses
 remain planned.
 

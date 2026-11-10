@@ -466,11 +466,12 @@ The chapter records each of the 41 labelled statements separately and explains t
 
 *Topological reconstruction in progress.*
 The fifth blueprint proposes the finite-stage convergence topology on the existing quadratic, graded and actual cohomology diagram groups, retaining the single common target.
-Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: two formalized, two partly formalized and thirteen planned.
+Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: four formalized, two partly formalized and eleven planned.
 The direct pure quadratic and graded topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved; the corresponding actual-theory and ordinary clauses remain planned.
 T05 proves the pointwise topological group and separation properties, normalized affine coefficient stabilizers, arbitrary geometric coordinate fibers and actual finite-stage kernel topology comparison for $`n\geq1`.
 Coefficient units are discrete, and the Galois factor has pointwise convergence topology.
-The Krull version needs the exact finite-intermediate-field fixing condition; algebraicity suffices, without normality or separability.
+T06 proves equality with Mathlib's existing Krull topology exactly under the finite-intermediate-field fixing condition; algebraicity suffices, without normality or separability.
+It identifies actual normalized coefficient-field fixers with hyperplane fixers and, for $`n\geq1`, places a chosen-stage kernel inside every finite intermediate-field fixer.
 A supplied cofinal system alone does not imply that comparison, as T08's actual rational-function counterexample proves.
 Its binary quadratic diagram is nontrivial, finite and discrete, while the actual direct Galois action and forward M8 classification are noncontinuous for Mathlib's Krull topology.
 The planned classification upgrades retain M8's local/domain, dimension and marking hypotheses; the basic and adapter topologies have broader scope.
