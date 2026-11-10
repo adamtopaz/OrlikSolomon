@@ -11,7 +11,8 @@ import OrlikSolomonBook.Blueprint
 Run with `lake env lean -DmaxSynthPendingDepth=3 -DautoImplicit=false
 scripts/tests/book-blueprint-parser.lean`. Section labels may follow whitespace and comments,
 but orphan labels, missing theorem labels and duplicated labels must not disappear from tracking.
-Custom node markers organize the fourth blueprint without replacing its theorem labels.
+Custom node markers organize the later blueprints without replacing their theorem labels.
+Tagged display labels are metadata, while every theorem-like environment still needs its own label.
 -/
 
 open OrlikSolomonBook.Blueprint
@@ -77,3 +78,48 @@ Another statement.
 
 #guard ((parseNodes r"% \begin{lemma}\label{lem:commented}
 ").toOption.map (·.size)) == some 0
+
+-- The fifth blueprint labels tagged equations inside a display and just after its closing delimiter.
+#guard ((parseNodes r"\[
+x = x. \tag{I}\label{eq:inside}
+\]
+\[
+y = y.
+\]
+\tag{O}\label{eq:outside}
+\begin{lemma}\label{lem:test}
+Statement.
+\end{lemma}").toOption.map (fun nodes => nodes.map (·.label))) == some #["lem:test"]
+
+-- Equation-like spelling never causes a theorem's own label to disappear.
+#guard ((parseNodes r"\begin{theorem}\label{eq:theorem}
+Statement.
+\end{theorem}").toOption.map (fun nodes => nodes.map (·.label))) == some #["eq:theorem"]
+
+-- A labelled equation inside an otherwise unlabelled theorem cannot own the theorem.
+#guard !(parseNodes r"\begin{theorem}
+\[x = x. \tag{E}\label{eq:only}\]
+\end{theorem}").isOk
+
+-- A label prefix, or a tag without an actual display, cannot hide an orphan.
+#guard !(parseNodes r"Orphan.\label{eq:orphan}").isOk
+#guard !(parseNodes r"Orphan.\tag{E}\label{eq:orphan}").isOk
+
+-- Only whitespace may separate the closed display from its tag.
+#guard !(parseNodes r"\[x = x.\]
+Intervening prose.\tag{E}\label{eq:orphan}").isOk
+
+-- Untagged displays and malformed tags do not acquire metadata-label ownership.
+#guard !(parseNodes r"\[x = x.\label{eq:untagged}\]").isOk
+#guard !(parseNodes r"\[x = x.\tag{}\label{eq:empty}\]").isOk
+#guard !(parseNodes r"\[x = x.\tag{E} extra\label{eq:extra}\]").isOk
+
+-- Duplicate theorem labels are still rejected even if they look like equation labels.
+#guard match parseNodes r"\begin{lemma}\label{eq:duplicate}
+Statement.\[x = x.\tag{E}\label{eq:metadata}\]
+\end{lemma}
+\begin{theorem}\label{eq:duplicate}
+Another statement.
+\end{theorem}" with
+  | .ok nodes => duplicateLabels nodes == ["eq:duplicate"]
+  | .error _ => false

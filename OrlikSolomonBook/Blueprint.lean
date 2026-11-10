@@ -13,10 +13,10 @@ module extracts them from the TeX source, so that the book can check its coverag
 blueprint itself rather than against a list that could drift from it.
 
 The parser is deliberately strict. A `\label` that is attached neither to a theorem-like
-environment nor to a sectioning command is an error, and so is a theorem-like environment without
-a `\label`. So is a label used by two nodes, even in different files, because a copied label would
-otherwise add a node with a new statement and no new coverage obligation. This way no node can drop
-out of the completeness check unnoticed.
+environment, a sectioning command nor a tagged display is an error, and so is a theorem-like
+environment without a `\label`. So is a label used by two nodes, even in different files, because
+a copied label would otherwise add a node with a new statement and no new coverage obligation.
+This way no node can drop out of the completeness check unnoticed.
 -/
 
 open Lean
@@ -68,15 +68,34 @@ private def afterLastBegin? (before : String) : Option String :=
   | [] | [_] => none
   | parts => parts.getLast?
 
+/-- A tag immediately before a label must belong to the current or just-closed display.
+This recognizes display metadata by its TeX context, never by the label's spelling. -/
+private def isTaggedDisplayLabel (before : String) : Bool := Id.run do
+  let parts := before.trimAscii.copy.splitOn "\\tag{"
+  if parts.length < 2 then return false
+  let arg := parts.getLast?.getD ""
+  if !arg.endsWith "}" then return false
+  let tag := arg.dropEnd 1 |>.copy
+  if tag.isEmpty || tag.toList.any (fun c => c == '{' || c == '}') then return false
+  let beforeTag := "\\tag{".intercalate (parts.take (parts.length - 1))
+  let displays := beforeTag.splitOn "\\["
+  if displays.length < 2 then return false
+  match (displays.getLast?.getD "").splitOn "\\]" with
+  | [_] => return true
+  | [_, afterClose] => return afterClose.trimAscii.isEmpty
+  | _ => return false
+
 /--
 Classifies the text that precedes a `\label`. Returns `some (some node)` if the label is on a
-theorem-like environment, `some none` if it is on a sectioning command, and `none` otherwise.
+theorem-like environment, `some none` for section or tagged-display metadata, and `none` otherwise.
 -/
 private def classify (label before : String) : Option (Option Node) := do
   -- A section label may follow its heading on a new line, including after blank lines.
   -- Trim only whitespace: intervening prose must still make the label an error.
   let lastLine := ((before.trimAscii.copy.splitOn "\n").getLast?.getD "").trimAscii.copy
   if sectioningCommands.any (lastLine.startsWith ·) then
+    return none
+  if isTaggedDisplayLabel before then
     return none
   let tail ← afterLastBegin? before
   match tail.splitOn "}" with
@@ -110,7 +129,7 @@ def parseNodes (src : String) : Except String (Array Node) := do
     let (label, after) := splitLabel chunk
     match classify label before with
     | none =>
-      throw s!"\\label\{{label}} is on neither a theorem-like environment nor a section"
+      throw s!"\\label\{{label}} is on neither a theorem-like environment, a section nor a tagged display"
     | some none => pure ()
     | some (some node) => nodes := nodes.push node
     before := after
