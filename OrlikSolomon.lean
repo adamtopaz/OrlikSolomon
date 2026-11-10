@@ -250,7 +250,14 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Basic
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Cofinal
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Comparison
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Basic
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Cofinal
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Cofinal.Basic
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Cofinal.Quotient
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Cofinal.Restriction
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Krull
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Quotient
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Quotient.Basic
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Quotient.Restriction
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Untwist
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Actions
