@@ -2442,7 +2442,7 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | `H/Cohomology/DeRham/Topology/Basic`, `Topology/Comparison`, `Topology/Actions`, `Topology/Cofinal`, `Topology/Reconstruction`, facade `H/Cohomology/DeRham/Topology` | Direct ordinary topology, twist comparisons, new algebraic scalar/cofinal wrappers and final ordinary upgrades; W17–W18, [#221](https://github.com/adamtopaz/OrlikSolomon/issues/221), [#222](https://github.com/adamtopaz/OrlikSolomon/issues/222) |
 | `Examples/HyperplaneGT/Topology/RatFunc/Field`, `RatFunc/Automorphisms`, `RatFunc/Counterexample`, small `RatFunc` facade | T08's field, finite group, stable system and actual noncontinuous-map example; W08, [#212](https://github.com/adamtopaz/OrlikSolomon/issues/212). No rational-function core imports |
 | `Examples/HyperplaneGT/Topology/Coefficients`, `Systems`, `Realizations` | Required coefficient/system/actual-realization consumers; W05 begins `Systems` with T05 regressions; W19, [#223](https://github.com/adamtopaz/OrlikSolomon/issues/223) |
-| `Examples/HyperplaneGT/Topology/Infinite/Frobenius`, `Infinite/Acceptance`, small `Infinite` facade | Genuine infinite algebraic example; W20, [#224](https://github.com/adamtopaz/OrlikSolomon/issues/224) |
+| `Examples/HyperplaneGT/Topology/Infinite/Frobenius`, `Infinite/Acceptance`, small `Infinite` facade | Implemented genuine infinite prime-closure Galois group, explicit pointwise/Krull compactness and nondiscreteness, actual full-system proper clopen kernel; W20, [#224](https://github.com/adamtopaz/OrlikSolomon/issues/224) |
 | `H/Topology`, `H/Cohomology/Topology`, `Examples/HyperplaneGT/Topology` | Additional explicit facades and final acceptance umbrella; W21, [#225](https://github.com/adamtopaz/OrlikSolomon/issues/225) |
 
 Leaves target roughly 250–600 lines and split before 800. Intermediate size-only leaves
@@ -2585,6 +2585,17 @@ topologies, using the two quotient-map universal properties and the old scalar
 representative squares. The approved import of the general scalar comparisons in
 `Cohomology/Main/Classification` adds no local/domain hypothesis to these results. The
 optional facade activates no scope and imports no concrete de Rham instance.
+
+`Examples/HyperplaneGT/Topology/Infinite/Frobenius` constructs the actual base-field
+Frobenius on `AlgebraicClosure (ZMod p)` for every prime `p`, reusing Mathlib's equivalence
+and iterate APIs. Distinct powers follow from the finite root bound for
+`X ^ (p ^ m) - X` and the existing infinitude of an algebraically closed field.
+`Infinite/Acceptance` uses T07 and T06 on those original carriers and topologies to prove
+pointwise and actual Krull compactness and nondiscreteness. It retains the literal full
+stable system and constructs a stage as the stable closure of one geometric coordinate
+fiber in dimension two; a proved moved scalar makes the clopen stage kernel proper.
+Both finite scalar tests and actual selected-stage kernels give the Krull identity basis.
+The three example leaves install no instances and remain outside every core facade.
 
 `Cohomology/DeRham/Topology/Basic` defines the ordinary quadratic and full graded
 finite-stage topologies directly on their original discrete complete H¹ and ordinary
