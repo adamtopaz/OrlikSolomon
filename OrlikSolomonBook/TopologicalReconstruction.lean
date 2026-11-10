@@ -231,6 +231,20 @@ The action remains coefficient-linear on covariant logarithmic labels, with the 
 With discrete coefficient units, the full de Rham groups are locally compact and noncompact, while their scalar quotients are profinite under the stated hypotheses.
 :::
 
+# A genuine infinite Galois example
+
+For every prime $`p`, the example uses the actual canonical algebraic closure of $`\mathbb F_p`.
+The {name OrlikSolomon.HyperplaneGT.PrimeClosureExamples.frobenius}`Frobenius automorphism` fixes the prime field and has powers $`x\mapsto x^{p^m}`.
+Their {name OrlikSolomon.HyperplaneGT.PrimeClosureExamples.frobenius_pow_injective}`proved distinctness` makes the actual automorphism group infinite: a positive identity power would force the infinite algebraic closure into the finite root set of $`X^{p^m}-X`.
+T07 gives pointwise compactness, and T06 identifies that topology with the existing Krull topology.
+The resulting {name OrlikSolomon.HyperplaneGT.PrimeClosureExamples.krull_not_discrete}`nondiscreteness` therefore concerns the actual Krull topology as well as pointwise convergence.
+
+The literal full stable system has the {name OrlikSolomon.HyperplaneGT.PrimeClosureExamples.full_stage_eq_krull}`same stage-permutation topology` in positive dimension.
+In dimension two, {name OrlikSolomon.HyperplaneGT.PrimeClosureExamples.scalarStage}`scalarStage` is the finite stable orbit closure of one geometric coordinate fiber.
+Its kernel is clopen, and a {name OrlikSolomon.HyperplaneGT.PrimeClosureExamples.exists_frobenius_not_mem_scalarStageKernel}`proved Frobenius-moved scalar` makes such a kernel proper.
+The scalar-test and selected-stage-kernel identity bases describe the same existing Krull topology.
+The ordinary inferred topology on the automorphism group remains Mathlib's Krull topology.
+
 # Completion and limits
 
 A box becomes formalized only when proved public declarations cover its whole statement.

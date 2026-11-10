@@ -119,6 +119,9 @@ any finite intermediate-field fixer for `n ≥ 1`. A supplied cofinal system alo
 imply the Krull comparison.
 T07 proves pointwise compactness from finite scalar orbits. A supplied stable cofinal system
 with `n ≥ 1`, or separately algebraicity, supplies this condition without normality or separability.
+The [prime-closure example](OrlikSolomon/Examples/HyperplaneGT/Topology/Infinite.lean) proves
+distinct actual Frobenius powers for every prime, giving an infinite compact nondiscrete
+Krull group and a proper clopen kernel in its actual full stable system.
 Classification upgrades retain M8's local/domain, dimension and
 marking hypotheses. Actual theory-level assertions stay conditional on a supplied eligible theory;
 the de Rham upgrade specializes the constructed characteristic-zero theory. Pure quadratic
