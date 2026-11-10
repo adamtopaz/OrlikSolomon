@@ -16,11 +16,11 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Nine statements are formalized, two are partly formalized and six remain planned.*
+*Eleven statements are formalized, zero are partly formalized and six remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
-The actual supplied-theory component topologies and bases are also proved; the ordinary de Rham clauses of T01–T02 remain planned.
+The actual supplied-theory and constructed characteristic-zero ordinary de Rham component topologies and bases are also proved, completing T01–T02 in every dimension.
 T14 upgrades both actual-to-presentation adapters and both scalar quotient comparisons, retaining their exact old underlying maps.
 T05 proves the pointwise Galois topology and its exact finite-equation, geometric-fiber and selected-stage kernel descriptions.
 T06 proves the exact comparison with Mathlib's existing Krull topology, normalized coefficient-field fixers and finite-intermediate-field containment by selected-stage kernels.
@@ -37,7 +37,7 @@ T09 upgrades the exact local/domain quadratic classifiers for pointwise converge
 Let $`k_0\to k` be an algebra map of fields and let $`G=(k\simeq_{k_0}k)`.
 A supplied cofinal system consists of finite $`G`-stable arrangements covering every finite set of hyperplanes.
 Its selected stages need not be closed under unions.
-The proposed diagram topology is induced from the product of discrete groups of complete stage automorphisms, including the single original common-target component.
+The diagram topology is induced from the product of discrete groups of complete stage automorphisms, including the single original common-target component.
 It concerns neighborhoods or nets, with no countability assumption.
 The coefficient units $`R^\times` are discrete, independently of any topology on $`R`; this makes no adic-coefficient claim.
 
@@ -53,18 +53,24 @@ A supplied cofinal system alone does not imply it.
 
 ## T01: finite-stage convergence
 
-:::node "def:t01" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.continuous_stageTopology_iff) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.continuous_stageTopology_iff) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.continuous_stageTopology_iff) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.continuous_stageTopology_iff) (remaining := "The direct ordinary de Rham component topologies (#221) remain planned.")
+:::node "def:t01" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.continuous_stageTopology_iff) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.continuous_stageTopology_iff) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.continuous_stageTopology_iff) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.continuous_stageTopology_iff) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.DiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.DiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.DiagramAut.continuous_stageTopology_iff) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.GradedDiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.GradedDiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.GradedDiagramAut.continuous_stageTopology_iff)
 Give the existing quadratic and full graded diagram groups their subspace topologies in products of discrete stage-automorphism groups and the discrete common-target group.
 Define the actual supplied-theory and ordinary de Rham topologies directly from their own components as well.
 Use deliberate named or scoped instances without changing carriers, group laws or structure fields, and without installing a global discrete topology on all linear or algebra equivalences.
+The ordinary characteristic-zero definitions use complete H¹ and full ordinary total-cohomology automorphism groups, with the same one original target even in dimension zero.
+They are direct product/subgroup topologies; neither a classifier nor a twist defines them.
+Only the existing {name OrlikSolomon.HyperplaneGT.FiniteStageTopology.deRhamDiagramTopologicalSpace}`FiniteStageTopology` scope activates their named topology values.
 :::
 
 ## T02: groups and neighborhood bases
 
-:::node "lem:t02" (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.diagramIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.gradedIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.diagramT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.gradedT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.diagramTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.gradedTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.nhds_one_stageBasis) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.nhds_one_stageBasis) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyDiagramIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyGradedIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyDiagramT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyGradedT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyDiagramTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyGradedTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.nhds_one_stageBasis) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.nhds_one_stageBasis) (remaining := "The group, separation and stage-and-target neighborhood basis results for ordinary de Rham diagrams (#221) remain planned.")
+:::node "lem:t02" (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.diagramIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.gradedIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.diagramT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.gradedT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.diagramTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.gradedTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.nhds_one_stageBasis) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.nhds_one_stageBasis) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyDiagramIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyGradedIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyDiagramT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyGradedT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyDiagramTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.cohomologyGradedTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.nhds_one_stageBasis) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.nhds_one_stageBasis) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.deRhamDiagramIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.deRhamDiagramT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.deRhamDiagramTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.deRhamGradedIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.deRhamGradedT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.deRhamGradedTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.DiagramAut.nhds_one_stageBasis) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DeRham.GradedDiagramAut.nhds_one_stageBasis)
 The intended topologies make all these groups Hausdorff and totally separated topological groups.
 At the identity, agreement with the identity on one selected stage and on the common target gives a neighborhood basis.
 Cofinal enlargement controls finitely many stage conditions; union closure and classification are not assumed.
+The ordinary kernels retain both whole components and are normal and clopen; their cosets are clopen as well.
+The ordinary downward-equality proof uses the old untwisting and generator comparisons, without injectivity of full cohomology inclusions.
+The constructed ordinary theory has an actual dimension-zero target interchange, invisible at every stage and excluded from every stage-and-target kernel, as proved by {name OrlikSolomon.HyperplaneGT.Cohomology.DeRham.TopologyExamples.ordinary_zero_target_detected}`ordinary_zero_target_detected`.
 :::
 
 ## T03: closedness and finite coefficients
@@ -230,6 +236,14 @@ For a supplied system, the exact comparison condition may replace algebraicity i
 The action remains coefficient-linear on covariant logarithmic labels, with the original degree-power scalars; it is not semilinear transport of differential forms.
 With discrete coefficient units, the full de Rham groups are locally compact and noncompact, while their scalar quotients are profinite under the stated hypotheses.
 :::
+
+
+The ordinary prerequisites now include {name OrlikSolomon.HyperplaneGT.Cohomology.DeRham.quadraticTwistContinuousEquiv}`quadraticTwistContinuousEquiv` and {name OrlikSolomon.HyperplaneGT.Cohomology.DeRham.gradedTwistContinuousEquiv}`gradedTwistContinuousEquiv`, whose underlying maps are the exact old ordinary-to-diagonal twists.
+They compare only the actual diagonal with full ordinary total cohomology, rather than the whole Laurent-weighted algebra or all weight-zero classes.
+Both new scalar quotient twists use the literal Mathlib quotient topologies and retain the old twist representative formulas in both directions.
+The algebraic-only {name OrlikSolomon.HyperplaneGT.Cohomology.DeRham.DiagramAut.scalarQuotientEquiv}`scalarQuotientEquiv` and {name OrlikSolomon.HyperplaneGT.Cohomology.DeRham.cofinalRestrictionEquiv}`cofinalRestrictionEquiv` wrappers retain exactly the old marking and dimension hypotheses; literal restriction selects complete stages and keeps the original target.
+These are prerequisites: T17's reconstruction, quotient-to-Galois and cofinal homeomorphisms, Krull specializations and compactness conclusions remain planned under #222.
+The actual characteristic-zero regression {name OrlikSolomon.HyperplaneGT.Cohomology.DeRham.TopologyExamples.ordinary_conjugation_class_ne_one}`ordinary_conjugation_class_ne_one` uses all real marking constants and a genuinely nontrivial complex-conjugation quotient class.
 
 # A genuine infinite Galois example
 
