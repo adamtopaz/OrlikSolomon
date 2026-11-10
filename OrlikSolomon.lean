@@ -333,6 +333,7 @@ public import OrlikSolomon.HyperplaneGT.Topology.Classification.Quadratic
 public import OrlikSolomon.HyperplaneGT.Topology.Compact
 public import OrlikSolomon.HyperplaneGT.Topology.Compact.Closed
 public import OrlikSolomon.HyperplaneGT.Topology.Compact.Finite
+public import OrlikSolomon.HyperplaneGT.Topology.Consequences
 public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact
 public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact.FiniteOrbits
 public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact.Stages

@@ -13,7 +13,10 @@ public import OrlikSolomon.Examples.HyperplaneGT.DomainClassification
 public import OrlikSolomon.Examples.HyperplaneGT.GradedClassification
 public import OrlikSolomon.Examples.HyperplaneGT.FinalCoefficients
 public import OrlikSolomon.HyperplaneGT.Topology.Quotient
+public import OrlikSolomon.HyperplaneGT.Topology.Consequences
+public import Mathlib.Algebra.GroupWithZero.Units.Fintype
 public import Mathlib.FieldTheory.KrullTopology
+import Mathlib.Tactic.Positivity
 
 /-!
 # Coefficients and the common target in finite-stage topology
@@ -39,6 +42,10 @@ quotient topologies, degree-one restriction and the nonlocal integer-domain case
 
 Blueprint: T01 (`def:t01`), T02 (`lem:t02`), T09 (`thm:t09`), T10 (`cor:t10`) and
 T11 (`thm:t11`).
+
+The compactness consumers distinguish the infinite ring of integers, with its finite unit
+group, from rational coefficients, whose infinitely many units prevent diagram compactness.
+Both rational scalar quotients remain compact. Blueprint: T13 (`cor:t13`).
 -/
 
 @[expose] public section
@@ -607,3 +614,75 @@ theorem binary_conjugation_quotients :
   · exact galoisQuadraticAut_targetEquiv _ _ _ _
 
 end OrlikSolomon.HyperplaneGT.QuotientTopologyExamples
+
+namespace OrlikSolomon.HyperplaneGT.CompactnessTopologyExamples
+
+open scoped FiniteStageTopology
+
+local instance : Fact (Nat.Prime 2) := ⟨by decide⟩
+
+/-- Integers give compact quadratic and full graded groups despite the coefficient ring
+being infinite. The proof uses domain classification and finite units, not localness. -/
+theorem integer_compact_groups :
+    let C := fullCofinalSystem ℝ ℂ 2
+    CompactSpace (DiagramAut ℤ C Set.univ) ∧
+      CompactSpace (GradedDiagramAut ℤ C Set.univ) ∧ Infinite ℤ ∧ Finite ℤˣ := by
+  dsimp only
+  exact ⟨DiagramAut.compactSpace_of_finite_units_of_isDomain _ _ _
+      (by trivial) (by simp) (by decide),
+    GradedDiagramAut.compactSpace_of_finite_units_of_isDomain _ _ _
+      (by trivial) (by simp) (by decide), inferInstance, inferInstance⟩
+
+private def positiveRationalUnit (n : ℕ) : ℚˣ := Units.mk0 (n + 1) (by positivity)
+
+private theorem positiveRationalUnit_injective : Function.Injective positiveRationalUnit := by
+  intro m n h
+  have hv := congrArg (fun a : ℚˣ ↦ (a : ℚ)) h
+  change (m : ℚ) + 1 = (n : ℚ) + 1 at hv
+  exact Nat.cast_injective (add_right_cancel hv)
+
+/-- Infinitely many actual rational units make both diagram groups noncompact, although
+they remain locally compact and both scalar quotients are compact. -/
+theorem rational_groups_and_quotients :
+    let C := fullCofinalSystem ℝ ℂ 2
+    LocallyCompactSpace (DiagramAut ℚ C Set.univ) ∧
+      LocallyCompactSpace (GradedDiagramAut ℚ C Set.univ) ∧
+      ¬ CompactSpace (DiagramAut ℚ C Set.univ) ∧
+      ¬ CompactSpace (GradedDiagramAut ℚ C Set.univ) ∧
+      CompactSpace (DiagramAut ℚ C Set.univ ⧸ DiagramAut.scalarSubgroup ℚ C Set.univ) ∧
+      CompactSpace (GradedDiagramAut ℚ C Set.univ ⧸
+        GradedDiagramAut.scalarSubgroup ℚ C Set.univ) := by
+  dsimp only
+  let : Infinite ℚˣ := Infinite.of_injective positiveRationalUnit positiveRationalUnit_injective
+  exact ⟨DiagramAut.locallyCompactSpace _ _ _ (by trivial) (by simp) (by decide),
+    GradedDiagramAut.locallyCompactSpace _ _ _ (by trivial) (by simp) (by decide),
+    DiagramAut.not_compactSpace_of_infinite_units _ _ _ (by trivial) (by simp) (by decide),
+    GradedDiagramAut.not_compactSpace_of_infinite_units _ _ _ (by trivial) (by simp) (by decide),
+    DiagramAut.scalarQuotient_compactSpace _ _ _ (by trivial) (by simp) (by decide),
+    GradedDiagramAut.scalarQuotient_compactSpace _ _ _ (by trivial) (by simp) (by decide)⟩
+
+/-- Characteristic-two finite fields and their nonfield dual numbers both retain compact
+diagram groups under the finite-unit criterion. No division by two is used. -/
+theorem binary_and_dual_number_compact_groups :
+    let C := fullCofinalSystem ℝ ℂ 2
+    CompactSpace (DiagramAut (ZMod 2) C Set.univ) ∧
+      CompactSpace (GradedDiagramAut (ZMod 2) C Set.univ) ∧
+      CompactSpace (DiagramAut (DualNumber (ZMod 2)) C Set.univ) ∧
+      CompactSpace (GradedDiagramAut (DualNumber (ZMod 2)) C Set.univ) := by
+  dsimp only
+  let : Finite (DualNumber (ZMod 2)) := by
+    change Finite (ZMod 2 × ZMod 2)
+    infer_instance
+  exact ⟨DiagramAut.compactSpace_of_finite_units _ _ _ (by trivial) (by simp) (by decide),
+    GradedDiagramAut.compactSpace_of_finite_units _ _ _ (by trivial) (by simp) (by decide),
+    DiagramAut.compactSpace_of_finite_units _ _ _ (by trivial) (by simp) (by decide),
+    GradedDiagramAut.compactSpace_of_finite_units _ _ _ (by trivial) (by simp) (by decide)⟩
+
+/-- The stronger finite-coefficient theorem still covers the zero ring and dimension zero,
+outside the classification hypotheses used for the finite-unit criterion. -/
+theorem zero_ring_zero_dimension_compact :
+    let C := fullCofinalSystem (ZMod 2) (ZMod 2) 0
+    CompactSpace (DiagramAut (ZMod 1) C ∅) ∧
+      CompactSpace (GradedDiagramAut (ZMod 1) C ∅) := ⟨inferInstance, inferInstance⟩
+
+end OrlikSolomon.HyperplaneGT.CompactnessTopologyExamples
