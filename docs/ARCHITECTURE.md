@@ -2436,9 +2436,9 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | `H/Topology/Classification/Quadratic`, `Classification/Graded`, facade `Classification` | Implemented T09–T10: exact local/domain quadratic and graded upgrades; W09–W10, [#213](https://github.com/adamtopaz/OrlikSolomon/issues/213), [#214](https://github.com/adamtopaz/OrlikSolomon/issues/214) |
 | `H/Topology/Quotient/Local`, `Quotient/Domain`, facade `Quotient` | Exact local/domain scalar quotient homeomorphisms, literal degree-one quotient restriction and closedness/profiniteness; W11, [#215](https://github.com/adamtopaz/OrlikSolomon/issues/215) |
 | `H/Topology/Cofinal/Restriction`, `Cofinal/Quotient/Basic`, `Cofinal/Quotient`, facade `Cofinal` | Implemented T12: literal cofinal embeddings, inverse continuity and actual scalar quotients; W12, [#216](https://github.com/adamtopaz/OrlikSolomon/issues/216) |
-| `H/Topology/Consequences` | Implemented local compactness and exact finite-unit compactness criterion; W13, [#217](https://github.com/adamtopaz/OrlikSolomon/issues/217) |
+| `H/Topology/Consequences` | Compactness and local compactness; W13, [#217](https://github.com/adamtopaz/OrlikSolomon/issues/217) |
 | `H/Cohomology/Topology/Adapter/Basic`, `Adapter/Comparison`, `Adapter/Quotient`, facade `Adapter` | Direct actual topologies, both adapter directions and quotient comparison; W14, [#218](https://github.com/adamtopaz/OrlikSolomon/issues/218). Quotient imports the existing Main scalar APIs without classification hypotheses |
-| `H/Cohomology/Topology/Main/Classification`, `Main/Cofinal`, `Main/Realization`, facade `Main` | Implemented T15 actual reconstruction/cofinality; separate T16 two-realization comparisons remain W16; W15–W16, [#219](https://github.com/adamtopaz/OrlikSolomon/issues/219), [#220](https://github.com/adamtopaz/OrlikSolomon/issues/220) |
+| `H/Cohomology/Topology/Main/Classification`, `Main/Cofinal`, `Main/Realization`, facade `Main` | Implemented T15 actual reconstruction/cofinality and T16 two-realization comparisons; W15–W16, [#219](https://github.com/adamtopaz/OrlikSolomon/issues/219), [#220](https://github.com/adamtopaz/OrlikSolomon/issues/220) |
 | `H/Cohomology/DeRham/Topology/Basic`, `Topology/Comparison`, `Topology/Actions`, `Topology/Cofinal`, `Topology/Reconstruction`, facade `H/Cohomology/DeRham/Topology` | Implemented T01/T02 ordinary topologies and T17 exact ordinary reconstruction, scalar quotients, cofinal/full-family homeomorphisms and characteristic-zero consequences; W17–W18, [#221](https://github.com/adamtopaz/OrlikSolomon/issues/221), [#222](https://github.com/adamtopaz/OrlikSolomon/issues/222) |
 | `Examples/HyperplaneGT/Topology/RatFunc/Field`, `RatFunc/Automorphisms`, `RatFunc/Counterexample`, small `RatFunc` facade | T08's field, finite group, stable system and actual noncontinuous-map example; W08, [#212](https://github.com/adamtopaz/OrlikSolomon/issues/212). No rational-function core imports |
 | `Examples/HyperplaneGT/Topology/Coefficients`, `Systems`, `Realizations`, size-only `Realizations/Ordinary` | Required coefficient/system/actual-realization consumers; W05 begins `Systems` with T05 regressions; W19, [#223](https://github.com/adamtopaz/OrlikSolomon/issues/223) |
@@ -2651,10 +2651,10 @@ Untwisting identifies only the actual diagonal with ordinary total cohomology, n
 whole Laurent algebra or all weight-zero classes. All stage, original target and
 k-linear covariant logarithmic actions remain the old ones. Forward-expansion equations
 remain plain rewrites so ordinary inverse cancellation survives. The two algebraic-only
-wrapper leaves import no new topology leaf. W18/#222 completes reconstruction/classification,
+wrapper leaves import no new topology leaf. Final reconstruction/classification,
 restriction/cofinal homeomorphisms, Krull/full-system wrappers and the explicit ordinary
-topology facade. W17 supplied only the ordinary T01/T02 clauses and the exact algebraic
-prerequisites used by that final T17 implementation.
+topology facade remain W18/#222; W17 completes only the ordinary T01/T02 clauses and
+records T17 prerequisites without certifying T17.
 
 W11 implements the [approved exact T11 statements](https://github.com/adamtopaz/OrlikSolomon/issues/215#issuecomment-6772281851)
 in the size-only `Topology/Quotient/Local` and `Domain` leaves and a small facade. The
@@ -2724,9 +2724,9 @@ preserving earlier Realizations namespaces. It checks all 36 bundles / 72 cancel
 actual whole targets and marked arrows, the genuine non-union-closed system, conditional
 nonfield-local nilpotent and integer-domain theories, constructed characteristic-zero
 covariant conjugation/target fixtures, and raw zero-ring/dimension-zero boundaries. It
-makes no out-of-range classification or semilinear pullback claim. T15 is used by the separate W18 ordinary specialization and does not itself certify T16 or T17.
+makes no out-of-range classification or semilinear pullback claim. Final ordinary topology
+remains W18; T15 does not certify T16 or T17.
 
-W13 implements the approved single pure leaf `Topology/Consequences`.
 `Topology/Consequences` derives T13 from the four existing pointwise classifier
 homeomorphisms. The parameter topology remains the literal product of discrete coefficient
 units and the compact pointwise Galois group supplied by T07 from C and positive dimension.
@@ -2743,6 +2743,42 @@ actual integer compact groups with finite units and an infinite coefficient ring
 locally compact noncompact groups with a proved infinite unit family and compact scalar
 quotients, binary/dual-number compact groups, and T03's stronger zero-ring/dimension-zero
 compactness outside classification.
+
+W16 implements the approved `Cohomology/Topology/Main/Realization` responsibility after
+[Claude's exact-statement approval](https://github.com/adamtopaz/OrlikSolomon/issues/220#issuecomment-6773420207).
+The size-only `Basic` (440 lines) and `Compatibility` (793 lines) leaves are re-exported
+by the small Realization facade, and the optional topological Main facade includes it.
+Basic imports only the old M8 realization API and the T14 adapters, without the M9
+classifier/cofinal topology leaves. Compatibility additionally imports the T15
+Classification and Cofinal/Quotient interfaces. Neither leaf imports Examples or an
+ordinary de Rham instance, activates a scope for downstream users or defines a topology,
+carrier, instance or new theory assumption. Old algebraic Main and DeRham facades remain
+unchanged.
+
+The four homeomorphisms have exactly the old M8 realization `MulEquiv`s as their data.
+Their two continuity directions compose the canonical T14 group or quotient adapters,
+using the actual directly defined component and literal quotient topologies. They retain
+arbitrary commutative coefficients, every dimension, arbitrary markings and supplied
+cofinal systems, with independent weight algebras, gradings, admissible domains and
+cohomology universes for two or three theories. No classification, field-extension
+condition, theory morphism, topology transported through an answer or cohomology base
+change is assumed. Whole stages and each theory's single original common target,
+inverses, quotient representatives, scalar/Galois families, literal degree-one and raw
+cofinal squares, identities/reversal and all four three-realization cocycles are public.
+
+Compatibility retains the old local/domain marking, field-generation and dimension
+hypotheses for unit/Galois coordinates and classified cofinal maps. All twelve bundled
+group classifier squares and twelve scalar-quotient classifier squares agree for the
+pointwise, explicit-K and algebraic versions; only a named Krull classifier introduces its
+K/algebraicity premise. Four classified group and four scalar-quotient cofinal squares
+use the exact T15 maps, including the honestly new quotient congruences. Raw quotient
+naturality is separate and needs no classified hypotheses. Public forward/inverse
+expansions are plain rewrites, preserving bare inverse cancellation without a heartbeat
+override. `Examples/HyperplaneGT/Topology/Realizations` preserves the earlier namespace and
+adds independent-theory/cocycle, original target, local/domain parameter and cofinal
+consumers. Its binary dimension-zero target-swap example is explicitly conditional on
+supplied eligible theories, while its zero-coefficient example uses an existing
+constructed theory. No nonzero theory existence or ordinary T17 result is asserted.
 
 W18 implements the approved final T17 API in
 `Cohomology/DeRham/Topology/Reconstruction`, with eleven proof leaves and five small
@@ -2835,12 +2871,11 @@ actual non-union-closed subsystem only within Examples, including original targe
 ZMod4 and ℤ, a genuinely nonidentity complex-conjugation class and zero-ring/dimension-zero
 literal continuity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **16 formalized /
-0 partial / 1 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **17 formalized / 0 partial / 0 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **16 formalized / 0 partial / 1 planned**; T01–T15 and T17
+unchanged. The current M9 count is **17 formalized / 0 partial / 0 planned**; T01–T17
 are complete. T01–T02 include pure, actual supplied-theory and constructed ordinary de Rham
 diagrams; the ordinary clauses retain the existing characteristic-zero field parameters.
 

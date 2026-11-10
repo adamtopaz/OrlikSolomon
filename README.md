@@ -101,7 +101,7 @@ and point-free-complement coverage is retained.
 
 **Milestone M9:** [topological hyperplane reconstruction](blueprint/topological_reconstruction_blueprint.tex)
 is tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
-Its 17 separately labelled statements T01–T17 include **16 formalized, 0 partly formalized and 1 planned**,
+Its 17 separately labelled statements T01–T17 include **17 formalized, 0 partly formalized and 0 planned**,
 counted separately from the four existing blueprints. The [chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
 describes finite-stage convergence, discrete coefficient units, and the pointwise Galois factor.
 T13 proves local compactness and compactness exactly for finite coefficient units, including
@@ -154,11 +154,16 @@ full graded restriction homeomorphisms without a field-extension hypothesis and 
 graded product classifiers for pointwise convergence, with separate fixing-condition and
 algebraic Krull wrappers. All ordinary degree powers and original target/arrow formulas are
 retained. T11 proves both literal scalar quotient homeomorphisms, closed scalar ranges and
-profinite quotients, without finiteness of coefficient units. T15 upgrades all exact supplied-theory
-local/domain reconstruction, quotient and restriction/cofinal homeomorphisms, preserving
-the original target and hypotheses. Only the separate two-realization
-topological comparison T16 remains planned. No adic-coefficient
-claim is made.
+profinite quotients, without finiteness of coefficient units. T15 upgrades all exact
+supplied-theory local/domain reconstruction and scalar quotient maps, preserving the same
+actual common target, whole-degree powers and covariant labels. Pointwise and actual
+degree-one/cofinal restriction need no field-extension condition; Krull wrappers use
+exactly the fixing condition or algebraicity. Raw cofinal maps retain arbitrary coefficients
+and dimensions. T16 upgrades all four existing two-realization group and scalar-quotient
+comparisons over arbitrary commutative coefficients and dimensions, without classification
+or algebraicity. Independent weight algebras, gradings, admissible domains, cohomology
+universes and the actual common targets are retained, as are the original parameter and
+cofinal squares under their old hypotheses. No adic-coefficient claim is made.
 
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective

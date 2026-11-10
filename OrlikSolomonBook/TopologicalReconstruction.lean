@@ -16,7 +16,7 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Sixteen statements are formalized, zero are partly formalized and one remains planned.*
+*All seventeen statements are formalized.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
@@ -33,10 +33,8 @@ The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic
 T09 upgrades the exact local/domain quadratic classifiers for pointwise convergence and for Krull under the precise fixing condition or algebraicity.
 T10 upgrades the exact graded restriction and full product classifiers.
 T11 proves the exact scalar quotient homeomorphisms, closedness and profiniteness.
-T12 upgrades literal cofinal restrictions and their actual scalar quotients without a field-extension condition; the ordinary reconstruction upgrades are proved in T17.
-T15 upgrades the exact supplied-theory local/domain quadratic and graded reconstruction, scalar quotients and actual restriction/cofinal equivalences. Pointwise and restriction/cofinal results need no field-extension condition; Krull versions use exactly the fixing condition or algebraicity.
-
-T13 proves local compactness and compactness exactly for finite coefficient units, including integral coefficients and noncompact rational-coefficient groups with compact scalar quotients.
+T12 upgrades literal cofinal restrictions and their actual scalar quotients without a field-extension condition; the ordinary reconstruction upgrades are proved in T17. T15 upgrades the exact actual-theory reconstruction, scalar quotients and restriction/cofinal maps with their original hypotheses. T16 proves the exact quadratic, graded and scalar-quotient realization comparisons are homeomorphisms without classification or algebraicity, preserving the independently sized theories and original targets.
+T13 proves local compactness and the exact finite-unit compactness criterion, including integral coefficients and noncompact rational-coefficient groups with compact scalar quotients.
 
 # The intended topology and hypotheses
 
@@ -254,10 +252,21 @@ Durable consumers distinguish supplied nonfield-local or nonlocal-domain theorie
 
 ## T16: realization independence
 
-:::node "thm:t16"
-The existing quadratic, graded and scalar-quotient comparisons between two supplied eligible realizations with the same coefficient ring and geometric data become topological group isomorphisms without classification or algebraicity.
-Retain the independently sized weight algebras, gradings, cohomology universes and admissible domains allowed by M8, and the single common target.
-Under classification the comparisons preserve the unit/Galois parameters and commute with the upgraded cofinal maps, with no assumed theory morphism or cohomology base-change theorem.
+:::node "thm:t16" (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationQuadraticContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationGradedContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationQuadraticScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationGradedScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationQuadraticContinuousEquiv_target) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationGradedContinuousEquiv_target) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationQuadraticContinuousEquiv_trans) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationGradedScalarQuotientContinuousEquiv_trans) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationQuadraticContinuousEquiv_localQuadraticReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.realizationGradedContinuousEquiv_domainGradedReconstruction) (decl := OrlikSolomon.HyperplaneGT.Cohomology.cofinalRestrictionContinuousEquiv_realization) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainGradedCofinalScalarQuotientContinuousEquiv_realization)
+All four existing quadratic, graded and scalar-quotient comparisons between two supplied eligible theories with the same coefficient ring and geometric data are topological group isomorphisms for their direct actual component and literal Mathlib quotient topologies.
+The underlying multiplicative equivalences, functions and inverses are exactly the M8 comparisons.
+This holds over every commutative coefficient ring, in every dimension and for arbitrary markings and supplied cofinal systems; no classification, nonzero, local/domain, fixing-condition or algebraicity hypothesis is added.
+The weight algebras, gradings, admissible domains and cohomology universes of the two theories remain independent.
+Whole stages and each theory's one original common target are compared by the existing canonical maps, in both directions; scalar ranges, quotient representatives, all ordinary degrees and cup kernels are retained.
+There is no assumed morphism of theories, cohomology base change or topology defined through a classifier.
+All four comparisons have identity, reversal and independently sized three-realization cocycle laws.
+Under precisely the old local/domain, generating-marking and dimension hypotheses, the comparisons preserve the same primal unit and covariant Galois parameter, and commute with the actual group and scalar-quotient cofinal homeomorphisms.
+Their pointwise, explicit-fixing-condition and algebraic classifier squares use only the hypotheses needed by those classifiers; the realization and raw cofinal comparisons themselves need none of the extra field-extension conditions.
+The quotient representative formulas are {name OrlikSolomon.HyperplaneGT.Cohomology.realizationQuadraticScalarQuotientContinuousEquiv_map}`realizationQuadraticScalarQuotientContinuousEquiv_map` and {name OrlikSolomon.HyperplaneGT.Cohomology.realizationGradedScalarQuotientContinuousEquiv_map}`realizationGradedScalarQuotientContinuousEquiv_map`, with their exact inverse forms.
+The literal degree-one square is {name OrlikSolomon.HyperplaneGT.Cohomology.realizationContinuousEquiv_toQuadratic}`realizationContinuousEquiv_toQuadratic`; arbitrary-coefficient stage selection and its scalar-quotient naturality are also proved before classification.
+The remaining cofinal squares include {name OrlikSolomon.HyperplaneGT.Cohomology.gradedCofinalRestrictionContinuousEquiv_realization}`gradedCofinalRestrictionContinuousEquiv_realization` and {name OrlikSolomon.HyperplaneGT.Cohomology.cofinalScalarQuotientContinuousEquiv_realization}`cofinalScalarQuotientContinuousEquiv_realization`, with both domain versions.
+Supporting classifier and quotient-classifier squares are public in the separate compatibility leaf; forward and inverse expansions remain plain rewrites, preserving bare cancellation.
+Durable consumers retain independently sized theories, all four cocycles, a conditional binary dimension-zero example whose nonidentity common target is invisible on every stage, and the constructed zero-ring raw boundary.
 :::
 
 ## T17: ordinary de Rham reconstruction
