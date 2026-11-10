@@ -17,3 +17,5 @@ it is inverse to the dual inertia unit.
 
 Blueprint: C04 (`prop:c04`) and S01 (`lem:s01`). No splitting or classification is asserted.
 -/
+
+@[expose] public section

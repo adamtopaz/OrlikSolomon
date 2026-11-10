@@ -18,8 +18,9 @@ Its action on actual coordinate levels fixes the marking constants; field genera
 descends it to the base field. The field action and its composition follow the coefficient
 point action, with no field automorphism stored as diagram data.
 
-The helpers below concern actual coefficient points and coordinate hyperplanes and use
-no coefficient-ring assumption. Blueprint: C04 (`prop:c04`).
+The pure coordinate helpers concern actual coefficient points and coordinate hyperplanes
+and use no coefficient-ring assumption. The diagram results retain the local-ring hypothesis.
+Blueprint: C04 (`prop:c04`).
 -/
 
 @[expose] public section
