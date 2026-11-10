@@ -1712,9 +1712,9 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04 and S01–S03 are formalized, including U04's actual universal
+G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04 and S01–S04 are formalized, including U04's actual universal
 configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
-graded extension, domain and cohomological reconstruction remain planned. The book records complete-statement status.
+domain and cohomological reconstruction remain planned. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
 described under Algebra above; `HyperplaneGT/Algebra/QuadraticKernel` applies it to the actual OS
 quotient and identifies its full degree-two kernel.
@@ -1827,10 +1827,13 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Reconstruction/Galois/Extraction` | Actual fixed-frame field extraction, marked-constant and field-generation descent, Galois homomorphism and recovered action | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
 | `HyperplaneGT/Reconstruction/Galois/Scalar` | Actual trace-kernel unit equality, connectivity, all-stage/common-target scalar identities and uniqueness | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
 | `HyperplaneGT/Diagram/GaloisAction`, with a `Stage` leaf | S02, formalized: direct coefficient-linear action on full OS algebras, every-degree image equality, inclusion and marking squares, group laws and identity common target | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
-| `HyperplaneGT/Reconstruction/LocalRing` | S03 formalized: actual local quadratic classification with explicit common scalar/Galois inverse; S04 graded extension and quotients remain planned | W18–W19, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170), [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
+| `HyperplaneGT/Reconstruction/LocalRing` | S03–S04 formalized: actual quadratic/full graded classification, degree powers and both canonical central scalar quotients with explicit inverse sections | W18–W19, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170), [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
 | `HyperplaneGT/Reconstruction/LocalRing/Scalar` | Pure unit-scalar families, whole relation-image equality, common-target formulas, injective homomorphism and literal central range over arbitrary commutative rings | W18, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170) |
 | `HyperplaneGT/Reconstruction/LocalRing/Splitting` | Canonical restriction of the existing S02 action, actual generator/target formulas, comparison with C04 extraction and literal scalar-kernel equality | W18, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170) |
 | `HyperplaneGT/Reconstruction/LocalRing/Quadratic` | Right-normalized primal scalar, canonical multiplicative equivalence, both inverse equations and actual stage/universal/common-target/marking/dual formulas | W18, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170) |
+| `HyperplaneGT/Reconstruction/LocalRing/GradedScalar` | Pure scaling of all OS relators and ordinary components, full scalar families with actual arrows/common target, faithful scalar restriction and literal central range | W19, [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
+| `HyperplaneGT/Reconstruction/LocalRing/Graded` | Existing degree-one restriction as a MulEquiv after S03, explicit full scalar/Galois inverse, generator/degree/target formulas and actual marking squares | W19, [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
+| `HyperplaneGT/Reconstruction/LocalRing/Quotient` | Normality of both literal scalar ranges, canonical quotient maps and Galois sections, both quotient-to-Galois MulEquivs/inverse laws and restriction compatibility | W19, [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
 | `HyperplaneGT/Reconstruction/Domain` | S05 | W20, [#172](https://github.com/adamtopaz/OrlikSolomon/issues/172) |
 | `HyperplaneGT/Cohomology/Adapter` | A04, formalized: facade comparing actual degree-one/cup-kernel and full diagonal-cohomology diagrams with A03 | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
 | `HyperplaneGT/Cohomology/Adapter/Maps` | One actual scheme target, tagged scheme marking maps, localization and unit/logarithm squares, actual component and diagonal pullbacks | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
@@ -1859,6 +1862,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/Projections` | P01–P02 consumers: characteristic-two geometry with a nilpotent `ZMod 4` detector, a nonvacuous `ZMod 2` coefficient recognition test, semiring restriction, zero/low-dimensional/full-coordinate cases, both inverse cancellations and inverse-three vertical dual action over `ZMod 5` | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
 | `Examples/HyperplaneGT/Incidence` | I01–I04 consumers: actual primal/dual units and group cancellation, nonfield local coefficients, characteristic-two exchanged-triple obstruction and the complete fixed frame | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
 | `Examples/HyperplaneGT/LocalClassification` | S03 consumers: independent-universe components, both inverse equations/cancellation, actual markings, primal two/dual three over `ZMod 5`, nilpotents in nonfield local `ZMod 4`, nontrivial complex conjugation and retained target at dimension zero/zero coefficients | W18, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170) |
+| `Examples/HyperplaneGT/GradedClassification` | S04 consumers: nonzero degree-two powers, characteristic-two nilpotent units, exact full markings and inverse cancellation, dimension-zero common target and nontrivial conjugation classes in both scalar quotients | W19, [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
 
 `HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
 the actual exterior quotient to `osExteriorSquareMap`, surjective onto the existing internal
@@ -2194,7 +2198,36 @@ coefficient-field structure, union closure, scalar/monomiality premise, arbitrar
 arrow or cohomology import is introduced. The scalar subgroup is the actual homomorphism
 range, contained in Mathlib's center; no competing classification group is defined. The three leaves and final statements
 have [Claude's explicit S03 approval](https://github.com/adamtopaz/OrlikSolomon/issues/170#issuecomment-6755665076).
-S04 graded/quotient equivalences and S05 domain descent remain separate.
+S05 domain descent remains separate.
+
+
+`GradedScalar` scales each full OS generator and checks both complete defining relator
+families. Its `OSAlgebra.scalarEquiv` acts by the q-th scalar power on every ordinary degree-q
+component, including degree zero and the one common target; the inclusion and tagged marking
+squares are the actual OS maps. Restriction gives the existing quadratic scalar family, so
+faithfulness proves full scalar injectivity and centrality over arbitrary commutative
+coefficients. `Graded` uses S03 to extend only the classified scalar/Galois families. Its
+`gradedAutEquiv` is directed from the literal full graded group to the quadratic group,
+with exactly the existing `toQuadratic` as its forward map and an explicit scalar/Galois
+inverse. Generation proves the original faithfulness; no quadratic presentation or arbitrary-Q
+lifting principle enters. The forward expansion lemmas are plain rewrite rules, preserving
+ordinary two-sided equivalence cancellation under `simp`. `Quotient` uses Mathlib's actual
+quotient groups and the literal scalar homomorphism ranges, with one normality instance for
+each central range. Both `scalarQuotientEquiv` constructions use the existing direct Galois
+section as their explicit inverse. Quotient projection formulas, both inverse laws and the
+square with actual graded restriction are exposed. These subgroups are scalar ranges;
+no equality with the full group centers is asserted. The classified hypotheses are unchanged
+from S03, and field/coefficient universes remain independent. The core imports no cohomology
+or de Rham module and introduces no new carrier exception. The three leaves and final
+statements have [Claude's explicit S04 approval](https://github.com/adamtopaz/OrlikSolomon/issues/171#issuecomment-6755893648).
+Durable `Examples/HyperplaneGT/GradedClassification` pins a nonzero degree-two binary triangle
+boundary with distinct scalar two and scalar-square four over `ZMod 5`, a nonidentity unit
+with square one over characteristic-two dual numbers, the actual full restriction inverse
+over nonfield local `ZMod 4`, zero coefficients, the retained target
+in dimension zero, exact full marking squares and ordinary inverse cancellation. Complex
+conjugation gives nonidentity elements in both actual scalar quotients, including on the
+constructed full cofinal system. The degree-two consumer reuses the existing affine-triangle
+regression, whose imports are confined to the example module rather than the pure core.
 
 The [supervisor's statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
 requires Claude's approval before proofs are finalized only for S03–S05, E01–E03 and statements
@@ -2205,7 +2238,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-36 formalized and 5 planned, separate from the other blueprints. Each
+37 formalized and 4 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
