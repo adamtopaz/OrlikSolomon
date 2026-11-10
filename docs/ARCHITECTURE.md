@@ -1815,7 +1815,12 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Reconstruction/Projections/Geometry` | Coordinate level labels and guarded equation-span/trace-exclusion geometry for P01 | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
 | `HyperplaneGT/Reconstruction/Projections/Recognition` | Arbitrary supported restriction, actual coordinate planes, trace-functional coefficient detector and full P01 iff | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
 | `HyperplaneGT/Reconstruction/Projections/Invariance` | Actual marking-plane image equality, P02 induction, restricted universal/dual action homomorphisms and actual restriction square | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
-| `HyperplaneGT/Reconstruction/Incidence` | I01–I04 | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
+| `HyperplaneGT/Reconstruction/Incidence` | I01–I04, formalized: canonical inertia permutation, actual trace/incidence transport, projective action and individually fixed marked frame | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
+| `HyperplaneGT/Reconstruction/Incidence/Inertia` | Derive every actual L05 hypothesis from graph restriction, the P02 square and common-target marking planes | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
+| `HyperplaneGT/Reconstruction/Incidence/Permutation` | Canonical unique labels and dual units, inverse primal scalar, inertia/decomposition/generator images and group laws | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
+| `HyperplaneGT/Reconstruction/Incidence/Relations` | Actual trace-domain/kernel images and strict parallel/dependent-triple equivalences in both directions | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
+| `HyperplaneGT/Reconstruction/Incidence/Projective` | Arbitrary-field coefficient-point extension, exact line images and the actual projective group action | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
+| `HyperplaneGT/Reconstruction/Incidence/Markings` | One common target excludes uniform exchange, fixes each marked fiber and supplies all basis/difference frame points | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
 | `HyperplaneGT/Geometry/Collineation`, with `Span`, `Chart`, and `Field` leaves | C01–C03, formalized: arbitrary projective spans, coordinatewise affine charts, and a unique field automorphism from the prescribed frame | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
 | `HyperplaneGT/Reconstruction/Galois` | C04, S01 | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
 | `HyperplaneGT/Diagram/GaloisAction`, with a `Stage` leaf | S02, formalized: direct coefficient-linear action on full OS algebras, every-degree image equality, inclusion and marking squares, group laws and identity common target | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
@@ -1838,6 +1843,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/Trace` | L01–L03 consumers: discarded/merged traces, empty-triangle guard, zero and nilpotent coefficients, low dimensions and a nonzero actual vertical target | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
 | `Examples/HyperplaneGT/Local` | L04–L05 consumers: zero-ring transfer, a nonzero actual vertical target over `ZMod 4`, characteristic-two dual numbers with nonzero nilpotents and a dimension-one counterexample satisfying all four actual conditions | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
 | `Examples/HyperplaneGT/Projections` | P01–P02 consumers: characteristic-two geometry with a nilpotent `ZMod 4` detector, a nonvacuous `ZMod 2` coefficient recognition test, semiring restriction, zero/low-dimensional/full-coordinate cases, both inverse cancellations and inverse-three vertical dual action over `ZMod 5` | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
+| `Examples/HyperplaneGT/Incidence` | I01–I04 consumers: actual primal/dual units and group cancellation, nonfield local coefficients, characteristic-two exchanged-triple obstruction and the complete fixed frame | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
 
 `HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
 the actual exterior quotient to `osExteriorSquareMap`, surjective onto the existing internal
@@ -1873,7 +1879,9 @@ hyperplane geometry and diagrams. The `Algebra/Dual` facade also re-exports the 
 its inverse evaluates a finite sum, and the dual is the full function product. Evaluation
 separates both vectors and functionals. `dualAction` is the homomorphism sending `g` to
 `g.symm.dualMap`, so simultaneous action preserves evaluation. No reflexivity or finite-index
-assumption is used. These APIs work over commutative semirings.
+assumption is used. `map_dualCoannihilator_dualAction` transports evaluation coannihilators
+through the paired action without any double-dual identification. These APIs work over
+commutative semirings.
 `unit_smul_lapply_eq_iff` separates unit multiples of coordinate functionals over a nontrivial
 commutative semiring, independently of any chosen geometric coordinate projection.
 
@@ -2078,6 +2086,25 @@ coefficient detector over characteristic-two geometry, a nonvacuous recognition 
 `ZMod 2` coefficients, and an inverse-three vertical dual
 coordinate for an actual scalar-two marked diagram over `ZMod 5`.
 
+`Reconstruction/Incidence` derives the hyperplane permutation from L05 applied to the actual
+contragredient images of deltas. `Inertia` obtains every detection hypothesis from the existing
+graph restriction, P02 square and actual common-target marking planes. `Permutation` constructs
+the unique label permutation, its dual-unit cocycle and inverse primal scalar, and proves the
+actual inertia, decomposition and generator-line image equalities. `Relations` transports the
+existing trace submodules by evaluation coannihilators and derives strict parallelism and guarded
+dependent triples in both directions. Unit-weighted trace differences have a common retained
+label and equal units; empty traces cannot be substituted. `Projective` extends the label
+permutation through the existing coefficient-point equivalence, fixes the constant point, and
+proves the existing exact projective-line image property. Its pure geometric assertions work
+over arbitrary fields and in every dimension. `Markings` uses the single common target to fix
+every marked zero/one fiber individually: its one matrix coefficient makes a possible exchange
+uniform, and the actual dependent zero triple and empty one triangle exclude it even in
+characteristic two. It exposes the full fixed basis/difference frame for later field
+reconstruction. Diagram results retain only the explicit local/nonzero, dimension-at-least-two
+and `0 ∈ S` hypotheses, with independent coefficient/field universes. No field automorphism,
+scalar-kernel classification, arbitrary-projection arrow or cohomology/de Rham import enters.
+The facade reexports the five approved leaves; no preceding leaf imports it.
+
 The [supervisor's statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
 requires Claude's approval before proofs are finalized only for S03–S05, E01–E03 and statements
 that deviate from the blueprint. Non-author Codex reviewers check intermediate statements
@@ -2087,7 +2114,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-28 formalized and 13 planned, separate from the other blueprints. Each
+32 formalized and 9 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
