@@ -2433,7 +2433,7 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | `H/Topology/Restriction` | Implemented T04: degree-one embedding and inverse-continuity API; W04, [#208](https://github.com/adamtopaz/OrlikSolomon/issues/208) |
 | `H/Topology/Krull/Pointwise`, `Krull/Hyperplanes`, `Krull/Comparison`, facade `Krull` | Generic pointwise topology, normalized geometric tests and exact Krull comparison; W05–W06, [#209](https://github.com/adamtopaz/OrlikSolomon/issues/209), [#210](https://github.com/adamtopaz/OrlikSolomon/issues/210) |
 | `H/Topology/GaloisCompact/FiniteOrbits`, `GaloisCompact/Stages`, facade `GaloisCompact` | Implemented T07: arrangement-free finite-orbit compactness and system/algebraicity corollaries; W07, [#211](https://github.com/adamtopaz/OrlikSolomon/issues/211) |
-| `H/Topology/Classification/Quadratic`, `Classification/Graded`, facade `Classification` | Exact local/domain quadratic and graded upgrades; W09–W10, [#213](https://github.com/adamtopaz/OrlikSolomon/issues/213), [#214](https://github.com/adamtopaz/OrlikSolomon/issues/214) |
+| `H/Topology/Classification/Quadratic`, `Classification/Graded`, facade `Classification` | Implemented T09–T10: exact local/domain quadratic and graded upgrades; W09–W10, [#213](https://github.com/adamtopaz/OrlikSolomon/issues/213), [#214](https://github.com/adamtopaz/OrlikSolomon/issues/214) |
 | `H/Topology/Quotient/Local`, `Quotient/Domain`, facade `Quotient` | Exact local/domain scalar quotient homeomorphisms, literal degree-one quotient restriction and closedness/profiniteness; W11, [#215](https://github.com/adamtopaz/OrlikSolomon/issues/215) |
 | `H/Topology/Cofinal/Restriction`, `Cofinal/Quotient`, facade `Cofinal` | Literal cofinal maps, inverse continuity and scalar quotients; W12, [#216](https://github.com/adamtopaz/OrlikSolomon/issues/216) |
 | `H/Topology/Consequences` | Implemented local compactness and exact finite-unit compactness criterion; W13, [#217](https://github.com/adamtopaz/OrlikSolomon/issues/217) |
@@ -2567,8 +2567,32 @@ cancellation. `Examples/HyperplaneGT/Topology/Coefficients` retains the earlier 
 consumers and adds actual nilpotent-local, integer-domain and complex-conjugation fixtures,
 whole marking squares, exact kernel tests and all six inverse-cancellation pairs. The
 zero-ring parameter topology and dimension-zero raw target test do not extend the
-classification to those boundary parameters. W10 will assemble the separate optional
+classification to those boundary parameters. W10 supplies the separate optional
 Classification facade; no additional leaf split was needed for W09.
+
+W10 implements the approved single `Topology/Classification/Graded` leaf and separate
+optional `Classification` facade. The
+[approved exact T10 statements](https://github.com/adamtopaz/OrlikSolomon/issues/214#issuecomment-6771736118)
+retain every old local/domain coefficient, dimension and marking hypothesis. T04's literal
+degree-one restriction and inverse-continuity API adjoin continuity to both existing
+restriction equivalences without K, algebraicity or another field-extension hypothesis.
+Composition with T09 adjoins continuity to the exact old graded product maps. Only their
+literal Krull-product wrappers take the explicit fixing condition, with algebraicity
+supplying it separately. All eight `toMulEquiv` fields, original scalar/Galois inverses,
+whole-degree scalar powers, covariant labels and actual stage/target arrow equations remain
+unchanged. Public expansion equations are plain rewrites and all sixteen bare inverse
+cancellations are retained.
+
+The leaf imports the specific old local/domain Graded modules, T04 and T09. No reconstruction,
+descent, compactness, cohomology or Examples argument is repeated; no topology definition or
+instance is added. The inherited T09 topology values remain `instance_reducible` for their
+existing discrete/product representations, while the scopes are still deliberate and never
+activated by importing the facade. No topology is defined through classification. The
+719-line leaf needs no size split. Approved Coefficients consumers preserve both earlier
+proof namespaces and add actual full scalar-two/dual-three, nonfield-local nilpotent,
+integer-domain and complex-conjugation fixtures, whole-degree stage/target formulas and
+actual full marking/inclusion squares. No zero-ring or low-dimensional classification
+hypothesis is inferred from the separate generic topology boundary tests.
 
 `Cohomology/Topology/Adapter/Basic` defines the actual quadratic and graded topologies
 directly from their existing complete component products and original common target. Named
@@ -2660,12 +2684,12 @@ retain zero coefficients and dimension zero; ordinary specializations retain the
 existing field and characteristic-zero parameters. Literal restriction/cofinal upgrades
 do not acquire algebraicity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **10 formalized /
-2 partial / 5 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **11 formalized /
+2 partial / 4 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **10 formalized / 2 partial / 5 planned**; T03–T09, T11, T13 and T14
+unchanged. The current M9 count is **11 formalized / 2 partial / 4 planned**; T03–T11, T13 and T14
 are complete. T01–T02 cover the pure and actual supplied-theory diagrams; their ordinary de Rham
 clauses remain planned.
 

@@ -16,7 +16,7 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Ten statements are formalized, two are partly formalized and five remain planned.*
+*Eleven statements are formalized, two are partly formalized and four remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
@@ -31,7 +31,8 @@ Its seventeen named nodes T01–T17 each have one labelled statement and one sep
 The four earlier blueprints retain their separate counts.
 The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic inputs.
 T09 upgrades the exact local/domain quadratic classifiers for pointwise convergence and for Krull under the precise fixing condition or algebraicity.
-T11 proves the exact scalar quotient homeomorphisms, closedness and profiniteness; the remaining graded, cofinal and actual/ordinary reconstruction upgrades remain planned.
+T10 upgrades the exact graded restriction and full product classifiers.
+T11 proves the exact scalar quotient homeomorphisms, closedness and profiniteness; the cofinal and actual/ordinary reconstruction upgrades remain planned.
 T13 proves local compactness and the exact finite-unit compactness criterion, including integral coefficients and noncompact rational-coefficient groups with compact scalar quotients.
 
 # The intended topology and hypotheses
@@ -156,10 +157,16 @@ Forward and inverse expansions are plain rewrites, preserving both bare inverse 
 
 ## T10: graded reconstruction
 
-:::node "cor:t10"
-Under the classification hypotheses, the existing graded restriction equivalence becomes a topological group isomorphism without an algebraicity hypothesis.
-The full graded classification has the same discrete-unit and pointwise product topology, with the Krull version under the comparison condition or algebraicity.
-The existing degree-power scalar action and common-target formulas remain unchanged.
+:::node "cor:t10" (decl := OrlikSolomon.HyperplaneGT.gradedAutContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedAutContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.gradedClassificationContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedClassificationContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.gradedClassificationKrullContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedClassificationKrullContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.gradedClassificationKrullContinuousEquivOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedClassificationKrullContinuousEquivOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.gradedAutContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedAutContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.gradedClassificationContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedClassificationContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.gradedClassificationKrullContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedClassificationKrullContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.gradedClassificationKrullContinuousEquivOfIsAlgebraic_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedClassificationKrullContinuousEquivOfIsAlgebraic_toMulEquiv)
+Under the exact M8 local-ring or integral-domain classification hypotheses, each existing full graded restriction equivalence is a topological group isomorphism for the original direct diagram topologies.
+Neither the fixing condition nor algebraicity is needed for restriction or the corresponding product classifier with pointwise Galois topology.
+The four product Krull wrappers use exactly the explicit fixing condition or its algebraic corollary; no normality or separability is added.
+Every displayed forgetful equality identifies the underlying multiplicative equivalence with its original M8 map, retaining both inverse continuities and the same actual common target.
+The full classified family still scales each ordinary degree $`q` by $`u^q` after the covariant Galois action, including degree zero and every homogeneous element of the common target.
+These formulas are {name OrlikSolomon.HyperplaneGT.gradedClassificationContinuousEquiv_stage_apply_of_mem_degree}`gradedClassificationContinuousEquiv_stage_apply_of_mem_degree` and {name OrlikSolomon.HyperplaneGT.gradedClassificationContinuousEquiv_target_apply_of_mem_degree}`gradedClassificationContinuousEquiv_target_apply_of_mem_degree`, with their exact domain counterparts.
+The actual full inclusion and marking squares and the bundled restriction square remain unchanged; {name OrlikSolomon.HyperplaneGT.gradedClassificationContinuousEquiv_trans_restriction}`gradedClassificationContinuousEquiv_trans_restriction` identifies that square with T09.
+Forward and inverse expansions are plain rewrites, so all sixteen bare inverse cancellation laws remain available.
+No quadratic presentation or unrestricted lifting principle for relation-preserving maps is asserted.
 :::
 
 ## T11: scalar quotients
