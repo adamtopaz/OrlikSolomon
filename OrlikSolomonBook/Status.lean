@@ -34,10 +34,12 @@ The Cartesian node retains its Tor-sheaf and conormal statements, and the statem
 
 The fourth blueprint, cohomological hyperplane reconstruction, is in progress.
 Its 38 named groups contain 41 separately labeled statements: U01, U04 and L02 each contain a definition and a lemma, which have separate boxes and statuses.
-Twenty-eight statements are formalized.
+Twenty-nine statements are formalized.
 G01–G03 give coordinate geometry, A01 gives the degree-one generator basis and algebra generation, A02 gives the full degree-two exterior-quotient kernel, U03 gives full-dual coordinates and the contragredient action, U04 gives the determinant and universal centralizer with its configuration equations and paired diagram invariance, and U05 proves the local-ring primitive-coordinate criterion.
 A02 identifies that kernel with the span of parallel-pair and guarded dependent-triple wedges, including zero coefficients and characteristic two.
 A03 defines the marked quadratic and full graded automorphism groups and their faithful degree-one restriction, with one common target.
+A04 identifies them with the actual degree-one/cup-kernel and full diagonal-cohomology diagrams for a supplied full geometric ordinary theory, preserving all actual arrows, scalar families and faithful degree-one restriction.
+The characteristic-two and point-free-target consumers are likewise conditional on such a theory; they construct no new nonzero mod-2 realization.
 G04–G06 construct the coefficient action, finite Galois orbits over algebraic extensions and cofinal stable arrangements with actual common-target marking maps.
 C01–C03 give projective span preservation, separate affine coordinate bijections, and, in dimension at least two, the unique field automorphism from the prescribed fixed frame, over an arbitrary field.
 U01–U02 give the literal universal free module, its finite-stage universal property and quadratic relation witnesses, and the induced diagram action preserving the common target component.
@@ -46,7 +48,7 @@ L01–L03 give the surjective trace map with exact kernel, the explicit decompos
 L04 transfers graph coefficients over every commutative coefficient ring by cancelling only a specified unit.
 L05 detects a unique unit-supported graph functional from the four stated conditions over a nonzero local ring in dimension at least two; its centralizer is the actual decomposition submodule.
 P01–P02 recognize every coordinate-supported span intrinsically, derive its diagram invariance from the actual marking squares, and make restriction to its full dual equivariant.
-The remaining thirteen statements are planned; the reconstruction theorem is not yet formalized.
+The remaining twelve statements are planned; the reconstruction theorem is not yet formalized.
 {ref "hyperplane-gt"}[Its chapter] explains the proposed theorem, its hypotheses and the limits of the planned applications.
 
 {statusOverview}
