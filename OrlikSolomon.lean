@@ -224,6 +224,8 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Examples
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Graded
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Maps
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Quadratic
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Actions
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
