@@ -246,6 +246,28 @@ theorem domainScalarPart_coefficientDomainAutEquiv (hS : (0 : k₀) ∈ S)
     (coefficientDomainAutEquiv R C S hS hgen hn (u, σ)).domainScalarPart hS hgen hn = u :=
   congrArg Prod.fst ((coefficientDomainAutEquiv R C S hS hgen hn).left_inv (u, σ))
 
+/-- The descended primal scalar of the identity diagram is one. -/
+@[simp]
+theorem domainScalarPart_one (hS : (0 : k₀) ∈ S)
+    (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (1 : DiagramAut R C S).domainScalarPart hS hgen hn = 1 :=
+  congrArg Prod.fst (coefficientDomainAutEquiv R C S hS hgen hn).symm.map_one
+
+/-- The descended primal scalar respects the actual diagram multiplication. -/
+@[simp]
+theorem domainScalarPart_mul (hS : (0 : k₀) ∈ S)
+    (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) (g h : DiagramAut R C S) :
+    (g * h).domainScalarPart hS hgen hn =
+      g.domainScalarPart hS hgen hn * h.domainScalarPart hS hgen hn :=
+  congrArg Prod.fst ((coefficientDomainAutEquiv R C S hS hgen hn).symm.map_mul g h)
+
+/-- Inverting the actual diagram inverts its descended primal scalar. -/
+@[simp]
+theorem domainScalarPart_inv (hS : (0 : k₀) ∈ S)
+    (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) (g : DiagramAut R C S) :
+    g⁻¹.domainScalarPart hS hgen hn = (g.domainScalarPart hS hgen hn)⁻¹ :=
+  congrArg Prod.fst (map_inv (coefficientDomainAutEquiv R C S hS hgen hn).symm g)
+
 /-- The fraction-field Galois coordinate has precisely the original literal scalar range
 as its kernel. All stage and common-target equalities are descended, not assumed. -/
 theorem ker_domainToGalois (hS : (0 : k₀) ∈ S)
