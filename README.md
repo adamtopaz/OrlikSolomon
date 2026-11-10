@@ -101,7 +101,7 @@ and point-free-complement coverage is retained.
 
 **Milestone M9:** [topological hyperplane reconstruction](blueprint/topological_reconstruction_blueprint.tex)
 is tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
-Its 17 separately labelled statements T01–T17 include **8 formalized, 2 partly formalized and 7 planned**,
+Its 17 separately labelled statements T01–T17 include **9 formalized, 2 partly formalized and 6 planned**,
 counted separately from the four existing blueprints. The [chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
 describes finite-stage convergence, discrete coefficient units, and the pointwise Galois factor.
 T05 proves the pointwise group topology, finite normalized affine coefficient tests and, for
@@ -126,7 +126,9 @@ Classification upgrades retain M8's local/domain, dimension and
 marking hypotheses. Actual theory-level assertions stay conditional on a supplied eligible theory;
 the de Rham upgrade specializes the constructed characteristic-zero theory. Pure quadratic
 and graded component topologies, group and separation properties, and stage-and-target
-neighborhood bases are proved; their actual-theory and ordinary clauses remain planned.
+neighborhood bases are proved. Their actual supplied-theory counterparts and both canonical
+group and scalar quotient adapter homeomorphisms are also proved (T14); the ordinary de Rham
+clauses remain planned.
 Both pure diagram groups are closed in the original ambient products for every commutative
 coefficient ring and compact for finite coefficients, without classification or algebraicity.
 The existing degree-one restriction is a topological embedding for arbitrary coefficients
@@ -134,7 +136,7 @@ and dimensions, and any actual inverse is continuous. T09 upgrades the exact loc
 quadratic classifiers to topological group isomorphisms for pointwise convergence, and for
 Krull under the fixing condition or algebraicity. Both continuity directions and the
 original common-target scalar and covariant-label formulas are retained. T10–T11 and the
-actual-cohomology/ordinary upgrades remain planned. No adic-coefficient claim is made.
+actual-cohomology/ordinary reconstruction upgrades remain planned. No adic-coefficient claim is made.
 
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective

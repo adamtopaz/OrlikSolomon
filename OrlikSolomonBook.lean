@@ -466,11 +466,12 @@ The chapter records each of the 41 labelled statements separately and explains t
 
 *Topological reconstruction in progress.*
 The fifth blueprint proposes the finite-stage convergence topology on the existing quadratic, graded and actual cohomology diagram groups, retaining the single common target.
-Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: eight formalized, two partly formalized and seven planned.
-The direct pure quadratic and graded topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved; the corresponding actual-theory and ordinary clauses remain planned.
+Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: nine formalized, two partly formalized and six planned.
+The direct pure quadratic and graded topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved; the actual supplied-theory clauses are also proved, and the ordinary de Rham clauses remain planned.
 T05 proves the pointwise topological group and separation properties, normalized affine coefficient stabilizers, arbitrary geometric coordinate fibers and actual finite-stage kernel topology comparison for $`n\geq1`.
 T04 proves that the existing degree-one restriction is a topological embedding and that its inverse, whenever available, is continuous.
 T07 proves compactness from finite scalar orbits, and obtains those orbits separately from a supplied positive-dimensional stable system or algebraicity, without normality or separability.
+T14 proves both canonical actual-to-presentation group adapters and scalar quotient comparisons are homeomorphisms, over arbitrary coefficients and dimensions.
 Coefficient units are discrete, and the Galois factor has pointwise convergence topology.
 T06 proves equality with Mathlib's existing Krull topology exactly under the finite-intermediate-field fixing condition; algebraicity suffices, without normality or separability.
 It identifies actual normalized coefficient-field fixers with hyperplane fixers and, for $`n\geq1`, places a chosen-stage kernel inside every finite intermediate-field fixer.
@@ -480,7 +481,7 @@ T09 upgrades the exact existing local/domain quadratic classifiers in both direc
 T12 upgrades the literal cofinal restrictions and their actual scalar quotients without algebraicity, retaining the original common target.
 The classification upgrades retain M8's local/domain, dimension and marking hypotheses; the basic and adapter topologies have broader scope.
 The de Rham upgrade is planned for the already constructed characteristic-zero realization, while arbitrary theory-level assertions remain conditional on a supplied eligible theory.
-T10–T11 and the actual-cohomology/ordinary topological upgrades remain planned. No adic-coefficient result is claimed.
+T10–T11 and the actual-cohomology/ordinary reconstruction upgrades remain planned. No adic-coefficient result is claimed.
 
 {include 1 OrlikSolomonBook.MainTheorem}
 
