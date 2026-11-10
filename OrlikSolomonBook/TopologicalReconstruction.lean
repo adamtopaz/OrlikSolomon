@@ -16,9 +16,10 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Four statements are formalized, two are partly formalized and eleven remain planned.*
+*Five statements are formalized, two are partly formalized and ten remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
+T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
 The actual-theory and ordinary de Rham clauses of T01–T02 remain planned.
 T05 proves the pointwise Galois topology and its exact finite-equation, geometric-fiber and selected-stage kernel descriptions.
 T06 proves the exact comparison with Mathlib's existing Krull topology, normalized coefficient-field fixers and finite-intermediate-field containment by selected-stage kernels.
@@ -73,7 +74,7 @@ The graded argument uses generation to make each degree-preserving factor finite
 
 ## T04: degree-one restriction
 
-:::node "lem:t04"
+:::node "lem:t04" (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.stageEquiv_eq_iff_toQuadratic) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.targetEquiv_eq_iff_toQuadratic) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.preimage_stageKernel) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.stageTopology_eq_induced_toQuadratic) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.isEmbedding_toQuadratic) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.continuous_inverse_toQuadratic)
 The existing graded-to-quadratic restriction homomorphism is a topological embedding over arbitrary commutative coefficients and in every dimension.
 Whenever its existing algebraic map is bijective, the inverse is continuous.
 This statement does not assert that every quadratic automorphism extends before classification.
