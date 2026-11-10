@@ -315,6 +315,8 @@ public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Projection
 public import OrlikSolomon.HyperplaneGT.Topology.Basic
 public import OrlikSolomon.HyperplaneGT.Topology.Basic.Components
 public import OrlikSolomon.HyperplaneGT.Topology.Basic.Neighborhoods
+public import OrlikSolomon.HyperplaneGT.Topology.Krull
+public import OrlikSolomon.HyperplaneGT.Topology.Krull.Comparison
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Hyperplanes
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Pointwise
 public import OrlikSolomon.Interface.Logarithms
