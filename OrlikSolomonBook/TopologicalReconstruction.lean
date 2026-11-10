@@ -16,7 +16,7 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Four statements are formalized, two are partly formalized and eleven remain planned.*
+*Five statements are formalized, two are partly formalized and ten remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
@@ -26,7 +26,8 @@ T06 proves the exact comparison with Mathlib's existing Krull topology, normaliz
 This chapter follows the [fifth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/topological_reconstruction_blueprint.tex), for milestone M9, tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
 Its seventeen named nodes T01–T17 each have one labelled statement and one separate box below.
 The four earlier blueprints retain their separate counts.
-The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic inputs, and their reconstruction homeomorphisms remain planned.
+The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic inputs.
+T09 upgrades the exact local/domain quadratic classifiers for pointwise convergence and for Krull under the precise fixing condition or algebraicity; the other reconstruction upgrades remain planned.
 
 # The intended topology and hypotheses
 
@@ -126,10 +127,15 @@ With coefficient ring $`\mathbb F_2` and $`S=\{0\}`, the M8 classification hypot
 
 ## T09: quadratic reconstruction
 
-:::node "thm:t09"
-Under the classification hypotheses, upgrade each existing local-ring or integral-domain quadratic equivalence to a topological group isomorphism from discrete coefficient units times the pointwise group.
+:::node "thm:t09" (decl := OrlikSolomon.HyperplaneGT.quadraticAutContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.quadraticAutKrullContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutKrullContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.quadraticAutKrullContinuousEquivOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutKrullContinuousEquivOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.quadraticAutContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.quadraticAutKrullContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutKrullContinuousEquiv_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.quadraticAutKrullContinuousEquivOfIsAlgebraic_toMulEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutKrullContinuousEquivOfIsAlgebraic_toMulEquiv)
+Under the classification hypotheses, each existing local-ring or integral-domain quadratic equivalence is a topological group isomorphism from discrete coefficient units times the pointwise group.
 Under the exact Krull comparison condition, in particular under algebraicity, use Mathlib's Krull topology instead.
-Both directions must be continuous, and the underlying multiplicative equivalence must be the existing M8 map.
+Both directions are continuous, and each displayed forgetful equality identifies the underlying multiplicative equivalence with the exact existing M8 map.
+The source uses the independently defined literal products {name OrlikSolomon.HyperplaneGT.coefficientGaloisPointwiseTopology}`coefficientGaloisPointwiseTopology` and {name OrlikSolomon.HyperplaneGT.coefficientGaloisKrullTopology}`coefficientGaloisKrullTopology`; the diagram keeps its direct component topology.
+The exact basis preimages are {name OrlikSolomon.HyperplaneGT.quadraticAutEquiv_preimage_stageKernel}`quadraticAutEquiv_preimage_stageKernel` and {name OrlikSolomon.HyperplaneGT.coefficientDomainAutEquiv_preimage_stageKernel}`coefficientDomainAutEquiv_preimage_stageKernel`.
+The common target forces the primal scalar to be one before the stage basis detects fixed geometric labels; the target remains present even at an empty stage.
+No algebraicity is required for the pointwise upgrades. The coefficient hypotheses, dimension bound and generating marking constants are exactly those of M8.
+Forward and inverse expansions are plain rewrites, preserving both bare inverse cancellations.
 :::
 
 ## T10: graded reconstruction

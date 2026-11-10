@@ -59,7 +59,7 @@ E03 gives unconditional reconstruction for the actual ordinary de Rham diagram i
 Final regression consumers pin binary and nilpotent local coefficients, actual common targets and both scalar quotients. A full disconnected-coefficient counterexample proves that the coefficient hypotheses cannot be replaced by an arbitrary commutative ring.
 {ref "hyperplane-gt"}[Its chapter] explains the proved conditional reconstruction, the unconditional de Rham application and their precise hypotheses.
 
-The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: four formalized, two partly formalized and eleven planned.
+The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: five formalized, two partly formalized and ten planned.
 It proposes direct finite-stage topologies and upgrades of the existing reconstruction maps, scalar quotients, cofinal and realization comparisons, and the ordinary de Rham specialization.
 Coefficient units are discrete; the Krull topology replaces pointwise convergence under the stated fixing condition, in particular for algebraic field extensions.
 The pure diagram topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved.
@@ -68,7 +68,8 @@ Both pure groups are closed in their original ambient products for every commuta
 T05 proves the arrangement-free pointwise topological group and separation properties, exact normalized affine coefficient tests and the finite hyperplane/stage-kernel comparisons for $`n\geq1`.
 T06 proves the exact Krull comparison criterion, its algebraic wrapper, actual normalized coefficient-field fixer equality and chosen-stage containment in every finite intermediate-field fixer for $`n\geq1`.
 T04 proves the existing degree-one restriction is a topological embedding for arbitrary coefficients and dimensions, with continuous inverse whenever the map is bijective.
-The actual-theory and ordinary clauses and the reconstruction homeomorphisms remain planned; the four earlier blueprint counts are unchanged.
+T09 proves both continuity directions for the exact local/domain quadratic classifiers, with pointwise convergence or, under the fixing condition or algebraicity, Krull.
+The full graded, quotient, cofinal and actual-cohomology/ordinary topological upgrades remain planned; the four earlier blueprint counts are unchanged.
 {ref "topological-reconstruction"}[Its chapter] records the topology, hypothesis and realization boundaries.
 
 {statusOverview}
