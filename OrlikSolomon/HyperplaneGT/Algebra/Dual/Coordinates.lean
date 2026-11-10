@@ -105,4 +105,25 @@ Blueprint: `lem:u03`. -/
 theorem dualAction_apply_apply (g : M ≃ₗ[R] M) (φ : Module.Dual R M) (m : M) :
     dualAction g φ (g m) = φ m := by simp
 
+/-- An equivalence carries evaluation coannihilators onto the coannihilators of their
+contragredient images. This uses the preserved evaluation pairing, with no reflexivity,
+finite-generation or field hypothesis. -/
+theorem map_dualCoannihilator_dualAction (g : M ≃ₗ[R] M)
+    (D : Submodule R (Module.Dual R M)) :
+    D.dualCoannihilator.map g.toLinearMap =
+      (D.map (dualAction g).toLinearMap).dualCoannihilator := by
+  ext x
+  constructor
+  · rintro ⟨y, hy, rfl⟩
+    have hy' := (Submodule.mem_dualCoannihilator (Φ := D) y).mp hy
+    apply (Submodule.mem_dualCoannihilator (g y)).mpr
+    rintro ψ ⟨φ, hφ, rfl⟩
+    simpa only [LinearEquiv.coe_toLinearMap, dualAction_apply_apply] using hy' φ hφ
+  · intro hx
+    refine ⟨g.symm x, ?_, g.apply_symm_apply x⟩
+    have hx' := (Submodule.mem_dualCoannihilator x).mp hx
+    apply (Submodule.mem_dualCoannihilator (g.symm x)).mpr
+    intro φ hφ
+    exact hx' (dualAction g φ) ⟨φ, hφ, rfl⟩
+
 end OrlikSolomon.HyperplaneGT
