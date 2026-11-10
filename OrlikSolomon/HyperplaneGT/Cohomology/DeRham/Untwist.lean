@@ -239,6 +239,13 @@ theorem diagonalUntwist_diagonalEquiv (A : Arrangement k V) (x : OSAlgebra k A) 
     diagonalUntwist ((Daff).complement A) ((Tdr).diagonalEquiv A x) =
       Geometric.DeRham.affineEquiv A x := rfl
 
+/-- The actual degree-one summand inclusion becomes the ordinary degree-submodule
+inclusion after untwisting. -/
+theorem diagonalUntwist_degreeOneι (A : Arrangement k V) (x : Cohomology.degreeOne Tdr A) :
+    diagonalUntwist ((Daff).complement A) (Cohomology.degreeOneι Tdr A x) =
+      (degreeOneUntwist A x : HdR ((Daff).complement A)) :=
+  diagonalUntwist_of _ 1 x
+
 /-- The actual ordinary alternating cup map. It is transported from A04's actual cup map;
 the generator formula below identifies it with ordinary multiplication on all classes. -/
 def cupMap (A : Arrangement k V) : (⋀[k]^2 (degreeOne A)) →ₗ[k] degreeTwo A :=
