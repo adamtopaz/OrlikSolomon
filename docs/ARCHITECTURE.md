@@ -1711,7 +1711,7 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A03, C01–C03, U01–U05, L01–L03 and S02 are formalized, including U04's actual universal
+G01–G06, A01–A04, C01–C03, U01–U05, L01–L03 and S02 are formalized, including U04's actual universal
 configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
 reconstruction theorem remains planned. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
@@ -2079,7 +2079,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-24 formalized and 17 planned, separate from the other blueprints. Each
+25 formalized and 16 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
