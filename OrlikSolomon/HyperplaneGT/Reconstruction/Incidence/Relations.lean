@@ -5,7 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Annihilators
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Incidence.Permutation
 
 /-!
 # Recovering affine incidence from the actual trace kernel
@@ -25,7 +25,9 @@ noncomputable section
 
 namespace OrlikSolomon.HyperplaneGT
 
-universe u v
+universe u v r
+
+section TraceTests
 
 variable {k : Type u} [Field k] {n : ℕ} (R : Type v) [Ring R] [Nontrivial R]
 
@@ -99,5 +101,100 @@ theorem unit_smul_single_sub_mem_traceKernel_iff (H K L : Hyperplane k n)
     obtain ⟨J', hK', hL'⟩ := (exists_common_traceLabel_iff H K' L' hKL).mpr hd
     have heq : J' = J := Option.some.inj (hK'.symm.trans hJ)
     simp only [hL', heq, Option.elim_some]
+
+end TraceTests
+
+namespace DiagramAut
+
+variable {k : Type u} {k₀ : Type v} [Field k] [Field k₀] [Algebra k₀ k]
+  {n : ℕ} {R : Type r} [CommRing R] [IsLocalRing R]
+  {C : CofinalSystem k₀ k n} {S : Set k₀}
+
+/-- The primal action carries the actual coefficient-zero trace domain onto the trace
+domain of the recovered label. This is evaluation-coannihilator equivariance for inertia. -/
+theorem map_traceDomain (g : DiagramAut R C S) (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n)
+    (H : Hyperplane k n) :
+    (traceDomain R H).map g.universalEquiv.toLinearMap =
+      traceDomain R (g.hyperplanePerm hS hn H) := by
+  rw [← inertia_dualCoannihilator, map_dualCoannihilator_dualAction]
+  change ((inertia R H).map (dualAction g).toLinearMap).dualCoannihilator = _
+  rw [g.map_inertia hS hn H, inertia_dualCoannihilator]
+
+/-- The primal action carries the entire actual trace kernel onto that of the recovered
+label. This uses the explicit decomposition coannihilator identity, not dual reflexivity.
+Blueprint: the trace-kernel transport in I02 (`lem:i02`). -/
+theorem map_traceKernel (g : DiagramAut R C S) (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n)
+    (H : Hyperplane k n) :
+    (traceKernel R H).map g.universalEquiv.toLinearMap =
+      traceKernel R (g.hyperplanePerm hS hn H) := by
+  rw [← decomposition_dualCoannihilator, map_dualCoannihilator_dualAction]
+  change ((decomposition R H).map (dualAction g).toLinearMap).dualCoannihilator = _
+  rw [g.map_decomposition hS hn H, decomposition_dualCoannihilator]
+
+/-- A vector belongs to an actual trace kernel precisely when its primal image belongs to
+the trace kernel at the recovered label. -/
+@[simp]
+theorem universalEquiv_mem_traceKernel_iff (g : DiagramAut R C S)
+    (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) (H : Hyperplane k n) (x : Hyperplane k n →₀ R) :
+    g.universalEquiv x ∈ traceKernel R (g.hyperplanePerm hS hn H) ↔
+      x ∈ traceKernel R H := by
+  rw [← g.map_traceKernel hS hn H, Submodule.mem_map_equiv]
+  simp only [LinearEquiv.symm_apply_apply]
+
+private theorem parallel_hyperplanePerm (g : DiagramAut R C S)
+    (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) (H K : Hyperplane k n) (hp : Parallel H K) :
+    Parallel (g.hyperplanePerm hS hn H) (g.hyperplanePerm hS hn K) := by
+  have hm := (single_mem_traceKernel_iff R H K hp.1.symm).mpr hp
+  have hm' := (g.universalEquiv_mem_traceKernel_iff hS hn H _).mpr hm
+  rw [g.universalEquiv_single hS hn K] at hm'
+  have hs : Finsupp.single (g.hyperplanePerm hS hn K) (1 : R) ∈
+      traceKernel R (g.hyperplanePerm hS hn H) := by
+    exact (Submodule.smul_mem_iff_of_isUnit _ (g.hyperplaneUnit hS hn K)⁻¹.isUnit).mp hm'
+  exact (single_mem_traceKernel_iff R _ _
+    ((g.hyperplanePerm hS hn).injective.ne hp.1.symm)).mp hs
+
+/-- The recovered label permutation preserves strict parallelism in both directions.
+Blueprint: the parallel-pair assertion in I02 (`lem:i02`). -/
+theorem parallel_hyperplanePerm_iff (g : DiagramAut R C S)
+    (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) (H K : Hyperplane k n) :
+    Parallel (g.hyperplanePerm hS hn H) (g.hyperplanePerm hS hn K) ↔ Parallel H K := by
+  constructor
+  · intro hp
+    simpa using parallel_hyperplanePerm g⁻¹ hS hn _ _ hp
+  · exact parallel_hyperplanePerm g hS hn H K
+
+private theorem dependentTriple_hyperplanePerm (g : DiagramAut R C S)
+    (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) (H K L : Hyperplane k n)
+    (hd : DependentTriple H K L) :
+    DependentTriple (g.hyperplanePerm hS hn H)
+      (g.hyperplanePerm hS hn K) (g.hyperplanePerm hS hn L) := by
+  have hp : ¬Parallel H K := by
+    rintro ⟨_, hbot⟩
+    exact hd.2.2.2.1 (by simp [hbot])
+  have hm : Finsupp.single K (1 : R) - Finsupp.single L 1 ∈ traceKernel R H := by
+    rw [traceKernel_eq_span]
+    exact Submodule.subset_span (Or.inr ⟨K, L, hd, rfl⟩)
+  have hm' := (g.universalEquiv_mem_traceKernel_iff hS hn H _).mpr hm
+  rw [map_sub, g.universalEquiv_single hS hn K, g.universalEquiv_single hS hn L] at hm'
+  exact ((unit_smul_single_sub_mem_traceKernel_iff R _ _ _
+    ((g.hyperplanePerm hS hn).injective.ne hd.1.symm)
+    ((g.hyperplanePerm hS hn).injective.ne hd.2.1.symm)
+    ((g.hyperplanePerm hS hn).injective.ne hd.2.2.1)
+    (fun hp' ↦ hp ((g.parallel_hyperplanePerm_iff hS hn H K).mp hp'))
+    (g.hyperplaneUnit hS hn K)⁻¹ (g.hyperplaneUnit hS hn L)⁻¹).mp hm').1
+
+/-- The recovered label permutation preserves guarded dependent triples in both directions,
+including pairwise distinctness and nonempty codimension-two intersection.
+Blueprint: the triple assertion in I02 (`lem:i02`). -/
+theorem dependentTriple_hyperplanePerm_iff (g : DiagramAut R C S)
+    (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) (H K L : Hyperplane k n) :
+    DependentTriple (g.hyperplanePerm hS hn H)
+      (g.hyperplanePerm hS hn K) (g.hyperplanePerm hS hn L) ↔ DependentTriple H K L := by
+  constructor
+  · intro hd
+    simpa using dependentTriple_hyperplanePerm g⁻¹ hS hn _ _ _ hd
+  · exact dependentTriple_hyperplanePerm g hS hn H K L
+
+end DiagramAut
 
 end OrlikSolomon.HyperplaneGT
