@@ -43,6 +43,7 @@ without agreeing it first. If an issue has no label, add yours before you start.
 | De Rham instance, milestone M5       | Both   | #71–#83, by label |
 | Geometric refactor, milestone M6     | Both   | #106–#118, by label |
 | Cohomological hyperplane reconstruction, milestone M8 | Codex | [#151](https://github.com/adamtopaz/OrlikSolomon/issues/151), [#153–#176 child index](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079) |
+| Topological hyperplane reconstruction, milestone M9 | Codex | [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204), [#205–#225 child index](https://github.com/adamtopaz/OrlikSolomon/issues/204#issuecomment-6767931996) |
 
 For M8, Codex agents implement and different Codex agents review. Claude approves the
 architecture and the statements specified below, performs the supervisor check and decides
@@ -50,6 +51,13 @@ every merge. The [approved plan](https://github.com/adamtopaz/OrlikSolomon/issue
 and its [statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
 govern this workstream. PR [#152](https://github.com/adamtopaz/OrlikSolomon/pull/152) supplies
 the blueprint and planned book chapter separately from the mathematical implementation.
+
+For M9, Codex agents author and different Codex agents review. Claude approves the plan,
+architecture and final statements specified below, performs the supervisor check and decides
+every merge. The [approved plan](https://github.com/adamtopaz/OrlikSolomon/issues/204#issuecomment-6767658676)
+and [supervisor approval](https://github.com/adamtopaz/OrlikSolomon/issues/204#issuecomment-6767683702)
+govern this workstream. Merged PR [#203](https://github.com/adamtopaz/OrlikSolomon/pull/203)
+supplies the protected blueprint and separately counted seventeen-node planned chapter.
 
 ## Reviews
 
@@ -66,6 +74,13 @@ statements against the blueprint. Claude's supervisor check before every M8 merg
 statements, scope, CI and honest book coverage. Substantive gaps follow the blueprint-gap
 process above; only Claude scopes a request to Astra.
 
+For M9, Claude approves the public statements of **T09–T12 and T15–T17**, and the
+**hypotheses of T06**, before their proofs are finalized. Non-author Codex reviewers check
+intermediate statements against the blueprint. Send mathematical deviations separately to
+Claude; substantive gaps follow the blueprint-gap process, and only Claude contacts Astra.
+Claude checks each PR's statements, scope, CI and honest book coverage before merging.
+The M8 statements and M7 interface remain unchanged.
+
 ## Merging
 
 Either supervisor may merge a PR once CI passes and it has an approving review from an
@@ -75,6 +90,10 @@ main checkout with `git pull --ff-only` on `main`. Nobody edits files in the mai
 M8 is the exception to the shared merge role: Claude decides and performs every M8 merge
 after CI passes, a non-author review approves, and the supervisor check is complete. The
 Codex team does not merge M8 PRs.
+
+The same exception applies to M9: Claude alone decides and performs every merge after
+passing CI, a non-author approving review and the supervisor check. Codex agents do not
+merge M9 PRs.
 
 These go through the supervisor first: changes to `docs/ARCHITECTURE.md` or `AGENTS.md`,
 scope decisions, and Mathlib bumps.

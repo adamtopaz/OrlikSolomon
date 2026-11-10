@@ -17,6 +17,8 @@ Read these before working:
   milestone M6.
 - `blueprint/cohomological_hyperplane_gt_blueprint.tex`: authoritative for mathematics of
   cohomological hyperplane reconstruction, milestone M8.
+- `blueprint/topological_reconstruction_blueprint.tex`: authoritative for mathematics of
+  topological hyperplane reconstruction, milestone M9.
 - `docs/ARCHITECTURE.md`: authoritative for Lean design, names and module layout. The
   blueprint says its own Lean names and signatures are only proposals.
 
