@@ -16,16 +16,17 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame are formalized; the reconstruction theorem is planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Thirty-two boxes are formalized and nine remain planned.
+Thirty-three boxes are formalized and eight remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
 A02 identifies the full degree-two kernel of the actual exterior quotient with the parallel-pair and guarded dependent-triple relation span, including zero coefficients and characteristic two.
 A03 defines the marked quadratic and full graded automorphism groups, with one common target and faithful degree-one restriction, over arbitrary commutative coefficient rings.
+A04 compares these groups with the actual degree-one/cup-kernel and full diagonal-cohomology diagrams for a supplied full theory, including all actual arrows and the common target.
 S02 gives the direct Galois action on the full graded diagram, preserving every defining relation and acting identically on its one common target.
 U01–U02 construct the universal free module, its explicit quadratic relation span and common finite-stage witnesses, and the induced diagram action retaining the common target component.
 C01–C03 recover a unique field automorphism from an arbitrary projective collineation fixing the prescribed frame, over any field and in dimension at least two.
@@ -145,10 +146,14 @@ Its restriction to the quadratic group is faithful by generation in degree one; 
 
 ## A04: comparison with a supplied theory
 
-:::node "thm:a04"
+:::node "thm:a04" (decl := OrlikSolomon.HyperplaneGT.Cohomology.degreeOneEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.targetDegreeOneEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.degreeOne_mul_self) (decl := OrlikSolomon.HyperplaneGT.Cohomology.cupKernel_eq) (decl := OrlikSolomon.HyperplaneGT.Cohomology.target_cupKernel_eq_top) (decl := OrlikSolomon.HyperplaneGT.Cohomology.diagonalEquiv_inclusion) (decl := OrlikSolomon.HyperplaneGT.Cohomology.diagonalEquiv_marking) (decl := OrlikSolomon.HyperplaneGT.Cohomology.degreeOneDiagramEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.gradedDiagramEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.toQuadratic_stage) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.toQuadratic_target) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.toQuadratic_injective) (decl := OrlikSolomon.HyperplaneGT.Cohomology.degreeOneDiagramEquiv_scalar_iff) (decl := OrlikSolomon.HyperplaneGT.Cohomology.gradedDiagramEquiv_scalar_iff)
 For a supplied C1–C5 theory, its degree-one modules and full cup kernels form a diagram isomorphic to A03, sending $`e_H` to $`[f_H]` and the target basis to $`[t]`, $`[t-1]`.
 The canonical diagonal algebra equivalences are also natural for every inclusion and marking, giving an isomorphism of the full graded diagrams.
-Marking naturality is proved on generators using logarithmic pullback, rather than assumed for extra diagram arrows.
+Marking naturality is proved on generators using logarithmic pullback along the actual scheme maps, with one common target retained even in dimension zero.
+Actual degree-one multiplication is alternating by transport from the OS theorem, including in characteristic two; its entire kernel is the transported parallel-pair and guarded dependent-triple span.
+The two automorphism-group comparisons are multiplicative equivalences with inverse component formulas.
+They preserve the fixed-unit scalar families in every degree and commute with faithful restriction to the actual degree-one summands at stages and target.
+These statements and the characteristic-two and point-free-target regression consumers use a supplied full geometric ordinary theory; A04 constructs no new nonzero theory instance or mod-2 realization.
 :::
 
 # The universal module and its algebraic dual
