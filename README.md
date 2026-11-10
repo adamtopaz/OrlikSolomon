@@ -101,7 +101,7 @@ and point-free-complement coverage is retained.
 
 **Milestone M9:** [topological hyperplane reconstruction](blueprint/topological_reconstruction_blueprint.tex)
 is tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
-Its 17 separately labelled statements T01–T17 include **7 formalized, 2 partly formalized and 8 planned**,
+Its 17 separately labelled statements T01–T17 include **8 formalized, 2 partly formalized and 7 planned**,
 counted separately from the four existing blueprints. The [chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
 describes finite-stage convergence, discrete coefficient units, and the pointwise Galois factor.
 T05 proves the pointwise group topology, finite normalized affine coefficient tests and, for
@@ -129,7 +129,11 @@ clauses remain planned.
 Both pure diagram groups are closed in the original ambient products for every commutative
 coefficient ring and compact for finite coefficients, without classification or algebraicity.
 The existing degree-one restriction is a topological embedding for arbitrary coefficients
-and dimensions, and any actual inverse is continuous. Reconstruction homeomorphisms are
+and dimensions, and any actual inverse is continuous. T09 upgrades the exact local/domain
+quadratic classifiers to topological group isomorphisms for pointwise convergence, and for
+Krull under the fixing condition or algebraicity. Both continuity directions and the
+original common-target scalar and covariant-label formulas are retained. The full graded,
+scalar-to-Galois quotient, cofinal and actual-cohomology/ordinary reconstruction upgrades remain
 planned. No adic-coefficient claim is made.
 
 **The public theorem in one file.**
