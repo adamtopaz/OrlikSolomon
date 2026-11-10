@@ -16,7 +16,7 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Fourteen statements are formalized, zero are partly formalized and three remain planned.*
+*Fifteen statements are formalized, zero are partly formalized and two remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
@@ -33,7 +33,7 @@ The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic
 T09 upgrades the exact local/domain quadratic classifiers for pointwise convergence and for Krull under the precise fixing condition or algebraicity.
 T10 upgrades the exact graded restriction and full product classifiers.
 T11 proves the exact scalar quotient homeomorphisms, closedness and profiniteness.
-T12 upgrades literal cofinal restrictions and their actual scalar quotients without a field-extension condition; the actual/ordinary reconstruction upgrades remain planned.
+T12 upgrades literal cofinal restrictions and their actual scalar quotients without a field-extension condition; the ordinary reconstruction upgrades remain planned. T15 upgrades the exact actual-theory reconstruction, scalar quotients and restriction/cofinal maps with their original hypotheses.
 T13 proves local compactness and the exact finite-unit compactness criterion, including integral coefficients and noncompact rational-coefficient groups with compact scalar quotients.
 
 # The intended topology and hypotheses
@@ -234,11 +234,20 @@ The exact old adapters preserve the simultaneous stage-and-target kernels, and b
 
 ## T15: reconstruction for a supplied theory
 
-:::node "thm:t15"
-Under the respective local/domain classification hypotheses and algebraicity, upgrade the existing actual quadratic and graded reconstruction and scalar-quotient equivalences to the Krull versions.
-The exact comparison condition may replace algebraicity.
-The actual degree-one and cofinal restriction equivalences already become topological group isomorphisms without algebraicity.
-All existing classification, marking, scalar and restriction squares are retained.
+:::node "thm:t15" (decl := OrlikSolomon.HyperplaneGT.Cohomology.localQuadraticKrullContinuousReconstructionOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.Cohomology.localGradedKrullContinuousReconstructionOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainQuadraticKrullContinuousReconstructionOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainGradedKrullContinuousReconstructionOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.localScalarQuotientKrullContinuousEquivOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.Cohomology.DiagramAut.domainScalarQuotientKrullContinuousEquivOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.localScalarQuotientKrullContinuousEquivOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.domainScalarQuotientKrullContinuousEquivOfIsAlgebraic) (decl := OrlikSolomon.HyperplaneGT.Cohomology.localRestrictionContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainRestrictionContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.cofinalRestrictionContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.gradedCofinalRestrictionContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainCofinalRestrictionContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainGradedCofinalRestrictionContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.cofinalScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.gradedCofinalScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainCofinalScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.domainGradedCofinalScalarQuotientContinuousEquiv)
+Under the exact M8 local-ring or integral-domain coefficient, marking (including zero and field generation) and dimension hypotheses, all four actual quadratic/graded reconstruction maps and all four actual scalar quotients are topological group isomorphisms for discrete units and Mathlib's existing Krull topology when the field extension is algebraic.
+The explicit fixing condition may replace algebraicity; pointwise versions require neither condition.
+All underlying multiplicative maps, inverse coordinates, whole-degree primal powers, covariant labels, actual inclusion and marking squares and the single original common target remain unchanged.
+The actual degree-one and cofinal restriction equivalences already become topological group isomorphisms without algebraicity or the fixing condition.
+Raw cofinal restriction is an inducing embedding over every commutative coefficient ring and in every dimension; its scalar-quotient map is continuous for the literal Mathlib quotient topology.
+No unclassified surjectivity, arrangement-union closure, scalar closedness or new cohomology axiom is assumed.
+The four cofinal scalar-quotient equivalences are honestly new routine congruences of the old actual cofinal group maps, with proved scalar-image equalities.
+Their forgetful fields disclose those exact congruences; the old quotient classifier and actual-adapter/pure-T12 coordinate composites are also proved.
+Unrelated chosen families compare through the union of their selected families, rather than through an assumption that either family contains unions of arrangements.
+The pointwise maps are {name OrlikSolomon.HyperplaneGT.Cohomology.localQuadraticContinuousReconstruction}`localQuadraticContinuousReconstruction`, {name OrlikSolomon.HyperplaneGT.Cohomology.localGradedContinuousReconstruction}`localGradedContinuousReconstruction` and their exact domain counterparts; the explicit-condition variants are {name OrlikSolomon.HyperplaneGT.Cohomology.localQuadraticKrullContinuousReconstruction}`localQuadraticKrullContinuousReconstruction` and {name OrlikSolomon.HyperplaneGT.Cohomology.domainGradedKrullContinuousReconstruction}`domainGradedKrullContinuousReconstruction`, with the other two corresponding variants.
+The old actual scalar-quotient degree-one maps are upgraded by {name OrlikSolomon.HyperplaneGT.Cohomology.localScalarQuotientRestrictionContinuousEquiv}`localScalarQuotientRestrictionContinuousEquiv` and {name OrlikSolomon.HyperplaneGT.Cohomology.domainScalarQuotientRestrictionContinuousEquiv}`domainScalarQuotientRestrictionContinuousEquiv`; their cofinal and classifier squares commute.
+Public expansions remain plain rewrites, retaining all seventy-two bare inverse cancellation laws for the thirty-six bundled equivalences.
+Durable consumers distinguish supplied nonfield-local or nonlocal-domain theories from the constructed characteristic-zero de Rham fixture, and retain the actual non-union-closed subsystem, nonzero nilpotent target coefficient, covariant nonreal label, nontrivial conjugation quotient class and the zero-coefficient/dimension-zero raw boundaries.
 :::
 
 ## T16: realization independence
