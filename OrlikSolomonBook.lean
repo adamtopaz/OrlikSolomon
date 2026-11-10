@@ -464,9 +464,10 @@ L04 uses only unit cancellation over a commutative ring; L05 detects a unique gr
 Final regression consumers retain binary and nilpotent local coefficients, the original common target and both scalar quotients. A concrete full diagram over disconnected binary coefficients has no common scalar/Galois factorization, demonstrating the need for the local/domain hypothesis.
 The chapter records each of the 41 labelled statements separately and explains the coefficient, dimension and realization limits.
 
-*Planned topological reconstruction.*
+*Topological reconstruction.*
 The fifth blueprint proposes the finite-stage convergence topology on the existing quadratic, graded and actual cohomology diagram groups, retaining the single common target.
-Its seventeen statements T01–T17 are all planned in {ref "topological-reconstruction"}[a separate chapter], counted independently of the four earlier blueprints.
+Its seventeen statements T01–T17 have one formalized and sixteen planned in {ref "topological-reconstruction"}[a separate chapter], counted independently of the four earlier blueprints.
+T05 proves the pointwise topological group and separation properties, normalized affine coefficient stabilizers, arbitrary geometric coordinate fibers and actual finite-stage kernel topology comparison for $`n\geq1`.
 Coefficient units are discrete, and the Galois factor has pointwise convergence topology.
 The Krull version needs the exact finite-intermediate-field fixing condition; algebraicity suffices, without normality or separability.
 A supplied cofinal system alone does not imply that comparison, as the proposed rational-function counterexample records.
