@@ -2434,7 +2434,7 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | `H/Topology/Krull/Pointwise`, `Krull/Hyperplanes`, `Krull/Comparison`, facade `Krull` | Generic pointwise topology, normalized geometric tests and exact Krull comparison; W05–W06, [#209](https://github.com/adamtopaz/OrlikSolomon/issues/209), [#210](https://github.com/adamtopaz/OrlikSolomon/issues/210) |
 | `H/Topology/GaloisCompact/FiniteOrbits`, `GaloisCompact/Stages`, facade `GaloisCompact` | Implemented T07: arrangement-free finite-orbit compactness and system/algebraicity corollaries; W07, [#211](https://github.com/adamtopaz/OrlikSolomon/issues/211) |
 | `H/Topology/Classification/Quadratic`, `Classification/Graded`, facade `Classification` | Implemented T09–T10: exact local/domain quadratic and graded upgrades; W09–W10, [#213](https://github.com/adamtopaz/OrlikSolomon/issues/213), [#214](https://github.com/adamtopaz/OrlikSolomon/issues/214) |
-| `H/Topology/Quotient` | Actual scalar quotient topology and closedness/profiniteness; W11, [#215](https://github.com/adamtopaz/OrlikSolomon/issues/215) |
+| `H/Topology/Quotient/Local`, `Quotient/Domain`, facade `Quotient` | Exact local/domain scalar quotient homeomorphisms, literal degree-one quotient restriction and closedness/profiniteness; W11, [#215](https://github.com/adamtopaz/OrlikSolomon/issues/215) |
 | `H/Topology/Cofinal/Restriction`, `Cofinal/Quotient/Basic`, `Cofinal/Quotient`, facade `Cofinal` | Implemented T12: literal cofinal embeddings, inverse continuity and actual scalar quotients; W12, [#216](https://github.com/adamtopaz/OrlikSolomon/issues/216) |
 | `H/Topology/Consequences` | Compactness and local compactness; W13, [#217](https://github.com/adamtopaz/OrlikSolomon/issues/217) |
 | `H/Cohomology/Topology/Adapter/Basic`, `Adapter/Comparison`, `Adapter/Quotient`, facade `Adapter` | Direct actual topologies, both adapter directions and quotient comparison; W14, [#218](https://github.com/adamtopaz/OrlikSolomon/issues/218). Quotient imports the existing Main scalar APIs without classification hypotheses |
@@ -2656,6 +2656,31 @@ restriction/cofinal homeomorphisms, Krull/full-system wrappers and the explicit 
 topology facade remain W18/#222; W17 completes only the ordinary T01/T02 clauses and
 records T17 prerequisites without certifying T17.
 
+W11 implements the [approved exact T11 statements](https://github.com/adamtopaz/OrlikSolomon/issues/215#issuecomment-6772281851)
+in the size-only `Topology/Quotient/Local` and `Domain` leaves and a small facade. The
+original four quadratic/full graded scalar quotients carry Mathlib's actual quotient-group
+topology from their direct component topologies. Both continuity proofs are adjoined to the
+exact old M8 quotient maps; inverse representatives are the existing direct Galois families.
+The continuous recovered Galois coordinate descends by the quotient universal property,
+and its direct class section is continuous. The scalar subgroup is the literal old range,
+not an asserted full center. Kernel closedness and the pointwise target's separation prove
+the four closedness, Hausdorff and total-separation results. T07 supplies compactness from
+the supplied stable system and `2 ≤ n`, with no algebraicity or finite-unit premise.
+All these properties are named theorems, not new global instances.
+
+Pointwise maps retain exactly the old local/domain classification hypotheses. Krull wrappers
+use the explicit fixing condition or `Algebra.IsAlgebraic`, and forget to the identical old
+multiplicative maps. The exact old degree-one quotient restriction is a homeomorphism without
+either Krull hypothesis; its representative, inverse-extension and classification squares
+and local/domain overlap remain literal. General projection continuity retains arbitrary
+commutative coefficients and dimensions. The core imports only the necessary pure topology
+classifiers and old quotients, never cohomology, de Rham or Examples. The optional facade
+activates no scope and no old facade, declaration or simp attribute changes. Durable
+`Coefficients` consumers retain the nonidentity unit `1 + ε` over characteristic-two dual
+numbers on the original target before its quotient class becomes one, genuine binary
+conjugation classes under the Krull maps and degree-one restriction, and scalar minus one
+over nonlocal `ℤ`.
+
 ### Hypotheses, review and book coverage
 
 Claude approves the exact public statements of **T09–T12 and T15–T17**, and the
@@ -2697,12 +2722,12 @@ actual non-union-closed subsystem only within Examples, including original targe
 ZMod4 and ℤ, a genuinely nonidentity complex-conjugation class and zero-ring/dimension-zero
 literal continuity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **12 formalized /
-0 partial / 5 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **13 formalized /
+0 partial / 4 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **12 formalized / 0 partial / 5 planned**; T01–T10, T12 and T14
+unchanged. The current M9 count is **13 formalized / 0 partial / 4 planned**; T01–T12 and T14
 are complete. T01–T02 include pure, actual supplied-theory and constructed ordinary de Rham
 diagrams; the ordinary clauses retain the existing characteristic-zero field parameters.
 

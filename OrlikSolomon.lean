@@ -348,6 +348,9 @@ public import OrlikSolomon.HyperplaneGT.Topology.Krull
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Comparison
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Hyperplanes
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Pointwise
+public import OrlikSolomon.HyperplaneGT.Topology.Quotient
+public import OrlikSolomon.HyperplaneGT.Topology.Quotient.Domain
+public import OrlikSolomon.HyperplaneGT.Topology.Quotient.Local
 public import OrlikSolomon.HyperplaneGT.Topology.Restriction
 public import OrlikSolomon.Interface.Logarithms
 public import OrlikSolomon.Interface.OSAlgebra
