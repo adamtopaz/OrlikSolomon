@@ -156,6 +156,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.GaloisReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.GradedClassification
 public import OrlikSolomon.Examples.HyperplaneGT.Incidence
 public import OrlikSolomon.Examples.HyperplaneGT.Local
+public import OrlikSolomon.Examples.HyperplaneGT.LocalClassification
 public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
