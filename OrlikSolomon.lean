@@ -166,6 +166,9 @@ public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
 public import OrlikSolomon.Examples.HyperplaneGT.TheoryReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Coefficients
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.Infinite
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.Infinite.Acceptance
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.Infinite.Frobenius
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Systems
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
