@@ -25,7 +25,7 @@ details.
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-38 formalized and 3 planned. Coefficient points, hyperplane incidence
+40 formalized and 1 planned. Coefficient points, hyperplane incidence
 and coordinate graphs (G01–G03) are proved over arbitrary fields. G04–G06 construct the
 coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal
 systems with actual marking maps to one common target. The canonical degree-one OS basis,
@@ -73,12 +73,18 @@ S05 proves the same quadratic and full graded classifications and both scalar qu
 any integral coefficient domain, by extending the actual matrices to its fraction field and
 descending the scalar and its inverse from original matrix entries. These constructions agree
 with the local ones on the overlap; no cohomology localization statement is assumed.
-The remaining reconstruction studies automorphisms of marked
-degree-one/cup-kernel and diagonal graded cohomology diagrams in dimension at least two,
-with nonzero local or integral-domain coefficients. The theory-level results will be conditional
-on the existing axioms, with an unconditional characteristic-zero de Rham specialization.
+E01 transports these classifications and both scalar quotients to the actual marked
+cohomology diagrams of a supplied C1–C5 ordinary theory. The logarithmic formula is
+`[H] ↦ u[σH]`, with the same unit on the common target and its q-th power in ordinary
+degree q. E02 proves that literal restriction to a cofinal subsystem is invertible after
+classification, with unchanged unit/Galois coordinates, and that two eligible realizations
+with the same coefficient ring have a unique generator-preserving marked-diagram comparison.
+The pure facade is [`OrlikSolomon/HyperplaneGT.lean`](OrlikSolomon/HyperplaneGT.lean);
+[`OrlikSolomon/HyperplaneGT/Cohomology.lean`](OrlikSolomon/HyperplaneGT/Cohomology.lean)
+reexports the conditional theory layer. The explicit characteristic-zero de Rham specialization
+remains planned and will stay a separate import. No new singular or ℓ-adic instance is claimed.
 The [book chapter](https://adamtopaz.github.io/OrlikSolomon/hyperplane-gt/) tracks the proved
-and planned statements; cohomological reconstruction remains planned.
+statements and the remaining application.
 
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective
