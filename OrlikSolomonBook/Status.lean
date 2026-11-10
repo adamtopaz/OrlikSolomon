@@ -59,10 +59,10 @@ E03 gives unconditional reconstruction for the actual ordinary de Rham diagram i
 Final regression consumers pin binary and nilpotent local coefficients, actual common targets and both scalar quotients. A full disconnected-coefficient counterexample proves that the coefficient hypotheses cannot be replaced by an arbitrary commutative ring.
 {ref "hyperplane-gt"}[Its chapter] explains the proved conditional reconstruction, the unconditional de Rham application and their precise hypotheses.
 
-The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: eight formalized, two partly formalized and seven planned.
+The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: nine formalized, two partly formalized and six planned.
 It proposes direct finite-stage topologies and upgrades of the existing reconstruction maps, scalar quotients, cofinal and realization comparisons, and the ordinary de Rham specialization.
 Coefficient units are discrete; the Krull topology replaces pointwise convergence under the stated fixing condition, in particular for algebraic field extensions.
-The pure diagram topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved.
+The pure and actual supplied-theory diagram topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved.
 Both pure groups are closed in their original ambient products for every commutative coefficient ring, and finite coefficients make both compact, without classification or algebraicity.
 
 T05 proves the arrangement-free pointwise topological group and separation properties, exact normalized affine coefficient tests and the finite hyperplane/stage-kernel comparisons for $`n\geq1`.
@@ -72,7 +72,8 @@ T07 makes the pointwise group compact under finite scalar orbits; supplied stabl
 T08 gives the actual rational-function system over every prime field, with finite nontrivial Galois group, indiscrete Krull and discrete pointwise/stage topologies, and proves noncontinuity of the actual M8 direct action and classification over binary coefficients.
 T09 proves both continuity directions for the exact local/domain quadratic classifiers, with pointwise convergence or, under the fixing condition or algebraicity, Krull.
 T10 proves both exact local/domain graded restriction homeomorphisms with no field-extension hypothesis and both full product classifiers for pointwise convergence, with explicit-condition and algebraic Krull wrappers.
-The quotient, cofinal and actual-cohomology/ordinary topological upgrades remain planned; the four earlier blueprint counts are unchanged.
+T14 proves the exact actual-to-presentation adapters and both scalar quotient homeomorphisms.
+The ordinary de Rham clauses and the remaining reconstruction homeomorphisms stay planned; the four earlier blueprint counts are unchanged.
 {ref "topological-reconstruction"}[Its chapter] records the topology, hypothesis and realization boundaries.
 
 {statusOverview}
