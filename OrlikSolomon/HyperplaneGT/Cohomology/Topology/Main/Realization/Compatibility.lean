@@ -5,6 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Basic
 
 /-!
@@ -14,6 +15,10 @@ The canonical realization homeomorphisms preserve the original unit and Galois
 coordinates and commute with the actual classified cofinal restrictions. These identities
 retain exactly the old local/domain, dimension and generating-marking hypotheses.
 The realization homeomorphisms themselves need none of those additional hypotheses.
+
+Pointwise and exact-K/algebraic classifier compatibility holds as equality of the actual
+continuous multiplicative equivalences, retaining their original parameters. The Krull
+comparisons alone use the corresponding fixing condition or algebraicity.
 
 Expansion equations are plain rewrite rules, preserving ordinary inverse cancellation.
 Blueprint: the classification compatibility clauses of T16 (`thm:t16`).
@@ -189,5 +194,210 @@ theorem realizationGradedContinuousEquiv_domainGradedCofinalRestrictionEquiv [Is
         (realizationGradedContinuousEquiv T₁ T₂ C S g) := by
   rw [domainGradedCofinalRestrictionEquiv_apply, domainGradedCofinalRestrictionEquiv_apply]
   exact realizationGradedContinuousEquiv_restrictStages T₁ T₂ C S C' hC g
+
+
+section PointwiseRealizationCompatibility
+
+open scoped DiscreteCoefficientUnits GaloisPointwise
+
+/-- The pointwise classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem localQuadraticContinuousReconstruction_realization
+    [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (localQuadraticContinuousReconstruction T₁ C S hS hgen hn).trans
+        (realizationQuadraticContinuousEquiv T₁ T₂ C S) =
+      localQuadraticContinuousReconstruction T₂ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationQuadraticContinuousEquiv T₁ T₂ C S
+      (localQuadraticReconstruction T₁ C S hS hgen hn x) =
+    localQuadraticReconstruction T₂ C S hS hgen hn x
+  exact realizationQuadraticContinuousEquiv_localQuadraticReconstruction T₁ T₂ C S hS hgen hn x
+
+/-- The pointwise classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem localGradedContinuousReconstruction_realization
+    [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (localGradedContinuousReconstruction T₁ C S hS hgen hn).trans
+        (realizationGradedContinuousEquiv T₁ T₂ C S) =
+      localGradedContinuousReconstruction T₂ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationGradedContinuousEquiv T₁ T₂ C S
+      (localGradedReconstruction T₁ C S hS hgen hn x) =
+    localGradedReconstruction T₂ C S hS hgen hn x
+  exact realizationGradedContinuousEquiv_localGradedReconstruction T₁ T₂ C S hS hgen hn x
+
+/-- The pointwise classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem domainQuadraticContinuousReconstruction_realization
+    [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (domainQuadraticContinuousReconstruction T₁ C S hS hgen hn).trans
+        (realizationQuadraticContinuousEquiv T₁ T₂ C S) =
+      domainQuadraticContinuousReconstruction T₂ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationQuadraticContinuousEquiv T₁ T₂ C S
+      (domainQuadraticReconstruction T₁ C S hS hgen hn x) =
+    domainQuadraticReconstruction T₂ C S hS hgen hn x
+  exact realizationQuadraticContinuousEquiv_domainQuadraticReconstruction T₁ T₂ C S hS hgen hn x
+
+/-- The pointwise classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem domainGradedContinuousReconstruction_realization
+    [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (domainGradedContinuousReconstruction T₁ C S hS hgen hn).trans
+        (realizationGradedContinuousEquiv T₁ T₂ C S) =
+      domainGradedContinuousReconstruction T₂ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationGradedContinuousEquiv T₁ T₂ C S
+      (domainGradedReconstruction T₁ C S hS hgen hn x) =
+    domainGradedReconstruction T₂ C S hS hgen hn x
+  exact realizationGradedContinuousEquiv_domainGradedReconstruction T₁ T₂ C S hS hgen hn x
+
+end PointwiseRealizationCompatibility
+
+
+section KrullRealizationCompatibility
+
+open scoped DiscreteCoefficientUnits
+
+/-- The krull classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem localQuadraticKrullContinuousReconstruction_realization
+    [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (hK : KrullFixingCondition k₀ k) :
+    (localQuadraticKrullContinuousReconstruction T₁ C S hS hgen hn hK).trans
+        (realizationQuadraticContinuousEquiv T₁ T₂ C S) =
+      localQuadraticKrullContinuousReconstruction T₂ C S hS hgen hn hK := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationQuadraticContinuousEquiv T₁ T₂ C S
+      (localQuadraticReconstruction T₁ C S hS hgen hn x) =
+    localQuadraticReconstruction T₂ C S hS hgen hn x
+  exact realizationQuadraticContinuousEquiv_localQuadraticReconstruction T₁ T₂ C S hS hgen hn x
+
+/-- The krull classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem localGradedKrullContinuousReconstruction_realization
+    [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (hK : KrullFixingCondition k₀ k) :
+    (localGradedKrullContinuousReconstruction T₁ C S hS hgen hn hK).trans
+        (realizationGradedContinuousEquiv T₁ T₂ C S) =
+      localGradedKrullContinuousReconstruction T₂ C S hS hgen hn hK := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationGradedContinuousEquiv T₁ T₂ C S
+      (localGradedReconstruction T₁ C S hS hgen hn x) =
+    localGradedReconstruction T₂ C S hS hgen hn x
+  exact realizationGradedContinuousEquiv_localGradedReconstruction T₁ T₂ C S hS hgen hn x
+
+/-- The krull classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem domainQuadraticKrullContinuousReconstruction_realization
+    [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (hK : KrullFixingCondition k₀ k) :
+    (domainQuadraticKrullContinuousReconstruction T₁ C S hS hgen hn hK).trans
+        (realizationQuadraticContinuousEquiv T₁ T₂ C S) =
+      domainQuadraticKrullContinuousReconstruction T₂ C S hS hgen hn hK := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationQuadraticContinuousEquiv T₁ T₂ C S
+      (domainQuadraticReconstruction T₁ C S hS hgen hn x) =
+    domainQuadraticReconstruction T₂ C S hS hgen hn x
+  exact realizationQuadraticContinuousEquiv_domainQuadraticReconstruction T₁ T₂ C S hS hgen hn x
+
+/-- The krull classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem domainGradedKrullContinuousReconstruction_realization
+    [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (hK : KrullFixingCondition k₀ k) :
+    (domainGradedKrullContinuousReconstruction T₁ C S hS hgen hn hK).trans
+        (realizationGradedContinuousEquiv T₁ T₂ C S) =
+      domainGradedKrullContinuousReconstruction T₂ C S hS hgen hn hK := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationGradedContinuousEquiv T₁ T₂ C S
+      (domainGradedReconstruction T₁ C S hS hgen hn x) =
+    domainGradedReconstruction T₂ C S hS hgen hn x
+  exact realizationGradedContinuousEquiv_domainGradedReconstruction T₁ T₂ C S hS hgen hn x
+
+end KrullRealizationCompatibility
+
+
+section AlgebraicRealizationCompatibility
+
+open scoped DiscreteCoefficientUnits
+
+/-- The algebraic classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem localQuadraticKrullContinuousReconstructionOfIsAlgebraic_realization
+    [IsLocalRing R] [Algebra.IsAlgebraic k₀ k]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (localQuadraticKrullContinuousReconstructionOfIsAlgebraic T₁ C S hS hgen hn).trans
+        (realizationQuadraticContinuousEquiv T₁ T₂ C S) =
+      localQuadraticKrullContinuousReconstructionOfIsAlgebraic T₂ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationQuadraticContinuousEquiv T₁ T₂ C S
+      (localQuadraticReconstruction T₁ C S hS hgen hn x) =
+    localQuadraticReconstruction T₂ C S hS hgen hn x
+  exact realizationQuadraticContinuousEquiv_localQuadraticReconstruction T₁ T₂ C S hS hgen hn x
+
+/-- The algebraic classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem localGradedKrullContinuousReconstructionOfIsAlgebraic_realization
+    [IsLocalRing R] [Algebra.IsAlgebraic k₀ k]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (localGradedKrullContinuousReconstructionOfIsAlgebraic T₁ C S hS hgen hn).trans
+        (realizationGradedContinuousEquiv T₁ T₂ C S) =
+      localGradedKrullContinuousReconstructionOfIsAlgebraic T₂ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationGradedContinuousEquiv T₁ T₂ C S
+      (localGradedReconstruction T₁ C S hS hgen hn x) =
+    localGradedReconstruction T₂ C S hS hgen hn x
+  exact realizationGradedContinuousEquiv_localGradedReconstruction T₁ T₂ C S hS hgen hn x
+
+/-- The algebraic classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem domainQuadraticKrullContinuousReconstructionOfIsAlgebraic_realization
+    [IsDomain R] [Algebra.IsAlgebraic k₀ k]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (domainQuadraticKrullContinuousReconstructionOfIsAlgebraic T₁ C S hS hgen hn).trans
+        (realizationQuadraticContinuousEquiv T₁ T₂ C S) =
+      domainQuadraticKrullContinuousReconstructionOfIsAlgebraic T₂ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationQuadraticContinuousEquiv T₁ T₂ C S
+      (domainQuadraticReconstruction T₁ C S hS hgen hn x) =
+    domainQuadraticReconstruction T₂ C S hS hgen hn x
+  exact realizationQuadraticContinuousEquiv_domainQuadraticReconstruction T₁ T₂ C S hS hgen hn x
+
+/-- The algebraic classifier preserves its unit and Galois parameters under realization
+comparison, as an equality of the original continuous group equivalences. -/
+theorem domainGradedKrullContinuousReconstructionOfIsAlgebraic_realization
+    [IsDomain R] [Algebra.IsAlgebraic k₀ k]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
+    (domainGradedKrullContinuousReconstructionOfIsAlgebraic T₁ C S hS hgen hn).trans
+        (realizationGradedContinuousEquiv T₁ T₂ C S) =
+      domainGradedKrullContinuousReconstructionOfIsAlgebraic T₂ C S hS hgen hn := by
+  apply ContinuousMulEquiv.ext
+  intro x
+  change realizationGradedContinuousEquiv T₁ T₂ C S
+      (domainGradedReconstruction T₁ C S hS hgen hn x) =
+    domainGradedReconstruction T₂ C S hS hgen hn x
+  exact realizationGradedContinuousEquiv_domainGradedReconstruction T₁ T₂ C S hS hgen hn x
+
+end AlgebraicRealizationCompatibility
 
 end OrlikSolomon.HyperplaneGT.Cohomology
