@@ -16,7 +16,7 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Six statements are formalized, two are partly formalized and nine remain planned.*
+*Seven statements are formalized, two are partly formalized and eight remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
@@ -164,10 +164,18 @@ No equality between a scalar range and the entire center is asserted.
 
 ## T12: cofinal restriction
 
-:::node "thm:t12"
+:::node "thm:t12" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.isEmbedding_restrictStages) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.isEmbedding_restrictStages) (decl := OrlikSolomon.HyperplaneGT.cofinalRestrictionContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.gradedCofinalRestrictionContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.domainCofinalRestrictionContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.domainGradedCofinalRestrictionContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.continuous_restrictStagesScalarQuotient) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.continuous_restrictStagesScalarQuotient) (decl := OrlikSolomon.HyperplaneGT.cofinalScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.gradedCofinalScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.domainCofinalScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.domainGradedCofinalScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.cofinalRestrictionContinuousEquiv_union_comparison) (decl := OrlikSolomon.HyperplaneGT.domainGradedCofinalScalarQuotientContinuousEquiv_union_comparison)
 Literal stage restriction to a supplied cofinal subsystem is continuous over every commutative coefficient ring and retains the same target.
 Under the classification hypotheses, each existing local/domain quadratic/graded restriction equivalence and its induced scalar-quotient equivalence becomes a topological group isomorphism.
 No algebraicity or union closure is required, and bijectivity comes from M8 rather than from cofinality alone.
+For arbitrary coefficients and dimensions, the original direct topology is exactly induced by literal subsystem restriction: a selected stage containing any old finite arrangement controls agreement at that old stage, while retaining the single target.
+The four group homeomorphisms keep the exact M8 maps and inverses, including their selected-stage, target and scalar/Galois coordinate formulas.
+Their underlying-map identities are {name OrlikSolomon.HyperplaneGT.cofinalRestrictionContinuousEquiv_toMulEquiv}, {name OrlikSolomon.HyperplaneGT.gradedCofinalRestrictionContinuousEquiv_toMulEquiv}, {name OrlikSolomon.HyperplaneGT.domainCofinalRestrictionContinuousEquiv_toMulEquiv} and {name OrlikSolomon.HyperplaneGT.domainGradedCofinalRestrictionContinuousEquiv_toMulEquiv}.
+The scalar quotients use the actual Mathlib quotient topologies; both directions descend by the quotient universal property.
+These new quotient wrappers expose exactly the induced old group equivalences through {name OrlikSolomon.HyperplaneGT.cofinalScalarQuotientContinuousEquiv_toMulEquiv}, {name OrlikSolomon.HyperplaneGT.gradedCofinalScalarQuotientContinuousEquiv_toMulEquiv}, {name OrlikSolomon.HyperplaneGT.domainCofinalScalarQuotientContinuousEquiv_toMulEquiv} and {name OrlikSolomon.HyperplaneGT.domainGradedCofinalScalarQuotientContinuousEquiv_toMulEquiv}.
+Local/domain overlaps and actual degree-one squares commute. Unrelated supplied families compare through the union of their selected families, without assuming either family contains unions of arrangements.
+The forward and inverse expansion equations are plain rewrites, preserving ordinary inverse cancellation.
+Examples use the actual non-union-closed subsystem, nonfield local and integer coefficients, a nonidentity complex-conjugation scalar class, and zero-coefficient/dimension-zero literal continuity.
 :::
 
 ## T13: separation and compactness
