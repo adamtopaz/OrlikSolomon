@@ -16,10 +16,11 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*One statement is formalized, two are partly formalized and fourteen remain planned.*
+*Two statements are formalized, two are partly formalized and thirteen remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The actual-theory and ordinary de Rham clauses of T01–T02 remain planned.
 T05 proves the pointwise Galois topology and its exact finite-equation, geometric-fiber and selected-stage kernel descriptions.
+T08 constructs the actual rational-function counterexample and proves noncontinuity of the M8 direct Galois action and classification for Mathlib's Krull topology.
 This chapter follows the [fifth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/topological_reconstruction_blueprint.tex), for milestone M9, tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
 Its seventeen named nodes T01–T17 each have one labelled statement and one separate box below.
 The four earlier blueprints retain their separate counts.
@@ -109,10 +110,16 @@ Finite orbits alone are not substituted for the Krull comparison condition.
 
 ## T08: the rational-function counterexample
 
-:::node "prop:t08"
+:::node "prop:t08" (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.intermediateField_eq_bot_of_finiteDimensional) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.finite_algEquiv) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.translation_one_ne_one) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.krullTopology_eq_top) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.finiteStableCofinalSystem) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.pointwiseTopology_eq_bot) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.stagePermutationTopology_eq_bot) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.zero_generates_primeField) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.finite_binary_diagramAut) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.nontrivial_binary_diagramAut) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.binary_diagramTopology_eq_bot) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.not_KrullFixingCondition) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.not_continuous_galoisQuadraticAction) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.not_continuous_quadraticAutEquiv) (decl := OrlikSolomon.HyperplaneGT.RatFuncExamples.not_isHomeomorph_quadraticAutEquiv)
 For $`\mathbb F_p(t)/\mathbb F_p` with $`p` prime and $`n=2`, construct an actual cofinal system of finite stable arrangements.
 Its field-automorphism group is finite and nontrivial, its Krull topology is indiscrete, and its pointwise and stage-permutation topologies are discrete.
 With coefficient ring $`\mathbb F_2` and $`S=\{0\}`, the M8 classification hypotheses hold, but that classification is not a homeomorphism for the Krull topology.
+The actual binary quadratic diagram is nontrivial, finite and discrete in its original stage-and-common-target topology.
+Both the actual direct Galois action and the forward M8 classifier are noncontinuous when the source uses Mathlib's literal Krull topology; the classifier uses the product with discrete coefficient units.
+The base prime $`p` is independent of the binary coefficient prime.
+The finite stable system is built by actual finite Galois saturation, without an algebraicity assumption or the algebraic full-system wrapper.
+For every constant field, the Krull topology is indiscrete and the pointwise topology is discrete; only finite constants are required for the supplied system, whose stage topology comparison explicitly retains $`n\geq1`.
+No topology instance is replaced and no cohomology theory is asserted to exist.
 :::
 
 # Topological classification

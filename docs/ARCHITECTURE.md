@@ -2469,6 +2469,22 @@ permutations. The pure M8 `Diagram/GaloisAction/Stage` import reuses the existin
 The stage-permutation application formula remains a plain rewrite to preserve both inverse
 cancellation simp forms. `Krull/Comparison` and its exact comparison criterion remain W06.
 
+W08 implements the approved three rational-function leaves and small facade entirely
+within `Examples`. `Field` and `Automorphisms` import only Mathlib and prove that every
+finite intermediate field is the base, the actual automorphism group is finite over finite
+constants, and translation by one is nonidentity. Their forward translation formulas are
+plain rewrite lemmas so compound fraction inverse cancellation remains available to `simp`.
+`Counterexample` names Mathlib's actual Krull topology and the existing named pointwise,
+stage-permutation and quadratic diagram topologies, without global instances. Actual finite
+Galois saturation supplies the system in every dimension; the stage topology comparison
+retains `1 ≤ n`. For every prime base field and independent binary coefficients, the exact
+M8 classifier proves the actual target finite, nontrivial and discrete. Both its direct
+Galois section and forward classification are noncontinuous for the literal Krull topology;
+the product factor of coefficient units is explicitly discrete. No topology is transported
+through classification, no cohomology realization is claimed, and no new core import
+acquires rational-function examples. The Krull/pointwise distinction itself holds over any
+constant field, without finite, algebraic, normality or perfectness assumptions.
+
 ### Hypotheses, review and book coverage
 
 Claude approves the exact public statements of **T09–T12 and T15–T17**, and the
@@ -2494,7 +2510,7 @@ The fifth blueprint has 17 separately labelled nodes T01–T17, initially **0 fo
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **1 formalized / 2 partial / 14 planned**; T05 is
+unchanged. The current M9 count is **2 formalized / 2 partial / 13 planned**; T05 and T08 are
 complete, and T01–T02 cover the pure diagrams while their actual-theory and ordinary clauses
 remain planned.
 
