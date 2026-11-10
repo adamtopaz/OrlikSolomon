@@ -145,13 +145,16 @@ public import OrlikSolomon.Examples.Geometric.NonAffine.MayerVietoris
 public import OrlikSolomon.Examples.Geometric.NonAffine.Overlap
 public import OrlikSolomon.Examples.Geometric.NonAffine.Sections
 public import OrlikSolomon.Examples.Geometric.NonAffine.SheafCech
+public import OrlikSolomon.Examples.HyperplaneGT
 public import OrlikSolomon.Examples.HyperplaneGT.Collineation
 public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
 public import OrlikSolomon.Examples.HyperplaneGT.DeRhamReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.DegreeOne
 public import OrlikSolomon.Examples.HyperplaneGT.Diagram
+public import OrlikSolomon.Examples.HyperplaneGT.Disconnected
 public import OrlikSolomon.Examples.HyperplaneGT.DomainClassification
 public import OrlikSolomon.Examples.HyperplaneGT.Dual
+public import OrlikSolomon.Examples.HyperplaneGT.FinalCoefficients
 public import OrlikSolomon.Examples.HyperplaneGT.Galois
 public import OrlikSolomon.Examples.HyperplaneGT.GaloisAction
 public import OrlikSolomon.Examples.HyperplaneGT.GaloisReconstruction

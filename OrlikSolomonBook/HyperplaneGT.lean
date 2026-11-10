@@ -458,16 +458,25 @@ For a supplied cofinal system no algebraicity or perfectness hypothesis is neede
 
 # Regressions, limits and completion
 
-The blueprint requires characteristic-two and nilpotent local coefficients, including $`\mathbb F_2[\epsilon]/(\epsilon^2)`, as tests of unit cancellation and alternation without division by two.
+The regression suite tests characteristic-two and nilpotent local coefficients, including $`\mathbb F_2[\epsilon]/(\epsilon^2)`, with unit cancellation and alternation proved without division by two.
+The final binary and dual-number consumers pin both classifications, literal degree-one restriction, both scalar quotients and their explicit Galois sections.
+The {name OrlikSolomon.HyperplaneGT.FinalCoefficientExamples.dual_number_common_target}`dual_number_common_target` consumer detects the nonidentity unit $`1+\epsilon` on the original target; its degree powers and every actual full marking square are retained.
+Complex conjugation remains nontrivial in both quotients, including with these coefficients.
+
 The reconstruction theorem requires $`n\ge2`, while the low-degree algebra remains valid in dimensions zero and one and for the empty arrangement.
 Zero coefficients remain permitted for the preceding algebraic constructions and the existing structure theorem; they are excluded from the new reconstruction theorem.
+Existing scheme-complement regressions also cover complements without rational points.
 
 The coefficient hypothesis cannot be replaced by arbitrary commutative rings.
-For a product $`F\times F` and two distinct Galois automorphisms, the two coefficient factors can carry different permutations, which cannot arise from one common scalar and one common field automorphism.
-The proof must also preserve the existing coverage of scheme complements without rational points.
+For a field $`F`, {name OrlikSolomon.HyperplaneGT.DisconnectedExamples.mixedGaloisAut}`mixedGaloisAut` constructs an actual full graded diagram over $`F\times F` by combining two existing Galois actions with the complementary coefficient idempotents.
+All OS relations, every degree and the actual inclusion and marking squares are preserved, with the same identity common target.
+For distinct Galois factors, {name OrlikSolomon.HyperplaneGT.DisconnectedExamples.mixedGaloisAut_not_scalar_mul_galois}`mixedGaloisAut_not_scalar_mul_galois` proves that even its quadratic restriction has no common scalar/Galois factorization.
+The {name OrlikSolomon.HyperplaneGT.DisconnectedExamples.binary_complex_disconnected_counterexample}`binary_complex_disconnected_counterexample` uses $`\mathbb F_2\times\mathbb F_2`, the identity and complex conjugation on the actual full stable system in dimension two, with all real marking constants.
+Thus classification fails for these disconnected coefficients: the local-ring or integral-domain hypotheses are needed.
 
-Further checks concern finite-stage compatibility without union closure, the single common marked target, recovery of coordinate spans without adding projection arrows, the full algebraic dual without a reflexivity shortcut, and extension to the graded algebra only after classification.
-The completed pure-core steps, integral-domain descent and conditional theory-level reconstruction prove these properties. The de Rham specialization retains the same requirements.
+Further regressions retain finite-stage compatibility without union closure, the single common marked target, coordinate spans recovered without extra projection arrows, the full algebraic dual and extension to the graded algebra only after classification.
+The supplied-theory characteristic-two examples construct no new nonzero realization. The unconditional de Rham examples instead use the existing constructed instance, the actual ordinary degrees and their diagonal $`E^{q,q}` comparison, with coefficient-linear action rather than semilinear geometric pullback.
 
-Completion requires proved public declarations for every statement, generator and marking formulas, the inverse and group laws of the equivalences, the existing repository checks and independent coverage review, and the application to the constructed de Rham instance.
-Every blueprint statement now has public formalized declarations. Final exposition and acceptance checks remain tracked by W24.
+All 41 separately labelled statements have proved public declarations, with generator and marking formulas and both inverse and group laws where required.
+The example umbrella collects the durable topic and final acceptance consumers. Independent coverage review checks each label against the unchanged blueprint, including the separate definition/lemma boxes; declaration trust checks supplement that statement-level audit.
+The repository checks build every source module, audit the allowed declarations and public interface, run the environment linters and replay the kernel declarations. The native book checks the node order, completeness, formulas and source links.
