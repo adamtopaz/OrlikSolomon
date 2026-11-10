@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import Mathlib.FieldTheory.KrullTopology
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact
+public import OrlikSolomon.HyperplaneGT.Topology.Cofinal
+public import OrlikSolomon.Examples.HyperplaneGT.TheoryReconstruction
 public import OrlikSolomon.HyperplaneGT.Topology.Krull
 import Mathlib.Tactic.NormNum
 
@@ -30,7 +32,12 @@ Finite scalar orbits, a chosen positive-dimensional stable system, and algebraic
 separate compactness consumers. The concrete complex fixture has a nonidentity
 automorphism; the genuine infinite-group example is separate from these consumers.
 
-Blueprint: T05–T07 (`lem:t05`, `thm:t06`, `prop:t07`).
+Cofinal restriction consumers use the existing genuinely non-union-closed subsystem,
+retain the original target over nonfield coefficients, and check both cancellations for
+every group and scalar-quotient homeomorphism. Generic zero-ring and dimension-zero
+continuity does not assert a classified inverse.
+
+Blueprint: T05–T07 (`lem:t05`, `thm:t06`, `prop:t07`) and T12 (`thm:t12`).
 -/
 
 @[expose] public section
@@ -347,3 +354,149 @@ theorem complex_compact_nontrivial :
   rw [h, one_smul]
 
 end OrlikSolomon.HyperplaneGT.GaloisCompactExamples
+
+namespace OrlikSolomon.HyperplaneGT.CofinalTopologyExamples
+
+open Topology
+open scoped FiniteStageTopology
+
+variable {k₀ : Type u} {k : Type v} [Field k₀] [Field k] [Algebra k₀ k]
+  {n : ℕ} {R : Type w} [CommRing R] (C C' : CofinalSystem k₀ k n) (S : Set k₀)
+  (hC : C'.stages ⊆ C.stages) (hS : (0 : k₀) ∈ S)
+  (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+
+/-- All four local homeomorphisms retain both ordinary inverse simplifications. -/
+theorem local_cancellation [IsLocalRing R]
+    (g : DiagramAut R C S) (g' : DiagramAut R C' S)
+    (f : GradedDiagramAut R C S) (f' : GradedDiagramAut R C' S)
+    (q : DiagramAut R C S ⧸ DiagramAut.scalarSubgroup R C S)
+    (q' : DiagramAut R C' S ⧸ DiagramAut.scalarSubgroup R C' S)
+    (z : GradedDiagramAut R C S ⧸ GradedDiagramAut.scalarSubgroup R C S)
+    (z' : GradedDiagramAut R C' S ⧸ GradedDiagramAut.scalarSubgroup R C' S) :
+    (cofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn).symm
+        (cofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn g) = g ∧
+    cofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn
+        ((cofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn).symm g') = g' ∧
+    (gradedCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn).symm
+        (gradedCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn f) = f ∧
+    gradedCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn
+        ((gradedCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn).symm f') = f' ∧
+    (cofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn).symm
+        (cofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn q) = q ∧
+    cofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn
+        ((cofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn).symm q') = q' ∧
+    (gradedCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn).symm
+        (gradedCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn z) = z ∧
+    gradedCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn
+        ((gradedCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn).symm z') = z' := by
+          simp
+
+/-- All four domain homeomorphisms retain both ordinary inverse simplifications. -/
+theorem domain_cancellation [IsDomain R]
+    (g : DiagramAut R C S) (g' : DiagramAut R C' S)
+    (f : GradedDiagramAut R C S) (f' : GradedDiagramAut R C' S)
+    (q : DiagramAut R C S ⧸ DiagramAut.scalarSubgroup R C S)
+    (q' : DiagramAut R C' S ⧸ DiagramAut.scalarSubgroup R C' S)
+    (z : GradedDiagramAut R C S ⧸ GradedDiagramAut.scalarSubgroup R C S)
+    (z' : GradedDiagramAut R C' S ⧸ GradedDiagramAut.scalarSubgroup R C' S) :
+    (domainCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn).symm
+        (domainCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn g) = g ∧
+    domainCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn
+        ((domainCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn).symm g') = g' ∧
+    (domainGradedCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn).symm
+        (domainGradedCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn f) = f ∧
+    domainGradedCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn
+        ((domainGradedCofinalRestrictionContinuousEquiv R C C' S hC hS hgen hn).symm f') = f' ∧
+    (domainCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn).symm
+        (domainCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn q) = q ∧
+    domainCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn
+        ((domainCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn).symm q') = q' ∧
+    (domainGradedCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn).symm
+        (domainGradedCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn z) = z ∧
+    domainGradedCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn
+        ((domainGradedCofinalScalarQuotientContinuousEquiv R C C' S hC hS hgen hn).symm z') = z'
+          := by simp
+
+/-- Actual restriction to the supplied non-union-closed subsystem is faithful and keeps
+its original target, without any coefficient or classification restriction. -/
+theorem non_union_closed_restriction (R : Type w) [CommRing R]
+    (g : DiagramAut R (fullCofinalSystem (ZMod 2) (ZMod 2) 2) Set.univ) :
+    let C := fullCofinalSystem (ZMod 2) (ZMod 2) 2
+    let D := TheoryReconstructionExamples.nonUnionSystem
+    let r := DiagramAut.restrictStages R C D Set.univ
+      TheoryReconstructionExamples.nonUnionSystem_subset
+    IsEmbedding r ∧ (r g).targetEquiv = g.targetEquiv :=
+  ⟨DiagramAut.isEmbedding_restrictStages _ _ _ _ _,
+    DiagramAut.restrictStages_targetEquiv _ _ _ _ _ _⟩
+
+local instance : IsLocalRing (ZMod 4) := by
+  change IsLocalRing (ZMod (2 ^ 2))
+  infer_instance
+
+/-- The actual nonfield local scalar family restricts through a cofinal family that is not
+union-closed, with its nonidentity target unchanged and an actual two-sided inverse. -/
+theorem non_union_mod_four :
+    let C := fullCofinalSystem (ZMod 2) (ZMod 2) 2
+    let D := TheoryReconstructionExamples.nonUnionSystem
+    let e := cofinalRestrictionContinuousEquiv (ZMod 4) C D Set.univ
+      TheoryReconstructionExamples.nonUnionSystem_subset (by simp) (by simp) (by decide)
+    let g := scalarQuadraticAut (ZMod 4) C Set.univ IncidenceExamples.scalarThreeUnit
+    e g = scalarQuadraticAut (ZMod 4) D Set.univ IncidenceExamples.scalarThreeUnit ∧
+      e.symm (e g) = g ∧ (e g).targetEquiv (Finsupp.single (0 : Fin 2) 1) 0 = 3 := by
+  dsimp only
+  refine ⟨?_, by simp, ?_⟩
+  · rw [cofinalRestrictionContinuousEquiv_apply, DiagramAut.restrictStages_scalarQuadraticAut]
+  · rw [cofinalRestrictionContinuousEquiv_targetEquiv, scalarQuadraticAut_targetEquiv_apply]
+    simp [IncidenceExamples.scalarThreeUnit]
+
+/-- The nonlocal integral domain ℤ uses the domain graded inverse, still through the actual
+non-union-closed subsystem and with the original negative scalar on the common target. -/
+theorem non_union_integer_graded :
+    let C := fullCofinalSystem (ZMod 2) (ZMod 2) 2
+    let D := TheoryReconstructionExamples.nonUnionSystem
+    let e := domainGradedCofinalRestrictionContinuousEquiv ℤ C D Set.univ
+      TheoryReconstructionExamples.nonUnionSystem_subset (by simp) (by simp) (by decide)
+    let g := scalarGradedAut ℤ C Set.univ (-1)
+    e.symm (e g) = g ∧
+      (GradedDiagramAut.toQuadratic ℤ D Set.univ (e g)).targetEquiv
+        (Finsupp.single (0 : Fin 2) 1) 0 = -1 := by
+  dsimp only
+  refine ⟨by simp, ?_⟩
+  rw [domainGradedCofinalRestrictionContinuousEquiv_apply,
+    GradedDiagramAut.restrictStages_scalarGradedAut, toQuadratic_scalarGradedAut,
+    scalarQuadraticAut_targetEquiv_apply]
+  simp
+
+/-- Literal restriction and its scalar quotients remain continuous for zero coefficients
+and dimension zero. This does not claim classified invertibility in those boundary cases. -/
+theorem zero_ring_dimension_zero (C : CofinalSystem k₀ k 0) (S : Set k₀) :
+    IsEmbedding (DiagramAut.restrictStages (ZMod 1) C C S (Set.Subset.refl _)) ∧
+    IsEmbedding (GradedDiagramAut.restrictStages (ZMod 1) C C S (Set.Subset.refl _)) ∧
+    Continuous (DiagramAut.restrictStagesScalarQuotient (ZMod 1) C C S (Set.Subset.refl _)) ∧
+    Continuous (GradedDiagramAut.restrictStagesScalarQuotient (ZMod 1) C C S
+      (Set.Subset.refl _)) :=
+  ⟨DiagramAut.isEmbedding_restrictStages _ _ _ _ _,
+    GradedDiagramAut.isEmbedding_restrictStages _ _ _ _ _,
+    DiagramAut.continuous_restrictStagesScalarQuotient _ _ _ _ _,
+    GradedDiagramAut.continuous_restrictStagesScalarQuotient _ _ _ _ _⟩
+
+/-- An actual nonidentity Galois class over the nonlocal domain ℤ is unchanged by
+cofinal quotient restriction; its inverse is the existing classified extension. -/
+theorem complex_conjugation_quotient (C C' : CofinalSystem ℝ ℂ 2)
+    (hC : C'.stages ⊆ C.stages) :
+    let e := domainCofinalScalarQuotientContinuousEquiv ℤ C C' Set.univ hC
+      (by simp) (by simp) (by decide)
+    let q := DiagramAut.scalarQuotientSection ℤ C Set.univ Complex.conjAe
+    e q = DiagramAut.scalarQuotientSection ℤ C' Set.univ Complex.conjAe ∧
+      e q ≠ 1 ∧ e.symm (e q) = q := by
+  dsimp only
+  refine ⟨domainCofinalScalarQuotientContinuousEquiv_scalarQuotientSection _ _ _ _ _ _ _ _ _,
+    ?_, by simp⟩
+  intro he
+  have hfield := congrArg
+    (DiagramAut.domainScalarQuotientEquiv ℤ C' Set.univ (by simp) (by simp) (by decide)) he
+  rw [domainCofinalScalarQuotientContinuousEquiv_scalarQuotientSection,
+    DiagramAut.domainScalarQuotientEquiv_section, map_one] at hfield
+  exact GaloisCompactExamples.complex_compact_nontrivial.2 hfield
+
+end OrlikSolomon.HyperplaneGT.CofinalTopologyExamples

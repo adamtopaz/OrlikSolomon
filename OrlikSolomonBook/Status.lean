@@ -59,7 +59,7 @@ E03 gives unconditional reconstruction for the actual ordinary de Rham diagram i
 Final regression consumers pin binary and nilpotent local coefficients, actual common targets and both scalar quotients. A full disconnected-coefficient counterexample proves that the coefficient hypotheses cannot be replaced by an arbitrary commutative ring.
 {ref "hyperplane-gt"}[Its chapter] explains the proved conditional reconstruction, the unconditional de Rham application and their precise hypotheses.
 
-The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: eleven formalized, zero partly formalized and six planned.
+The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: thirteen formalized, zero partly formalized and four planned.
 It proposes direct finite-stage topologies and upgrades of the existing reconstruction maps, scalar quotients, cofinal and realization comparisons, and the ordinary de Rham specialization.
 Coefficient units are discrete; the Krull topology replaces pointwise convergence under the stated fixing condition, in particular for algebraic field extensions.
 The pure, actual supplied-theory and constructed characteristic-zero ordinary diagram topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved in every dimension.
@@ -72,7 +72,9 @@ T07 makes the pointwise group compact under finite scalar orbits; supplied stabl
 T08 gives the actual rational-function system over every prime field, with finite nontrivial Galois group, indiscrete Krull and discrete pointwise/stage topologies, and proves noncontinuity of the actual M8 direct action and classification over binary coefficients.
 T09 proves both continuity directions for the exact local/domain quadratic classifiers, with pointwise convergence or, under the fixing condition or algebraicity, Krull.
 T10 proves both exact local/domain graded restriction homeomorphisms with no field-extension hypothesis and both full product classifiers for pointwise convergence, with explicit-condition and algebraic Krull wrappers.
+T12 proves literal cofinal restriction is a topological embedding for arbitrary coefficients and dimensions, and upgrades all four existing local/domain quadratic/graded cofinal equivalences and their actual scalar quotients. It retains the single common target, has no algebraicity or union-closure hypothesis, and compares unrelated supplied families through the union of their selected families.
 T14 proves the exact actual-to-presentation adapters and both scalar quotient homeomorphisms.
+T11 proves the exact local/domain scalar quotient homeomorphisms, closedness and profiniteness, without algebraicity or finiteness of coefficient units for the pointwise result.
 The exact old ordinary twists and their literal scalar quotient twists are homeomorphisms. New algebraic ordinary scalar and cofinal wrappers retain the old marking and dimension hypotheses. Final ordinary reconstruction, quotient-to-Galois and cofinal topological upgrades stay planned under T17; the four earlier blueprint counts are unchanged.
 {ref "topological-reconstruction"}[Its chapter] records the topology, hypothesis and realization boundaries.
 
