@@ -16,7 +16,7 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Eight statements are formalized, two are partly formalized and seven remain planned.*
+*Nine statements are formalized, two are partly formalized and six remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
@@ -30,7 +30,8 @@ This chapter follows the [fifth blueprint](https://github.com/adamtopaz/OrlikSol
 Its seventeen named nodes T01–T17 each have one labelled statement and one separate box below.
 The four earlier blueprints retain their separate counts.
 The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic inputs.
-T09 upgrades the exact local/domain quadratic classifiers for pointwise convergence and for Krull under the precise fixing condition or algebraicity; the other reconstruction upgrades remain planned.
+T09 upgrades the exact local/domain quadratic classifiers for pointwise convergence and for Krull under the precise fixing condition or algebraicity.
+T11 proves the exact scalar quotient homeomorphisms, closedness and profiniteness; the remaining graded, cofinal and actual/ordinary reconstruction upgrades remain planned.
 
 # The intended topology and hypotheses
 
@@ -162,11 +163,17 @@ The existing degree-power scalar action and common-target formulas remain unchan
 
 ## T11: scalar quotients
 
-:::node "thm:t11"
+:::node "thm:t11" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.scalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.domainScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.scalarQuotientKrullContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.domainScalarQuotientKrullContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.isClosed_scalarSubgroup) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.isClosed_scalarSubgroup_of_isDomain) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.scalarQuotient_compactSpace) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.domainScalarQuotient_compactSpace) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.scalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.domainScalarQuotientContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.scalarQuotientKrullContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.domainScalarQuotientKrullContinuousEquiv) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.isClosed_scalarSubgroup) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.isClosed_scalarSubgroup_of_isDomain) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.scalarQuotient_compactSpace) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.domainScalarQuotient_compactSpace)
 Equip both groups modulo their actual scalar ranges with the quotient-group topology.
 Under the classification hypotheses, the existing local/domain quotient equivalences become topological group isomorphisms with the pointwise group, and with the Krull group under the comparison condition.
 The scalar ranges are closed and the quotients are Hausdorff and profinite.
 No equality between a scalar range and the entire center is asserted.
+The source is Mathlib's literal quotient topology on each original diagram group, defined before the comparison; each new `toMulEquiv` is exactly its existing M8 equivalence.
+The quotient universal property proves forward continuity, and the original direct Galois class section proves inverse continuity.
+The displayed compactness proofs use the supplied stable system and $`n\geq2`, without algebraicity or finiteness of the coefficient-unit group.
+The Hausdorff and total-separation structures are also exported explicitly as {name OrlikSolomon.HyperplaneGT.DiagramAut.scalarQuotient_t2Space}`scalarQuotient_t2Space`, {name OrlikSolomon.HyperplaneGT.GradedDiagramAut.scalarQuotient_t2Space}`scalarQuotient_t2Space`, {name OrlikSolomon.HyperplaneGT.DiagramAut.domainScalarQuotient_t2Space}`domainScalarQuotient_t2Space`, {name OrlikSolomon.HyperplaneGT.GradedDiagramAut.domainScalarQuotient_t2Space}`domainScalarQuotient_t2Space` and their `totallySeparatedSpace` counterparts.
+The algebraic Krull wrappers use the precise comparison condition already proved from algebraicity; the pointwise and quotient degree-one restriction equivalences need neither condition.
+The literal degree-one quotient square is {name OrlikSolomon.HyperplaneGT.scalarQuotientRestrictionContinuousEquiv}`scalarQuotientRestrictionContinuousEquiv`, with {name OrlikSolomon.HyperplaneGT.domainScalarQuotientRestrictionContinuousEquiv}`domainScalarQuotientRestrictionContinuousEquiv` for domains.
 :::
 
 ## T12: cofinal restriction
