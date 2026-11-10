@@ -2441,7 +2441,7 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | `H/Cohomology/Topology/Main/Classification`, `Main/Cofinal`, `Main/Realization`, facade `Main` | Actual reconstruction/cofinality and two-realization comparisons; W15–W16, [#219](https://github.com/adamtopaz/OrlikSolomon/issues/219), [#220](https://github.com/adamtopaz/OrlikSolomon/issues/220) |
 | `H/Cohomology/DeRham/Topology/Basic`, `Topology/Comparison`, `Topology/Actions`, `Topology/Cofinal`, `Topology/Reconstruction`, facade `H/Cohomology/DeRham/Topology` | Direct ordinary topology, twist comparisons, new algebraic scalar/cofinal wrappers and final ordinary upgrades; W17–W18, [#221](https://github.com/adamtopaz/OrlikSolomon/issues/221), [#222](https://github.com/adamtopaz/OrlikSolomon/issues/222) |
 | `Examples/HyperplaneGT/Topology/RatFunc/Field`, `RatFunc/Automorphisms`, `RatFunc/Counterexample`, small `RatFunc` facade | T08's field, finite group, stable system and actual noncontinuous-map example; W08, [#212](https://github.com/adamtopaz/OrlikSolomon/issues/212). No rational-function core imports |
-| `Examples/HyperplaneGT/Topology/Coefficients`, `Systems`, `Realizations` | Required coefficient/system/actual-realization consumers; W19, [#223](https://github.com/adamtopaz/OrlikSolomon/issues/223) |
+| `Examples/HyperplaneGT/Topology/Coefficients`, `Systems`, `Realizations` | Required coefficient/system/actual-realization consumers; W05 begins `Systems` with T05 regressions; W19, [#223](https://github.com/adamtopaz/OrlikSolomon/issues/223) |
 | `Examples/HyperplaneGT/Topology/Infinite/Frobenius`, `Infinite/Acceptance`, small `Infinite` facade | Genuine infinite algebraic example; W20, [#224](https://github.com/adamtopaz/OrlikSolomon/issues/224) |
 | `H/Topology`, `H/Cohomology/Topology`, `Examples/HyperplaneGT/Topology` | Additional explicit facades and final acceptance umbrella; W21, [#225](https://github.com/adamtopaz/OrlikSolomon/issues/225) |
 
@@ -2465,6 +2465,21 @@ unrestricted algebra-automorphism factors or replacement topology is used. Compa
 exposed by named theorems and instances only in `FiniteStageTopology`, retaining zero
 coefficients, dimension zero and the single original common target.
 
+W05 implements `Krull/Pointwise` and `Krull/Hyperplanes`, together with the T05
+consumers in `Examples/HyperplaneGT/Topology/Systems`. `Pointwise` imports only Mathlib,
+works without a dimension or cofinal family, and defines the actual evaluation-induced
+`galoisPointwiseTopology`. Its `GaloisPointwise` scope exposes the group, Hausdorff and
+total-separation instances without changing the global Krull instance or a field topology.
+`Hyperplanes` normalizes all affine coefficients, including the constant, at a nonzero
+normal pivot. Its exact stabilizer equality is exposed on the existing `Hyperplane` type;
+the chosen pivot does not become consumer data. Arbitrary geometric coordinate fibers give
+the converse finite-test comparison for `1 ≤ n`. The actual finite-stage kernel basis
+uses only the supplied cofinality, and the induced product uses whole discrete stage
+permutations. The pure M8 `Diagram/GaloisAction/Stage` import reuses the existing
+`galoisLabelEquiv` rather than duplicating it; no reconstruction or cohomology is imported.
+The stage-permutation application formula remains a plain rewrite to preserve both inverse
+cancellation simp forms. `Krull/Comparison` and its exact comparison criterion remain W06.
+
 ### Hypotheses, review and book coverage
 
 Claude approves the exact public statements of **T09–T12 and T15–T17**, and the
@@ -2485,12 +2500,14 @@ retain zero coefficients and dimension zero; ordinary specializations retain the
 existing field and characteristic-zero parameters. Literal restriction/cofinal upgrades
 do not acquire algebraicity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **1 formalized /
-2 partial / 14 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **2 formalized /
+2 partial / 13 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged.
+unchanged. The current M9 count is **1 formalized / 2 partial / 14 planned**; T05 is
+complete, and T01–T02 cover the pure diagrams while their actual-theory and ordinary clauses
+remain planned.
 
 Book coverage is incremental and clause-complete. T01–T02 remain partial until pure,
 actual-theory and ordinary specializations are all present; T14 includes scalar-quotient
