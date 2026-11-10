@@ -152,6 +152,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Diagram
 public import OrlikSolomon.Examples.HyperplaneGT.Dual
 public import OrlikSolomon.Examples.HyperplaneGT.Galois
 public import OrlikSolomon.Examples.HyperplaneGT.GaloisAction
+public import OrlikSolomon.Examples.HyperplaneGT.Incidence
 public import OrlikSolomon.Examples.HyperplaneGT.Local
 public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
@@ -212,6 +213,14 @@ public import OrlikSolomon.HyperplaneGT.Algebra.Dual.DiagramAction
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Primitive
 public import OrlikSolomon.HyperplaneGT.Algebra.LowDegrees
 public import OrlikSolomon.HyperplaneGT.Algebra.QuadraticKernel
+public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter
+public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Comparison
+public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.CupKernel
+public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.DegreeOne
+public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Examples
+public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Graded
+public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Maps
+public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Quadratic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
@@ -239,6 +248,12 @@ public import OrlikSolomon.HyperplaneGT.Geometry.Galois.CoordinateAction
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Markings
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.System
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Incidence
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Incidence.Inertia
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Incidence.Markings
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Incidence.Permutation
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Incidence.Projective
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Incidence.Relations
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Detection
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Geometry

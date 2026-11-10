@@ -16,16 +16,17 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, trace modules, local detection and intrinsic coordinate spans are formalized; the reconstruction theorem is planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Twenty-eight boxes are formalized and thirteen remain planned.
+Thirty-three boxes are formalized and eight remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
 A02 identifies the full degree-two kernel of the actual exterior quotient with the parallel-pair and guarded dependent-triple relation span, including zero coefficients and characteristic two.
 A03 defines the marked quadratic and full graded automorphism groups, with one common target and faithful degree-one restriction, over arbitrary commutative coefficient rings.
+A04 compares these groups with the actual degree-one/cup-kernel and full diagonal-cohomology diagrams for a supplied full theory, including all actual arrows and the common target.
 S02 gives the direct Galois action on the full graded diagram, preserving every defining relation and acting identically on its one common target.
 U01–U02 construct the universal free module, its explicit quadratic relation span and common finite-stage witnesses, and the induced diagram action retaining the common target component.
 C01–C03 recover a unique field automorphism from an arbitrary projective collineation fixing the prescribed frame, over any field and in dimension at least two.
@@ -34,6 +35,7 @@ U04 gives the determinant and centralizer, their exact equations on all parallel
 L01–L03 give the surjective trace map and its full kernel, inertia and decomposition with all four annihilator identities, and restriction from a graph to the actual vertical free span.
 L04 transfers graph coefficients over any commutative ring by cancelling a specified unit; L05 detects the unique unit-supported graph functional over a nonzero local ring in dimension at least two.
 P01–P02 recognize every supported coordinate span using commuting functionals, derive its diagram invariance from the marking squares, and give the actual equivariant restriction to its full dual.
+I01–I04 recover the unique hyperplane permutation, transport actual incidence and projective lines, and fix every marked fiber and the full projective frame, over nonzero local coefficients with dimension at least two and zero among the marking constants.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
@@ -144,10 +146,14 @@ Its restriction to the quadratic group is faithful by generation in degree one; 
 
 ## A04: comparison with a supplied theory
 
-:::node "thm:a04"
+:::node "thm:a04" (decl := OrlikSolomon.HyperplaneGT.Cohomology.degreeOneEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.targetDegreeOneEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.degreeOne_mul_self) (decl := OrlikSolomon.HyperplaneGT.Cohomology.cupKernel_eq) (decl := OrlikSolomon.HyperplaneGT.Cohomology.target_cupKernel_eq_top) (decl := OrlikSolomon.HyperplaneGT.Cohomology.diagonalEquiv_inclusion) (decl := OrlikSolomon.HyperplaneGT.Cohomology.diagonalEquiv_marking) (decl := OrlikSolomon.HyperplaneGT.Cohomology.degreeOneDiagramEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.gradedDiagramEquiv) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.toQuadratic_stage) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.toQuadratic_target) (decl := OrlikSolomon.HyperplaneGT.Cohomology.GradedDiagramAut.toQuadratic_injective) (decl := OrlikSolomon.HyperplaneGT.Cohomology.degreeOneDiagramEquiv_scalar_iff) (decl := OrlikSolomon.HyperplaneGT.Cohomology.gradedDiagramEquiv_scalar_iff)
 For a supplied C1–C5 theory, its degree-one modules and full cup kernels form a diagram isomorphic to A03, sending $`e_H` to $`[f_H]` and the target basis to $`[t]`, $`[t-1]`.
 The canonical diagonal algebra equivalences are also natural for every inclusion and marking, giving an isomorphism of the full graded diagrams.
-Marking naturality is proved on generators using logarithmic pullback, rather than assumed for extra diagram arrows.
+Marking naturality is proved on generators using logarithmic pullback along the actual scheme maps, with one common target retained even in dimension zero.
+Actual degree-one multiplication is alternating by transport from the OS theorem, including in characteristic two; its entire kernel is the transported parallel-pair and guarded dependent-triple span.
+The two automorphism-group comparisons are multiplicative equivalences with inverse component formulas.
+They preserve the fixed-unit scalar families in every degree and commute with faithful restriction to the actual degree-one summands at stages and target.
+These statements and the characteristic-two and point-free-target regression consumers use a supplied full geometric ordinary theory; A04 constructs no new nonzero theory instance or mod-2 realization.
 :::
 
 # The universal module and its algebraic dual
@@ -281,25 +287,30 @@ This agrees with the explicit surjective-restriction quotient construction and u
 
 # Hyperplane permutation and incidence
 
+Throughout I01–I04, the coefficient ring is nonzero and local, the dimension is at least two, and the marking constants contain zero.
+A supplied cofinal system is sufficient; these steps impose no perfectness, algebraicity or generation condition on the field extension or the marking set.
+
 ## I01: the recovered permutation
 
-:::node "prop:i01"
+:::node "prop:i01" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.hyperplanePerm) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.hyperplaneUnit) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.dualAction_delta) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.universalEquiv_single) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_inertia) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_decomposition) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_generatorLine) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.hyperplaneAction) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.hyperplanePerm_unique)
 Over a nonzero local coefficient ring, each diagram automorphism has a unique hyperplane permutation $`\pi_g` satisfying $`gI_H=I_{\pi_gH}`, $`gD_H=D_{\pi_gH}` and $`g(Re_H)=Re_{\pi_gH}`.
 These permutations respect composition.
+The dual action sends each coordinate delta to a unit multiple at the recovered label; the primal generator uses the same label and the inverse unit.
 The convention for the dual action is U03's contragredient convention.
 :::
 
 ## I02: incidence is preserved
 
-:::node "lem:i02"
+:::node "lem:i02" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_traceDomain) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.map_traceKernel) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.parallel_hyperplanePerm_iff) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.dependentTriple_hyperplanePerm_iff) (decl := OrlikSolomon.HyperplaneGT.unit_smul_single_sub_mem_traceKernel_iff)
 The permutation preserves parallel pairs and dependent triples in both directions.
-The planned proof detects these configurations from the trace kernel and from equality of nonzero coordinate lines in its quotient.
+The proof transports the actual trace domains and kernels by evaluation coannihilator identities.
+A single basis vector detects an empty trace, and a unit-weighted difference with a retained trace detects precisely the guarded dependent triple and equality of the two units.
 Nonzero coefficients are required to distinguish trace labels.
 :::
 
 ## I03: the projective collineation
 
-:::node "lem:i03"
+:::node "lem:i03" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.projectivePerm) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.projectivePerm_constantPoint) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.projectivePerm_coefficientPoint) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.preservesProjectiveLines_projectivePerm) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.projectiveAction)
 Use G01 to view $`\pi_g` as a permutation of coefficient points away from $`o=[1:0:\cdots:0]`, and extend it by fixing $`o`.
 The extension and its inverse map every projective line onto a projective line.
 Parallel pencils account for lines through $`o`; dependent triples account for the other lines.
@@ -307,9 +318,9 @@ Parallel pencils account for lines through $`o`; dependent triples account for t
 
 ## I04: individual marked labels are fixed
 
-:::node "lem:i04"
+:::node "lem:i04" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.hyperplanePerm_marking_zero) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.hyperplanePerm_marking_one) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.projectivePerm_basisPoint) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.projectivePerm_differencePoint) (decl := OrlikSolomon.HyperplaneGT.dependentTriple_marking_coordinate_zero) (decl := OrlikSolomon.HyperplaneGT.not_dependentTriple_marking_coordinate_one)
 Each marked zero and one hyperplane is individually fixed.
-The common source component forces the same two-label permutation for every marking, and the dependent triple $`x_i=0`, $`x_j=0`, $`x_i-x_j=0` rules out simultaneous exchange.
+The single common target component forces the same two-label permutation for every marking, and the dependent triple $`x_i=0`, $`x_j=0`, $`x_i-x_j=0` rules out simultaneous exchange.
 This is a combinatorial distinction of labels and remains valid in characteristic two.
 :::
 
