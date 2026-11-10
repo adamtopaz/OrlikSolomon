@@ -183,7 +183,7 @@ first page shows the statements, elaborated, with the output of `#print axioms`.
   consumers, formalized to the extent indicated in their book boxes:
   [`blueprint/`](blueprint/geometric_refactor_blueprint.tex)
 - Auditable public projective theorem: [`MainTheorem.lean`](OrlikSolomon/MainTheorem.lean)
-- Milestone M8, cohomological hyperplane reconstruction in progress:
+- Milestone M8, cohomological hyperplane reconstruction and regression coverage:
   [`blueprint/`](blueprint/cohomological_hyperplane_gt_blueprint.tex)
 - Design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Contribution rules: [`AGENTS.md`](AGENTS.md) and [`docs/TEAM.md`](docs/TEAM.md)

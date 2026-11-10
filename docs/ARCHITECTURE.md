@@ -1716,7 +1716,7 @@ G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04, S01
 are formalized, including U04's actual universal configuration equations and paired diagram
 invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. Supplied-theory
 transport and independence and unconditional ordinary de Rham reconstruction are formalized.
-The book records complete-statement status; final exposition and acceptance checks remain W24.
+The book records complete-statement status, with W24's final regression and acceptance exposition.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
 described under Algebra above; `HyperplaneGT/Algebra/QuadraticKernel` applies it to the actual OS
 quotient and identifies its full degree-two kernel.
@@ -1775,7 +1775,7 @@ these comparisons. The de Rham specialization is `k`-linear on logarithmic gener
 blueprint. The M7 `MainTheorem.lean` interface remains unchanged.
 
 The following modules give the approved layout, relative to `OrlikSolomon/`. The theorem
-modules are implemented; W24's final acceptance assembly remains in progress. Their work-item
+modules and W24's regression/exposition assembly are implemented. Their work-item
 IDs are those of the approved plan; the issue links identify the implementation work.
 
 | Module | Responsibility | Work item and issue |
@@ -1867,7 +1867,7 @@ IDs are those of the approved plan; the issue links identify the implementation 
 | `Examples/HyperplaneGT/DeRhamReconstruction` | Actual ordinary inverse/group/restriction and marking consumers, nonzero target dlogs, degree-zero/two and dimension-zero boundaries, moved complex-conjugate hyperplane and nonzero k-linear-versus-semilinear detector | W23, #175 |
 | `HyperplaneGT` | Pure-core facade, importing only geometry/algebra/diagram/reconstruction leaves; no cohomology or de Rham import | W22, #174 |
 | `HyperplaneGT/Cohomology` | Conditional-cohomology Adapter/Main facade; the explicit de Rham specialization stays a separate import | W22–W23, #174, #175 |
-| `Examples/HyperplaneGT/Disconnected` | Actual full product-coefficient mixed Galois family, shared target and proved failure of quadratic/full common factorization; private idempotent helpers | W24, #176 |
+| `Examples/HyperplaneGT/Disconnected` | Actual full product-coefficient Galois family, shared target and non-factorization for field factors; private idempotent helpers | W24, #176 |
 | `Examples/HyperplaneGT/FinalCoefficients` | Final binary/dual-number classifications, literal restriction, both scalar quotients, nilpotent common-target unit and genuine conjugation classes | W24, #176 |
 | `Examples/HyperplaneGT` | Umbrella over every durable topic leaf, including supplied-theory and actual ordinary de Rham consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
 | `Examples/HyperplaneGT/DegreeOne` | Formalized A01 consumers: zero coefficients, empty arrangements, dimensions zero and one, and zero new coordinates after inclusion | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
@@ -2350,8 +2350,9 @@ full Galois algebra equivalences using complementary central coefficient idempot
 all-degree image equalities and actual arrow squares with one identity common target. Its
 generic helpers remain example-private, and the public mixed-family constructor hides them
 behind proved generator and target formulas. No product-OS comparison or relator preservation
-is assumed. The two coefficient projections recover the distinct Galois factors and prove
-that no single scalar/Galois family gives this diagram, already after quadratic restriction.
+is assumed. When the factor is a field, the two coefficient projections recover the distinct
+Galois factors and prove that no single scalar/Galois family gives this diagram, already after
+quadratic restriction.
 The explicit binary product/complex-conjugation fixture therefore proves classification fails
 over disconnected coefficients, so the local/domain hypotheses cannot be omitted.
 `FinalCoefficients` pins the actual final classifications, restriction and both scalar

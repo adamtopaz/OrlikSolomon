@@ -468,7 +468,7 @@ Zero coefficients remain permitted for the preceding algebraic constructions and
 Existing scheme-complement regressions also cover complements without rational points.
 
 The coefficient hypothesis cannot be replaced by arbitrary commutative rings.
-For a product $`F\times F`, {name OrlikSolomon.HyperplaneGT.DisconnectedExamples.mixedGaloisAut}`mixedGaloisAut` constructs an actual full graded diagram by combining two existing Galois actions with the complementary coefficient idempotents.
+For a field $`F`, {name OrlikSolomon.HyperplaneGT.DisconnectedExamples.mixedGaloisAut}`mixedGaloisAut` constructs an actual full graded diagram over $`F\times F` by combining two existing Galois actions with the complementary coefficient idempotents.
 All OS relations, every degree and the actual inclusion and marking squares are preserved, with the same identity common target.
 For distinct Galois factors, {name OrlikSolomon.HyperplaneGT.DisconnectedExamples.mixedGaloisAut_not_scalar_mul_galois}`mixedGaloisAut_not_scalar_mul_galois` proves that even its quadratic restriction has no common scalar/Galois factorization.
 The {name OrlikSolomon.HyperplaneGT.DisconnectedExamples.binary_complex_disconnected_counterexample}`binary_complex_disconnected_counterexample` uses $`\mathbb F_2\times\mathbb F_2`, the identity and complex conjugation on the actual full stable system in dimension two, with all real marking constants.
