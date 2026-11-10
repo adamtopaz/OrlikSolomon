@@ -256,6 +256,10 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Basic
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Comparison
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Quotient
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Basic
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull.Domain
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull.Local
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Basic
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Compatibility
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic
@@ -329,7 +333,13 @@ public import OrlikSolomon.HyperplaneGT.Reconstruction.Trace.Projection
 public import OrlikSolomon.HyperplaneGT.Topology.Basic
 public import OrlikSolomon.HyperplaneGT.Topology.Basic.Components
 public import OrlikSolomon.HyperplaneGT.Topology.Basic.Neighborhoods
+public import OrlikSolomon.HyperplaneGT.Topology.Classification
+public import OrlikSolomon.HyperplaneGT.Topology.Classification.Graded
 public import OrlikSolomon.HyperplaneGT.Topology.Classification.Quadratic
+public import OrlikSolomon.HyperplaneGT.Topology.Cofinal
+public import OrlikSolomon.HyperplaneGT.Topology.Cofinal.Quotient
+public import OrlikSolomon.HyperplaneGT.Topology.Cofinal.Quotient.Basic
+public import OrlikSolomon.HyperplaneGT.Topology.Cofinal.Restriction
 public import OrlikSolomon.HyperplaneGT.Topology.Compact
 public import OrlikSolomon.HyperplaneGT.Topology.Compact.Closed
 public import OrlikSolomon.HyperplaneGT.Topology.Compact.Finite
@@ -340,6 +350,9 @@ public import OrlikSolomon.HyperplaneGT.Topology.Krull
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Comparison
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Hyperplanes
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Pointwise
+public import OrlikSolomon.HyperplaneGT.Topology.Quotient
+public import OrlikSolomon.HyperplaneGT.Topology.Quotient.Domain
+public import OrlikSolomon.HyperplaneGT.Topology.Quotient.Local
 public import OrlikSolomon.HyperplaneGT.Topology.Restriction
 public import OrlikSolomon.Interface.Logarithms
 public import OrlikSolomon.Interface.OSAlgebra
