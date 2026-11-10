@@ -438,8 +438,7 @@ Blueprint: E01 (`thm:e01`). -/
 def domainGradedReconstruction (hS : (0 : k₀) ∈ S)
     (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) :
     (Rˣ × (k ≃ₐ[k₀] k)) ≃* GradedDiagramAut T C S :=
- 
-      (coefficientDomainGradedClassificationEquiv R C S hS hgen hn).trans
+  (coefficientDomainGradedClassificationEquiv R C S hS hgen hn).trans
     (gradedDiagramEquiv T C S).symm
 
 /-- The classification is literally scalar action followed by coefficient-linear Galois
@@ -458,7 +457,6 @@ theorem domainGradedReconstruction_apply (hS : (0 : k₀) ∈ S)
 theorem domainGradedReconstruction_symm_apply (hS : (0 : k₀) ∈ S)
     (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) (g : GradedDiagramAut T C S) :
     (domainGradedReconstruction T C S hS hgen hn).symm g =
-     
       (coefficientDomainGradedClassificationEquiv R C S hS hgen hn).symm
         (gradedDiagramEquiv T C S g) := rfl
 

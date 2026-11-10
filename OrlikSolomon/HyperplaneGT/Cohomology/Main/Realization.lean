@@ -5,7 +5,7 @@ Authors: Adam Topaz, Codex
 -/
 module
 
-public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Cofinal
 
 /-!
 # Canonical independence of an eligible cohomology realization
@@ -333,5 +333,219 @@ theorem realizationGradedAutEquiv_target (g : GradedDiagramAut T₁ C S)
   rw [realizationStageEquiv_apply, ← gradedDiagramEquiv_target T₁ C S g x,
     realizationStageEquiv_apply]
   exact gradedDiagramEquiv_symm_target T₂ C S (gradedDiagramEquiv T₁ C S g) x
+
+
+/-- The same realization induces the identity comparison on its actual automorphism group. -/
+@[simp]
+theorem realizationQuadraticAutEquiv_refl : realizationQuadraticAutEquiv T₁ T₁ C S =
+      MulEquiv.refl _ := by
+  apply MulEquiv.ext
+  intro g
+  simp [realizationQuadraticAutEquiv]
+
+/-- Reversing the two realizations gives the inverse group comparison. -/
+theorem realizationQuadraticAutEquiv_symm :
+    (realizationQuadraticAutEquiv T₁ T₂ C S).symm = realizationQuadraticAutEquiv T₂ T₁ C S := by
+  apply MulEquiv.ext
+  intro g
+  rfl
+
+/-- Canonical actual automorphism comparisons satisfy the cocycle identity. -/
+theorem realizationQuadraticAutEquiv_trans :
+    (realizationQuadraticAutEquiv T₁ T₂ C S).trans (realizationQuadraticAutEquiv T₂ T₃ C S) =
+      realizationQuadraticAutEquiv T₁ T₃ C S := by
+  apply MulEquiv.ext
+  intro g
+  simp [realizationQuadraticAutEquiv]
+
+/-- Realization comparison retains the same scalar family over every coefficient ring. -/
+@[simp]
+theorem realizationQuadraticAutEquiv_scalarQuadraticAction (a : Rˣ) :
+    realizationQuadraticAutEquiv T₁ T₂ C S (scalarQuadraticAction T₁ C S a) =
+      scalarQuadraticAction T₂ C S a := by
+  simp [realizationQuadraticAutEquiv, scalarQuadraticAction]
+
+/-- Realization comparison retains the same galois family over every coefficient ring. -/
+@[simp]
+theorem realizationQuadraticAutEquiv_galoisQuadraticAction (a : k ≃ₐ[k₀] k) :
+    realizationQuadraticAutEquiv T₁ T₂ C S (galoisQuadraticAction T₁ C S a) =
+      galoisQuadraticAction T₂ C S a := by
+  simp [realizationQuadraticAutEquiv, galoisQuadraticAction]
+
+/-- Canonical realization comparison commutes with literal stage restriction. -/
+theorem realizationQuadraticAutEquiv_restrictStages (C' : CofinalSystem k₀ k n)
+    (hC : C'.stages ⊆ C.stages) (g : DiagramAut T₁ C S) :
+    realizationQuadraticAutEquiv T₁ T₂ C' S (DiagramAut.restrictStages T₁ C C' S hC g) =
+      DiagramAut.restrictStages T₂ C C' S hC (realizationQuadraticAutEquiv T₁ T₂ C S g) := by
+  apply (degreeOneDiagramEquiv T₂ C' S).injective
+  simp only [realizationQuadraticAutEquiv, MulEquiv.trans_apply, MulEquiv.apply_symm_apply,
+    degreeOneDiagramEquiv_restrictStages]
+
+/-- Canonical comparison of the literal actual scalar quotients, before classification. -/
+def realizationQuadraticScalarQuotientEquiv :
+    (DiagramAut T₁ C S ⧸ DiagramAut.scalarSubgroup T₁ C S) ≃*
+      (DiagramAut T₂ C S ⧸ DiagramAut.scalarSubgroup T₂ C S) :=
+  (DiagramAut.scalarQuotientComparison T₁ C S).trans
+    (DiagramAut.scalarQuotientComparison T₂ C S).symm
+
+/-- The quotient comparison sends an actual diagram class to its conjugate diagram class. -/
+@[simp]
+theorem realizationQuadraticScalarQuotientEquiv_map (g : DiagramAut T₁ C S) :
+    realizationQuadraticScalarQuotientEquiv T₁ T₂ C S (DiagramAut.scalarQuotientMap T₁ C S g) =
+      DiagramAut.scalarQuotientMap T₂ C S (realizationQuadraticAutEquiv T₁ T₂ C S g) := by
+  apply (DiagramAut.scalarQuotientComparison T₂ C S).injective
+  simp only [realizationQuadraticScalarQuotientEquiv, realizationQuadraticAutEquiv,
+    MulEquiv.trans_apply,
+    MulEquiv.apply_symm_apply, DiagramAut.scalarQuotientComparison_map]
+
+/-- The local classification coordinates are independent of the eligible realization. -/
+@[simp]
+theorem realizationQuadraticAutEquiv_localQuadraticReconstruction [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (p : Rˣ × (k ≃ₐ[k₀] k)) :
+    realizationQuadraticAutEquiv T₁ T₂ C S (localQuadraticReconstruction T₁ C S hS hgen hn p) =
+      localQuadraticReconstruction T₂ C S hS hgen hn p := by
+  simp [realizationQuadraticAutEquiv, localQuadraticReconstruction]
+
+/-- Realization comparison preserves the canonical local scalar-quotient Galois coordinate.
+-/
+theorem realizationQuadraticScalarQuotientEquiv_localScalarQuotientEquiv [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (q : DiagramAut T₁ C S ⧸ DiagramAut.scalarSubgroup T₁ C S) :
+    DiagramAut.localScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationQuadraticScalarQuotientEquiv T₁ T₂ C S q) =
+    DiagramAut.localScalarQuotientEquiv T₁ C S hS hgen hn q := by
+  simp only [DiagramAut.localScalarQuotientEquiv,
+    realizationQuadraticScalarQuotientEquiv, MulEquiv.trans_apply, MulEquiv.apply_symm_apply]
+
+/-- The domain classification coordinates are independent of the eligible realization. -/
+@[simp]
+theorem realizationQuadraticAutEquiv_domainQuadraticReconstruction [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (p : Rˣ × (k ≃ₐ[k₀] k)) :
+    realizationQuadraticAutEquiv T₁ T₂ C S (domainQuadraticReconstruction T₁ C S hS hgen hn p) =
+      domainQuadraticReconstruction T₂ C S hS hgen hn p := by
+  simp [realizationQuadraticAutEquiv, domainQuadraticReconstruction]
+
+/-- Realization comparison preserves the canonical domain scalar-quotient Galois coordinate.
+-/
+theorem realizationQuadraticScalarQuotientEquiv_domainScalarQuotientEquiv [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (q : DiagramAut T₁ C S ⧸ DiagramAut.scalarSubgroup T₁ C S) :
+    DiagramAut.domainScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationQuadraticScalarQuotientEquiv T₁ T₂ C S q) =
+    DiagramAut.domainScalarQuotientEquiv T₁ C S hS hgen hn q := by
+  simp only [DiagramAut.domainScalarQuotientEquiv,
+    realizationQuadraticScalarQuotientEquiv, MulEquiv.trans_apply, MulEquiv.apply_symm_apply]
+
+/-- The same realization induces the identity comparison on its actual automorphism group. -/
+@[simp]
+theorem realizationGradedAutEquiv_refl : realizationGradedAutEquiv T₁ T₁ C S = MulEquiv.refl _ := by
+  apply MulEquiv.ext
+  intro g
+  simp [realizationGradedAutEquiv]
+
+/-- Reversing the two realizations gives the inverse group comparison. -/
+theorem realizationGradedAutEquiv_symm :
+    (realizationGradedAutEquiv T₁ T₂ C S).symm = realizationGradedAutEquiv T₂ T₁ C S := by
+  apply MulEquiv.ext
+  intro g
+  rfl
+
+/-- Canonical actual automorphism comparisons satisfy the cocycle identity. -/
+theorem realizationGradedAutEquiv_trans :
+    (realizationGradedAutEquiv T₁ T₂ C S).trans (realizationGradedAutEquiv T₂ T₃ C S) =
+      realizationGradedAutEquiv T₁ T₃ C S := by
+  apply MulEquiv.ext
+  intro g
+  simp [realizationGradedAutEquiv]
+
+/-- Realization comparison retains the same scalar family over every coefficient ring. -/
+@[simp]
+theorem realizationGradedAutEquiv_scalarGradedAction (a : Rˣ) :
+    realizationGradedAutEquiv T₁ T₂ C S (scalarGradedAction T₁ C S a) =
+      scalarGradedAction T₂ C S a := by
+  simp [realizationGradedAutEquiv, scalarGradedAction]
+
+/-- Realization comparison retains the same galois family over every coefficient ring. -/
+@[simp]
+theorem realizationGradedAutEquiv_galoisGradedAction (a : k ≃ₐ[k₀] k) :
+    realizationGradedAutEquiv T₁ T₂ C S (galoisGradedAction T₁ C S a) =
+      galoisGradedAction T₂ C S a := by
+  simp [realizationGradedAutEquiv, galoisGradedAction]
+
+/-- Canonical realization comparison commutes with literal stage restriction. -/
+theorem realizationGradedAutEquiv_restrictStages (C' : CofinalSystem k₀ k n)
+    (hC : C'.stages ⊆ C.stages) (g : GradedDiagramAut T₁ C S) :
+    realizationGradedAutEquiv T₁ T₂ C' S (GradedDiagramAut.restrictStages T₁ C C' S hC g) =
+      GradedDiagramAut.restrictStages T₂ C C' S hC (realizationGradedAutEquiv T₁ T₂ C S g) := by
+  apply (gradedDiagramEquiv T₂ C' S).injective
+  simp only [realizationGradedAutEquiv, MulEquiv.trans_apply, MulEquiv.apply_symm_apply,
+    gradedDiagramEquiv_restrictStages]
+
+/-- Canonical comparison of the literal actual scalar quotients, before classification. -/
+def realizationGradedScalarQuotientEquiv :
+    (GradedDiagramAut T₁ C S ⧸ GradedDiagramAut.scalarSubgroup T₁ C S) ≃*
+      (GradedDiagramAut T₂ C S ⧸ GradedDiagramAut.scalarSubgroup T₂ C S) :=
+  (GradedDiagramAut.scalarQuotientComparison T₁ C S).trans
+    (GradedDiagramAut.scalarQuotientComparison T₂ C S).symm
+
+/-- The quotient comparison sends an actual diagram class to its conjugate diagram class. -/
+@[simp]
+theorem realizationGradedScalarQuotientEquiv_map (g : GradedDiagramAut T₁ C S) :
+    realizationGradedScalarQuotientEquiv T₁ T₂ C S (GradedDiagramAut.scalarQuotientMap T₁ C S g) =
+      GradedDiagramAut.scalarQuotientMap T₂ C S (realizationGradedAutEquiv T₁ T₂ C S g) := by
+  apply (GradedDiagramAut.scalarQuotientComparison T₂ C S).injective
+  simp only [realizationGradedScalarQuotientEquiv, realizationGradedAutEquiv, MulEquiv.trans_apply,
+    MulEquiv.apply_symm_apply, GradedDiagramAut.scalarQuotientComparison_map]
+
+/-- The local classification coordinates are independent of the eligible realization. -/
+@[simp]
+theorem realizationGradedAutEquiv_localGradedReconstruction [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (p : Rˣ × (k ≃ₐ[k₀] k)) :
+    realizationGradedAutEquiv T₁ T₂ C S (localGradedReconstruction T₁ C S hS hgen hn p) =
+      localGradedReconstruction T₂ C S hS hgen hn p := by
+  simp [realizationGradedAutEquiv, localGradedReconstruction]
+
+/-- Realization comparison preserves the canonical local scalar-quotient Galois coordinate.
+-/
+theorem realizationGradedScalarQuotientEquiv_localScalarQuotientEquiv [IsLocalRing R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (q : GradedDiagramAut T₁ C S ⧸ GradedDiagramAut.scalarSubgroup T₁ C S) :
+    GradedDiagramAut.localScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationGradedScalarQuotientEquiv T₁ T₂ C S q) =
+    GradedDiagramAut.localScalarQuotientEquiv T₁ C S hS hgen hn q := by
+  simp only [GradedDiagramAut.localScalarQuotientEquiv,
+    realizationGradedScalarQuotientEquiv, MulEquiv.trans_apply, MulEquiv.apply_symm_apply]
+
+/-- The domain classification coordinates are independent of the eligible realization. -/
+@[simp]
+theorem realizationGradedAutEquiv_domainGradedReconstruction [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (p : Rˣ × (k ≃ₐ[k₀] k)) :
+    realizationGradedAutEquiv T₁ T₂ C S (domainGradedReconstruction T₁ C S hS hgen hn p) =
+      domainGradedReconstruction T₂ C S hS hgen hn p := by
+  simp [realizationGradedAutEquiv, domainGradedReconstruction]
+
+/-- Realization comparison preserves the canonical domain scalar-quotient Galois coordinate.
+-/
+theorem realizationGradedScalarQuotientEquiv_domainScalarQuotientEquiv [IsDomain R]
+    (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
+    (q : GradedDiagramAut T₁ C S ⧸ GradedDiagramAut.scalarSubgroup T₁ C S) :
+    GradedDiagramAut.domainScalarQuotientEquiv T₂ C S hS hgen hn
+      (realizationGradedScalarQuotientEquiv T₁ T₂ C S q) =
+    GradedDiagramAut.domainScalarQuotientEquiv T₁ C S hS hgen hn q := by
+  simp only [GradedDiagramAut.domainScalarQuotientEquiv,
+    realizationGradedScalarQuotientEquiv, MulEquiv.trans_apply, MulEquiv.apply_symm_apply]
+
+/-- The canonical actual realization comparisons commute with literal degree-one restriction.
+-/
+theorem realizationAutEquiv_toQuadratic (g : GradedDiagramAut T₁ C S) :
+    realizationQuadraticAutEquiv T₁ T₂ C S (GradedDiagramAut.toQuadratic T₁ C S g) =
+    GradedDiagramAut.toQuadratic T₂ C S (realizationGradedAutEquiv T₁ T₂ C S g) := by
+  apply (degreeOneDiagramEquiv T₂ C S).injective
+  simp only [realizationQuadraticAutEquiv, realizationGradedAutEquiv, MulEquiv.trans_apply,
+    MulEquiv.apply_symm_apply, GradedDiagramAut.toQuadratic_comparison]
 
 end OrlikSolomon.HyperplaneGT.Cohomology
