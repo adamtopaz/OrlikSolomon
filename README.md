@@ -25,7 +25,7 @@ details.
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-37 formalized and 4 planned. Coefficient points, hyperplane incidence
+38 formalized and 3 planned. Coefficient points, hyperplane incidence
 and coordinate graphs (G01–G03) are proved over arbitrary fields. G04–G06 construct the
 coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal
 systems with actual marking maps to one common target. The canonical degree-one OS basis,
@@ -69,12 +69,16 @@ perfectness or algebraicity assumption. S04 upgrades the actual degree-one restr
 multiplicative equivalence with the full graded diagram. Scalars act by their degree powers,
 and both groups modulo their literal central scalar ranges are canonically the Galois group,
 with explicit direct Galois sections and both inverse laws.
-The remaining classification studies automorphisms of marked
+S05 proves the same quadratic and full graded classifications and both scalar quotients over
+any integral coefficient domain, by extending the actual matrices to its fraction field and
+descending the scalar and its inverse from original matrix entries. These constructions agree
+with the local ones on the overlap; no cohomology localization statement is assumed.
+The remaining reconstruction studies automorphisms of marked
 degree-one/cup-kernel and diagonal graded cohomology diagrams in dimension at least two,
 with nonzero local or integral-domain coefficients. The theory-level results will be conditional
 on the existing axioms, with an unconditional characteristic-zero de Rham specialization.
 The [book chapter](https://adamtopaz.github.io/OrlikSolomon/hyperplane-gt/) tracks the proved
-and planned statements; domain coefficients and cohomological reconstruction remain planned.
+and planned statements; cohomological reconstruction remains planned.
 
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective
