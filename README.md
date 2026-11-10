@@ -25,7 +25,7 @@ details.
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-26 formalized and 15 planned. Coefficient points, hyperplane incidence
+28 formalized and 13 planned. Coefficient points, hyperplane incidence
 and coordinate graphs (G01–G03) are proved over arbitrary fields. G04–G06 construct the
 coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal
 systems with actual marking maps to one common target. The canonical degree-one OS basis,
@@ -45,7 +45,10 @@ for any explicit relation submodule. U04 gives the exact universal parallel-pair
 dependent-triple equations and paired diagram invariance, including equality of centralizer
 images. L01–L03 prove the surjective trace map and its full kernel, the explicit decomposition
 product and annihilator identities, the unit-delta centralizer, and graph restriction to the
-actual vertical module with inertia kernel. P01–P02 recognize all coordinate-supported spans
+actual vertical module with inertia kernel. L04 transfers graph coefficients by cancelling a specified
+unit over any commutative ring. L05 detects a unique unit-supported graph functional over a
+nonzero local ring in dimension at least two, from the four literal primitive, vertical, zero-coordinate
+and centralizer-surjectivity conditions. P01–P02 recognize all coordinate-supported spans
 using commuting functionals and derive their invariance and actual full-dual restriction
 equivariance from the marking squares. The planned reconstruction studies automorphisms of marked
 degree-one/cup-kernel and diagonal graded cohomology diagrams in dimension at least two,
