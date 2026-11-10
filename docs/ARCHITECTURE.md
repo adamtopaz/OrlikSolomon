@@ -581,6 +581,9 @@ In scope: the ordinary affine and projective theorems, their combinatorial corol
 the bridge from a standard degreewise theory, the de Rham instance, the geometric refactor,
 the cohomological hyperplane reconstruction (M8), and the exposition.
 
+The topological upgrades of hyperplane reconstruction (M9) are also in scope, under the
+approved plan and module boundaries in "Topological hyperplane reconstruction (M9)" below.
+
 The de Rham instance has its own blueprint, `blueprint/de_rham_instance_blueprint.tex`, and is
 tracked by the GitHub milestone "M5 De Rham instance". See the next section.
 
@@ -2370,3 +2373,126 @@ mathematical PR names declarations only on the boxes it actually covers and reco
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 records durable regression coverage and the final
 label-by-label exposition and acceptance checks.
+
+## Topological hyperplane reconstruction (M9)
+
+`blueprint/topological_reconstruction_blueprint.tex` is authoritative for the mathematics.
+The [parent issue #204](https://github.com/adamtopaz/OrlikSolomon/issues/204),
+[approved W01–W21 plan](https://github.com/adamtopaz/OrlikSolomon/issues/204#issuecomment-6767658676),
+[Claude's approval](https://github.com/adamtopaz/OrlikSolomon/issues/204#issuecomment-6767683702)
+and [#205–#225 child index](https://github.com/adamtopaz/OrlikSolomon/issues/204#issuecomment-6767931996)
+govern this layer. W01 ([#205](https://github.com/adamtopaz/OrlikSolomon/issues/205)) records
+the architecture and governance; it contains no mathematical implementation. Merged
+PR [#203](https://github.com/adamtopaz/OrlikSolomon/pull/203) supplies the unchanged
+Astra-authored blueprint and planned chapter. Protect its TeX blob
+`d9ac8916705cd8a231074f4e768b6902859c2a9c`, SHA256
+`a6936e1e99be423fc7ce4fa98033a58f2f0dd5ed05b1043d9a7493f4510c867f`.
+
+The M9 topology is defined directly on the existing M8 diagram carriers by the product of
+discrete complete stage automorphism groups, retaining the single original common target,
+and the induced topology on the existing subgroup. The actual-theory and ordinary de Rham
+topologies are defined from their actual components before proving the adapter and
+untwisting homeomorphisms. Scalar quotients use Mathlib's quotient-group topology. No
+topology is defined by transport through the desired classification, and no M8 carrier,
+group law, theorem type, simp attribute or cohomology field is changed.
+
+Topologies are named values with deliberately scoped instances on the diagram groups and
+on discrete coefficient units. There is no global discrete `LinearEquiv`, `AlgEquiv` or
+`Units` instance, and no topology on the coefficient ring is assumed. The pointwise topology
+on the field automorphism group is named separately from Mathlib's existing global Krull
+topology. The exact comparison criterion is an ordinary proposition, not a new
+`CofinalSystem` or `OrdinaryTheory` field or a global class prerequisite. Discrete
+coefficient units are not given an adic topology, and existing coefficient topologies are
+not changed by importing this layer.
+
+Each upgrade adjoins forward and inverse continuity proofs to the exact existing
+`MulEquiv` and exports an equality of its `toMulEquiv` with that map, plus application,
+coercion and inverse formulas. Broad forward-expansion simp rules must not defeat ordinary
+inverse cancellation. T17's ordinary scalar quotient and cofinal algebraic wrappers are
+new wrappers explicitly required by the blueprint; expose their exact adapter descriptions
+rather than describing them as pre-existing declarations.
+
+Pure topology modules import only the necessary M8 geometry, algebra, diagram and
+reconstruction leaves and Mathlib. Conditional theory topology imports no de Rham instance.
+The explicit ordinary de Rham specialization and rational-function/Frobenius examples
+remain separate imports. New topology facades do not change the existing M8 facades or
+activate instances merely on import. Generic helpers have no arrangement or cohomology
+hypotheses and reuse Mathlib before adding local API.
+
+The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbreviates
+`HyperplaneGT/`. File-path components do not introduce namespaces that shadow Mathlib's
+`Topology`, `Algebra` or other root namespaces. Use the existing
+`OrlikSolomon.HyperplaneGT`, `OrlikSolomon.HyperplaneGT.Cohomology` and
+`OrlikSolomon.HyperplaneGT.Cohomology.DeRham` namespaces and a dedicated scope name.
+
+| Modules | Responsibility and work items |
+| --- | --- |
+| Optional small `Topology/DiscreteFamily`, namespace `OrlikSolomon` | Only reusable discrete-product/induced-topology helpers missing from Mathlib; W02, [#206](https://github.com/adamtopaz/OrlikSolomon/issues/206) |
+| `H/Topology/Basic/Components`, `Basic/Neighborhoods`, facade `Basic` | Direct pure topologies, component APIs, group/separation and stage/target bases; W02, #206 |
+| `H/Topology/Compact/Closed`, `Compact/Finite`, facade `Compact` | Closed constraints and finite-coefficient compactness; W03, [#207](https://github.com/adamtopaz/OrlikSolomon/issues/207) |
+| `H/Topology/Restriction` | Degree-one embedding and inverse-continuity API; W04, [#208](https://github.com/adamtopaz/OrlikSolomon/issues/208) |
+| `H/Topology/Krull/Pointwise`, `Krull/Hyperplanes`, `Krull/Comparison`, facade `Krull` | Generic pointwise topology, normalized geometric tests and exact Krull comparison; W05–W06, [#209](https://github.com/adamtopaz/OrlikSolomon/issues/209), [#210](https://github.com/adamtopaz/OrlikSolomon/issues/210) |
+| `H/Topology/GaloisCompact/FiniteOrbits`, `GaloisCompact/Stages`, facade `GaloisCompact` | Arrangement-free finite-orbit compactness and system/algebraicity corollaries; W07, [#211](https://github.com/adamtopaz/OrlikSolomon/issues/211) |
+| `H/Topology/Classification/Quadratic`, `Classification/Graded`, facade `Classification` | Exact local/domain quadratic and graded upgrades; W09–W10, [#213](https://github.com/adamtopaz/OrlikSolomon/issues/213), [#214](https://github.com/adamtopaz/OrlikSolomon/issues/214) |
+| `H/Topology/Quotient` | Actual scalar quotient topology and closedness/profiniteness; W11, [#215](https://github.com/adamtopaz/OrlikSolomon/issues/215) |
+| `H/Topology/Cofinal/Restriction`, `Cofinal/Quotient`, facade `Cofinal` | Literal cofinal maps, inverse continuity and scalar quotients; W12, [#216](https://github.com/adamtopaz/OrlikSolomon/issues/216) |
+| `H/Topology/Consequences` | Compactness and local compactness; W13, [#217](https://github.com/adamtopaz/OrlikSolomon/issues/217) |
+| `H/Cohomology/Topology/Adapter/Basic`, `Adapter/Comparison`, `Adapter/Quotient`, facade `Adapter` | Direct actual topologies, both adapter directions and quotient comparison; W14, [#218](https://github.com/adamtopaz/OrlikSolomon/issues/218). Quotient imports the existing Main scalar APIs without classification hypotheses |
+| `H/Cohomology/Topology/Main/Classification`, `Main/Cofinal`, `Main/Realization`, facade `Main` | Actual reconstruction/cofinality and two-realization comparisons; W15–W16, [#219](https://github.com/adamtopaz/OrlikSolomon/issues/219), [#220](https://github.com/adamtopaz/OrlikSolomon/issues/220) |
+| `H/Cohomology/DeRham/Topology/Basic`, `Topology/Comparison`, `Topology/Actions`, `Topology/Cofinal`, `Topology/Reconstruction`, facade `H/Cohomology/DeRham/Topology` | Direct ordinary topology, twist comparisons, new algebraic scalar/cofinal wrappers and final ordinary upgrades; W17–W18, [#221](https://github.com/adamtopaz/OrlikSolomon/issues/221), [#222](https://github.com/adamtopaz/OrlikSolomon/issues/222) |
+| `Examples/HyperplaneGT/Topology/RatFunc/Field`, `RatFunc/Automorphisms`, `RatFunc/Counterexample`, small `RatFunc` facade | T08's field, finite group, stable system and actual noncontinuous-map example; W08, [#212](https://github.com/adamtopaz/OrlikSolomon/issues/212). No rational-function core imports |
+| `Examples/HyperplaneGT/Topology/Coefficients`, `Systems`, `Realizations` | Required coefficient/system/actual-realization consumers; W19, [#223](https://github.com/adamtopaz/OrlikSolomon/issues/223) |
+| `Examples/HyperplaneGT/Topology/Infinite/Frobenius`, `Infinite/Acceptance`, small `Infinite` facade | Genuine infinite algebraic example; W20, [#224](https://github.com/adamtopaz/OrlikSolomon/issues/224) |
+| `H/Topology`, `H/Cohomology/Topology`, `Examples/HyperplaneGT/Topology` | Additional explicit facades and final acceptance umbrella; W21, [#225](https://github.com/adamtopaz/OrlikSolomon/issues/225) |
+
+Leaves target roughly 250–600 lines and split before 800. Intermediate size-only leaves
+stay within the approved imports and are listed in PR bodies. The ordinary Actions/cofinal
+algebraic wrapper portions need only their existing algebraic inputs; topology statements
+remain in the higher leaves. Existing `HyperplaneGT`, `HyperplaneGT/Cohomology` and
+`HyperplaneGT/Cohomology/DeRham` facades stay unchanged. Add every new library module to
+the sorted root import list as implementation lands. W08 and W20 stay separate from the
+positive classifiers and from each other; their example support never becomes an assumed
+conclusion of a core theorem.
+
+### Hypotheses, review and book coverage
+
+Claude approves the exact public statements of **T09–T12 and T15–T17**, and the
+**hypotheses of T06**, before their proofs are finalized. Non-author Codex reviewers check
+intermediate statements against the blueprint. Send any mathematical deviation separately
+to Claude. Substantive gaps follow the existing blueprint-gap process; only Claude scopes
+an Astra request. Claude checks every PR before deciding and performing the merge, after
+passing CI and a non-author approving review. The M8 statements and M7 interface remain
+unchanged.
+
+The arbitrary-extension Krull criterion retains finite-dimensional intermediate fields.
+The T05–T06 stage comparisons and T07 supplied-system corollary explicitly require
+`1 ≤ n`. Classified statements retain `2 ≤ n`, zero among the subfield-generating marking
+constants, and nonzero local or integral-domain coefficients. Krull products visibly use
+the exact criterion (K) or algebraicity; no normality, separability, perfectness or
+algebraic-closure hypothesis is added. Basic pure/theory topology, embeddings and adapters
+retain zero coefficients and dimension zero; ordinary specializations retain their
+existing field and characteristic-zero parameters. Literal restriction/cofinal upgrades
+do not acquire algebraicity.
+
+The fifth blueprint has 17 separately labelled nodes T01–T17, initially **0 formalized /
+0 partial / 17 planned**, separate from all four earlier blueprint counts. The #203
+bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
+recognizes the nine tagged-display equation labels as metadata while retaining theorem
+ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
+unchanged.
+
+Book coverage is incremental and clause-complete. T01–T02 remain partial until pure,
+actual-theory and ordinary specializations are all present; T14 includes scalar-quotient
+adapter comparisons. A pointwise-only classifier does not complete a node's Krull clause,
+and a continuous bijection does not complete a topological-isomorphism node. Review each
+attachment against its entire statement; node counts and standard-axiom checks alone do
+not establish semantic coverage.
+
+Final acceptance checks both continuity directions, exact underlying M8 maps, actual common
+targets and quotient topologies, the inferred global Krull instance, and scope isolation
+from pre-existing coefficient topologies. It includes finite, dual-number and integer
+fixtures, the actual non-union-closed system, genuine finite and infinite Galois examples,
+T08's actual failure without (K), and honest supplied-theory versus constructed ordinary
+de Rham claims. Check all 17 labelled statements separately on the final reviewed tree,
+with coordinated library check/replay, native Book, strict parser, completeness/render,
+source-link and formula checks.
