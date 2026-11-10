@@ -55,10 +55,10 @@ theorem original_target_entry_isUnit (g : DiagramAut R C S) :
 
 include hS hgen hn in
 /-- The whole common target is scalar over the nonlocal coefficient ring of integers. -/
-theorem integer_target_scalar (g : DiagramAut ℤ C S) (x : Fin 2 →₀ ℤ) :
-    ∃ u : ℤˣ, g.targetEquiv x = (u : ℤ) • x := by
+theorem integer_target_scalar (g : DiagramAut ℤ C S) :
+    ∃ u : ℤˣ, ∀ x : Fin 2 →₀ ℤ, g.targetEquiv x = (u : ℤ) • x := by
   obtain ⟨⟨u, σ⟩, rfl⟩ := (coefficientDomainAutEquiv ℤ C S hS hgen hn).surjective g
-  exact ⟨u, coefficientDomainAutEquiv_targetEquiv_apply ℤ C S hS hgen hn u σ x⟩
+  exact ⟨u, coefficientDomainAutEquiv_targetEquiv_apply ℤ C S hS hgen hn u σ⟩
 
 /-- Local and domain classification agree as complete equivalences. -/
 theorem local_overlap [IsLocalRing R] :
@@ -86,7 +86,6 @@ theorem integer_scalar_nonidentity :
     g.targetEquiv (Finsupp.single (0 : Fin 2) 1) 0) he
   rw [coefficientDomainAutEquiv_targetEquiv_apply] at hv
   norm_num at hv
-
 
 /-- The actual graded restriction and full classification retain bare simp cancellation. -/
 theorem graded_cancellation (g : GradedDiagramAut R C S) (q : DiagramAut R C S)
