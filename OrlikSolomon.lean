@@ -152,6 +152,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Diagram
 public import OrlikSolomon.Examples.HyperplaneGT.Disconnected
 public import OrlikSolomon.Examples.HyperplaneGT.DomainClassification
 public import OrlikSolomon.Examples.HyperplaneGT.Dual
+public import OrlikSolomon.Examples.HyperplaneGT.FinalCoefficients
 public import OrlikSolomon.Examples.HyperplaneGT.Galois
 public import OrlikSolomon.Examples.HyperplaneGT.GaloisAction
 public import OrlikSolomon.Examples.HyperplaneGT.GaloisReconstruction
