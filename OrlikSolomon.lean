@@ -232,11 +232,15 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Reconstruction
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Untwist
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Actions
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification.Compatibility
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Cofinal
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Realization
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Quadratic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Restriction
+public import OrlikSolomon.HyperplaneGT.Diagram.Cofinal
 public import OrlikSolomon.HyperplaneGT.Diagram.GaloisAction
 public import OrlikSolomon.HyperplaneGT.Diagram.GaloisAction.Stage
 public import OrlikSolomon.HyperplaneGT.Diagram.Universal
@@ -259,6 +263,7 @@ public import OrlikSolomon.HyperplaneGT.Geometry.Galois.CoordinateAction
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Markings
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.System
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Cofinal
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Descent
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Diagram
