@@ -265,6 +265,7 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Quotient.Domain
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Quotient.Local
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Cofinal.Basic
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Cofinal.Quotient
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Cofinal.Restriction
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Basic
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Compatibility
