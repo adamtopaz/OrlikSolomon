@@ -103,7 +103,9 @@ private def exteriorCongr (e : M ≃ₗ[R] N) : (⋀[R]^2 M) ≃ₗ[R] (⋀[R]^2
     (by rw [← exteriorPower.map_comp, e.comp_symm, exteriorPower.map_id])
     (by rw [← exteriorPower.map_comp, e.symm_comp, exteriorPower.map_id])
 
-private theorem map_conjugate_eq_iff (e : M ≃ₗ[R] N) (P : Submodule R M) (P' : Submodule R N)
+/-- A linear equivalence identifies submodule preservation with preservation under the
+conjugated automorphism, provided it identifies the whole submodules. -/
+theorem map_conjugate_eq_iff (e : M ≃ₗ[R] N) (P : Submodule R M) (P' : Submodule R N)
     (hP : P.map e.toLinearMap = P') (g : N ≃ₗ[R] N) :
     P.map (e.trans (g.trans e.symm)).toLinearMap = P ↔
       P'.map g.toLinearMap = P' := by
@@ -124,7 +126,9 @@ private theorem conjugate_arrow_iff {M M' N N' : Type*} (eM : M ≃ M') (eN : N 
     apply eN.injective
     simpa only [eN.apply_symm_apply, ← hp, eM.apply_symm_apply] using h (eM x)
 
-private theorem linear_conjugate_arrow_iff {M M' N N' : Type*}
+/-- A commuting square of linear equivalences transports an entire linear naturality
+equation to the equation for the conjugated automorphisms. -/
+theorem linear_conjugate_arrow_iff {M M' N N' : Type*}
     [AddCommGroup M] [Module R M] [AddCommGroup M'] [Module R M']
     [AddCommGroup N] [Module R N] [AddCommGroup N'] [Module R N']
     (eM : M ≃ₗ[R] M') (eN : N ≃ₗ[R] N') (p : M →ₗ[R] N) (p' : M' →ₗ[R] N')
@@ -138,7 +142,9 @@ private theorem linear_conjugate_arrow_iff {M M' N N' : Type*}
   exact (conjugate_arrow_iff eM.toEquiv eN.toEquiv p p'
     (fun x ↦ DFunLike.congr_fun hp x) gM gN).symm
 
-private theorem exterior_conjugate_iff (e : M ≃ₗ[R] N)
+/-- Exterior-square conjugation preserves a whole relation submodule exactly when the
+original automorphism preserves the corresponding submodule. -/
+theorem exterior_conjugate_iff (e : M ≃ₗ[R] N)
     (P : Submodule R (⋀[R]^2 M)) (P' : Submodule R (⋀[R]^2 N))
     (hP : P.map (exteriorPower.map 2 e.toLinearMap) = P') (g : N ≃ₗ[R] N) :
     P'.map (exteriorPower.map 2 g.toLinearMap) = P' ↔
@@ -232,7 +238,9 @@ theorem map_diagonalEquiv_degree (A : Arrangement k V) (q : ℕ) :
     rw [T.diagonalEquiv_of_mem_degree y.property]
     exact congrArg (DirectSum.of _ q) hy
 
-private theorem algebra_conjugate_arrow_iff {M M' N N' : Type*}
+/-- A commuting square of algebra equivalences transports an entire algebra naturality
+equation to the equation for the conjugated automorphisms. -/
+theorem algebra_conjugate_arrow_iff {M M' N N' : Type*}
     [Ring M] [Algebra R M] [Ring M'] [Algebra R M']
     [Ring N] [Algebra R N] [Ring N'] [Algebra R N']
     (eM : M ≃ₐ[R] M') (eN : N ≃ₐ[R] N') (p : M →ₐ[R] N) (p' : M' →ₐ[R] N')

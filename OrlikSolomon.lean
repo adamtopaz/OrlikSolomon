@@ -148,6 +148,7 @@ public import OrlikSolomon.Examples.Geometric.NonAffine.SheafCech
 public import OrlikSolomon.Examples.HyperplaneGT
 public import OrlikSolomon.Examples.HyperplaneGT.Collineation
 public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
+public import OrlikSolomon.Examples.HyperplaneGT.DeRhamReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.DegreeOne
 public import OrlikSolomon.Examples.HyperplaneGT.Diagram
 public import OrlikSolomon.Examples.HyperplaneGT.Disconnected
@@ -163,6 +164,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Local
 public import OrlikSolomon.Examples.HyperplaneGT.LocalClassification
 public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
+public import OrlikSolomon.Examples.HyperplaneGT.TheoryReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
 public import OrlikSolomon.Examples.Moebius
@@ -211,6 +213,7 @@ public import OrlikSolomon.Grading.Laurent
 public import OrlikSolomon.Grading.LinearImage
 public import OrlikSolomon.Grading.Restriction
 public import OrlikSolomon.Grading.TensorProduct
+public import OrlikSolomon.HyperplaneGT
 public import OrlikSolomon.HyperplaneGT.Algebra.DegreeOne
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Alternating
@@ -220,6 +223,7 @@ public import OrlikSolomon.HyperplaneGT.Algebra.Dual.DiagramAction
 public import OrlikSolomon.HyperplaneGT.Algebra.Dual.Primitive
 public import OrlikSolomon.HyperplaneGT.Algebra.LowDegrees
 public import OrlikSolomon.HyperplaneGT.Algebra.QuadraticKernel
+public import OrlikSolomon.HyperplaneGT.Cohomology
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Comparison
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.CupKernel
@@ -228,11 +232,22 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Examples
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Graded
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Maps
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Quadratic
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Diagram
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Reconstruction
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Untwist
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Actions
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification.Compatibility
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Cofinal
+public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Realization
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Graded
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.MarkingMaps
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Quadratic
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic.Restriction
+public import OrlikSolomon.HyperplaneGT.Diagram.Cofinal
 public import OrlikSolomon.HyperplaneGT.Diagram.GaloisAction
 public import OrlikSolomon.HyperplaneGT.Diagram.GaloisAction.Stage
 public import OrlikSolomon.HyperplaneGT.Diagram.Universal
@@ -255,6 +270,7 @@ public import OrlikSolomon.HyperplaneGT.Geometry.Galois.CoordinateAction
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Markings
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.System
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Cofinal
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Descent
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Diagram
