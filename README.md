@@ -101,7 +101,7 @@ and point-free-complement coverage is retained.
 
 **Milestone M9:** [topological hyperplane reconstruction](blueprint/topological_reconstruction_blueprint.tex)
 is tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
-Its 17 separately labelled statements T01–T17 include **15 formalized, 0 partly formalized and 2 planned**,
+Its 17 separately labelled statements T01–T17 include **16 formalized, 0 partly formalized and 1 planned**,
 counted separately from the four existing blueprints. The [chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
 describes finite-stage convergence, discrete coefficient units, and the pointwise Galois factor.
 T13 proves local compactness and compactness exactly for finite coefficient units, including
@@ -136,7 +136,11 @@ group and scalar quotient adapter homeomorphisms are also proved (T14). The ordi
 characteristic-zero component topologies and complete-stage-plus-target bases complete
 T01–T02 in every dimension. Both old ordinary twists and their literal scalar quotient
 twists are homeomorphisms. New algebraic ordinary scalar and cofinal wrappers retain
-exactly the old hypotheses; final ordinary reconstruction topology remains T17/#222.
+exactly the old hypotheses. T17 upgrades all ordinary reconstruction, quotient and cofinal
+homeomorphisms for pointwise convergence and, under the fixing condition or algebraicity,
+Krull. All fourteen full-family specializations retain algebraicity for the old family
+constructor. The characteristic-zero ordinary groups are locally compact and noncompact;
+their literal scalar quotients are profinite, without a field-extension condition on a supplied system.
 Durable constructed ordinary fixtures include a dimension-zero target interchange detected
 by every stage-and-target kernel and a nontrivial complex-conjugation scalar-quotient class.
 Both pure diagram groups are closed in the original ambient products for every commutative
@@ -152,8 +156,8 @@ algebraic Krull wrappers. All ordinary degree powers and original target/arrow f
 retained. T11 proves both literal scalar quotient homeomorphisms, closed scalar ranges and
 profinite quotients, without finiteness of coefficient units. T15 upgrades all exact supplied-theory
 local/domain reconstruction, quotient and restriction/cofinal homeomorphisms, preserving
-the original target and hypotheses. The remaining realization/cofinal and ordinary
-reconstruction upgrades remain planned. No adic-coefficient
+the original target and hypotheses. Only the separate two-realization
+topological comparison T16 remains planned. No adic-coefficient
 claim is made.
 
 **The public theorem in one file.**

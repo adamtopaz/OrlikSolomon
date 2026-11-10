@@ -2439,9 +2439,9 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | `H/Topology/Consequences` | Implemented local compactness and exact finite-unit compactness criterion; W13, [#217](https://github.com/adamtopaz/OrlikSolomon/issues/217) |
 | `H/Cohomology/Topology/Adapter/Basic`, `Adapter/Comparison`, `Adapter/Quotient`, facade `Adapter` | Direct actual topologies, both adapter directions and quotient comparison; W14, [#218](https://github.com/adamtopaz/OrlikSolomon/issues/218). Quotient imports the existing Main scalar APIs without classification hypotheses |
 | `H/Cohomology/Topology/Main/Classification`, `Main/Cofinal`, `Main/Realization`, facade `Main` | Implemented T15 actual reconstruction/cofinality; separate T16 two-realization comparisons remain W16; W15–W16, [#219](https://github.com/adamtopaz/OrlikSolomon/issues/219), [#220](https://github.com/adamtopaz/OrlikSolomon/issues/220) |
-| `H/Cohomology/DeRham/Topology/Basic`, `Topology/Comparison`, `Topology/Actions`, `Topology/Cofinal`, `Topology/Reconstruction`, facade `H/Cohomology/DeRham/Topology` | Direct ordinary topology, twist comparisons, new algebraic scalar/cofinal wrappers and final ordinary upgrades; W17–W18, [#221](https://github.com/adamtopaz/OrlikSolomon/issues/221), [#222](https://github.com/adamtopaz/OrlikSolomon/issues/222) |
+| `H/Cohomology/DeRham/Topology/Basic`, `Topology/Comparison`, `Topology/Actions`, `Topology/Cofinal`, `Topology/Reconstruction`, facade `H/Cohomology/DeRham/Topology` | Implemented T01/T02 ordinary topologies and T17 exact ordinary reconstruction, scalar quotients, cofinal/full-family homeomorphisms and characteristic-zero consequences; W17–W18, [#221](https://github.com/adamtopaz/OrlikSolomon/issues/221), [#222](https://github.com/adamtopaz/OrlikSolomon/issues/222) |
 | `Examples/HyperplaneGT/Topology/RatFunc/Field`, `RatFunc/Automorphisms`, `RatFunc/Counterexample`, small `RatFunc` facade | T08's field, finite group, stable system and actual noncontinuous-map example; W08, [#212](https://github.com/adamtopaz/OrlikSolomon/issues/212). No rational-function core imports |
-| `Examples/HyperplaneGT/Topology/Coefficients`, `Systems`, `Realizations` | Required coefficient/system/actual-realization consumers; W05 begins `Systems` with T05 regressions; W19, [#223](https://github.com/adamtopaz/OrlikSolomon/issues/223) |
+| `Examples/HyperplaneGT/Topology/Coefficients`, `Systems`, `Realizations`, size-only `Realizations/Ordinary` | Required coefficient/system/actual-realization consumers; W05 begins `Systems` with T05 regressions; W19, [#223](https://github.com/adamtopaz/OrlikSolomon/issues/223) |
 | `Examples/HyperplaneGT/Topology/Infinite/Frobenius`, `Infinite/Acceptance`, small `Infinite` facade | Implemented genuine infinite prime-closure Galois group, explicit pointwise/Krull compactness and nondiscreteness, actual full-system proper clopen kernel; W20, [#224](https://github.com/adamtopaz/OrlikSolomon/issues/224) |
 | `H/Topology`, `H/Cohomology/Topology`, `Examples/HyperplaneGT/Topology` | Additional explicit facades and final acceptance umbrella; W21, [#225](https://github.com/adamtopaz/OrlikSolomon/issues/225) |
 
@@ -2651,10 +2651,10 @@ Untwisting identifies only the actual diagonal with ordinary total cohomology, n
 whole Laurent algebra or all weight-zero classes. All stage, original target and
 k-linear covariant logarithmic actions remain the old ones. Forward-expansion equations
 remain plain rewrites so ordinary inverse cancellation survives. The two algebraic-only
-wrapper leaves import no new topology leaf. Final reconstruction/classification,
+wrapper leaves import no new topology leaf. W18/#222 completes reconstruction/classification,
 restriction/cofinal homeomorphisms, Krull/full-system wrappers and the explicit ordinary
-topology facade remain W18/#222; W17 completes only the ordinary T01/T02 clauses and
-records T17 prerequisites without certifying T17.
+topology facade. W17 supplied only the ordinary T01/T02 clauses and the exact algebraic
+prerequisites used by that final T17 implementation.
 
 W11 implements the [approved exact T11 statements](https://github.com/adamtopaz/OrlikSolomon/issues/215#issuecomment-6772281851)
 in the size-only `Topology/Quotient/Local` and `Domain` leaves and a small facade. The
@@ -2724,8 +2724,7 @@ preserving earlier Realizations namespaces. It checks all 36 bundles / 72 cancel
 actual whole targets and marked arrows, the genuine non-union-closed system, conditional
 nonfield-local nilpotent and integer-domain theories, constructed characteristic-zero
 covariant conjugation/target fixtures, and raw zero-ring/dimension-zero boundaries. It
-makes no out-of-range classification or semilinear pullback claim. Final ordinary topology
-remains W18; T15 does not certify T16 or T17.
+makes no out-of-range classification or semilinear pullback claim. T15 is used by the separate W18 ordinary specialization and does not itself certify T16 or T17.
 
 W13 implements the approved single pure leaf `Topology/Consequences`.
 `Topology/Consequences` derives T13 from the four existing pointwise classifier
@@ -2744,6 +2743,56 @@ actual integer compact groups with finite units and an infinite coefficient ring
 locally compact noncompact groups with a proved infinite unit family and compact scalar
 quotients, binary/dual-number compact groups, and T03's stronger zero-ring/dimension-zero
 compactness outside classification.
+
+W18 implements the approved final T17 API in
+`Cohomology/DeRham/Topology/Reconstruction`, with eleven proof leaves and five small
+facades. The size-only refinements preserve the approved inputs and every public equation:
+
+| Relative Reconstruction leaf | Exact import boundary and responsibility |
+| --- | --- |
+| `Basic`, `Krull` | Ordinary Comparison plus actual Classification/Basic, then Basic plus actual Krull: six exact ordinary product classifiers and literal degree-one restriction, preserving all old maps, inverses, whole-degree/dlog/target and scheme-arrow formulas |
+| `Quotient/Basic`, `Quotient/Restriction`, facade `Quotient` | Krull and actual quotient Classification, then Quotient/Basic: six literal ordinary scalar quotient classifiers and the honestly new quotient congruence of the old degree-one equivalence, with proved scalar-image equality and exact actual/twist composites |
+| `Cofinal/Basic`, `Cofinal/Restriction`, `Cofinal/Quotient`, facade `Cofinal` | Old ordinary algebraic Cofinal and actual raw Cofinal/Basic; higher leaves add the required own/actual classifiers and quotients: all-dimension inducing embeddings and raw quotient homomorphisms, then exact old group inverses and new quotient congruences, retaining whole stages and the single original target |
+| `Full/Groups`, `Full/Quotient`, `Full/Cofinal`, facade `Full` | Krull, then own ordinary Quotient, then own Cofinal: all fourteen exact full-family specializations and their action/classifier/restriction squares. Each retains algebraicity for the old full-family constructor; full-to-selected containment is proved, not supplied |
+| `Consequences` | Own ordinary Quotient and pure Topology/Consequences; private specific Mathlib CharZero/Infinite and units-equivalence imports: reuse T13 through the exact twist/adapter homeomorphisms, derive Infinite kˣ privately and locally, and prove ordinary noncompactness and literal scalar quotient closed/Hausdorff/compact/totally-separated packages without K or algebraicity |
+
+The small Reconstruction facade imports Basic, Krull, Quotient, Cofinal, Full and
+Consequences. The NEW explicit ordinary `Cohomology/DeRham/Topology` facade imports the
+four W17 leaves and Reconstruction and activates no scope. The Quotient, Cofinal and Full
+splits are solely to keep the exhaustive compatibility APIs below 800 lines per leaf;
+none enlarges the approved responsibility or reduces the final statements. All sixteen
+new modules have sorted complete root imports. Existing pure/conditional import closures
+acquire no de Rham instance, and every old M8 facade, declaration and simp attribute stays
+unchanged.
+
+The thirty-two continuous bundles forget to the exact old ordinary maps where those
+exist. The new ordinary quotient/cofinal wrappers disclose their actual congruences,
+quotient representatives, inverse maps and actual-theory/twist composites. Pointwise
+and supplied-family restriction/cofinal/consequence assertions add no K or algebraicity;
+Krull assertions retain exactly K or algebraicity. Every full-family wrapper retains
+algebraicity solely for its old family constructor. All ordinary statements use the
+constructed characteristic-zero theory with coefficient field k, never a supplied T or
+new cohomology/carrier/continuity input. Only the diagonal untwists to ordinary total
+cohomology, not all weight-zero classes or the Laurent algebra.
+
+Whole-degree primal powers (including zero), coefficient-linear covariant dlog labels,
+actual scheme inclusion and tagged marking arrows and the entire original common target
+are retained. Literal Mathlib quotient topologies are used throughout. All expansions
+are plain rewrites, preserving sixty-four bare cancellation identities. Unrelated cofinal
+families compare through unions of selected families, without arrangement-union closure.
+No topology on forms, analytic/adic coefficient result or field-semilinear pullback is
+asserted.
+
+The size-only `Examples/HyperplaneGT/Topology/Realizations/Ordinary` leaf holds forty
+final ordinary consumers, preserving the complete existing Realizations file and all
+earlier proof namespace blocks. Its direct inputs are the existing Realizations, the old
+M8 DeRhamReconstruction fixture and the new ordinary Topology facade; the parent does not
+re-export it, avoiding an import cycle and keeping the incoming W16 examples below 800. They pin every bundle in both directions, the whole
+ordinary degree and actual marking formulas, genuine moved complex logarithms and target
+dlogs, a nonidentity conjugation scalar class, and actual characteristic-zero noncompact
+groups with profinite literal scalar quotients. The concrete logarithm alone retains a
+local recursion-depth allowance for its inherited nested scheme/diagonal carriers,
+matching the existing M8 fixture; no core heartbeat or recursion option is added.
 
 ### Hypotheses, review and book coverage
 
@@ -2786,18 +2835,18 @@ actual non-union-closed subsystem only within Examples, including original targe
 ZMod4 and ℤ, a genuinely nonidentity complex-conjugation class and zero-ring/dimension-zero
 literal continuity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **15 formalized /
-0 partial / 2 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **16 formalized /
+0 partial / 1 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **15 formalized / 0 partial / 2 planned**; T01–T15
+unchanged. The current M9 count is **16 formalized / 0 partial / 1 planned**; T01–T15 and T17
 are complete. T01–T02 include pure, actual supplied-theory and constructed ordinary de Rham
 diagrams; the ordinary clauses retain the existing characteristic-zero field parameters.
 
 Book coverage is incremental and clause-complete. T01–T02 now include all three pure,
 actual-theory and ordinary specializations; T14 includes scalar-quotient adapter comparisons.
-The new ordinary twist and algebraic scalar/cofinal prerequisites do not complete T17. A pointwise-only classifier does not complete a node's Krull clause,
+T17 now includes all ordinary reconstruction, quotient, cofinal, full-family and characteristic-zero consequence clauses. A pointwise-only classifier does not complete a node's Krull clause,
 and a continuous bijection does not complete a topological-isomorphism node. Review each
 attachment against its entire statement; node counts and standard-axiom checks alone do
 not establish semantic coverage.
