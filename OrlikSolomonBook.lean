@@ -451,10 +451,11 @@ The coefficient ring is required to be nonzero and local, or an integral domain,
 The proof first classifies automorphisms of an explicit Orlik–Solomon diagram, then uses the existing structure theorem to pass to a supplied theory satisfying the axioms.
 Its characteristic-zero de Rham specialization and the theory-level reconstruction remain planned.
 The blueprint has 38 named groups containing 41 separately labeled statements: thirty-eight are formalized and three remain planned in {ref "hyperplane-gt"}[the new chapter], counted separately above.
-The completed statements cover G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04 and S01–S04, including the actual universal configuration equations and paired centralizer invariance in U04.
+The completed statements cover G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04 and S01–S05, including the actual universal configuration equations and paired centralizer invariance in U04.
 C04 extracts the base-field Galois homomorphism from the fixed marking frame and field generation; S01 proves its unique common primal scalar kernel, including the original common target.
 S03 classifies the actual local quadratic diagram by a canonical multiplicative equivalence with coefficient units times base-field automorphisms and both explicit inverse equations.
 S04 proves that actual degree-one restriction is a group equivalence with the full graded diagram, and identifies both groups modulo their central scalar ranges with the Galois group through explicit direct Galois sections.
+S05 gives the same quadratic and full graded classifications and both scalar quotients over integral domains, by descending original matrix coefficients from the fraction field.
 A04 compares the actual cohomology diagrams with their presentations for a supplied full theory; it constructs no new nonzero theory instance.
 L04 uses only unit cancellation over a commutative ring; L05 detects a unique graph delta over a nonzero local ring, using the actual centralizer restriction and the explicit dimension bound.
 
