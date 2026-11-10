@@ -59,10 +59,10 @@ E03 gives unconditional reconstruction for the actual ordinary de Rham diagram i
 Final regression consumers pin binary and nilpotent local coefficients, actual common targets and both scalar quotients. A full disconnected-coefficient counterexample proves that the coefficient hypotheses cannot be replaced by an arbitrary commutative ring.
 {ref "hyperplane-gt"}[Its chapter] explains the proved conditional reconstruction, the unconditional de Rham application and their precise hypotheses.
 
-The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: twelve formalized, two partly formalized and three planned.
+The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: fourteen formalized, zero partly formalized and three planned.
 It proposes direct finite-stage topologies and upgrades of the existing reconstruction maps, scalar quotients, cofinal and realization comparisons, and the ordinary de Rham specialization.
 Coefficient units are discrete; the Krull topology replaces pointwise convergence under the stated fixing condition, in particular for algebraic field extensions.
-The pure and actual supplied-theory diagram topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved.
+The pure, actual supplied-theory and constructed characteristic-zero ordinary diagram topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved in every dimension.
 Both pure groups are closed in their original ambient products for every commutative coefficient ring, and finite coefficients make both compact, without classification or algebraicity.
 
 T05 proves the arrangement-free pointwise topological group and separation properties, exact normalized affine coefficient tests and the finite hyperplane/stage-kernel comparisons for $`n\geq1`.
@@ -75,7 +75,8 @@ T10 proves both exact local/domain graded restriction homeomorphisms with no fie
 T12 proves literal cofinal restriction is a topological embedding for arbitrary coefficients and dimensions, and upgrades all four existing local/domain quadratic/graded cofinal equivalences and their actual scalar quotients. It retains the single common target, has no algebraicity or union-closure hypothesis, and compares unrelated supplied families through the union of their selected families.
 T14 proves the exact actual-to-presentation adapters and both scalar quotient homeomorphisms.
 T11 proves the exact local/domain scalar quotient homeomorphisms, closedness and profiniteness, without algebraicity or finiteness of coefficient units for the pointwise result.
-T15 proves the exact actual supplied-theory local/domain classifiers and scalar quotients are homeomorphisms for pointwise convergence, and for Krull under precisely the fixing condition or algebraicity. Actual degree-one/cofinal restriction needs neither condition, retains the original target, and compares arbitrary chosen cofinal families without union closure. The ordinary de Rham clauses remain planned; the four earlier blueprint counts are unchanged.
+T15 proves the exact actual supplied-theory local/domain classifiers and scalar quotients are homeomorphisms for pointwise convergence, and for Krull under precisely the fixing condition or algebraicity. Actual degree-one/cofinal restriction needs neither condition, retains the original target, and compares arbitrary chosen cofinal families without union closure.
+The exact old ordinary twists and their literal scalar quotient twists are homeomorphisms. New algebraic ordinary scalar and cofinal wrappers retain the old marking and dimension hypotheses. Final ordinary reconstruction, quotient-to-Galois and cofinal topological upgrades stay planned under T17; the four earlier blueprint counts are unchanged.
 {ref "topological-reconstruction"}[Its chapter] records the topology, hypothesis and realization boundaries.
 
 {statusOverview}
