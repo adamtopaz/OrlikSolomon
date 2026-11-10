@@ -21,6 +21,10 @@ canonical numerator/denominator polynomials of degree less than two.
 
 These are field-theoretic ingredients for blueprint `prop:t08`. Finiteness and
 nontriviality are theorems, not global instances; this file defines no topology.
+
+The forward polynomial, variable and constant formulas are plain rewrite lemmas.
+Expanding them during simplification can hide an inner translation from ordinary
+equivalence cancellation, including on compound rational functions.
 -/
 
 @[expose] public section
@@ -38,18 +42,18 @@ noncomputable def translation (a : F) : RatFunc F ≃ₐ[F] RatFunc F :=
     (Polynomial.algEquivAevalXAddC a)
 
 /-- Rational translation agrees with polynomial translation on the polynomial subring. -/
-@[simp] theorem translation_algebraMap (a : F) (P : Polynomial F) :
+theorem translation_algebraMap (a : F) (P : Polynomial F) :
     translation F a (algebraMap (Polynomial F) (RatFunc F) P) =
       algebraMap (Polynomial F) (RatFunc F) (Polynomial.algEquivAevalXAddC a P) :=
   IsFractionRing.algEquivOfAlgEquiv_algebraMap _ _
 
 /-- Translation sends the variable to the variable plus the chosen constant. -/
-@[simp] theorem translation_X (a : F) :
+theorem translation_X (a : F) :
     translation F a RatFunc.X = RatFunc.X + RatFunc.C a := by
   simpa using translation_algebraMap F a Polynomial.X
 
 /-- Translation fixes every element of the constant field. -/
-@[simp] theorem translation_C (a b : F) :
+theorem translation_C (a b : F) :
     translation F a (RatFunc.C b) = RatFunc.C b :=
   (translation F a).commutes b
 
@@ -57,7 +61,7 @@ noncomputable def translation (a : F) : RatFunc F ≃ₐ[F] RatFunc F :=
 @[simp] theorem translation_zero : translation F 0 = 1 := by
   apply AlgEquiv.coe_toAlgHom_injective
   apply algHom_ext_X F
-  simp
+  simp [translation_X]
 
 /-- Negating the translation parameter gives the inverse automorphism. This orientation
 preserves ordinary equivalence cancellation under `simp`. -/
@@ -66,13 +70,22 @@ preserves ordinary equivalence cancellation under `simp`. -/
   simp only [translation, IsFractionRing.algEquivOfAlgEquiv_symm,
     Polynomial.algEquivAevalXAddC_symm]
 
+/-- Both ordinary inverse cancellations simplify on a genuine compound rational function.
+This also guards against forward-expansion rules that hide the inner equivalence. -/
+theorem translation_fraction_inverse_forms (a : F) :
+    (translation F a).symm (translation F a (1 / (RatFunc.X + RatFunc.C a))) =
+      1 / (RatFunc.X + RatFunc.C a) ∧
+    translation F a ((translation F a).symm (1 / (RatFunc.X + RatFunc.C a))) =
+      1 / (RatFunc.X + RatFunc.C a) := by
+  simp
+
 /-- A translation is the identity exactly when its parameter is zero. -/
 @[simp] theorem translation_eq_one_iff (a : F) :
     translation F a = 1 ↔ a = 0 := by
   constructor
   · intro h
     have hx := DFunLike.congr_fun h RatFunc.X
-    simpa using hx
+    simpa [translation_X] using hx
   · rintro rfl
     exact translation_zero F
 
