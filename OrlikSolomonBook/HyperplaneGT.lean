@@ -16,11 +16,11 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame, Galois extraction, local quadratic and full graded classification and both scalar quotients are formalized; domain and cohomological reconstruction remain planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame, Galois extraction, local quadratic and full graded classification and both scalar quotients, including integral-domain descent, are formalized; cohomological reconstruction remains planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Thirty-seven boxes are formalized and four remain planned.
+Thirty-eight boxes are formalized and three remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
@@ -39,6 +39,7 @@ I01–I04 recover the unique hyperplane permutation, transport actual incidence 
 C04 extracts the base-field Galois homomorphism from that frame and generation by the marked constants; S01 identifies its kernel with one unique common primal scalar on every stage and the common target.
 S03 classifies the actual quadratic diagram over a nonzero local coefficient ring, with an explicit primal-scalar/Galois inverse and both inverse equations, retaining the common target.
 S04 proves that the existing degree-one restriction is a multiplicative equivalence with the full graded group, gives every-degree scalar powers, and identifies both literal scalar quotients with the Galois group through explicit sections and inverse laws.
+S05 extends these classifications and scalar quotients to arbitrary integral domains by descending the fraction-field scalar from original matrix entries.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
@@ -405,10 +406,13 @@ This extension follows from classification, rather than an assertion that the al
 
 ## S05: integral domain coefficients
 
-:::node "thm:s05"
-The classification, graded extension and scalar quotient also hold over any integral domain $`R`.
-The planned proof extends the finite matrices and explicit relation spans to its fraction field, applies the local result there, and descends a unit and all matrix entries using injectivity.
-It assumes no localization theorem for the kernels of a new cohomology theory.
+:::node "thm:s05" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.coefficientExtend) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutEquiv) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.domainScalarPart_val) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutEquiv_dualAction_delta) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedAutEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedClassificationEquiv_stage_apply_of_mem_degree) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.domainScalarQuotientEquiv) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.domainScalarQuotientEquiv) (decl := OrlikSolomon.HyperplaneGT.domainScalarQuotientEquiv_restriction) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainAutEquiv_eq_quadraticAutEquiv) (decl := OrlikSolomon.HyperplaneGT.coefficientDomainGradedClassificationEquiv_eq_gradedClassificationEquiv)
+The quadratic classification, full graded extension and both literal scalar quotients hold over any integral domain $`R`, with the same dimension and generating-marking hypotheses.
+The proof extends the actual finite matrices, both explicit quadratic relation families and the one common target to the fraction field, and applies S03 there.
+Entries of the original forward and inverse target matrices recover the scalar and its inverse in $`R`; injectivity descends the equality of every stage and target component.
+The full graded action uses the ordinary degree powers of the primal scalar, and the actual degree-one restriction is a multiplicative equivalence. Both scalar quotient inverses are the existing direct Galois class sections, and the quotient square commutes with this restriction.
+The domain and local constructions agree on their overlap. No localness or coefficient-field structure is imposed on $`R`, and no perfectness or algebraicity is imposed on the geometric fields for a supplied cofinal system.
+Pure coefficient extension itself also works along noninjective coefficient maps and maps to zero. This construction assumes no localization theorem for the kernels of a new cohomology theory.
 :::
 
 # Transport and the planned de Rham application
@@ -448,7 +452,7 @@ For a product $`F\times F` and two distinct Galois automorphisms, the two coeffi
 The proof must also preserve the existing coverage of scheme complements without rational points.
 
 Further checks concern finite-stage compatibility without union closure, the single common marked target, recovery of coordinate spans without adding projection arrows, the full algebraic dual without a reflexivity shortcut, and extension to the graded algebra only after classification.
-The completed pure-core steps prove these properties. The domain descent and theory-level applications retain the same requirements.
+The completed pure-core steps prove these properties. The completed domain descent and the planned theory-level applications retain the same requirements.
 
 Completion requires proved public declarations for every statement, generator and marking formulas, the inverse and group laws of the equivalences, the existing repository checks and independent coverage review, and the application to the constructed de Rham instance.
-The remaining domain and theory-level boxes record planned work.
+The three remaining theory-level boxes record planned work.

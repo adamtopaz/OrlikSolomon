@@ -150,6 +150,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
 public import OrlikSolomon.Examples.HyperplaneGT.DeRhamReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.DegreeOne
 public import OrlikSolomon.Examples.HyperplaneGT.Diagram
+public import OrlikSolomon.Examples.HyperplaneGT.DomainClassification
 public import OrlikSolomon.Examples.HyperplaneGT.Dual
 public import OrlikSolomon.Examples.HyperplaneGT.Galois
 public import OrlikSolomon.Examples.HyperplaneGT.GaloisAction
@@ -258,6 +259,13 @@ public import OrlikSolomon.HyperplaneGT.Geometry.Galois.CoordinateAction
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Markings
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.System
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Descent
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Diagram
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Graded
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.LinearExtension
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Quotient
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Domain.Relations
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Galois
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Galois.Extraction
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Galois.Geometry

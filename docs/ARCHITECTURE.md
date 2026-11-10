@@ -1712,9 +1712,9 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04 and S01–S04 are formalized, including U04's actual universal
-configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
-domain and cohomological reconstruction remain planned. The book records complete-statement status.
+G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04 and S01–S05 are formalized, including U04's actual universal
+configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields.
+Cohomological reconstruction remains planned. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
 described under Algebra above; `HyperplaneGT/Algebra/QuadraticKernel` applies it to the actual OS
 quotient and identifies its full degree-two kernel.
@@ -1834,7 +1834,13 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Reconstruction/LocalRing/GradedScalar` | Pure scaling of all OS relators and ordinary components, full scalar families with actual arrows/common target, faithful scalar restriction and literal central range | W19, [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
 | `HyperplaneGT/Reconstruction/LocalRing/Graded` | Existing degree-one restriction as a MulEquiv after S03, explicit full scalar/Galois inverse, generator/degree/target formulas and actual marking squares | W19, [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
 | `HyperplaneGT/Reconstruction/LocalRing/Quotient` | Normality of both literal scalar ranges, canonical quotient maps and Galois sections, both quotient-to-Galois MulEquivs/inverse laws and restriction compatibility | W19, [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
-| `HyperplaneGT/Reconstruction/Domain` | S05 | W20, [#172](https://github.com/adamtopaz/OrlikSolomon/issues/172) |
+| `HyperplaneGT/Reconstruction/Domain` | S05 formalized: arbitrary integral-domain quadratic/full graded classification, both literal scalar quotients and agreement with local classification | W20, [#172](https://github.com/adamtopaz/OrlikSolomon/issues/172) |
+| `HyperplaneGT/Reconstruction/Domain/LinearExtension` | Pure free-module coefficient extension, matrix/inverse and naturality identities, using Mathlib free-module maps | W20, #172 |
+| `HyperplaneGT/Reconstruction/Domain/Relations` | Exterior coefficient maps and coefficient-extended span witnesses for both actual A02 relation families | W20, #172 |
+| `HyperplaneGT/Reconstruction/Domain/Diagram` | Actual quadratic diagram coefficient extension, single common target, group laws and faithfulness for injective coefficient maps | W20, #172 |
+| `HyperplaneGT/Reconstruction/Domain/Descent` | Fraction-field classification, original scalar/inverse matrix-entry descent and canonical quadratic formulas | W20, #172 |
+| `HyperplaneGT/Reconstruction/Domain/Graded` | Classified full scalar/Galois extension, actual degree-one restriction equivalence and whole-degree formulas | W20, #172 |
+| `HyperplaneGT/Reconstruction/Domain/Quotient` | Both literal scalar quotients, explicit sections, restriction square and agreement with local classification | W20, #172 |
 | `HyperplaneGT/Cohomology/Adapter` | A04, formalized: facade comparing actual degree-one/cup-kernel and full diagonal-cohomology diagrams with A03 | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
 | `HyperplaneGT/Cohomology/Adapter/Maps` | One actual scheme target, tagged scheme marking maps, localization and unit/logarithm squares, actual component and diagonal pullbacks | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
 | `HyperplaneGT/Cohomology/Adapter/DegreeOne` | Canonical actual logarithmic bases and ordered target coordinates, with actual inclusion/marking comparison squares | W21, [#173](https://github.com/adamtopaz/OrlikSolomon/issues/173) |
@@ -1863,6 +1869,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/Incidence` | I01–I04 consumers: actual primal/dual units and group cancellation, nonfield local coefficients, characteristic-two exchanged-triple obstruction and the complete fixed frame | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
 | `Examples/HyperplaneGT/LocalClassification` | S03 consumers: independent-universe components, both inverse equations/cancellation, actual markings, primal two/dual three over `ZMod 5`, nilpotents in nonfield local `ZMod 4`, nontrivial complex conjugation and retained target at dimension zero/zero coefficients | W18, [#170](https://github.com/adamtopaz/OrlikSolomon/issues/170) |
 | `Examples/HyperplaneGT/GradedClassification` | S04 consumers: nonzero degree-two powers, characteristic-two nilpotent units, exact full markings and inverse cancellation, dimension-zero common target and nontrivial conjugation classes in both scalar quotients | W19, [#171](https://github.com/adamtopaz/OrlikSolomon/issues/171) |
+| `Examples/HyperplaneGT/DomainClassification` | Independent-universe, nonlocal integer coefficient, original unit-entry, quotient inverse, whole-degree, local overlap, noninjective coefficient-change and map-to-zero consumers | W20, #172 |
 
 `HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
 the actual exterior quotient to `osExteriorSquareMap`, surjective onto the existing internal
@@ -2229,6 +2236,28 @@ conjugation gives nonidentity elements in both actual scalar quotients, includin
 constructed full cofinal system. The degree-two consumer reuses the existing affine-triangle
 regression, whose imports are confined to the example module rather than the pure core.
 
+`Reconstruction/Domain` extends the matrices of the actual finite quadratic diagram along
+coefficient maps, including the one common marking target and both explicit A02 relation
+families. The extension uses Mathlib's free-module linear combinations and coefficient maps;
+inverse matrix identities remain valid even for noninjective maps and maps to the zero ring.
+Over an integral domain it applies the local theorem to the canonical fraction field and
+descends the scalar and its inverse by injectivity of the coefficient map. The (0,0) entries
+of the original forward and inverse common-target matrices recover the two coefficients in
+the original ring; their product is one. Faithfulness descends equality of all stage and
+target components. This proves the canonical quadratic and full graded classifications,
+both literal central-scalar quotients with the existing Galois class sections, and agreement
+with local classification on the overlap. Whole-degree formulas use the q-th power of the
+primal unit, while the full-dual coordinate formula uses its inverse and the same covariant
+Galois label. Forward expansion lemmas are plain rewrite rules, as in S03–S04, preserving
+ordinary two-sided equivalence cancellation under `simp`. Pure coefficient extension needs
+no injectivity or nonzero-ring hypothesis. No scalar extension or exactness statement about
+an arbitrary cohomology theory is used; the core imports neither cohomology nor de Rham.
+The six size-oriented leaves and final statements have
+[Claude's explicit S05 approval](https://github.com/adamtopaz/OrlikSolomon/issues/172#issuecomment-6756221663).
+Durable examples pin a nonidentity diagram over the nonlocal ring `ℤ`, recovered units in
+that ring, both explicit quotient inverse laws, all-degree action, local/domain overlap,
+noninjective reduction modulo two and the whole-target square after passage to zero.
+
 The [supervisor's statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
 requires Claude's approval before proofs are finalized only for S03–S05, E01–E03 and statements
 that deviate from the blueprint. Non-author Codex reviewers check intermediate statements
@@ -2238,7 +2267,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-37 formalized and 4 planned, separate from the other blueprints. Each
+38 formalized and 3 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
