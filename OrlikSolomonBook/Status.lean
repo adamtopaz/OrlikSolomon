@@ -32,7 +32,7 @@ Of the third blueprint, the geometric refactor, forty nodes are formalized and t
 The sheaf logarithmic residue sequence and its local quasi-isomorphism are proved separately; their affine comparison identifies the instance's residue and Gysin maps on global sheaf representatives.
 The Cartesian node retains its Tor-sheaf and conormal statements, and the statement-by-statement transport rule remains partly formalized. {ref "geometric"}[Its chapter] gives the proved statements and the remaining clauses.
 
-The fourth blueprint, cohomological hyperplane reconstruction, is in progress.
+The fourth blueprint formalizes cohomological hyperplane reconstruction.
 Its 38 named groups contain 41 separately labeled statements: U01, U04 and L02 each contain a definition and a lemma, which have separate boxes and statuses.
 All forty-one statements are formalized.
 G01–G03 give coordinate geometry, A01 gives the degree-one generator basis and algebra generation, A02 gives the full degree-two exterior-quotient kernel, U03 gives full-dual coordinates and the contragredient action, U04 gives the determinant and universal centralizer with its configuration equations and paired diagram invariance, and U05 proves the local-ring primitive-coordinate criterion.
@@ -56,6 +56,7 @@ S05 proves the same quadratic and full graded classifications and both scalar qu
 E01 transports both coefficient cases and scalar quotients to actual cohomology diagrams, with the logarithmic, whole-degree and common-target formulas.
 E02 proves literal cofinal restriction is invertible after classification and gives the unique generator-preserving comparison between two eligible realizations, including all actual arrow, degree and cup-kernel squares.
 E03 gives unconditional reconstruction for the actual ordinary de Rham diagram in characteristic zero, including both inverse laws, the k-linear covariant dlog formula, all ordinary degrees and one actual common target. Its comparisons untwist only the diagonal E^(q,q); no semilinear geometric pullback is asserted.
+Final regression consumers pin binary and nilpotent local coefficients, actual common targets and both scalar quotients. A full disconnected-coefficient counterexample proves that the coefficient hypotheses cannot be replaced by an arbitrary commutative ring.
 {ref "hyperplane-gt"}[Its chapter] explains the proved conditional reconstruction, the unconditional de Rham application and their precise hypotheses.
 
 {statusOverview}

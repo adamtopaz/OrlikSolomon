@@ -449,7 +449,7 @@ The algebraic structure theorems and their algebraic de Rham corollaries do not 
 The fourth blueprint recovers the Galois group of a perfect field from the marked degree-one and degree-two cohomology diagram of hyperplane complements over its algebraic closure, up to a central scalar subgroup.
 The coefficient ring is required to be nonzero and local, or an integral domain, and the ambient dimension is at least two.
 The proof first classifies automorphisms of an explicit Orlik–Solomon diagram, then uses the existing structure theorem to pass to a supplied theory satisfying the axioms.
-The actual theory-level reconstruction and cofinal/realization independence are formalized. The characteristic-zero de Rham specialization is unconditional on a supplied theory and acts on actual ordinary cohomology.
+The actual theory-level reconstruction and cofinal/realization independence are formalized. The characteristic-zero de Rham specialization requires no supplied theory and acts on actual ordinary cohomology.
 The blueprint has 38 named groups containing 41 separately labeled statements: all forty-one are formalized and none remain planned in {ref "hyperplane-gt"}[the new chapter], counted separately above.
 The completed statements cover G01–G06, A01–A04, C01–C04, U01–U05, L01–L05, P01–P02, I01–I04, S01–S05 and E01–E03, including the actual universal configuration equations and paired centralizer invariance in U04.
 C04 extracts the base-field Galois homomorphism from the fixed marking frame and field generation; S01 proves its unique common primal scalar kernel, including the original common target.
@@ -460,6 +460,8 @@ A04 compares the actual cohomology diagrams with their presentations for a suppl
 E01 transports the local/domain classifications and both scalar quotients, with the actual logarithmic, marking, degree-power and common-target formulas.
 E02 proves invertible literal restriction to a cofinal subsystem after classification, and the unique generator-preserving marked-diagram comparison between eligible realizations with the same coefficient ring.
 L04 uses only unit cancellation over a commutative ring; L05 detects a unique graph delta over a nonzero local ring, using the actual centralizer restriction and the explicit dimension bound.
+Final regression consumers retain binary and nilpotent local coefficients, the original common target and both scalar quotients. A concrete full diagram over disconnected binary coefficients has no common scalar/Galois factorization, demonstrating the need for the local/domain hypothesis.
+The chapter records each of the 41 labelled statements separately and explains the coefficient, dimension and realization limits.
 
 {include 1 OrlikSolomonBook.MainTheorem}
 

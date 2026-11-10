@@ -20,7 +20,7 @@ and interpreted by hand for ℓ-adic cohomology, but not in Lean. The empty proj
 is excluded. The [book](https://adamtopaz.github.io/OrlikSolomon/) states the theorems and has the
 details.
 
-**Milestone M8 in progress:** cohomological hyperplane reconstruction is tracked by
+**Milestone M8:** cohomological hyperplane reconstruction is tracked by
 [#151](https://github.com/adamtopaz/OrlikSolomon/issues/151) and its
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
@@ -89,7 +89,15 @@ Laurent weights only on the diagonal E^(q,q), and makes no semilinear-pullback c
 The explicit `HyperplaneGT/Cohomology/DeRham` realization stays a separate import. No new
 singular or ℓ-adic instance is claimed.
 The [book chapter](https://adamtopaz.github.io/OrlikSolomon/hyperplane-gt/) tracks all 41
-proved statements; final exposition and acceptance checks remain tracked by W24.
+proved statements, with separate coverage for every definition and lemma label.
+The [regression umbrella](OrlikSolomon/Examples/HyperplaneGT.lean) collects the coefficient,
+dimension, incidence, marking, cofinality and realization examples. Final consumers test the
+classifications and both scalar quotients over `𝔽₂` and its dual numbers, detecting the
+nonidentity nilpotent unit on the common target. An actual full diagram over `𝔽₂ × 𝔽₂`
+uses the identity and complex conjugation on its two coefficient factors and has no common
+scalar/Galois factorization: classification fails over disconnected coefficients, so the
+local/domain hypotheses cannot be omitted. Existing zero-ring, low-dimensional, empty-arrangement
+and point-free-complement coverage is retained.
 
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective

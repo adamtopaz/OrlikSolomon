@@ -1867,7 +1867,9 @@ IDs are those of the approved plan; the issue links identify the implementation 
 | `Examples/HyperplaneGT/DeRhamReconstruction` | Actual ordinary inverse/group/restriction and marking consumers, nonzero target dlogs, degree-zero/two and dimension-zero boundaries, moved complex-conjugate hyperplane and nonzero k-linear-versus-semilinear detector | W23, #175 |
 | `HyperplaneGT` | Pure-core facade, importing only geometry/algebra/diagram/reconstruction leaves; no cohomology or de Rham import | W22, #174 |
 | `HyperplaneGT/Cohomology` | Conditional-cohomology Adapter/Main facade; the explicit de Rham specialization stays a separate import | W22–W23, #174, #175 |
-| `Examples/HyperplaneGT`, with small topic leaves | Coefficient, dimension, marking, cofinality, generator and transport acceptance consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
+| `Examples/HyperplaneGT/Disconnected` | Actual full product-coefficient mixed Galois family, shared target and proved failure of quadratic/full common factorization; private idempotent helpers | W24, #176 |
+| `Examples/HyperplaneGT/FinalCoefficients` | Final binary/dual-number classifications, literal restriction, both scalar quotients, nilpotent common-target unit and genuine conjugation classes | W24, #176 |
+| `Examples/HyperplaneGT` | Umbrella over every durable topic leaf, including supplied-theory and actual ordinary de Rham consumers | W24, [#176](https://github.com/adamtopaz/OrlikSolomon/issues/176) |
 | `Examples/HyperplaneGT/DegreeOne` | Formalized A01 consumers: zero coefficients, empty arrangements, dimensions zero and one, and zero new coordinates after inclusion | W05, [#157](https://github.com/adamtopaz/OrlikSolomon/issues/157) |
 | `Examples/HyperplaneGT/Collineation` | Formalized C01–C03 consumers: identity extraction, dimension-zero charts, characteristic-two zero sums and points at infinity | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
 | `Examples/HyperplaneGT/GaloisReconstruction` | C04/S01 consumers: guarded binary connectivity, actual scalar kernels over `ZMod 5`/`ZMod 4`, composition and necessary field generation | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
@@ -2342,10 +2344,28 @@ against the blueprint. Claude checks statements, scope, CI and book honesty befo
 merge and decides every merge. Substantive mathematical gaps follow the existing blueprint-gap
 process; only Claude scopes a request to Astra.
 
+The [approved W24 refinement](https://github.com/adamtopaz/OrlikSolomon/issues/176#issuecomment-6757124299)
+adds only the two final example leaves and their umbrella. `Disconnected` mixes the existing
+full Galois algebra equivalences using complementary central coefficient idempotents, proving
+all-degree image equalities and actual arrow squares with one identity common target. Its
+generic helpers remain example-private, and the public mixed-family constructor hides them
+behind proved generator and target formulas. No product-OS comparison or relator preservation
+is assumed. The two coefficient projections recover the distinct Galois factors and prove
+that no single scalar/Galois family gives this diagram, already after quadratic restriction.
+The explicit binary product/complex-conjugation fixture therefore proves classification fails
+over disconnected coefficients, so the local/domain hypotheses cannot be omitted.
+`FinalCoefficients` pins the actual final classifications, restriction and both scalar
+quotients over `ZMod 2` and `DualNumber (ZMod 2)`, retaining the nonidentity nilpotent unit on
+the original common target, its whole-degree powers and the actual full marking maps. Both
+quotients contain nonidentity conjugation classes. The umbrella reuses the existing non-union
+cofinal subsystem and ordinary de Rham consumers, including the nonzero dlog and coefficient
+linearity tests; it changes no library facade boundary. Zero, low-dimensional and point-free
+coverage remains in the original source modules.
+
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
 41 formalized and 0 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
-versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
-and completes the final exposition checks.
+versus unconditional realizations. W24 records durable regression coverage and the final
+label-by-label exposition and acceptance checks.

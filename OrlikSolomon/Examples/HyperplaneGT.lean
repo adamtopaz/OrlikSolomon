@@ -7,6 +7,7 @@ module
 
 public import OrlikSolomon.Examples.HyperplaneGT.Collineation
 public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
+public import OrlikSolomon.Examples.HyperplaneGT.DeRhamReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.DegreeOne
 public import OrlikSolomon.Examples.HyperplaneGT.Diagram
 public import OrlikSolomon.Examples.HyperplaneGT.Disconnected
@@ -22,6 +23,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Local
 public import OrlikSolomon.Examples.HyperplaneGT.LocalClassification
 public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
+public import OrlikSolomon.Examples.HyperplaneGT.TheoryReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
 
