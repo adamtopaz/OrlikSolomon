@@ -101,10 +101,10 @@ theorem coefficientExtendLinearEquiv_toLinearMap (f : (ι →₀ R) ≃ₗ[R] (�
     (coefficientExtendLinearEquiv R A f).toLinearMap =
       coefficientExtendLinearMap R A f.toLinearMap := rfl
 
-/-- The inverse extended equivalence is the extension of the original inverse. -/
+/-- Extending the original inverse gives the inverse of the extended equivalence. -/
 @[simp]
 theorem coefficientExtendLinearEquiv_symm (f : (ι →₀ R) ≃ₗ[R] (κ →₀ R)) :
-    (coefficientExtendLinearEquiv R A f).symm = coefficientExtendLinearEquiv R A f.symm := rfl
+    coefficientExtendLinearEquiv R A f.symm = (coefficientExtendLinearEquiv R A f).symm := rfl
 
 /-- The extended equivalence commutes with the actual coefficient map on every vector. -/
 theorem coefficientExtendLinearEquiv_mapRange (f : (ι →₀ R) ≃ₗ[R] (κ →₀ R))
