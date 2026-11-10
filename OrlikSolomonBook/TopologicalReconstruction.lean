@@ -16,7 +16,7 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Fourteen statements are formalized, zero are partly formalized and three remain planned.*
+*Fifteen statements are formalized, zero are partly formalized and two remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 T04 proves the existing degree-one restriction is a topological embedding, with continuous inverse whenever the map is bijective.
@@ -35,6 +35,8 @@ T10 upgrades the exact graded restriction and full product classifiers.
 T11 proves the exact scalar quotient homeomorphisms, closedness and profiniteness.
 T12 upgrades literal cofinal restrictions and their actual scalar quotients without a field-extension condition; the ordinary reconstruction upgrades remain planned.
 T15 upgrades the exact supplied-theory local/domain quadratic and graded reconstruction, scalar quotients and actual restriction/cofinal equivalences. Pointwise and restriction/cofinal results need no field-extension condition; Krull versions use exactly the fixing condition or algebraicity.
+
+T13 proves local compactness and compactness exactly for finite coefficient units, including integral coefficients and noncompact rational-coefficient groups with compact scalar quotients.
 
 # The intended topology and hypotheses
 
@@ -209,10 +211,15 @@ Examples use the actual non-union-closed subsystem, nonfield local and integer c
 
 ## T13: separation and compactness
 
-:::node "cor:t13"
+:::node "cor:t13" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.locallyCompactSpace) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.locallyCompactSpace_of_isDomain) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.locallyCompactSpace) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.locallyCompactSpace_of_isDomain) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.compactSpace_iff_finite_units) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.compactSpace_iff_finite_units_of_isDomain) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.compactSpace_iff_finite_units) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.compactSpace_iff_finite_units_of_isDomain) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.scalarQuotient_compactSpace) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.domainScalarQuotient_compactSpace) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.scalarQuotient_compactSpace) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.domainScalarQuotient_compactSpace)
 Under the classification hypotheses, both diagram groups are locally compact, Hausdorff and totally separated.
 They are compact, equivalently profinite, exactly when the discrete coefficient-unit group is finite; this includes integral coefficients $`\mathbb Z` as well as finite coefficients.
 Their scalar quotients are always profinite in the pointwise topology, including when the Krull comparison condition fails.
+The local-ring and integral-domain hypotheses are exactly those of the pointwise classifiers; no algebraicity, Krull fixing condition or finiteness of the coefficient ring is needed.
+T02 supplies Hausdorffness and total separation in the existing scope, while T11 supplies the closed scalar ranges and the literal quotients' Hausdorff, compact and totally separated structures.
+The continuous surjective projection to discrete coefficient units proves the converse compactness criterion.
+The durable consumers {name OrlikSolomon.HyperplaneGT.CompactnessTopologyExamples.integer_compact_groups}`integer_compact_groups` and {name OrlikSolomon.HyperplaneGT.CompactnessTopologyExamples.rational_groups_and_quotients}`rational_groups_and_quotients` distinguish finite units in an infinite ring from actual infinite units.
+Binary and dual-number coefficients give compact classified groups; zero coefficients in dimension zero use T03's stronger unclassified compactness theorem.
 :::
 
 # Actual cohomology and de Rham
