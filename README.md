@@ -25,7 +25,7 @@ details.
 [child issues](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750266079),
 under the [approved implementation plan](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750159326).
 Its [blueprint](blueprint/cohomological_hyperplane_gt_blueprint.tex) has 41 labelled statements:
-29 formalized and 12 planned. Coefficient points, hyperplane incidence
+33 formalized and 8 planned. Coefficient points, hyperplane incidence
 and coordinate graphs (G01–G03) are proved over arbitrary fields. G04–G06 construct the
 coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal
 systems with actual marking maps to one common target. The canonical degree-one OS basis,
@@ -55,7 +55,10 @@ unit over any commutative ring. L05 detects a unique unit-supported graph functi
 nonzero local ring in dimension at least two, from the four literal primitive, vertical, zero-coordinate
 and centralizer-surjectivity conditions. P01–P02 recognize all coordinate-supported spans
 using commuting functionals and derive their invariance and actual full-dual restriction
-equivariance from the marking squares. The planned reconstruction studies automorphisms of marked
+equivariance from the marking squares. I01–I04 recover the canonical hyperplane permutation,
+preserve actual affine and projective incidence, and fix every marked fiber and the full
+projective frame over nonzero local coefficients in dimension at least two, assuming zero
+among the marking constants. The planned classification studies automorphisms of marked
 degree-one/cup-kernel and diagonal graded cohomology diagrams in dimension at least two,
 with nonzero local or integral-domain coefficients. The theory-level results will be conditional
 on the existing axioms, with an unconditional characteristic-zero de Rham specialization.
