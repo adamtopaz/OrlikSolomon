@@ -169,6 +169,10 @@ public import OrlikSolomon.Examples.HyperplaneGT.Topology.Coefficients
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Infinite
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Infinite.Acceptance
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Infinite.Frobenius
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc.Automorphisms
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc.Counterexample
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc.Field
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Systems
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
