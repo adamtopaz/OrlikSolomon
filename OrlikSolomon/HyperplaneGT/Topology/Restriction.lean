@@ -90,6 +90,16 @@ theorem targetEquiv_eq_iff_toQuadratic (g h : GradedDiagramAut R C S) :
 
 variable (R C S)
 
+/-- Kernel membership commutes with restriction, including the single common target. -/
+theorem mem_stageKernel_toQuadratic (g : GradedDiagramAut R C S) (𝒜 : C.Stage) :
+    toQuadratic R C S g ∈ DiagramAut.stageKernel R C S 𝒜 ↔
+      g ∈ stageKernel R C S 𝒜 := by
+  rw [DiagramAut.mem_stageKernel, mem_stageKernel]
+  simpa only [map_one, stageEquiv_one, targetEquiv_one, DiagramAut.stageEquiv_one,
+    DiagramAut.targetEquiv_one, LinearEquiv.one_eq_refl, AlgEquiv.aut_one] using
+    and_congr (stageEquiv_eq_iff_toQuadratic g 1 𝒜).symm
+      (targetEquiv_eq_iff_toQuadratic g 1).symm
+
 /-- Restriction pulls back each quadratic stage-and-target kernel to exactly the full
 graded kernel. In particular the common target is retained. Blueprint: T04 (`lem:t04`). -/
 theorem preimage_stageKernel (𝒜 : C.Stage) :
@@ -98,11 +108,7 @@ theorem preimage_stageKernel (𝒜 : C.Stage) :
   ext g
   change toQuadratic R C S g ∈ DiagramAut.stageKernel R C S 𝒜 ↔
     g ∈ stageKernel R C S 𝒜
-  rw [DiagramAut.mem_stageKernel, mem_stageKernel]
-  simpa only [map_one, stageEquiv_one, targetEquiv_one, DiagramAut.stageEquiv_one,
-    DiagramAut.targetEquiv_one, LinearEquiv.one_eq_refl, AlgEquiv.aut_one] using
-    and_congr (stageEquiv_eq_iff_toQuadratic g 1 𝒜).symm
-      (targetEquiv_eq_iff_toQuadratic g 1).symm
+  exact mem_stageKernel_toQuadratic R C S g 𝒜
 
 /-- The direct full graded topology is induced by the existing degree-one restriction:
 the stage-and-target neighborhood bases agree exactly. Blueprint: T04 (`lem:t04`). -/

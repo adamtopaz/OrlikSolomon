@@ -2430,7 +2430,7 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | Optional small `Topology/DiscreteFamily`, namespace `OrlikSolomon` | Only reusable discrete-product/induced-topology helpers missing from Mathlib; W02, [#206](https://github.com/adamtopaz/OrlikSolomon/issues/206) |
 | `H/Topology/Basic/Components`, `Basic/Neighborhoods`, facade `Basic` | Direct pure topologies, component APIs, group/separation and stage/target bases; W02, #206 |
 | `H/Topology/Compact/Closed`, `Compact/Finite`, facade `Compact` | Closed constraints and finite-coefficient compactness; W03, [#207](https://github.com/adamtopaz/OrlikSolomon/issues/207) |
-| `H/Topology/Restriction` | Degree-one embedding and inverse-continuity API; W04, [#208](https://github.com/adamtopaz/OrlikSolomon/issues/208) |
+| `H/Topology/Restriction` | Implemented T04: degree-one embedding and inverse-continuity API; W04, [#208](https://github.com/adamtopaz/OrlikSolomon/issues/208) |
 | `H/Topology/Krull/Pointwise`, `Krull/Hyperplanes`, `Krull/Comparison`, facade `Krull` | Generic pointwise topology, normalized geometric tests and exact Krull comparison; W05–W06, [#209](https://github.com/adamtopaz/OrlikSolomon/issues/209), [#210](https://github.com/adamtopaz/OrlikSolomon/issues/210) |
 | `H/Topology/GaloisCompact/FiniteOrbits`, `GaloisCompact/Stages`, facade `GaloisCompact` | Arrangement-free finite-orbit compactness and system/algebraicity corollaries; W07, [#211](https://github.com/adamtopaz/OrlikSolomon/issues/211) |
 | `H/Topology/Classification/Quadratic`, `Classification/Graded`, facade `Classification` | Exact local/domain quadratic and graded upgrades; W09–W10, [#213](https://github.com/adamtopaz/OrlikSolomon/issues/213), [#214](https://github.com/adamtopaz/OrlikSolomon/issues/214) |
@@ -2453,6 +2453,14 @@ remain in the higher leaves. Existing `HyperplaneGT`, `HyperplaneGT/Cohomology` 
 the sorted root import list as implementation lands. W08 and W20 stay separate from the
 positive classifiers and from each other; their example support never becomes an assumed
 conclusion of a core theorem.
+
+`Topology/Restriction` proves the exact existing `GradedDiagramAut.toQuadratic` is a
+topological embedding, without classification or a dimension/coefficient restriction.
+Faithfulness of each whole algebra component follows from its degree-one generators,
+including the original common target. The stage-and-target kernels pull back exactly,
+so the original direct graded topology equals the topology induced by this restriction.
+The continuity criterion and inverse-continuity theorem apply to actual existing maps;
+no quadratic-automorphism extension is assumed and no topology instance is added.
 
 W05 implements `Krull/Pointwise` and `Krull/Hyperplanes`, together with the T05
 consumers in `Examples/HyperplaneGT/Topology/Systems`. `Pointwise` imports only Mathlib,
@@ -2494,7 +2502,7 @@ The fifth blueprint has 17 separately labelled nodes T01–T17, initially **0 fo
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **1 formalized / 2 partial / 14 planned**; T05 is
+unchanged. The current M9 count is **2 formalized / 2 partial / 13 planned**; T04 and T05 are
 complete, and T01–T02 cover the pure diagrams while their actual-theory and ordinary clauses
 remain planned.
 
