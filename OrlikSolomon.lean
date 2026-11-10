@@ -320,6 +320,7 @@ public import OrlikSolomon.HyperplaneGT.Topology.Compact.Closed
 public import OrlikSolomon.HyperplaneGT.Topology.Compact.Finite
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Hyperplanes
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Pointwise
+public import OrlikSolomon.HyperplaneGT.Topology.Restriction
 public import OrlikSolomon.Interface.Logarithms
 public import OrlikSolomon.Interface.OSAlgebra
 public import OrlikSolomon.Interface.ProjectiveComplement
