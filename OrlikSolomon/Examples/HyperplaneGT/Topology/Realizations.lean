@@ -9,6 +9,7 @@ public import Mathlib.FieldTheory.KrullTopology
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Coefficients
 public import OrlikSolomon.Examples.Sanity
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Compatibility
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
 
 /-!
@@ -31,7 +32,13 @@ when the deliberate finite-stage scope and an unrelated geometric-field topology
 * `exists_target_detected_at_dimension_zero`: a supplied characteristic-two theory
   retains a target action invisible at every stage in dimension zero.
 
-Blueprint: acceptance consumers for T01–T02 and T14 (`def:t01`, `lem:t02`, `thm:t14`).
+The realization consumers retain independent theories and all four bare inverse pairs,
+whole-stage/common-target formulas and the three-theory cocycle. A conditional binary
+example proves that target detection survives comparison in dimension zero; the concrete
+zero theory supplies the separate zero-coefficient boundary case.
+
+Blueprint: acceptance consumers for T01–T02, T14 and T16
+(`def:t01`, `lem:t02`, `thm:t14`, `thm:t16`).
 -/
 
 @[expose] public section
@@ -131,3 +138,161 @@ theorem preserves_global_krull (k₀ : Type*) [Field k₀] [Algebra k₀ k]
       (inferInstance : TopologicalSpace (k ≃ₐ[k₀] k)) = krullTopology k₀ k := ⟨rfl, rfl⟩
 
 end OrlikSolomon.HyperplaneGT.Cohomology.TopologyExamples
+
+universe v r b₁ b₂ b₃ h₁ h₂ h₃
+
+namespace OrlikSolomon.HyperplaneGT.Cohomology.RealizationTopologyExamples
+
+open scoped FiniteStageTopology
+
+variable {k : Type u} {k₀ : Type v} [Field k] [Field k₀] [Algebra k₀ k]
+  {R : Type r} [CommRing R]
+  {B₁ : Type b₁} [CommRing B₁] [Algebra R B₁]
+  {ℬ₁ : ℤ → Submodule R B₁} [GradedAlgebra ℬ₁] {D₁ : Geometric.SmoothDomain k}
+  {B₂ : Type b₂} [CommRing B₂] [Algebra R B₂]
+  {ℬ₂ : ℤ → Submodule R B₂} [GradedAlgebra ℬ₂] {D₂ : Geometric.SmoothDomain k}
+  {B₃ : Type b₃} [CommRing B₃] [Algebra R B₃]
+  {ℬ₃ : ℤ → Submodule R B₃} [GradedAlgebra ℬ₃] {D₃ : Geometric.SmoothDomain k}
+  (T₁ : Geometric.OrdinaryTheory.{u, r, b₁, h₁} D₁ ℬ₁)
+  (T₂ : Geometric.OrdinaryTheory.{u, r, b₂, h₂} D₂ ℬ₂)
+  (T₃ : Geometric.OrdinaryTheory.{u, r, b₃, h₃} D₃ ℬ₃)
+  {n : ℕ} (C : CofinalSystem k₀ k n) (S : Set k₀)
+
+
+/-- Both bare quadratic inverse cancellations retain independently sized realizations. -/
+theorem quadratic_realization_roundtrips (x : DiagramAut T₁ C S) (y : DiagramAut T₂ C S) :
+    (realizationQuadraticContinuousEquiv T₁ T₂ C S).symm (realizationQuadraticContinuousEquiv T₁
+      T₂ C S x) = x ∧
+      realizationQuadraticContinuousEquiv T₁ T₂ C S ((realizationQuadraticContinuousEquiv T₁ T₂ C
+        S).symm y) = y := by
+  simp
+
+/-- Both bare graded inverse cancellations retain independently sized realizations. -/
+theorem graded_realization_roundtrips (x : GradedDiagramAut T₁ C S) (y : GradedDiagramAut T₂ C S) :
+    (realizationGradedContinuousEquiv T₁ T₂ C S).symm (realizationGradedContinuousEquiv T₁ T₂ C S
+      x) = x ∧
+      realizationGradedContinuousEquiv T₁ T₂ C S ((realizationGradedContinuousEquiv T₁ T₂ C
+        S).symm y) = y := by
+  simp
+
+/-- Both bare quadratic quotient inverse cancellations retain independently sized realizations. -/
+theorem quadratic_quotient_realization_roundtrips (x : DiagramAut T₁ C S ⧸
+  DiagramAut.scalarSubgroup T₁ C S) (y : DiagramAut T₂ C S ⧸ DiagramAut.scalarSubgroup T₂ C S) :
+    (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).symm
+      (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S x) = x ∧
+      realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S
+        ((realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).symm y) = y := by
+  simp
+
+/-- Both bare graded quotient inverse cancellations retain independently sized realizations. -/
+theorem graded_quotient_realization_roundtrips (x : GradedDiagramAut T₁ C S ⧸
+  GradedDiagramAut.scalarSubgroup T₁ C S) (y : GradedDiagramAut T₂ C S ⧸
+  GradedDiagramAut.scalarSubgroup T₂ C S) :
+    (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).symm
+      (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S x) = x ∧
+      realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S
+        ((realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).symm y) = y := by
+  simp
+
+/-- All four maps satisfy the same cocycle for three independent eligible realizations. -/
+theorem independent_realization_cocycles :
+    (realizationQuadraticContinuousEquiv T₁ T₂ C S).trans
+        (realizationQuadraticContinuousEquiv T₂ T₃ C S) =
+      realizationQuadraticContinuousEquiv T₁ T₃ C S ∧
+    (realizationGradedContinuousEquiv T₁ T₂ C S).trans
+        (realizationGradedContinuousEquiv T₂ T₃ C S) =
+      realizationGradedContinuousEquiv T₁ T₃ C S ∧
+    (realizationQuadraticScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (realizationQuadraticScalarQuotientContinuousEquiv T₂ T₃ C S) =
+      realizationQuadraticScalarQuotientContinuousEquiv T₁ T₃ C S ∧
+    (realizationGradedScalarQuotientContinuousEquiv T₁ T₂ C S).trans
+        (realizationGradedScalarQuotientContinuousEquiv T₂ T₃ C S) =
+      realizationGradedScalarQuotientContinuousEquiv T₁ T₃ C S :=
+  ⟨realizationQuadraticContinuousEquiv_trans T₁ T₂ T₃ C S,
+    realizationGradedContinuousEquiv_trans T₁ T₂ T₃ C S,
+    realizationQuadraticScalarQuotientContinuousEquiv_trans T₁ T₂ T₃ C S,
+    realizationGradedScalarQuotientContinuousEquiv_trans T₁ T₂ T₃ C S⟩
+
+/-- Entire actual stage and common-target actions are conjugated, not only generators. -/
+theorem whole_realization_components (g : DiagramAut T₁ C S)
+    (f : GradedDiagramAut T₁ C S) (A : C.Stage)
+    (x : degreeOne T₁ A.val.val) (t : degreeOne T₁ (twoPunctureArrangement k))
+    (y : diagonal T₁ (D₁.complement A.val.val))
+    (z : diagonal T₁ (schemeMarkingTarget D₁)) :
+    (realizationQuadraticContinuousEquiv T₁ T₂ C S g).stageEquiv A
+        (realizationDegreeOneEquiv T₁ T₂ A.val.val x) =
+      realizationDegreeOneEquiv T₁ T₂ A.val.val (g.stageEquiv A x) ∧
+    (realizationQuadraticContinuousEquiv T₁ T₂ C S g).targetEquiv
+        (realizationDegreeOneEquiv T₁ T₂ (twoPunctureArrangement k) t) =
+      realizationDegreeOneEquiv T₁ T₂ (twoPunctureArrangement k) (g.targetEquiv t) ∧
+    (realizationGradedContinuousEquiv T₁ T₂ C S f).stageEquiv A
+        (realizationStageEquiv T₁ T₂ A.val.val y) =
+      realizationStageEquiv T₁ T₂ A.val.val (f.stageEquiv A y) ∧
+    (realizationGradedContinuousEquiv T₁ T₂ C S f).targetEquiv
+        (realizationStageEquiv T₁ T₂ (twoPunctureArrangement k) z) =
+      realizationStageEquiv T₁ T₂ (twoPunctureArrangement k) (f.targetEquiv z) :=
+  ⟨realizationQuadraticContinuousEquiv_stage T₁ T₂ C S g A x,
+    realizationQuadraticContinuousEquiv_target T₁ T₂ C S g t,
+    realizationGradedContinuousEquiv_stage T₁ T₂ C S f A y,
+    realizationGradedContinuousEquiv_target T₁ T₂ C S f z⟩
+
+/-- The actual zero theory realizes all four comparisons in dimension zero, with no
+nonzero-theory claim or classification hypothesis. -/
+theorem actual_zero_theory_comparisons (k : Type u) [Field k] :
+    let T := TopologyExamples.actualZeroTheory k
+    let C := fullCofinalSystem k k 0
+    realizationQuadraticContinuousEquiv T T C {0} = ContinuousMulEquiv.refl _ ∧
+      realizationGradedContinuousEquiv T T C {0} = ContinuousMulEquiv.refl _ ∧
+      realizationQuadraticScalarQuotientContinuousEquiv T T C {0} =
+        ContinuousMulEquiv.refl _ ∧
+      realizationGradedScalarQuotientContinuousEquiv T T C {0} =
+        ContinuousMulEquiv.refl _ :=
+  ⟨realizationQuadraticContinuousEquiv_refl _ _ _,
+    realizationGradedContinuousEquiv_refl _ _ _,
+    realizationQuadraticScalarQuotientContinuousEquiv_refl _ _ _,
+    realizationGradedScalarQuotientContinuousEquiv_refl _ _ _⟩
+
+/-- For two supplied binary theories, canonical realization comparison preserves the
+nonidentity common target invisible at every dimension-zero stage. This is conditional on
+both eligible theories; it constructs no nonzero characteristic-two cohomology theory. -/
+theorem target_swap_survives_realization
+    {W₁ : Type b₁} [CommRing W₁] [Algebra (ZMod 2) W₁]
+    {𝒲₁ : ℤ → Submodule (ZMod 2) W₁} [GradedAlgebra 𝒲₁]
+    {E₁ : Geometric.SmoothDomain (ZMod 2)}
+    {W₂ : Type b₂} [CommRing W₂] [Algebra (ZMod 2) W₂]
+    {𝒲₂ : ℤ → Submodule (ZMod 2) W₂} [GradedAlgebra 𝒲₂]
+    {E₂ : Geometric.SmoothDomain (ZMod 2)}
+    (U₁ : Geometric.OrdinaryTheory.{0, 0, b₁, h₁} E₁ 𝒲₁)
+    (U₂ : Geometric.OrdinaryTheory.{0, 0, b₂, h₂} E₂ 𝒲₂) :
+    let C := DiagramExamples.binarySystem 0
+    let S : Set (ZMod 2) := {0}
+    let e := realizationQuadraticContinuousEquiv U₁ U₂ C S
+    ∃ g : DiagramAut U₁ C S,
+      (∀ A, g.stageEquiv A = 1) ∧ (∀ A, (e g).stageEquiv A = 1) ∧
+      (∀ A, g ∉ DiagramAut.stageKernel U₁ C S A) ∧
+      (∀ A, e g ∉ DiagramAut.stageKernel U₂ C S A) := by
+  dsimp only
+  let C := DiagramExamples.binarySystem 0
+  let S : Set (ZMod 2) := {0}
+  obtain ⟨g, hg, hk⟩ := TopologyExamples.exists_target_detected_at_dimension_zero U₁
+  refine ⟨g, hg, ?_, hk, ?_⟩
+  · intro A
+    apply LinearEquiv.ext
+    intro y
+    obtain ⟨x, rfl⟩ := (realizationDegreeOneEquiv U₁ U₂ A.val.val).surjective y
+    rw [realizationQuadraticContinuousEquiv_stage, hg A]
+    rfl
+  · intro A hmem
+    have ht := ((DiagramAut.mem_stageKernel U₂ C S A
+      (realizationQuadraticContinuousEquiv U₁ U₂ C S g)).mp hmem).2
+    apply hk A
+    rw [DiagramAut.mem_stageKernel]
+    refine ⟨hg A, ?_⟩
+    apply LinearEquiv.ext
+    intro x
+    apply (realizationDegreeOneEquiv U₁ U₂ (twoPunctureArrangement (ZMod 2))).injective
+    have h := realizationQuadraticContinuousEquiv_target U₁ U₂ C S g x
+    rw [ht] at h
+    exact h.symm
+
+end OrlikSolomon.HyperplaneGT.Cohomology.RealizationTopologyExamples
