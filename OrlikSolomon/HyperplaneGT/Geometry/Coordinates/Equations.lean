@@ -271,6 +271,11 @@ noncomputable def coefficientPointEquiv (k : Type u) [Field k] (n : ℕ) :
 theorem coe_coefficientPointEquiv_apply (H : Hyperplane k n) :
     (coefficientPointEquiv k n H).val = coefficientPoint H := rfl
 
+/-- Different affine hyperplanes have different projective coefficient points. -/
+theorem coefficientPoint_injective : Function.Injective (coefficientPoint (k := k) (n := n)) := by
+  intro H K h
+  exact (coefficientPointEquiv k n).injective (Subtype.ext h)
+
 @[simp]
 theorem coefficientPointEquiv_symm_apply
     (p : {p : Projectivization k (Fin (n + 1) → k) // p ≠ constantPoint k n}) :
