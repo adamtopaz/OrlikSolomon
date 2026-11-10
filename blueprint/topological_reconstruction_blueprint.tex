@@ -1,0 +1,1035 @@
+% Requested by the Claude supervisor, at Adam Topaz's request, 10 November 2026.
+% Mathematical blueprint authored by GPT-6-Astra; no Lean declarations are added.
+% Standalone: latexmk -pdf topological_reconstruction_blueprint.tex
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype,enumitem,booktabs,longtable,array,xcolor,xurl,listings,needspace}
+\usepackage[colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small Topological hyperplane reconstruction: M9 blueprint}
+\fancyhead[R]{\small\thepage}
+\setlength{\headheight}{14pt}
+\setlength{\emergencystretch}{3em}
+\setlist{itemsep=3pt,topsep=5pt}
+\lstset{basicstyle=\ttfamily\small,breaklines=true,columns=fullflexible,keepspaces=true,frame=single}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\A}{\mathbb A}
+\newcommand{\F}{\mathbb F}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\OS}{\operatorname{OS}}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\Gal}{\operatorname{Gal}}
+\newcommand{\Fix}{\operatorname{Fix}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\GL}{\operatorname{GL}}
+\newcommand{\D}{\mathcal D}
+\newcommand{\DG}{\mathcal D^{\mathrm{gr}}}
+\newcommand{\code}[1]{{\normalfont\nolinkurl{#1}}}
+\newcommand{\node}[3]{\par\Needspace{8\baselineskip}\smallskip\noindent\textbf{Node #1.}\quad
+ \textsf{Proposed:}\ \code{#2}\par\noindent
+ \textsf{Dependencies:} #3.\par\smallskip}
+\title{Topological hyperplane reconstruction\\
+\large A Lean blueprint upgrading the M8 isomorphisms}
+\author{Prepared for Adam Topaz by GPT-6-Astra}
+\date{10 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+We put the finite-stage convergence topology on the existing marked
+quadratic, graded, and cohomological diagram automorphism groups. The
+M8 reconstruction maps become topological group isomorphisms with
+discrete coefficient units times the field automorphism group with its
+pointwise topology. For algebraic extensions this is precisely Mathlib's
+existing Krull topology, without normality, separability, perfectness,
+or algebraic closure assumptions. We prove the exact weaker condition
+for this identification and exhibit a supplied cofinal system over
+$\F_p(t)/\F_p$ for which it fails. Scalar quotients, cofinal restriction,
+realization independence, and actual ordinary de Rham reconstruction
+receive compatible topological upgrades. All new mathematical steps
+are proved here; all proposed Lean declarations remain specifications.
+\end{abstract}
+\tableofcontents
+\newpage
+
+\section{Scope, hypotheses, and checked inputs}
+\label{sec:scope}
+
+This is the M9 blueprint requested in issue \#202. Source references were
+checked against repository commit
+\code{56153841b49fa57f217c2dd41e6c39f555f9475f} and Mathlib commit
+\code{6db5db0d2279846cc8fb25901bd53221d37a77d8}.
+Source inspection is not a new Lean build or kernel replay. The existing
+architecture remains authoritative for Lean names and module boundaries.
+This document changes neither the M8 mathematical statements nor the
+earlier blueprint files. Every name attached to an M9 node is proposed.
+
+Let $k_0\to k$ be an algebra map of fields and let
+$G=(k\simeq_{k_0}k)$, written $\Gal(k/k_0)$ even when the extension is
+not Galois. Let $C$ be a supplied
+\texttt{HyperplaneGT.CofinalSystem k0 k n}. Its stages are finite
+$G$-stable arrangements, and every finite set of hyperplanes is contained
+in some selected stage. In particular $C$ is directed; its selected
+stages need not be closed under unions. Let $R$ be a commutative ring,
+with its universe independent of those of both fields, and $S\subset k_0$.
+Write $\D_R(C,S)$ and $\DG_R(C,S)$ for the existing
+\texttt{DiagramAut R C S} and \texttt{GradedDiagramAut R C S}.
+
+The \emph{classification hypotheses} mean
+\[
+ \begin{gathered}
+  2\leq n,\qquad 0\in S,\qquad \operatorname{Subfield.closure}(S)=k_0,\\
+  R\text{ is a nonzero local ring or an integral domain}.
+ \end{gathered}
+\tag{H}\label{eq:H}
+\]
+These are exactly the approved M8 hypotheses. Basic topology, adapter
+comparisons, and literal restriction maps will not require~\eqref{eq:H}.
+The main Krull reconstruction statements additionally assume
+\[
+                     k/k_0\text{ is algebraic}.                 \tag{A}\label{eq:A}
+\]
+In Lean this is \texttt{Algebra.IsAlgebraic k0 k}; over fields it supplies
+the integrality used by some Mathlib topology lemmas. No normality or
+separability is added. Section~\ref{sec:krull} gives the exact weaker
+condition and proves that merely supplying $C$ does not replace it.
+
+The coefficient units $R^\times$ are discrete. This is a topology on the
+unit group, with no preexisting topology on $R$ required. The product in
+the final theorem is the ordinary product of this discrete topology
+and Mathlib's Krull topology. In particular, if $R=\Z_\ell$ is used as
+an abstract ring, this blueprint gives its units the \emph{discrete}
+topology. An adic-coefficient variant is out of scope: it would require
+different stage topologies and separate continuity and inverse-continuity
+proofs for coefficient extraction and linear automorphisms. Nothing here
+asserts that the resulting discrete-coefficient diagram topology is adic.
+
+\subsection{Verified repository references}
+
+Paths below are relative to \code{OrlikSolomon/HyperplaneGT/}; names
+are in \code{OrlikSolomon.HyperplaneGT} unless a namespace is stated.
+These are existing inputs, not proposed declarations.
+\small
+\begin{longtable}{@{}p{.42\textwidth}p{.53\textwidth}@{}}
+\toprule Source & Existing declaration or fact\\\midrule\endhead
+\code{Geometry/Galois/System.lean:71}&
+\code{CofinalSystem}; \code{exists_stage_containing} at 99,
+\code{exists_ge_arrangement} at 106, \code{exists_ge_finset} at 118.\\
+\code{Geometry/Coordinates/Equations.lean:121}&
+\code{exists_normal_coefficient_ne_zero_of_isEquation};
+\code{zeroLocus_coefficientForm_eq_iff} at 128.\\
+\code{Geometry/Galois/CoordinateAction.lean:242}&
+\code{affineCoefficients_fieldAffineForm};
+\code{isEquation_fieldAffineForm} at 268.\\
+\code{Geometry/Galois/Orbits.lean:43}&
+\code{finite_scalarOrbit}; \code{fullCofinalSystem} at 172,
+the latter under algebraicity.\\
+\code{Diagram/Basic/Quadratic.lean:39}&
+\code{QuadraticAutFamily}; \code{quadraticDiagramAutSubgroup} at 46;
+\code{DiagramAut} at 109; stage/target component API follows.\\
+\code{Diagram/Basic/Graded.lean:38}&
+\code{GradedAutFamily}; \code{gradedDiagramAutSubgroup} at 44;
+\code{GradedDiagramAut} at 110.\\
+\code{Algebra/DegreeOne.lean:50}&
+\code{adjoin_range_osGenerator}; the canonical degree-one basis
+and its inclusion naturality are in the same file.\\
+\code{Diagram/Basic/Restriction.lean:198}&
+\code{GradedDiagramAut.toQuadratic}; stage/target formulas at
+252/256 and injectivity at 262.\\
+\code{Reconstruction/LocalRing/Quadratic.lean:104}&
+\code{quadraticAutEquiv}; inverse formula at 130;
+stage generator formula at 195, target scalar formula at 205.\\
+\code{Reconstruction/LocalRing/Graded.lean:41}&
+\code{gradedAutEquiv}; \code{gradedClassificationEquiv} at 82;
+generator and whole-degree action formulas at 110/121/133.\\
+\code{Reconstruction/LocalRing/Quotient.lean:121}&
+\code{DiagramAut.scalarQuotientEquiv}; graded version at 130;
+inverse section formulas at 154/161.\\
+\code{Reconstruction/Domain/Descent.lean:201}&
+\code{coefficientDomainAutEquiv}; stage and target formulas
+at 313/323.\\
+\code{Reconstruction/Domain/Graded.lean:44}&
+\code{coefficientDomainGradedAutEquiv}; product classification
+\code{coefficientDomainGradedClassificationEquiv} at 88.\\
+\code{Reconstruction/Domain/Quotient.lean:84}&
+\code{DiagramAut.domainScalarQuotientEquiv}; graded version at 94.\\
+\code{Diagram/Cofinal.lean:60}&
+\code{DiagramAut.restrictStages}; stage formula at 72 and target
+formula at 78; graded restriction at 102.\\
+\code{Reconstruction/Cofinal.lean:53}&
+\code{cofinalRestrictionEquiv}; graded at 108;
+domain and domain-graded versions at 199/254.\\
+\code{Cohomology/Adapter/Comparison.lean:198}&
+\code{Cohomology.degreeOneDiagramEquiv}; stage/target conjugation
+at 205/215 and inverse formulas at 316/326.\\
+\code{Cohomology/Adapter/Comparison.lean:290}&
+\code{Cohomology.gradedDiagramEquiv}; component formulas at
+295/305 and inverse formulas at 334/342.\\
+\code{Cohomology/Main/Classification.lean:43}&
+\code{Cohomology.DiagramAut.scalarQuotientComparison}; graded
+version at 58. Scalar ranges, normality, and adapter compatibility
+are in \code{Cohomology/Main/Actions.lean}.\\
+\code{Cohomology/Main/Classification.lean:77}&
+\code{localQuadraticReconstruction}; \code{localGradedReconstruction}
+at 143, \code{localRestrictionEquiv} at 208; domain versions at
+374/440/509; actual scalar quotients at 123/189/420/490.\\
+\code{Cohomology/Main/Cofinal.lean:162}&
+Actual \code{cofinalRestrictionEquiv}; graded at 219,
+domain and domain-graded at 303/361.\\
+\code{Cohomology/Main/Realization.lean:286}&
+\code{realizationQuadraticAutEquiv}; graded at 290;
+scalar quotient comparisons at 385/487.\\
+\code{Cohomology/DeRham/Diagram.lean:200}&
+\code{quadraticTwistEquiv}; \code{gradedTwistEquiv} at 396;
+componentwise conjugation and inverse formulas accompany both.\\
+\code{Cohomology/DeRham/Reconstruction.lean:78}&
+\code{quadraticReconstruction}, \code{gradedReconstruction},
+\code{restrictionEquiv}; the final full-system wrappers use
+the already constructed characteristic-zero theory.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Verified Mathlib topology boundary}
+
+The file \code{Mathlib/FieldTheory/KrullTopology.lean} defines
+\code{finiteExts} at line 66, \code{galGroupBasis} at 101,
+the global \code{krullTopology} instance at 134, and its topological-group
+instance immediately after. The theorem
+\code{krullTopology_mem_nhds_one_iff} at 144 says exactly
+\[
+ U\in\mathcal N_G(1)\ \Longleftrightarrow\
+ \exists E\subset k\text{ intermediate},\ [E:k_0]<\infty,
+                       \ \Fix(E)\subset U.                    \tag{K0}\label{eq:K0}
+\]
+Here \code{IntermediateField.fixingSubgroup_isOpen} is at 170;
+\code{krullTopology_t2} at 186 and the total-separation instance at 224
+assume integrality. Crucially, \emph{finite-dimensional} does not mean
+finitely generated by possibly transcendental elements. We never install
+another global topology on $G$ under the name Krull topology.
+
+\code{Mathlib/Topology/Algebra/ContinuousMonoidHom.lean:310} defines
+\code{ContinuousMulEquiv}, notation $\simeq_{\!t}^{\!*}$ in Lean, extending both
+\code{MulEquiv} and \code{Homeomorph}.
+\code{Mathlib/Topology/Algebra/Group/Quotient.lean} supplies the quotient
+topology (29), \code{QuotientGroup.isQuotientMap_mk} (38),
+\code{continuous_mk} (42), \code{isOpenQuotientMap_mk} (53), and the
+quotient topological-group instance for normal subgroups (151).
+Use \code{IsQuotientMap.continuous_iff} in
+\code{Mathlib/Topology/Maps/Basic.lean:358} for its universal property.
+\code{Mathlib/Topology/Algebra/Group/Basic.lean:283} supplies
+\code{isTopologicalGroup_induced}. Products, subtypes, discrete spaces,
+and compact products use Mathlib's standard topology instances.
+\code{WithTopology} is defined in
+\code{Mathlib/Topology/Defs/Basic.lean:250}; its supporting API is in
+\code{Mathlib/Topology/WithTopology.lean}.
+The existing abbreviation \code{WithDiscreteTopology} in
+\code{Mathlib/Topology/Order.lean:588} is also available; wrapping a
+factor does not by itself assert an inherited group instance.
+
+\section{The topology of a diagram}
+\label{sec:diagram}
+
+\node{T01}{DiagramAut.stageTopology}{M8 A03}
+\begin{definition}[Finite-stage convergence]\label{def:t01}
+For a stage $A$, put $V_A=\bigoplus_{H\in A}R e_H$ and
+$V_T=R e_0\oplus R e_1$. Give each group $\GL_R(V_A)$ and
+$\GL_R(V_T)$ the discrete topology, and their product
+\[
+       P_2=\left(\prod_{A\in C}\GL_R(V_A)\right)\times\GL_R(V_T)
+\]
+the product topology. Give $\D_R(C,S)$ its existing subgroup's
+subspace topology in $P_2$.
+
+For the graded diagram, give every full algebra automorphism group
+$\Aut_{R\text{-alg}}(\OS_R(A))$ and the corresponding common-target
+group the discrete topology. Give $\DG_R(C,S)$ the subspace topology
+in their product. The degree-preservation condition remains part of
+the existing subgroup, not an extra coordinate. Define the same topology
+on the actual cohomological diagrams using their actual degree-one
+modules, respectively their actual diagonal algebras; for ordinary
+de Rham use its actual $H^1$, respectively its ordinary graded algebra.
+Always include the single original common-target component.
+\end{definition}
+
+Thus convergence means eventual equality on any specified finite list
+of complete stage automorphisms and on the common target. We use nets
+or neighborhoods, not a sequential-convergence definition. There is no
+countability assumption on the set of stages.
+
+\paragraph{Lean topology instances.}
+The existing family and diagram types are transparent product and subgroup
+synonyms. Define the factor topologies explicitly as the discrete topology
+$\bot$, then take product and induced topologies; alternatively use
+\code{WithTopology} for each discrete factor and pull back along the
+component tuple. Expose the chosen diagram topology through a named
+definition and a deliberate scoped instance. Use a named/scoped discrete
+topology on $R^\times$ as well. Prove component continuity and the
+universal property for these chosen topologies. Do not add a global
+discrete topology on every \code{LinearEquiv} or \code{AlgEquiv}:
+the latter would interfere with the already installed Krull topology.
+Do not infer a stage topology from an unrelated topology on $R$.
+This instance plumbing must not change a carrier, a group law, or a
+field of any existing structure.
+
+\node{T02}{DiagramAut.nhds_one_stageBasis}{T01; M8 G06}
+\begin{lemma}[Group structure, separation, and neighborhoods]\label{lem:t02}
+All the diagram topologies in T01 make their groups Hausdorff, totally
+separated topological groups. For the quadratic diagram, the subgroups
+\[
+ K_A=\{g:g_T=1,\ g_A=1\}\qquad(A\in C)
+                                                               \tag{B}\label{eq:B}
+\]
+form a neighborhood basis at $1$. The analogous assertion holds for the
+graded diagram and for the actual theory and de Rham diagrams.
+\end{lemma}
+\begin{proof}
+Every discrete group is a topological group, as are products and
+subgroups. Two different diagram elements differ at a component; its
+discrete coordinate separates them by complementary clopen cylinder
+sets. This proves Hausdorffness and total separation without
+classification or a nonzero-coefficient assumption.
+
+An identity neighborhood in the product contains the simultaneous
+identity conditions on finitely many stage coordinates, with the target
+condition added if necessary. Choose a common upper stage $B$ by
+\code{CofinalSystem.exists_ge_finset}. In the quadratic case, naturality
+and injectivity of the finite-support inclusion show that $g_B=1$
+implies $g_A=1$ for every selected $A\leq B$. This proves~\eqref{eq:B}.
+In the graded case restrict to degree one, apply the same injectivity,
+and then use generation of each stage algebra by its degree-one
+generators. The actual diagrams have the same properties through their
+already proved generator comparisons. Each $K_A$ is a kernel of the
+pair of component homomorphisms, hence a normal open subgroup, and its
+cosets are clopen. Only the existence of an upper stage was used.
+\end{proof}
+
+\node{T03}{DiagramAut.isClosed_embedding}{T01--T02; M8 A01, A03}
+\begin{proposition}[Closed subgroup and finite coefficients]\label{prop:t03}
+The quadratic and graded diagrams are closed subgroups of their
+respective ambient products for every commutative ring $R$.
+If $R$ is finite, both are compact and therefore profinite, meaning
+compact, Hausdorff, and totally disconnected.
+This assertion requires neither classification nor algebraicity.
+\end{proposition}
+\begin{proof}
+For each stage, preservation of its entire quadratic relation span is
+a condition on one discrete factor, hence a closed cylinder. For each
+inclusion arrow, its naturality equation is a condition on two discrete
+factors; any subset of their finite product is clopen, so the equation
+defines a closed cylinder. Each marking square similarly depends on
+one stage and the common target. The subgroup is the intersection of
+all these closed sets, hence closed. There is no finiteness claim about
+the number of equations or markings. For the graded diagram, preserving
+each degree is again a condition on one discrete coordinate, and each
+algebra naturality equation depends on two coordinates. The same
+closed-intersection argument applies.
+
+If $R$ is finite, every $V_A$ and $V_T$ is a finite set. Each linear
+automorphism group embeds in its finite function set and is finite
+discrete, hence compact. The product is compact, and its closed subgroup
+is compact. For the graded group, first replace each discrete full
+algebra-automorphism factor by its subgroup preserving every degree.
+Restriction to degree one injects this subgroup into $\GL_R(V_A)$,
+because the algebra is generated by degree one; the same holds at the
+target. These discrete subgroups are therefore finite. Their product
+is compact, and the diagram's remaining naturality conditions cut out
+a closed subspace. T02 gives the separation assertions. In particular
+no unproved inverse-limit description or finiteness of an entire
+unrestricted algebra-automorphism group is needed.
+\end{proof}
+
+\node{T04}{GradedDiagramAut.isEmbedding_toQuadratic}{T01--T02; M8 A01--A03}
+\begin{lemma}[The degree-one topology determines the graded topology]\label{lem:t04}
+The existing homomorphism
+$r:\DG_R(C,S)\to\D_R(C,S)$ is a topological embedding, for arbitrary
+commutative coefficients and all dimensions. Whenever the existing
+M8 restriction map is bijective, its existing inverse is continuous.
+\end{lemma}
+\begin{proof}
+Restriction at a fixed stage or at the target is a map between discrete
+automorphism groups (restricted to the degree-preserving subgroup), so
+each coordinate of $r$ is continuous. Conversely, for two graded
+diagram elements $g,h$ and any stage $A$, their full stage algebra maps
+are equal if and only if their degree-one restrictions agree: the
+forward implication is immediate; the reverse follows because the
+algebra is generated by the classes $e_H$. The same statement holds
+at the common target. Thus the basic equality neighborhoods defining
+the graded topology are exactly the pullbacks of the corresponding
+quadratic equality neighborhoods. This proves that $r$ is inducing.
+Its already proved injectivity makes it an embedding. If $r$ is
+bijective, this equality of topologies proves continuity of its inverse.
+No assertion that every quadratic automorphism extends is made here;
+the existing M8 classification supplies that bijectivity when used.
+\end{proof}
+
+\section{Pointwise convergence and the Krull topology}
+\label{sec:krull}
+
+We temporarily write $G_{\mathrm{pt}}$ for the same abstract group $G$
+with the topology induced by the map $G\to\prod_{a\in k}k$,
+$\sigma\mapsto(\sigma(a))_a$, where every copy of $k$ is discrete.
+This notation does not replace Mathlib's global Krull instance. Its
+identity neighborhoods have the basis $\Fix(B)$ for finite $B\subset k$.
+
+\node{T05}{hyperplaneStabilizer_eq_fixingCoefficients}{M8 G01, G04, G06}
+\begin{lemma}[Finite equations and coordinate fibers]\label{lem:t05}
+The pointwise topology makes $G$ a Hausdorff totally separated
+topological group.
+For every hyperplane $H$ there is a finite set $b(H)\subset k$ such that
+\[
+                \sigma H=H\quad\Longleftrightarrow\quad
+                \sigma\text{ fixes every element of }b(H).       \tag{N}\label{eq:N}
+\]
+If $n\geq1$, put $H_a=\{x:x_0=a\}$. Then
+$\sigma H_a=H_{\sigma a}$ and $H_a=H_b$ if and only if $a=b$.
+Consequently the topology on $G$ generated by pointwise stabilizers of
+finite sets of hyperplanes, or by kernels of its permutations of the
+stages of $C$, is precisely $G_{\mathrm{pt}}$.
+\end{lemma}
+\begin{proof}
+To determine $(\sigma\tau)(a)$ near $(\sigma_0,\tau_0)$, require
+$\tau(a)=\tau_0(a)$ and $\sigma(\tau_0(a))=\sigma_0(\tau_0(a))$.
+To determine $\sigma^{-1}(a)$ near $\sigma_0$, require
+$\sigma(\sigma_0^{-1}(a))=a$. These finite evaluation conditions
+prove multiplication and inversion continuous. Evaluation separates
+different automorphisms by clopen sets.
+
+Choose an equation $c+\sum_i a_i x_i=0$ for $H$, choose an index $j$
+with $a_j\ne0$, and divide every coefficient by $a_j$. Let $b(H)$ be
+the finite set of these normalized coefficients, including the constant.
+The coefficient of $x_j$ is now $1$. The transformed equation has the
+same pivot coefficient $1$. Two nonconstant affine equations have the
+same zero locus exactly when their coefficient vectors are nonzero
+scalar multiples; comparing the pivot forces that scalar to be $1$.
+This proves~\eqref{eq:N}, using the existing equation and coordinate
+action lemmas. No algebraicity was used.
+
+The equation for $H_a$ gives its transformation rule. Evaluating at
+the vector with coordinate $0$ equal to $a$ and other coordinates zero
+proves $H_a=H_b\Rightarrow a=b$. Thus every finite field-evaluation
+test is a finite hyperplane test. Conversely every finite hyperplane
+test is a finite coefficient test by~\eqref{eq:N}. Cofinality places
+any finite collection of these hyperplanes into some stage. A stage's
+permutation kernel is exactly the pointwise stabilizer of its finite
+set of hyperplanes. These two containments prove equality of the
+neighborhood bases. The fibers $H_a$ used here are arbitrary geometric
+hyperplanes, not only the marking fibers indexed by $S$; the markings
+were needed in M8 to identify $G$ over $k_0$.
+\end{proof}
+
+\node{T06}{krull_eq_pointwise_iff}{T05; Mathlib Krull topology}
+\begin{theorem}[Exact Krull comparison]\label{thm:t06}
+For an arbitrary extension $k/k_0$, its Krull topology agrees with
+$G_{\mathrm{pt}}$ if and only if
+\[
+ \text{for every }a\in k\text{ there is }E\subset k,\quad
+ [E:k_0]<\infty,\quad \Fix(E)\subset\Fix(\{a\}).             \tag{K}\label{eq:K}
+\]
+In particular~\eqref{eq:A} implies~\eqref{eq:K}. Under algebraicity,
+for every finite collection $A$ of hyperplanes the field
+\[
+        E_A=k_0\bigl(b(H):H\in A\bigr)
+\]
+is finite dimensional and
+\[
+          \Fix(A)=\Gal(k/E_A).                                \tag{F}\label{eq:F}
+\]
+For every finite intermediate field $E/k_0$ there is a stage $A\in C$
+such that $\Fix(A)\subset\Gal(k/E)$, provided $n\geq1$.
+\end{theorem}
+\begin{proof}
+A finite-dimensional intermediate field has a finite vector-space
+basis. An automorphism fixes that basis if and only if it fixes the
+entire intermediate field, since it fixes $k_0$ and respects addition
+and multiplication. Hence every basic Krull subgroup is open in
+$G_{\mathrm{pt}}$. Conversely, if~\eqref{eq:K} holds, the stabilizer
+of each element contains a basic Krull identity neighborhood and is
+therefore open. Finite intersections give continuity of every finite
+pointwise test. If the topologies agree, each element stabilizer is a
+Krull neighborhood of $1$, and~\eqref{eq:K} follows from~\eqref{eq:K0}.
+
+Under algebraicity take $E=k_0(a)$ to obtain~\eqref{eq:K}. For $E_A$,
+adjoining one algebraic element gives a finite extension; repeated
+adjoining and the tower law prove finiteness for the finite set of
+normalized coefficients. An automorphism fixes the generated field
+exactly when it fixes its generators; T05 proves~\eqref{eq:F}.
+For the last assertion choose a finite $k_0$-basis $a_1,\ldots,a_m$ of
+$E$, and use cofinality to place $H_{a_1},\ldots,H_{a_m}$ in one
+stage $A$. Fixing every hyperplane of $A$ fixes every $a_i$ and hence
+$E$. Notice that containment of fixing subgroups is the required
+statement: it is unnecessary, and generally false, that the chosen
+stage have coefficient field exactly $E$.
+\end{proof}
+
+Thus algebraicity is a convenient sufficient hypothesis, not a claimed
+necessary one: an extension with trivial automorphism group satisfies
+\eqref{eq:K} regardless of algebraicity. The most general product
+upgrade below may use~\eqref{eq:K} as an explicit proposition; the
+recommended public wrappers assume~\eqref{eq:A}. This introduces no
+field into \code{CofinalSystem} or a cohomology structure.
+
+\node{T07}{galois_pointwise_compact_of_finite_orbits}{T05}
+\begin{proposition}[Compactness from finite orbits]\label{prop:t07}
+If every element of $k$ has finite $G$-orbit, $G_{\mathrm{pt}}$ is a
+profinite topological group. A supplied $C$ and $n\geq1$ imply this
+finite-orbit condition. Algebraicity also implies it directly.
+\end{proposition}
+\begin{proof}
+The topological group and separation statements follow from T05.
+Write $O_a=G\cdot a$ and let $X=\prod_{a\in k}O_a$, a product of
+finite discrete spaces. Interpret a point of $X$ as a function
+$f:k\to k$ satisfying $f(a)\in O_a$. The equations saying that $f$
+preserves $0,1,+,\cdot$ and fixes each image of an element of $k_0$
+are closed conditions in $X$: each equation depends on finitely many
+discrete coordinates. Let $Y$ be their closed intersection. Every
+automorphism gives a point of $Y$. Conversely, $f\in Y$ is a unital
+field homomorphism, hence injective. If $b\in O_a$ then $O_b=O_a$,
+so $f$ restricts to an injective self-map of the finite set $O_a$,
+hence a surjection on that set. As $a\in O_a$, every element of $k$
+is in the image of $f$. Thus $f$ is an automorphism fixing $k_0$.
+The evaluation embedding identifies $G_{\mathrm{pt}}$ homeomorphically
+with $Y$. It is therefore compact and totally separated Hausdorff.
+
+For a supplied $C$, choose a finite stable stage containing $H_a$.
+Its finiteness and the injectivity of $b\mapsto H_b$ show that $O_a$
+is finite. Under algebraicity, the orbit is contained in the finite
+root set of the nonzero minimal polynomial of $a$ over $k_0$.
+\end{proof}
+
+This proof covers nonnormal and inseparable algebraic extensions.
+Alternatively, after the classification upgrade, T03 with coefficients
+$\F_2$, $S=k_0$, and the given $n\geq2$ implies compactness of $G$
+by the product projection. Neither argument invokes an unproved
+compactness theorem for arbitrary algebraic extensions. In particular,
+Mathlib's stronger-hypothesis \code{IsGalois} compactness instance need
+not be used or made a hypothesis of the main theorem.
+
+\node{T08}{ratFunc_krull_stage_counterexample}{T02, T05--T06; M8 S03; Mathlib rational functions}
+\begin{proposition}[A supplied system does not imply the Krull comparison]\label{prop:t08}
+Let $k_0=\F_p$, $k=\F_p(t)$, and $n=2$, with $p$ prime. There is a
+cofinal system of finite $G$-stable arrangements, $G$ is finite and
+nontrivial, and its Krull topology is indiscrete. Its pointwise and
+stage permutation topologies are discrete. With $R=\F_2$ and
+$S=\{0\}$ all the M8 classification hypotheses hold, but the M8
+classification is not a homeomorphism for Mathlib's Krull topology.
+\end{proposition}
+\begin{proof}
+Every nonconstant rational function in $t$ is transcendental over
+$\F_p$ (existing \code{RatFunc.transcendental_of_ne_C},
+\code{Mathlib/FieldTheory/RatFunc/IntermediateField.lean:120}).
+Therefore the only finite-dimensional intermediate field is $\F_p$
+itself; all Krull basic identity subgroups equal $G$.
+
+An automorphism is determined by $f=\sigma(t)$. Surjectivity gives
+$\F_p(f)=\F_p(t)$. Write $f=P(t)/Q(t)$ in the canonical coprime
+numerator/denominator representation. The existing degree theorem
+\code{RatFunc.finrank_eq_max_natDegree} in that same file at 165 gives
+\[
+             1=[\F_p(t):\F_p(f)]=\max(\deg P,\deg Q).
+\]
+Only finitely many such pairs of polynomials exist over the finite
+field, so $G$ is finite. Substitution $t\mapsto t+1$ defines a field
+automorphism, with inverse $t\mapsto t-1$, and is nonidentity; this
+also works when $p=2$. For completeness the substitution is defined
+first on polynomials and then on fractions, where nonzero denominators
+stay nonzero because polynomial translation is invertible.
+
+The saturation of any finite set of hyperplanes by the finite group
+$G$ is finite and stable. Taking all finite stable arrangements
+therefore supplies $C$ directly; do not invoke the existing
+\code{fullCofinalSystem} wrapper, whose current hypotheses require
+algebraicity. In the pointwise topology the stabilizer of $t$ is
+$\{1\}$, so the topology is discrete. Equivalently a stage containing
+$H_t$ has trivial permutation kernel. The automorphism group is
+nontrivial, hence its indiscrete Krull topology differs from this
+discrete topology. The prime field is generated as a subfield by
+$\{0\}$, and $\F_2^\times$ is trivial. By M8 the quadratic diagram
+has a nontrivial finite Hausdorff, hence discrete, topology. Its
+classification with indiscrete $G$ cannot be a homeomorphism; indeed
+the forward Galois action is not continuous.
+\end{proof}
+
+\section{Upgrading the existing classification maps}
+\label{sec:classification}
+
+\node{T09}{quadraticAutContinuousEquiv}{T01--T02, T05--T06; M8 S03, S05}
+\begin{theorem}[Quadratic reconstruction as a topological isomorphism]\label{thm:t09}
+Assume~\eqref{eq:H}. The existing local-ring map
+\code{quadraticAutEquiv}, respectively the domain map
+\code{coefficientDomainAutEquiv}, is a topological group isomorphism
+\[
+       R^\times_{\mathrm{disc}}\times G_{\mathrm{pt}}
+                         \ \simeq_{\mathrm{top.grp}}\ \D_R(C,S).
+\]
+Under~\eqref{eq:K}, and in particular under~\eqref{eq:A}, replace
+$G_{\mathrm{pt}}$ by $G$ with its existing Krull topology. This
+upgrades the exact existing \code{MulEquiv} in each case.
+\end{theorem}
+\begin{proof}
+Write $\Phi$ for the existing M8 equivalence. Its established formulas
+are
+\[
+ \Phi(u,\sigma)_A(e_H)=u e_{\sigma H},\qquad
+ \Phi(u,\sigma)_T(x)=u x.                                    \tag{C}\label{eq:C}
+\]
+The coefficient ring is nontrivial under~\eqref{eq:H}. The target
+component equals the identity if and only if $u=1$, by applying it to
+$e_0$ and reading its coefficient at $0$. With $u=1$, equality of the
+stage map with the identity is equivalent to $\sigma H=H$ for every
+$H\in A$, by independence of the standard basis. Consequently
+\[
+                    \Phi^{-1}(K_A)=\{1\}\times\Fix(A).        \tag{P}\label{eq:P}
+\]
+T02 and T05 show that the two sides of~\eqref{eq:P} range through
+cofinal identity-neighborhood bases in their respective groups. Since
+$\Phi$ is a group isomorphism, translation of these bases proves
+continuity in both directions everywhere. T06 supplies exactly the
+Krull identification. Both M8 maps have~\eqref{eq:C}, so the proof
+applies verbatim to local and domain coefficients, without repeating
+fraction-field descent or incidence reconstruction.
+\end{proof}
+
+An alternative inverse-continuity proof may use the existing scalar
+extraction formula: the scalar is the $(0,0)$ entry of the target
+matrix. Having extracted it, a stage containing the coordinate fibers
+of a finite basis of $E$ determines the reconstructed automorphism on
+$E$. Equation~\eqref{eq:P} is the shorter proof and retains the target
+even for systems whose smallest stages are empty.
+
+\node{T10}{gradedAutContinuousEquiv}{T04, T09; M8 S04, S05}
+\begin{corollary}[Graded restriction and reconstruction]\label{cor:t10}
+Under~\eqref{eq:H}, upgrade the existing local or domain graded
+restriction equivalence to
+\[
+                 \DG_R(C,S)\simeq_{\mathrm{top.grp}}\D_R(C,S).
+\]
+This statement needs no additional field-extension hypothesis. The
+existing \code{gradedClassificationEquiv}, respectively
+\code{coefficientDomainGradedClassificationEquiv}, upgrades to
+\[
+       R^\times_{\mathrm{disc}}\times G_{\mathrm{pt}}
+                            \simeq_{\mathrm{top.grp}}\DG_R(C,S),
+\]
+and to the Krull version under~\eqref{eq:K} or~\eqref{eq:A}.
+\end{corollary}
+\begin{proof}
+T04 and the existing graded restriction bijectivity give the first
+upgrade. Compose its inverse with T09 for the second. M8 identifies
+this composite with its existing graded classification, so the
+underlying map and inverse are unchanged. Its action on degree $q$
+is still $u^q$ times the existing Galois action, including degree zero
+and every common-target degree. The naturality and marking equations
+are exactly the already proved equations.
+\end{proof}
+
+\node{T11}{DiagramAut.scalarQuotientContinuousEquiv}{T07, T09--T10; M8 scalar quotients}
+\begin{theorem}[Scalar quotients with their quotient topology]\label{thm:t11}
+Under~\eqref{eq:H}, let $Z_R$ denote the existing range of the scalar
+action in either diagram group. With the actual quotient-group
+topology, the existing local and domain scalar quotient equivalences
+upgrade to
+\[
+             \D_R(C,S)/Z_R\simeq_{\mathrm{top.grp}}G_{\mathrm{pt}},
+ \qquad      \DG_R(C,S)/Z_R\simeq_{\mathrm{top.grp}}G_{\mathrm{pt}}.
+\]
+These are Krull isomorphisms under~\eqref{eq:K}. The scalar subgroups
+are closed, and the quotient groups are Hausdorff and profinite.
+\end{theorem}
+\begin{proof}
+Under T09 or T10 the scalar range is exactly
+$R^\times\times\{1\}$, a closed subgroup since $G_{\mathrm{pt}}$
+is Hausdorff. Centrality and normality are already proved in M8.
+The extracted Galois coordinate $\pi$ is continuous. The existing
+quotient equivalence $\bar\pi$ satisfies $\bar\pi\circ q=\pi$,
+where $q$ is the quotient projection. The universal property of the
+quotient topology proves $\bar\pi$ continuous. Its already proved
+inverse is $\sigma\mapsto q(\Phi(1,\sigma))$, a composite of
+continuous maps. The same proof applies in the graded case. T07
+gives profiniteness, and T06 supplies the Krull conclusion. This
+proves the topology is the quotient topology; it is not defined by
+transporting a topology along the quotient equivalence. No equality
+between the scalar subgroup and the entire group center is asserted.
+\end{proof}
+
+\node{T12}{cofinalRestrictionContinuousEquiv}{T02, T04; M8 cofinal restriction}
+\begin{theorem}[Independence of the selected cofinal stages]\label{thm:t12}
+Let $C'$ be a supplied cofinal subsystem of $C$. Literal stage
+restriction is continuous over any commutative $R$. Under~\eqref{eq:H}
+each existing local/domain quadratic/graded cofinal restriction
+\code{MulEquiv} upgrades to a topological group isomorphism. No
+algebraicity is needed. The induced scalar quotient equivalences
+are topological isomorphisms as well.
+\end{theorem}
+\begin{proof}
+Restriction selects the indicated coordinates and leaves the target
+coordinate unchanged, so it is continuous by the product universal
+property. For inverse continuity in the quadratic case, given an old
+stage $A\in C$, choose $B\in C'$ whose arrangement contains $A$.
+For two old diagrams $g,h$ agreeing at $B$, inclusion naturality and
+injectivity of $V_A\to V_B$ imply $g_A=h_A$. Thus agreement at one
+new stage controls the required old stage; the common target is
+unchanged. The same argument for finitely many old stages, or T02,
+proves the inverse continuous. In the graded case use T04 and the
+existing commutative square with degree-one restriction. Bijectivity
+is imported from M8, not concluded merely from cofinality. Since the
+map and inverse preserve the scalar subgroups, the quotient universal
+property proves both quotient directions continuous. For two cofinal
+systems without an inclusion, compare both with the system whose
+selected stages are the union of their selected families; it is again
+cofinal. This uses a union of families, not closure of either family
+under arrangement unions.
+\end{proof}
+
+\node{T13}{DiagramAut.compactSpace_iff_finite_units}{T03, T07, T09--T11}
+\begin{corollary}[Separation and compactness in the classified range]\label{cor:t13}
+Under~\eqref{eq:H}, both diagram groups are locally compact and
+totally separated Hausdorff. They are compact, equivalently profinite,
+if and only if $R^\times$ is finite. In particular finite coefficients
+give profinite groups, and $R=\Z$ also gives profinite groups.
+Their scalar quotients are always profinite. These conclusions use
+the diagram topology even if~\eqref{eq:K} fails; under~\eqref{eq:K}
+the quotient is the profinite Krull group.
+\end{corollary}
+\begin{proof}
+By T07 and T09--T10 the groups are products of a discrete group and
+a compact totally separated Hausdorff group. Each slice
+$\{u\}\times G_{\mathrm{pt}}$ is a compact open neighborhood, proving
+local compactness. If the unit group is finite the whole product is
+compact. Conversely its continuous surjective projection to the
+discrete unit group forces that group to be compact, hence finite:
+its singleton open cover must have a finite subcover. For $\Z$ its
+units are $\{1,-1\}$. Quotient assertions follow from T11.
+For both pure groups with finite coefficients, T03 is the stronger
+statement outside the classified range. No compactness claim for
+arbitrary infinite-unit coefficient rings is made.
+\end{proof}
+
+\section{Actual cohomology and ordinary de Rham}
+\label{sec:cohomology}
+
+All theory parameters below are precisely those of the existing
+\code{Geometric.OrdinaryTheory} and the M8 adapter: an admissible
+smooth-scheme domain, its coefficient algebra and grading, and C1--C5.
+No topological-cohomology axiom, continuity field, generation axiom,
+or semilinear pullback is added. The topologies concern automorphism
+groups of the already constructed finite-stage objects.
+
+\node{T14}{Cohomology.degreeOneDiagramContinuousEquiv}{T01; M8 A04}
+\begin{theorem}[The canonical adapters are homeomorphisms]\label{thm:t14}
+For any supplied ordinary theory $T$ and arbitrary commutative
+coefficients, upgrade its existing comparisons to
+\[
+ \D_T(C,S)\simeq_{\mathrm{top.grp}}\D_R(C,S),\qquad
+ \DG_T(C,S)\simeq_{\mathrm{top.grp}}\DG_R(C,S).
+\]
+The actual common targets are included. The induced scalar quotient
+comparisons are homeomorphisms for the quotient topologies. No
+classification, dimension bound, or algebraicity hypothesis is needed.
+\end{theorem}
+\begin{proof}
+Each component of the existing comparison is conjugation by the
+canonical degree-one linear equivalence, or the canonical diagonal
+algebra equivalence. It is a bijection between discrete factor groups,
+hence a homeomorphism. Its inverse is the opposite conjugation.
+Taking the product and restricting to the already identified diagram
+subgroups proves continuity in both directions. M8 already proves
+that these maps preserve scalar ranges. Descending each direction
+through the quotient topology proves the last assertion. This also
+shows that the topology defined directly from actual components in
+T01 agrees with transport through the adapter, rather than defining
+it by that transport in the first place.
+\end{proof}
+
+\node{T15}{Cohomology.localQuadraticContinuousReconstruction}{T09--T12, T14; M8 E01--E02}
+\begin{theorem}[Topological reconstruction for every supplied theory]\label{thm:t15}
+Under~\eqref{eq:H} and~\eqref{eq:A}, upgrade the existing maps
+\code{localQuadraticReconstruction}, \code{localGradedReconstruction},
+\code{domainQuadraticReconstruction}, and
+\code{domainGradedReconstruction} to topological group
+isomorphisms from $R^\times_{\mathrm{disc}}\times G_{\mathrm{Krull}}$
+to the corresponding actual diagram groups, each under its respective
+local-ring or integral-domain hypothesis. Upgrade the actual scalar
+quotients under the same respective hypotheses to Krull isomorphisms
+as well.
+
+The actual local/domain degree-one restriction equivalences and
+cofinal restriction equivalences are topological group isomorphisms
+already under~\eqref{eq:H}, without~\eqref{eq:A}. All existing
+classification, scalar, marking, and restriction squares still commute.
+The Krull conclusions also hold with~\eqref{eq:K} replacing~\eqref{eq:A}.
+\end{theorem}
+\begin{proof}
+Compose T09--T10 with the inverse of T14; these composites are the
+definitions of the existing actual reconstruction maps. Apply T11
+and T14 to the actual scalar quotients. The actual degree-one
+restriction is conjugate via T14 to the pure one of T10, so it and
+its inverse are continuous. For cofinal restriction use its existing
+square with the adapters and T12. All comparisons reuse the existing
+\code{MulEquiv}s, and equality of maps is unchanged by adjoining
+continuity proofs. Thus the already proved squares and whole-degree
+$u^q$ formulas remain literally the same statements after coercion.
+\end{proof}
+
+\node{T16}{Cohomology.realizationQuadraticContinuousEquiv}{T14; M8 E02}
+\begin{theorem}[Topological realization independence]\label{thm:t16}
+For two supplied eligible theories $T_1,T_2$ with the same coefficient
+ring and geometric data $k_0,k,n,C,S$, the existing quadratic and graded realization
+comparison equivalences are topological group isomorphisms, as are
+their existing scalar quotient comparisons. This requires no
+classification or algebraicity and allows the independent cohomology
+and weight universes, coefficient algebras and gradings, and admissible
+domains already admitted in M8. Under the classification
+hypotheses the comparisons preserve the unit and Galois parameters
+and commute with the upgraded cofinal maps.
+\end{theorem}
+\begin{proof}
+The existing realization comparison is the adapter for $T_1$ followed
+by the inverse adapter for $T_2$. Apply T14 twice. On scalar quotients
+apply its quotient version twice. The existing M8 component formulas
+identify these composites with the canonical actual realization
+comparisons, including the common target. Parameter and restriction
+compatibility are the existing commuting squares. There is no assumed
+morphism of theories and no new cohomology base-change theorem.
+\end{proof}
+
+\node{T17}{Cohomology.DeRham.quadraticContinuousReconstruction}{T13--T15; M8 E03}
+\begin{corollary}[Actual ordinary de Rham reconstruction]\label{cor:t17}
+Let $k$ have characteristic zero. For a supplied $C$, the marking and
+dimension hypotheses of~\eqref{eq:H}, and algebraic $k/k_0$, the
+existing ordinary de Rham maps upgrade to
+\[
+ k^\times_{\mathrm{disc}}\times G_{\mathrm{Krull}}
+       \simeq_{\mathrm{top.grp}}\D_{\mathrm{dR}}(C,S),\qquad
+ k^\times_{\mathrm{disc}}\times G_{\mathrm{Krull}}
+       \simeq_{\mathrm{top.grp}}\DG_{\mathrm{dR}}(C,S).
+\]
+The existing ordinary degree-one restriction is a topological
+isomorphism already without algebraicity. The scalar quotients are
+Krull isomorphic to $G$, with the quotient topology. Cofinal restriction
+and the canonical full-system specializations have the corresponding
+topological upgrades. These are unconditional specializations to
+the already constructed de Rham theory, not theorems asking for a
+supplied realization.
+\end{corollary}
+\begin{proof}
+Equip the ordinary diagram groups with their direct stage topologies
+from T01. The existing \code{quadraticTwistEquiv} and
+\code{gradedTwistEquiv} conjugate each actual stage and target by the
+canonical untwisting equivalence; their inverses do the opposite.
+As in T14 these are componentwise homeomorphisms between discrete
+factors. Compose their inverses with T15 instantiated at
+\texttt{Geometric.DeRham.ordinaryTheory k}. This is exactly the
+definition of the existing \code{quadraticReconstruction} and
+\code{gradedReconstruction}. Apply the same comparison to restriction,
+cofinal maps, and scalar quotients. At the checked revision, ordinary
+de Rham scalar subgroups, quotient equivalences, and cofinal restriction
+maps are not separately named. Their new algebraic wrappers are
+specified as follows. Let $a_C$ be the appropriate quadratic or graded
+twist equivalence. Define $Z_{\mathrm{dR}}$ as the range of the already
+defined ordinary scalar action. The existing action comparison gives
+$a_C(Z_{\mathrm{dR}})=Z_T$, so normality follows from normality of
+$Z_T$. The quotient equivalence is the map induced by $a_C$, followed
+by the existing theory-level scalar quotient equivalence. Its forward
+and inverse continuities follow from the quotient universal property
+as in T14. For $C'\subset C$, the ordinary cofinal equivalence is
+$a_{C'}^{-1}\circ r_T\circ a_C$, with inverse
+$a_C^{-1}\circ r_T^{-1}\circ a_{C'}$, where $r_T$ is the existing
+theory-level cofinal equivalence. The component formulas cancel the
+stagewise conjugations, so its forward map is literal stage selection
+and its target is unchanged. Both directions are continuous by the
+already established comparisons. These wrappers add no classification
+argument. The full
+family is supplied by the existing \code{fullCofinalSystem} under
+algebraicity. Finally the same argument works under~\eqref{eq:K}
+for a supplied $C$.
+\end{proof}
+
+The action remains $k$-linear on logarithmic generators with the
+covariant label $H\mapsto\sigma H$, and scales degree $q$ by $u^q$.
+It is not identified with semilinear transport of differential forms.
+Since a characteristic-zero field has infinitely many nonzero elements,
+$k^\times$ with the chosen discrete topology is infinite; these full
+de Rham diagram groups are locally compact but not compact. Their
+scalar quotients are profinite under the stated hypotheses.
+
+\section{Implementation order, regressions, and acceptance}
+\label{sec:implementation}
+
+\subsection{Proposed module boundaries}
+
+The following paths are proposals relative to
+\code{OrlikSolomon/HyperplaneGT/}. The architecture owner may split
+large leaves; topology is added above the existing M8 modules and
+never imported back into their pure algebraic foundations.
+\small
+\begin{longtable}{@{}p{.34\textwidth}p{.14\textwidth}p{.46\textwidth}@{}}
+\toprule Proposed module & Nodes & Dependencies and order\\\midrule\endhead
+\code{Topology/Basic.lean}&T01--T02&
+\code{Diagram/Basic}; product, induced, discrete, and group topology.
+Fix explicit/scoped topology instances and component APIs first.\\
+\code{Topology/Compact.lean}&T03&
+Basic; compact products and closed subspaces. No reconstruction import.\\
+\code{Topology/Restriction.lean}&T04&
+Basic; existing degree-one restriction and generation.\\
+\code{Topology/Krull.lean}&T05--T06&
+Pure coordinate/Galois geometry, \code{Mathlib.FieldTheory.KrullTopology};
+normalized coefficient tests and finite-adjoin facts.\\
+\code{Topology/GaloisCompact.lean}&T07&
+Krull; product compactness and finite orbits. The general field-group
+lemma should be stated without arrangements; supplied-$C$ is a corollary.\\
+\code{Topology/Classification.lean}&T09--T10&
+Basic, Restriction, Krull; existing local/domain classification leaves;
+\code{Mathlib.Topology.Algebra.ContinuousMonoidHom}.\\
+\code{Topology/Quotient.lean}&T11&
+Classification, GaloisCompact; existing scalar quotients and
+\code{Mathlib.Topology.Algebra.Group.Quotient}.\\
+\code{Topology/Cofinal.lean}&T12&
+Basic, Restriction; existing pure cofinal classification. Keep the
+literal-map continuity lemma general; import Mathlib's topological
+quotient-group module for the quotient assertion.\\
+\code{Topology/Consequences.lean}&T13&
+Compact, GaloisCompact, Classification, Quotient.\\
+\code{Cohomology/Topology/Adapter.lean}&T01--T02, T14&
+Actual theory topologies and adapter homeomorphisms; Topology/Basic
+and existing A04 comparisons. The T14 quotient portion follows in Main.\\
+\code{Cohomology/Topology/Main.lean}&T14--T16&
+Adapter, pure topological classification/quotients/cofinal maps and
+existing theory Main leaves, including Classification/Actions for
+T14's quotient comparisons and Mathlib's topological quotient-group
+module. No de Rham imports.\\
+\code{Cohomology/DeRham/Topology.lean}&T01--T02, T17&
+Theory topological Main plus existing DeRham Diagram/Reconstruction.
+Keep this specialization out of the conditional theory facade.\\
+\code{OrlikSolomon/Examples/HyperplaneGT/Topology.lean} (full path)&T08;
+regressions&
+Final topology consumers and rational functions. Keep the rational-function
+counterexample imports out of the library core.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+Give new facade modules their usual sorted imports in
+\code{OrlikSolomon.lean}; preserve the existing separation of pure,
+conditional-cohomological, and de Rham facades. No coefficient topology
+instance may leak from an example into the core. The optional exact
+criterion~\eqref{eq:K} belongs in the Krull leaf as an ordinary proposition,
+not an additional typeclass prerequisite of all M8 declarations.
+The pure Basic leaf implements only the pure-diagram portions of
+T01--T02. Their actual-theory portions are implemented in the adapter
+leaf, and their ordinary de Rham portions in its specialization leaf.
+These repeated node references specify specializations of the same
+statements, not imports from the pure core into a realization layer
+in the wrong direction.
+
+Each upgraded map should be built by adjoining
+\code{continuous_toFun} and \code{continuous_invFun} proofs to its
+existing \code{MulEquiv}. Export a theorem identifying
+\code{toMulEquiv} with that exact existing equivalence, plus the
+coercion/application formula. Retain the existing inverse and component
+formulas rather than restating the classification. Do not mark broad
+expansion equations as simp rules where that would interfere with
+ordinary two-sided equivalence cancellation. Existing normality
+instances for scalar ranges should be reused.
+
+\subsection{Required regressions}
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Characteristic-two coefficients.} Instantiate the Krull
+upgrade at $R=\Z/2$ and an algebraic geometric extension with nontrivial
+automorphism group. The scalar factor is trivial, so the actual
+quadratic and graded groups are topologically $G$. Check the original
+common target and the quotient projection formulas, not just group
+cardinalities. Nothing in the proof divides by $2$.
+\item \textbf{Nilpotent coefficients.} Use
+$R=\F_2[\epsilon]/(\epsilon^2)$, the existing dual-number fixture.
+The unit $1+\epsilon\ne1$ is detected on the target in degree one,
+although its square is $1$ and its degree-two action is trivial.
+Thus the topology and inverse proof cannot replace the target or
+degree-one component by degree two alone. The ring is finite local,
+so its diagram groups are profinite and the nonidentity scalar is a
+closed discrete factor.
+\item \textbf{Domain coefficients.} Use $R=\Z$ and check the domain
+upgrade and its underlying M8 map. The units $\{1,-1\}$ are finite,
+so the diagram is profinite even though the ring is infinite.
+At a coefficient field the local/domain topological maps agree
+because their underlying M8 maps agree and continuity proofs are
+proof-irrelevant.
+\item \textbf{Dimension and non-union closure.} Run the final wrappers
+at $n=2$. Reuse M8's actual cofinal subsystem with two singleton stages
+whose union is excluded and which admits an enlargement through a
+third hyperplane. Check that T02 and T12 call the cofinal enlargement
+lemmas; no union-closure field or silently replaced system is allowed.
+\item \textbf{Finite Galois group.} For any finite algebraic extension,
+take the finite intermediate field $E=k$ in~\eqref{eq:K0}. The trivial
+subgroup is open, so the Krull topology is discrete; $G$ is finite.
+The product and quotient statements specialize accordingly. A
+nontrivial quadratic extension tests both the section and quotient.
+\item \textbf{Infinite Galois group.} Use an algebraic closure of
+$\F_p$ with the full stable system, or a supplied algebraic extension
+with infinite $G$. T07 gives compactness; an infinite compact discrete
+space cannot exist, so $G$ is not discrete. For the algebraic-closure
+example, Frobenius is an automorphism since $x\mapsto x^p$ is
+injective and every element has a $p$th root. Its positive powers are
+distinct: if its $m$th power were identity then every element would
+be a root of $X^{p^m}-X$, forcing the algebraic closure to be finite.
+An algebraically closed field is infinite, since for a finite field
+the polynomial $1+\prod_{a\in k}(X-a)$ has no root. Thus this is a
+genuine infinite example. Pin a stage kernel as an open subgroup;
+do not accidentally give the whole field automorphism group the
+discrete topology through an \code{AlgEquiv} instance.
+\item \textbf{Failure without the Krull condition.} Formalize T08,
+including an actual finite-stable cofinal-system witness and the
+nontrivial translation automorphism. This checks that the new
+algebraicity wrapper hypothesis has a mathematical purpose. It must
+not be weakened to ``finite orbits'' while retaining Mathlib's Krull
+topology. Use the already proved rational-function degree theorem.
+\item \textbf{Unclassified and degenerate cases.} T01--T04 and T14
+retain arbitrary commutative coefficients, including the zero ring,
+and permit $n=0$. A dimension-zero system may have only empty stages;
+the common target must still be present. Do not instantiate the
+classified product theorem there. The topological argument evaluates
+formal coefficient vectors, not points of arrangement complements,
+so it does not impose a rational-point hypothesis. Existing M8
+point-free examples remain valid consumers of all applicable maps.
+\item \textbf{Actual theories and de Rham.} Reuse the supplied-theory
+fixtures for $\F_2$, the dual numbers, and $\Z$; their realization
+claims remain conditional on those supplied theories. Separately
+instantiate T17 with the constructed characteristic-zero de Rham
+theory, retaining ordinary $H^1$, full ordinary cohomology, and its
+untwisting square. Test both inverse continuities and all quotient
+topologies, not only continuity of the forward actions.
+\end{enumerate}
+
+\subsection{Book tracking and completion criteria}
+
+There are seventeen logical M9 nodes T01--T17, each with exactly one
+labelled statement in this document. Their dependencies are recorded
+next to the statements; M8 S03--S05 and E01--E03 remain formally
+proved algebraic inputs. The book should add separate M9 boxes and
+mark each as planned until the corresponding topology statement is
+formalized. A product theorem with pointwise topology alone does not
+complete its Krull wrapper. A continuous bijection without a proof of
+inverse continuity does not complete a topological-isomorphism node.
+
+Acceptance requires direct component-topology definitions, topological
+group instances, the explicit basis comparison~\eqref{eq:P}, actual
+quotient-topology proofs, cofinal and two-realization compatibility,
+and the ordinary de Rham specialization. Audit the inferred topology
+on $k\simeq_{k_0}k$ against \texttt{krullTopology k0 k}. Audit the
+underlying equivalence of every upgraded theorem against the exact
+M8 declaration. All new hypotheses must be visible, especially
+algebraicity or~\eqref{eq:K}; no assumption may assert a reconstruction
+conclusion. No M8 source statement or cohomology structure needs
+alteration. The resulting library proves the minimal requested
+discrete-coefficient theorem and makes no adic-coefficient claim.
+
+\end{document}
