@@ -16,11 +16,14 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*All seventeen topology statements in this chapter are planned.*
+*One statement is formalized, two are partly formalized and fourteen remain planned.*
+The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
+The actual-theory and ordinary de Rham clauses of T01–T02 remain planned.
+T05 proves the pointwise Galois topology and its exact finite-equation, geometric-fiber and selected-stage kernel descriptions.
 This chapter follows the [fifth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/topological_reconstruction_blueprint.tex), for milestone M9, tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
 Its seventeen named nodes T01–T17 each have one labelled statement and one separate box below.
-No box has a declaration attachment; the four earlier blueprints retain their separate counts.
-The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic inputs, and no continuity claim about them is formalized by this bootstrap.
+The four earlier blueprints retain their separate counts.
+The existing {ref "hyperplane-gt"}[M8 reconstruction equivalences] are algebraic inputs, and their reconstruction homeomorphisms remain planned.
 
 # The intended topology and hypotheses
 
@@ -43,7 +46,7 @@ A supplied cofinal system alone does not imply it.
 
 ## T01: finite-stage convergence
 
-:::node "def:t01"
+:::node "def:t01" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.continuous_stageTopology_iff) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.familyTopology) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.stageTopology) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.continuous_stageTopology_iff) (remaining := "The actual supplied-theory component topologies and adapters (#218), and the direct ordinary de Rham component topologies (#221), remain planned.")
 Give the existing quadratic and full graded diagram groups their subspace topologies in products of discrete stage-automorphism groups and the discrete common-target group.
 Define the actual supplied-theory and ordinary de Rham topologies directly from their own components as well.
 Use deliberate named or scoped instances without changing carriers, group laws or structure fields, and without installing a global discrete topology on all linear or algebra equivalences.
@@ -51,7 +54,7 @@ Use deliberate named or scoped instances without changing carriers, group laws o
 
 ## T02: groups and neighborhood bases
 
-:::node "lem:t02"
+:::node "lem:t02" (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.diagramIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.gradedIsTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.diagramT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.gradedT2Space) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.diagramTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.FiniteStageTopology.gradedTotallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.nhds_one_stageBasis) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.nhds_one_stageBasis) (remaining := "The corresponding group, separation and stage-and-target neighborhood basis results for actual supplied-theory diagrams (#218) and ordinary de Rham diagrams (#221) remain planned.")
 The intended topologies make all these groups Hausdorff and totally separated topological groups.
 At the identity, agreement with the identity on one selected stage and on the common target gives a neighborhood basis.
 Cofinal enlargement controls finitely many stage conditions; union closure and classification are not assumed.
@@ -77,10 +80,14 @@ This statement does not assert that every quadratic automorphism extends before 
 
 ## T05: finite equations and coordinate fibers
 
-:::node "lem:t05"
+:::node "lem:t05" (decl := OrlikSolomon.HyperplaneGT.galoisPointwiseTopology) (decl := OrlikSolomon.HyperplaneGT.galoisPointwise_nhds_one_basis) (decl := OrlikSolomon.HyperplaneGT.galoisPointwise_isTopologicalGroup) (decl := OrlikSolomon.HyperplaneGT.galoisPointwise_t2Space) (decl := OrlikSolomon.HyperplaneGT.galoisPointwise_totallySeparatedSpace) (decl := OrlikSolomon.HyperplaneGT.hyperplaneStabilizer_eq_fixingCoefficients) (decl := OrlikSolomon.HyperplaneGT.normalizedAffineCoefficients_smul) (decl := OrlikSolomon.HyperplaneGT.coordinateFiber_inj) (decl := OrlikSolomon.HyperplaneGT.galois_smul_coordinateFiber) (decl := OrlikSolomon.HyperplaneGT.galoisPointwise_nhds_one_hyperplaneBasis) (decl := OrlikSolomon.HyperplaneGT.galoisStagePermutation) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.mem_galoisStageKernel_iff) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.galoisPointwise_nhds_one_stageKernelBasis) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.galoisStagePermutationTopology_eq_pointwise)
 Pointwise convergence makes $`G` a Hausdorff totally separated topological group.
 Fixing a hyperplane is equivalent to fixing its finite set of normalized equation coefficients.
 For $`n\geq1`, the coordinate fibers $`x_0=a` identify the pointwise topology with the topology generated by finite hyperplane stabilizers, or by stage permutation kernels of the supplied system.
+The values $`a` range over the entire geometric field; the finite coefficient test includes the affine constant.
+The basis and selected-stage topology comparison use only cofinality, with no algebraicity or union-closure assumption.
+The arrangement-free pointwise group and separation results have no dimension hypothesis.
+A deliberate scope selects this named topology while preserving Mathlib's global Krull topology and every pre-existing field topology.
 :::
 
 ## T06: the exact Krull comparison
@@ -191,7 +198,8 @@ With discrete coefficient units, the full de Rham groups are locally compact and
 
 # Completion and limits
 
-A box remains planned until proved public declarations cover its whole statement.
+A box becomes formalized only when proved public declarations cover its whole statement.
+Coverage of some clauses is marked partly formalized with the remaining clauses listed.
 Pointwise reconstruction alone does not complete a Krull wrapper, and continuity of a bijection alone does not complete inverse continuity.
 Completion requires the direct component topologies and neighborhood bases, the actual quotient topologies, exact agreement with the underlying M8 maps, all cofinal and realization squares, and the ordinary de Rham specialization.
 The required regressions retain characteristic two, nilpotent and integral coefficients, finite and infinite Galois groups, the rational-function counterexample, non-union-closed cofinal systems, zero coefficients, dimension zero and point-free complements wherever the hypotheses allow them.
