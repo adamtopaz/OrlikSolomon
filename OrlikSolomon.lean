@@ -251,6 +251,7 @@ public import OrlikSolomon.HyperplaneGT.Reconstruction.Local
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Detection
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Geometry
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Local.Transfer
+public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.Scalar
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections.Geometry
 public import OrlikSolomon.HyperplaneGT.Reconstruction.Projections.Invariance
