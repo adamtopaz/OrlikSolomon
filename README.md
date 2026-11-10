@@ -101,7 +101,7 @@ and point-free-complement coverage is retained.
 
 **Milestone M9:** [topological hyperplane reconstruction](blueprint/topological_reconstruction_blueprint.tex)
 is tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
-Its 17 separately labelled statements T01–T17 include **12 formalized, 2 partly formalized and 3 planned**,
+Its 17 separately labelled statements T01–T17 include **13 formalized, 2 partly formalized and 2 planned**,
 counted separately from the four existing blueprints. The [chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
 describes finite-stage convergence, discrete coefficient units, and the pointwise Galois factor.
 T05 proves the pointwise group topology, finite normalized affine coefficient tests and, for
@@ -148,8 +148,12 @@ supplied-theory local/domain reconstruction and scalar quotient maps, preserving
 actual common target, whole-degree powers and covariant labels. Pointwise and actual
 degree-one/cofinal restriction need no field-extension condition; Krull wrappers use
 exactly the fixing condition or algebraicity. Raw cofinal maps retain arbitrary coefficients
-and dimensions. The ordinary reconstruction upgrades remain planned. No adic-coefficient
-claim is made.
+and dimensions. T16 upgrades all four existing two-realization group and scalar-quotient
+comparisons over arbitrary commutative coefficients and dimensions, without classification
+or algebraicity. Independent weight algebras, gradings, admissible domains, cohomology
+universes and the actual common targets are retained, as are the original parameter and
+cofinal squares under their old hypotheses. The ordinary reconstruction upgrades remain
+planned. No adic-coefficient claim is made.
 
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective
