@@ -322,6 +322,9 @@ public import OrlikSolomon.HyperplaneGT.Topology.Basic.Neighborhoods
 public import OrlikSolomon.HyperplaneGT.Topology.Compact
 public import OrlikSolomon.HyperplaneGT.Topology.Compact.Closed
 public import OrlikSolomon.HyperplaneGT.Topology.Compact.Finite
+public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact
+public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact.FiniteOrbits
+public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact.Stages
 public import OrlikSolomon.HyperplaneGT.Topology.Krull
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Comparison
 public import OrlikSolomon.HyperplaneGT.Topology.Krull.Hyperplanes
