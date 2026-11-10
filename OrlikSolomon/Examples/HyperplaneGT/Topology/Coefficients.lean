@@ -46,6 +46,10 @@ T11 (`thm:t11`).
 The compactness consumers distinguish the infinite ring of integers, with its finite unit
 group, from rational coefficients, whose infinitely many units prevent diagram compactness.
 Both rational scalar quotients remain compact. Blueprint: T13 (`cor:t13`).
+
+Final acceptance distinguishes the nonidentity dual-number target action from its trivial
+degree-two action through the actual topological classifier. The finite complex extension
+also retains Mathlib's literal discrete Krull topology.
 -/
 
 @[expose] public section
@@ -686,3 +690,56 @@ theorem zero_ring_zero_dimension_compact :
       CompactSpace (GradedDiagramAut (ZMod 1) C ∅) := ⟨inferInstance, inferInstance⟩
 
 end OrlikSolomon.HyperplaneGT.CompactnessTopologyExamples
+
+namespace OrlikSolomon.HyperplaneGT.TopologyAcceptanceExamples
+
+open scoped DiscreteCoefficientUnits FiniteStageTopology GaloisPointwise
+
+local instance : Fact (Nat.Prime 2) := ⟨by decide⟩
+
+/-- A nonidentity characteristic-two unit is detected in degree one while its square
+acts trivially on the whole degree-two component. The actual topological classifier
+recovers the unit, its scalar quotient kills it, and the full diagram group is compact.
+Blueprint: the nilpotent-coefficient regression for T10, T11 and T13. -/
+theorem dual_number_target_and_degree_two (A : (fullCofinalSystem ℝ ℂ 2).Stage)
+    (x : OSAlgebra (DualNumber (ZMod 2)) A.val.val)
+    (hx : x ∈ OSAlgebra.degree (DualNumber (ZMod 2)) A.val.val 2) :
+    let C := fullCofinalSystem ℝ ℂ 2
+    let a := LocalExamples.dualNumberUnit
+    let e := gradedClassificationContinuousEquiv (DualNumber (ZMod 2)) C Set.univ
+      (Set.mem_univ _) (by simp) (by decide)
+    let g := e (a, 1)
+    e.symm g = (a, 1) ∧
+      (a : DualNumber (ZMod 2)) ≠ 1 ∧
+      (a : DualNumber (ZMod 2)) ^ 2 = 1 ∧
+      (GradedDiagramAut.toQuadratic _ C Set.univ g).targetEquiv
+        (Finsupp.single 0 1) 0 = (a : DualNumber (ZMod 2)) ∧
+      g.stageEquiv A x = x ∧
+      GradedDiagramAut.scalarQuotientMap _ C Set.univ g = 1 ∧
+      @CompactSpace (GradedDiagramAut (DualNumber (ZMod 2)) C Set.univ)
+        (GradedDiagramAut.stageTopology _ C Set.univ) := by
+  dsimp only
+  have hp : (LocalExamples.dualNumberUnit : DualNumber (ZMod 2)) ^ 2 = 1 := by
+    ext <;> norm_num [LocalExamples.dualNumberUnit, pow_two]
+    decide
+  refine ⟨by simp, LocalExamples.dualNumberUnit_ne_one, hp, ?_, ?_, ?_, ?_⟩
+  · rw [toQuadratic_gradedClassificationContinuousEquiv,
+      quadraticAutContinuousEquiv_targetEquiv_apply]
+    simp only [Finsupp.smul_apply, Finsupp.single_eq_same, smul_eq_mul, mul_one]
+  · rw [gradedClassificationContinuousEquiv_stage_apply_of_mem_degree _ _ _ _ _ _ _ _ A 2 x hx,
+      hp, one_smul, galoisOSAlgebraEquiv_one, AlgEquiv.one_apply]
+  · rw [gradedClassificationContinuousEquiv_apply_pair, galoisGradedAut_one, mul_one]
+    exact (QuotientGroup.eq_one_iff _).mpr ⟨LocalExamples.dualNumberUnit, rfl⟩
+  · let : Finite (DualNumber (ZMod 2)) := by
+      change Finite (ZMod 2 × ZMod 2)
+      infer_instance
+    exact GradedDiagramAut.compactSpace_of_finite_units _ _ _
+      (Set.mem_univ _) (by simp) (by decide)
+
+/-- The genuine quadratic complex extension gives a finite automorphism group with
+Mathlib's literal Krull topology discrete. Blueprint: the finite-Galois regression. -/
+theorem complex_krull_finite_discrete :
+    Finite (ℂ ≃ₐ[ℝ] ℂ) ∧ @DiscreteTopology (ℂ ≃ₐ[ℝ] ℂ) (krullTopology ℝ ℂ) :=
+  ⟨inferInstance, krullTopology_discreteTopology_of_finiteDimensional ℝ ℂ⟩
+
+end OrlikSolomon.HyperplaneGT.TopologyAcceptanceExamples
