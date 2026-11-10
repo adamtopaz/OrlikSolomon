@@ -466,7 +466,7 @@ The chapter records each of the 41 labelled statements separately and explains t
 
 *Topological reconstruction in progress.*
 The fifth blueprint proposes the finite-stage convergence topology on the existing quadratic, graded and actual cohomology diagram groups, retaining the single common target.
-Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: thirteen formalized, zero partly formalized and four planned.
+Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: fourteen formalized, zero partly formalized and three planned.
 The direct pure, actual supplied-theory and constructed characteristic-zero ordinary topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved in every dimension.
 T05 proves the pointwise topological group and separation properties, normalized affine coefficient stabilizers, arbitrary geometric coordinate fibers and actual finite-stage kernel topology comparison for $`n\geq1`.
 T04 proves that the existing degree-one restriction is a topological embedding and that its inverse, whenever available, is continuous.
@@ -483,7 +483,8 @@ T12 upgrades the literal cofinal restrictions and their actual scalar quotients 
 The classification upgrades retain M8's local/domain, dimension and marking hypotheses; the basic and adapter topologies have broader scope.
 The old ordinary twists and their literal scalar quotient twists are homeomorphisms; final ordinary reconstruction upgrades remain planned for the constructed characteristic-zero realization. Arbitrary theory-level assertions remain conditional on a supplied eligible theory.
 T11 proves the exact scalar quotient homeomorphisms, closed scalar ranges and profinite quotients under the original local/domain classification hypotheses, without finiteness of coefficient units.
-The remaining actual-cohomology/ordinary reconstruction upgrades remain planned. No adic-coefficient result is claimed.
+T15 upgrades the exact supplied-theory local/domain quadratic and graded reconstruction, scalar quotients and actual restriction/cofinal equivalences. Pointwise and restriction/cofinal results need no field-extension condition; Krull versions use exactly the fixing condition or algebraicity.
+The remaining realization/cofinal and ordinary reconstruction upgrades remain planned. No adic-coefficient result is claimed.
 
 {include 1 OrlikSolomonBook.MainTheorem}
 
