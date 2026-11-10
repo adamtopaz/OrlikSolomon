@@ -16,11 +16,11 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame, Galois extraction and local quadratic classification are formalized; graded and cohomological reconstruction remain planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams with actual cohomology comparison and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, the local primitive criterion, trace modules, local detection, intrinsic coordinate spans, the recovered incidence permutation and its fixed frame, Galois extraction, local quadratic and full graded classification and both scalar quotients are formalized; domain and cohomological reconstruction remain planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Thirty-six boxes are formalized and five remain planned.
+Thirty-seven boxes are formalized and four remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
@@ -38,6 +38,7 @@ P01–P02 recognize every supported coordinate span using commuting functionals,
 I01–I04 recover the unique hyperplane permutation, transport actual incidence and projective lines, and fix every marked fiber and the full projective frame, over nonzero local coefficients with dimension at least two and zero among the marking constants.
 C04 extracts the base-field Galois homomorphism from that frame and generation by the marked constants; S01 identifies its kernel with one unique common primal scalar on every stage and the common target.
 S03 classifies the actual quadratic diagram over a nonzero local coefficient ring, with an explicit primal-scalar/Galois inverse and both inverse equations, retaining the common target.
+S04 proves that the existing degree-one restriction is a multiplicative equivalence with the full graded group, gives every-degree scalar powers, and identifies both literal scalar quotients with the Galois group through explicit sections and inverse laws.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
@@ -54,7 +55,7 @@ The graded group consists of natural graded unital $`R`-algebra equivalences of 
 The scalar $`u` acts in degree $`q` by $`u^q`, and the proposed quotient by the central scalar subgroup is $`k\simeq_{k_0}k`.
 These are abstract group equivalences; the blueprint supplies no topology on the groups.
 
-The local quadratic classification is proved first for an explicit Orlik–Solomon diagram, with no cohomology theory as an input; the full graded extension remains planned.
+The local quadratic classification is proved first for an explicit Orlik–Solomon diagram, with no cohomology theory as an input; the full graded extension follows from that classification.
 The existing geometric structure theorem then identifies the diagram of a supplied {name OrlikSolomon.Geometric.OrdinaryTheory}`Geometric.OrdinaryTheory` with that explicit diagram.
 Its hypotheses remain exactly C1–C5: products and grading, functorial pullbacks, the point and affine-line axioms, localization with residue and Gysin, and pair naturality with the right projection formula.
 No field may assume reconstruction, the Orlik–Solomon theorem, logarithmic generation or an action of field automorphisms on a theory.
@@ -392,10 +393,13 @@ For a supplied cofinal system, the proof needs exactly nonzero local coefficient
 
 ## S04: extension and the scalar quotient
 
-:::node "thm:s04"
+:::node "thm:s04" (decl := OrlikSolomon.HyperplaneGT.gradedAutEquiv) (decl := OrlikSolomon.HyperplaneGT.gradedAutEquiv_apply) (decl := OrlikSolomon.HyperplaneGT.gradedAutEquiv_symm_apply) (decl := OrlikSolomon.HyperplaneGT.gradedAutEquiv_left_inv) (decl := OrlikSolomon.HyperplaneGT.gradedAutEquiv_right_inv) (decl := OrlikSolomon.HyperplaneGT.scalarGradedAut) (decl := OrlikSolomon.HyperplaneGT.scalarGradedAut_stage_apply_of_mem_degree) (decl := OrlikSolomon.HyperplaneGT.scalarGradedAut_target_apply_of_mem_degree) (decl := OrlikSolomon.HyperplaneGT.gradedClassificationEquiv_stage_generator) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.scalarSubgroup_le_center) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.scalarQuotientEquiv) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.scalarQuotientEquiv) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.scalarQuotientEquiv_symm_apply) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.scalarQuotientEquiv_symm_apply) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.scalarQuotientSection_equiv) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.scalarQuotientSection_equiv) (decl := OrlikSolomon.HyperplaneGT.scalarQuotientEquiv_restriction)
 Restriction to degree one gives a group equivalence $`\operatorname{Aut}_{\mathrm{gr}}\simeq\operatorname{Aut}_2`.
-After S03, the classified automorphism extends by multiplying words of length $`q` by $`u^q` and applying $`P_\sigma`.
-The quotient of either group by its central scalar subgroup is canonically $`k\simeq_{k_0}k`.
+Its forward map is the existing canonical restriction, and its explicit inverse is the full scalar family times the direct Galois family supplied by S03.
+The full scalar construction checks both complete OS relator families. On every ordinary degree-$`q` component, including degree zero and the one common target, it acts by $`u^q`; the Galois factor is then applied on the stages.
+The quotient of either group by its literal central scalar subgroup is canonically $`k\simeq_{k_0}k`.
+The equivalences have explicit quotient projection formulas, inverse direct Galois sections and both inverse laws, and commute with actual graded restriction. The subgroups are the scalar ranges, which need not be the full centers.
+The equivalences retain precisely the S03 hypotheses: nonzero local coefficients, dimension at least two, zero among the generating marking constants and a supplied cofinal system. The pure scalar constructions and quotient maps remain valid over arbitrary commutative coefficients.
 This extension follows from classification, rather than an assertion that the algebra is quadratic.
 :::
 
@@ -444,7 +448,7 @@ For a product $`F\times F` and two distinct Galois automorphisms, the two coeffi
 The proof must also preserve the existing coverage of scheme complements without rational points.
 
 Further checks concern finite-stage compatibility without union closure, the single common marked target, recovery of coordinate spans without adding projection arrows, the full algebraic dual without a reflexivity shortcut, and extension to the graded algebra only after classification.
-These are requirements of the planned proof, rather than additional assumptions on the theorem.
+The completed pure-core steps prove these properties. The domain descent and theory-level applications retain the same requirements.
 
 Completion requires proved public declarations for every statement, generator and marking formulas, the inverse and group laws of the equivalences, the existing repository checks and independent coverage review, and the application to the constructed de Rham instance.
-Until then, the boxes above record the scope of work and claim no formalized reconstruction result.
+The remaining domain and theory-level boxes record planned work.

@@ -9,6 +9,7 @@ public import OrlikSolomon.HyperplaneGT.Reconstruction.LocalRing.Quotient
 public import OrlikSolomon.Examples.AffineLines
 public import OrlikSolomon.Examples.HyperplaneGT.Dual
 public import OrlikSolomon.Examples.HyperplaneGT.Local
+public import Mathlib.FieldTheory.PrimeField
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 
 /-!
@@ -138,6 +139,43 @@ theorem zero_coeff_degree_zero {k : Type u} [Field k]
     (a : (ZMod 1)ˣ) (x : OSAlgebra (ZMod 1) A) (hx : x ∈ degree (ZMod 1) A 0) :
     scalarEquiv (ZMod 1) A a x = x := by
   rw [scalarEquiv_apply_of_mem_degree _ _ _ 0 _ hx, pow_zero, one_smul]
+
+local instance : IsLocalRing (ZMod 4) := by
+  change IsLocalRing (ZMod (2 ^ 2))
+  infer_instance
+
+/-- The actual restriction inverse extends a nontrivial quadratic scalar over the nonfield
+local ring `ℤ/4`, retaining its common target and the nonzero nilpotent coefficient two. -/
+theorem mod_four_full_extension :
+    let C := fullCofinalSystem (ZMod 2) (ZMod 2) 2
+    let S : Set (ZMod 2) := {0}
+    let hgen : Subfield.closure S = ⊤ := Subsingleton.elim _ _
+    let g := (gradedAutEquiv (ZMod 4) C S (by simp [S]) hgen (by decide)).symm
+      (scalarQuadraticAut (ZMod 4) C S LocalExamples.modFourUnit)
+    g = scalarGradedAut (ZMod 4) C S LocalExamples.modFourUnit ∧
+      (GradedDiagramAut.toQuadratic (ZMod 4) C S g).targetEquiv (Finsupp.single 0 1) 0 = 3 ∧
+      g ≠ 1 ∧ (2 : ZMod 4) ≠ 0 ∧ (2 : ZMod 4) * 2 = 0 := by
+  dsimp only
+  let C := fullCofinalSystem (ZMod 2) (ZMod 2) 2
+  let S : Set (ZMod 2) := {0}
+  have hS : (0 : ZMod 2) ∈ S := by simp [S]
+  have hgen : Subfield.closure S = ⊤ := Subsingleton.elim _ _
+  let e := gradedAutEquiv (ZMod 4) C S hS hgen (by decide)
+  have hg : e.symm (scalarQuadraticAut (ZMod 4) C S LocalExamples.modFourUnit) =
+      scalarGradedAut (ZMod 4) C S LocalExamples.modFourUnit := by
+    apply e.injective
+    rw [e.apply_symm_apply]
+    exact (toQuadratic_scalarGradedAut (ZMod 4) C S LocalExamples.modFourUnit).symm
+  refine ⟨hg, ?_, ?_, by decide, by decide⟩
+  · rw [hg, toQuadratic_scalarGradedAut, scalarQuadraticAut_targetEquiv_apply]
+    simp [LocalExamples.modFourUnit]
+  · intro he
+    have hv := congrArg (fun f : GradedDiagramAut (ZMod 4) C S ↦
+      (GradedDiagramAut.toQuadratic (ZMod 4) C S f).targetEquiv
+        (Finsupp.single (0 : Fin 2) 1) 0) he
+    rw [hg, toQuadratic_scalarGradedAut] at hv
+    have hz : (3 : ZMod 4) = 1 := by simpa [LocalExamples.modFourUnit] using hv
+    exact (by decide : (3 : ZMod 4) ≠ 1) hz
 
 /-- With no geometric labels in dimension zero, the same common target still detects the
 nonidentity full scalar family. This uses only the pure construction, not reconstruction.
