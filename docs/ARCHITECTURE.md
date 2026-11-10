@@ -2606,9 +2606,10 @@ and local/domain overlap remain literal. General projection continuity retains a
 commutative coefficients and dimensions. The core imports only the necessary pure topology
 classifiers and old quotients, never cohomology, de Rham or Examples. The optional facade
 activates no scope and no old facade, declaration or simp attribute changes. Durable
-`Coefficients` consumers retain the nonidentity characteristic-two nilpotent scalar on the
-original target before its quotient class becomes one, genuine binary conjugation classes
-under the Krull maps and degree-one restriction, and scalar minus one over nonlocal `ℤ`.
+`Coefficients` consumers retain the nonidentity unit `1 + ε` over characteristic-two dual
+numbers on the original target before its quotient class becomes one, genuine binary
+conjugation classes under the Krull maps and degree-one restriction, and scalar minus one
+over nonlocal `ℤ`.
 
 ### Hypotheses, review and book coverage
 

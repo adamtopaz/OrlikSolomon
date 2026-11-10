@@ -33,9 +33,9 @@ The graded consumers retain all sixteen bare inverse cancellations, whole-degree
 literal restriction and actual full marking/inclusion squares. Concrete fixtures use the
 same original scalar and Galois families through the full-algebra homeomorphisms.
 
-The literal scalar quotient consumers detect a nonidentity nilpotent unit before taking
-the quotient, and retain complex conjugation afterwards. They test both actual quotient
-topologies, degree-one restriction and the nonlocal integer-domain case.
+The literal scalar quotient consumers detect the nonidentity unit `1 + ε` over dual numbers
+before taking the quotient, and retain complex conjugation afterwards. They test both actual
+quotient topologies, degree-one restriction and the nonlocal integer-domain case.
 
 Blueprint: T01 (`def:t01`), T02 (`lem:t02`), T09 (`thm:t09`), T10 (`cor:t10`) and
 T11 (`thm:t11`).
@@ -507,9 +507,9 @@ section Pointwise
 
 open scoped GaloisPointwise
 
-/-- The actual common target detects the nonidentity nilpotent unit over the nonfield
-local ring of characteristic-two dual numbers. Both literal scalar quotients kill it,
-and both new quotient homeomorphisms send its class to the identity. -/
+/-- The actual common target detects the nonidentity unit `1 + ε` over the nonfield
+local ring of characteristic-two dual numbers, with `ε ≠ 0` and `ε² = 0`. Both scalar
+quotients kill it, and both new quotient homeomorphisms send its class to the identity. -/
 theorem dual_number_scalar_quotients :
     let C := fullCofinalSystem ℝ ℂ 2
     let a := LocalExamples.dualNumberUnit
