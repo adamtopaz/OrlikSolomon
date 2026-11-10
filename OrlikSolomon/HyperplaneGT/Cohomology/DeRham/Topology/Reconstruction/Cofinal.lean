@@ -17,3 +17,5 @@ target. The proved ordinary inverse maps and honest new quotient congruences are
 under precisely the old marking and dimension hypotheses. This optional facade activates
 no scope. Blueprint: the cofinal clauses of T17 (`cor:t17`).
 -/
+
+@[expose] public section

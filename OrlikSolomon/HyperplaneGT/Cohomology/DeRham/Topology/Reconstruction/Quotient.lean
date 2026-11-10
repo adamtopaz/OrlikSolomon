@@ -15,3 +15,5 @@ The six exact scalar quotient classifiers and literal quotient degree-one restri
 retain the original ordinary diagram groups, scalar ranges, targets and Mathlib quotient
 topologies. This optional facade activates no scope. Blueprint: T17 (`cor:t17`).
 -/
+
+@[expose] public section
