@@ -2586,6 +2586,41 @@ representative squares. The approved import of the general scalar comparisons in
 `Cohomology/Main/Classification` adds no local/domain hypothesis to these results. The
 optional facade activates no scope and imports no concrete de Rham instance.
 
+`Cohomology/DeRham/Topology/Basic` defines the ordinary quadratic and full graded
+finite-stage topologies directly on their original discrete complete H¹ and ordinary
+total-cohomology automorphism products and original subgroups. Both retain the one
+original two-puncture target, independently of dimension or marking availability.
+Named `instance_reducible` values and instances only in the existing parent
+`FiniteStageTopology` scope expose the product/subgroup structure. Group, T2 and total
+separation, whole component continuity and complete-stage-plus-target clopen normal
+kernel bases hold in every dimension, with only the existing characteristic-zero
+field parameters. Downward equality uses the old untwisting/generator comparisons;
+no topology is defined through a classifier or twist.
+
+`Topology/Actions` reuses the OLD ordinary scalar/Galois actions and adds genuinely new
+ordinary scalar ranges, their centrality/normality, Mathlib quotient maps, direct Galois
+sections, quotient twists and algebraic quotient-to-G wrappers. Its direct project
+import is OLD `DeRham/Reconstruction`, where the existing ordinary actions are named;
+its inherited old classification imports are algebraic and introduce no M9 topology
+dependency or new argument. `Topology/Cofinal` similarly imports only OLD
+`DeRham/Reconstruction` and OLD `Cohomology/Main/Cofinal` to name literal ordinary stage
+selection and its algebraic cofinal equivalences. General maps retain all dimensions
+and the identical common target; inverse equivalences retain exactly the old zero-
+marking, field-generation and n≥2 hypotheses, without algebraicity or K.
+
+`Topology/Comparison` imports Basic and Actions, and adjoins both continuity directions
+to the exact OLD quadratic/graded twist MulEquivs and the NEW algebraic scalar-quotient
+twists. Quotient topologies are the literal Mathlib quotient-group topologies, with
+forward/inverse representative formulas obtained from the quotient universal property.
+Untwisting identifies only the actual diagonal with ordinary total cohomology, not the
+whole Laurent algebra or all weight-zero classes. All stage, original target and
+k-linear covariant logarithmic actions remain the old ones. Forward-expansion equations
+remain plain rewrites so ordinary inverse cancellation survives. The two algebraic-only
+wrapper leaves import no new topology leaf. Final reconstruction/classification,
+restriction/cofinal homeomorphisms, Krull/full-system wrappers and the explicit ordinary
+topology facade remain W18/#222; W17 completes only the ordinary T01/T02 clauses and
+records T17 prerequisites without certifying T17.
+
 ### Hypotheses, review and book coverage
 
 Claude approves the exact public statements of **T09–T12 and T15–T17**, and the
@@ -2606,18 +2641,18 @@ retain zero coefficients and dimension zero; ordinary specializations retain the
 existing field and characteristic-zero parameters. Literal restriction/cofinal upgrades
 do not acquire algebraicity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **8 formalized /
-2 partial / 7 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **10 formalized /
+0 partial / 7 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **8 formalized / 2 partial / 7 planned**; T03–T09 and T14
-are complete. T01–T02 cover the pure and actual supplied-theory diagrams; their ordinary de Rham
-clauses remain planned.
+unchanged. The current M9 count is **10 formalized / 0 partial / 7 planned**; T01–T09 and T14
+are complete. T01–T02 include pure, actual supplied-theory and constructed ordinary de Rham
+diagrams; the ordinary clauses retain the existing characteristic-zero field parameters.
 
-Book coverage is incremental and clause-complete. T01–T02 remain partial until pure,
-actual-theory and ordinary specializations are all present; T14 includes scalar-quotient
-adapter comparisons. A pointwise-only classifier does not complete a node's Krull clause,
+Book coverage is incremental and clause-complete. T01–T02 now include all three pure,
+actual-theory and ordinary specializations; T14 includes scalar-quotient adapter comparisons.
+The new ordinary twist and algebraic scalar/cofinal prerequisites do not complete T17. A pointwise-only classifier does not complete a node's Krull clause,
 and a continuous bijection does not complete a topological-isomorphism node. Review each
 attachment against its entire statement; node counts and standard-axiom checks alone do
 not establish semantic coverage.
