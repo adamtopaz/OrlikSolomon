@@ -249,6 +249,8 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Actions
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Basic
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Cofinal
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Comparison
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Basic
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology.Reconstruction.Krull
 public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Untwist
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Actions
