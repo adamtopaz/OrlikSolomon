@@ -256,10 +256,16 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Basic
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Comparison
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Adapter.Quotient
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Basic
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull.Domain
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Krull.Local
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Quotient
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Quotient.Domain
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Classification.Quotient.Local
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Cofinal.Basic
+public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Cofinal.Restriction
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Basic
 public import OrlikSolomon.HyperplaneGT.Cohomology.Topology.Main.Realization.Compatibility
 public import OrlikSolomon.HyperplaneGT.Diagram.Basic
