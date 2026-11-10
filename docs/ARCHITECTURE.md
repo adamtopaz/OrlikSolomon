@@ -2191,8 +2191,8 @@ The reconstruction hypotheses are exactly a nonzero local coefficient ring, `2 �
 `0 ∈ S` and `Subfield.closure S = ⊤`, together with the supplied arbitrary cofinal system.
 Fields and coefficients have independent universes. No perfectness, algebraicity,
 coefficient-field structure, union closure, scalar/monomiality premise, arbitrary projection
-arrow or cohomology import is introduced. The scalar subgroup is Mathlib's actual range and
-center; no competing classification group is defined. The three leaves and final statements
+arrow or cohomology import is introduced. The scalar subgroup is the actual homomorphism
+range, contained in Mathlib's center; no competing classification group is defined. The three leaves and final statements
 have [Claude's explicit S03 approval](https://github.com/adamtopaz/OrlikSolomon/issues/170#issuecomment-6755665076).
 S04 graded/quotient equivalences and S05 domain descent remain separate.
 
