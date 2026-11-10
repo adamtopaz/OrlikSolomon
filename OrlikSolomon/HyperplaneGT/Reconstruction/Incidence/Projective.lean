@@ -8,6 +8,7 @@ module
 public import Mathlib.Algebra.Group.End
 public import OrlikSolomon.HyperplaneGT.Geometry.Collineation.Span
 public import OrlikSolomon.HyperplaneGT.Geometry.Coordinates.Incidence
+public import OrlikSolomon.HyperplaneGT.Reconstruction.Incidence.Relations
 import Mathlib.LinearAlgebra.Projectivization.Independence
 
 /-!
@@ -19,8 +20,9 @@ describe the lines through the constant point; guarded dependent triples describ
 lines. Thus preservation of the actual affine incidence relations gives preservation of
 projective lines in both directions.
 
-The geometric constructions use an arbitrary field and do not require a coefficient ring,
-locality or a dimension bound. Blueprint: the geometric extension in I03 (`lem:i03`).
+The pure geometric constructions use an arbitrary field and do not require a coefficient
+ring, locality or a dimension bound. Applied to the recovered diagram permutation, they give
+its actual projective action. Blueprint: I03 (`lem:i03`).
 -/
 
 @[expose] public section
@@ -31,7 +33,7 @@ namespace OrlikSolomon.HyperplaneGT
 
 open scoped LinearAlgebra.Projectivization
 
-universe u v
+universe u v r
 
 variable {k : Type u} [Field k] {n : ℕ}
 
@@ -317,5 +319,87 @@ theorem preservesProjectiveLines_projectiveExtension (π : Equiv.Perm (Hyperplan
     ← isCollinear_triple_iff_mem_projective_span_pair _ _ _
       ((projectiveExtension π).injective.ne hpq)]
   exact (projectiveExtension_collinear_iff π hp ht p q r hpq (Ne.symm hrp) (Ne.symm hrq)).symm
+
+namespace DiagramAut
+
+variable {k₀ : Type v} [Field k₀] [Algebra k₀ k]
+  {R : Type r} [CommRing R] [IsLocalRing R] {C : CofinalSystem k₀ k n} {S : Set k₀}
+
+/-- Extend the actual recovered label permutation to coefficient projective space by fixing
+the constant point. Blueprint: I03 (`lem:i03`). -/
+def projectivePerm (g : DiagramAut R C S) (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) :
+    Equiv.Perm (ℙ k (Fin (n + 1) → k)) :=
+  projectiveExtension (g.hyperplanePerm hS hn)
+
+/-- The actual projective action fixes the deliberately omitted constant point. -/
+@[simp]
+theorem projectivePerm_constantPoint (g : DiagramAut R C S)
+    (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) :
+    g.projectivePerm hS hn (constantPoint k n) = constantPoint k n :=
+  projectiveExtension_constantPoint _
+
+/-- On hyperplane coefficient points the projective action is the recovered permutation. -/
+@[simp]
+theorem projectivePerm_coefficientPoint (g : DiagramAut R C S)
+    (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) (H : Hyperplane k n) :
+    g.projectivePerm hS hn (coefficientPoint H) =
+      coefficientPoint (g.hyperplanePerm hS hn H) :=
+  projectiveExtension_coefficientPoint _ H
+
+/-- Incidence reconstruction makes the actual projective permutation preserve every line
+as an exact set image, so the inverse has the same property. Blueprint: I03 (`lem:i03`). -/
+theorem preservesProjectiveLines_projectivePerm (g : DiagramAut R C S)
+    (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) :
+    PreservesProjectiveLines (g.projectivePerm hS hn) :=
+  preservesProjectiveLines_projectiveExtension _ (g.parallel_hyperplanePerm_iff hS hn)
+    (g.dependentTriple_hyperplanePerm_iff hS hn)
+
+/-- The recovered projective permutations form a group action with the same composition
+order as the actual diagram and its hyperplane action. -/
+def projectiveAction (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) :
+    DiagramAut R C S →* Equiv.Perm (ℙ k (Fin (n + 1) → k)) :=
+  projectiveExtensionHom.comp (hyperplaneAction hS hn)
+
+/-- The projective action homomorphism evaluates to the named projective permutation. -/
+@[simp]
+theorem projectiveAction_apply (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) (g : DiagramAut R C S) :
+    projectiveAction hS hn g = g.projectivePerm hS hn := rfl
+
+/-- The identity diagram induces the identity projective permutation. -/
+@[simp]
+theorem projectivePerm_one (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) :
+    (1 : DiagramAut R C S).projectivePerm hS hn = 1 :=
+  (projectiveAction hS hn).map_one
+
+/-- Recovered projective permutations respect diagram composition. -/
+theorem projectivePerm_mul (g h : DiagramAut R C S) (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) :
+    (g * h).projectivePerm hS hn = g.projectivePerm hS hn * h.projectivePerm hS hn :=
+  (projectiveAction hS hn).map_mul g h
+
+/-- Composition of diagrams acts by successive projective evaluation. -/
+@[simp]
+theorem projectivePerm_mul_apply (g h : DiagramAut R C S) (hS : (0 : k₀) ∈ S)
+    (hn : 2 ≤ n) (p : ℙ k (Fin (n + 1) → k)) :
+    (g * h).projectivePerm hS hn p = g.projectivePerm hS hn (h.projectivePerm hS hn p) := by
+  rw [projectivePerm_mul]
+  rfl
+
+/-- Inversion of diagrams gives the ordinary inverse projective permutation. -/
+@[simp]
+theorem projectivePerm_inv (g : DiagramAut R C S) (hS : (0 : k₀) ∈ S) (hn : 2 ≤ n) :
+    g⁻¹.projectivePerm hS hn = (g.projectivePerm hS hn)⁻¹ :=
+  (projectiveAction hS hn).map_inv g
+
+/-- The inverse diagram cancels the projective action on the left. -/
+theorem projectivePerm_inv_apply_apply (g : DiagramAut R C S) (hS : (0 : k₀) ∈ S)
+    (hn : 2 ≤ n) (p : ℙ k (Fin (n + 1) → k)) :
+    g⁻¹.projectivePerm hS hn (g.projectivePerm hS hn p) = p := by simp
+
+/-- The inverse diagram cancels the projective action on the right. -/
+theorem projectivePerm_apply_inv_apply (g : DiagramAut R C S) (hS : (0 : k₀) ∈ S)
+    (hn : 2 ≤ n) (p : ℙ k (Fin (n + 1) → k)) :
+    g.projectivePerm hS hn (g⁻¹.projectivePerm hS hn p) = p := by simp
+
+end DiagramAut
 
 end OrlikSolomon.HyperplaneGT
