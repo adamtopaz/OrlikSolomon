@@ -16,11 +16,12 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Two statements are formalized, two are partly formalized and thirteen remain planned.*
+*Three statements are formalized, two are partly formalized and twelve remain planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
 The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 The actual-theory and ordinary de Rham clauses of T01–T02 remain planned.
 T05 proves the pointwise Galois topology and its exact finite-equation, geometric-fiber and selected-stage kernel descriptions.
+T07 proves pointwise compactness from finite scalar orbits, with supplied-system and algebraic corollaries.
 This chapter follows the [fifth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/topological_reconstruction_blueprint.tex), for milestone M9, tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
 Its seventeen named nodes T01–T17 each have one labelled statement and one separate box below.
 The four earlier blueprints retain their separate counts.
@@ -102,10 +103,15 @@ For $`n\geq1`, cofinal coordinate fibers place a stage stabilizer inside the fix
 
 ## T07: compactness from finite orbits
 
-:::node "prop:t07"
+:::node "prop:t07" (decl := OrlikSolomon.HyperplaneGT.surjective_of_mem_galoisOrbit) (decl := OrlikSolomon.HyperplaneGT.galoisPointwise_compactSpace_of_finite_orbits) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.galoisOrbit_finite) (decl := OrlikSolomon.HyperplaneGT.CofinalSystem.galoisPointwise_compactSpace) (decl := OrlikSolomon.HyperplaneGT.galoisOrbit_finite_of_isAlgebraic) (decl := OrlikSolomon.HyperplaneGT.galoisPointwise_compactSpace_of_isAlgebraic)
 If every element of $`k` has finite $`G`-orbit, the pointwise group is profinite.
 A supplied cofinal system with $`n\geq1` implies this orbit condition, and algebraicity also implies it directly.
 Finite orbits alone are not substituted for the Krull comparison condition.
+The generic theorem needs neither arrangements nor algebraicity, and adds compactness to T05's group and separation properties on the original pointwise topology.
+Evaluation into the product of finite actual orbits has closed image cut out by the field and base-scalar equations.
+An orbit-compatible field endomorphism is proved surjective on each finite orbit; no assertion that a limit of bijections is bijective is assumed.
+The supplied-system argument uses arbitrary geometric coordinate fibers in a finite stable stage; the algebraic argument reuses the minimal-polynomial orbit bound.
+No normality, separability or global compactness instance is required.
 :::
 
 ## T08: the rational-function counterexample
