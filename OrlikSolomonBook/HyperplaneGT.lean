@@ -16,11 +16,11 @@ file := "hyperplane-gt"
 htmlSplit := .never
 %%%
 
-*The coordinate and Galois geometry, low-degree algebra, marked diagrams and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers and local primitive criterion are formalized; the reconstruction theorem is planned.*
+*The coordinate and Galois geometry, low-degree algebra, marked diagrams and direct Galois action, universal module and diagram action, pure coordinate reconstruction, full-dual coordinates, universal centralizers, trace modules and local detection are formalized; the reconstruction theorem is planned.*
 This chapter follows the project's [fourth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/cohomological_hyperplane_gt_blueprint.tex), for milestone M8.
 The blueprint has 38 named groups, G01–E03, containing 41 separately labeled statements.
 U01, U04 and L02 each contain a definition and a lemma; each statement has its own box and status below.
-Twenty-four boxes are formalized and seventeen remain planned.
+Twenty-six boxes are formalized and fifteen remain planned.
 G01–G03 identify hyperplanes with coefficient points and prove the incidence and coordinate graph formulas over every field, including characteristic two and dimension zero.
 G04–G06 construct the coefficient Galois action, finite stable enlargements over algebraic extensions, and cofinal systems with actual marking arrows to a single common target.
 A01 gives the canonical generator basis in degree one, its inclusion naturality and generation of the whole OS algebra, over every commutative coefficient ring.
@@ -32,6 +32,7 @@ C01–C03 recover a unique field automorphism from an arbitrary projective colli
 U03 and U05 give the full algebraic dual, its inverse-precomposition action and the local-ring primitive-coordinate criterion for arbitrary index types.
 U04 gives the determinant and centralizer, their exact equations on all parallel pairs and guarded dependent triples, and paired invariance under the actual diagram action.
 L01–L03 give the surjective trace map and its full kernel, inertia and decomposition with all four annihilator identities, and restriction from a graph to the actual vertical free span.
+L04 transfers graph coefficients over any commutative ring by cancelling a specified unit; L05 detects the unique unit-supported graph functional over a nonzero local ring in dimension at least two.
 The existing structure theorems and de Rham instance are inputs to the proposed application, rather than proofs of its new reconstruction statements.
 
 # The proposed theorem and its inputs
@@ -240,18 +241,21 @@ The graph identifies each hyperplane of its base with exactly one vertical trace
 
 ## L04: the local transfer calculation
 
-:::node "lem:l04"
+:::node "lem:l04" (decl := OrlikSolomon.eq_of_unit_transfer) (decl := OrlikSolomon.HyperplaneGT.exists_vertical_transfer_pair) (decl := OrlikSolomon.HyperplaneGT.centralizerVerticalRestriction) (decl := OrlikSolomon.HyperplaneGT.local_transfer)
 Suppose $`p_z\lambda=0`, the map $`C(\lambda)\to P_z` is onto, and $`\lambda_{H_0}` is a unit for a graph $`H_0`.
 Then a graph distinct and parallel to $`H_0` has the same value under $`\lambda` as any graph distinct from and meeting $`H_0`.
-The calculation uses two vertical trace labels and division only by the specified unit coordinate.
+The calculation derives two distinct actual vertical trace labels and cancels only the specified unit coordinate.
+The coefficient ring may be zero and need not be local or a domain; the projection target is the full dual of the actual supported vertical module.
 :::
 
 ## L05: detecting one supported coordinate
 
-:::node "thm:l05"
+:::node "thm:l05" (decl := OrlikSolomon.HyperplaneGT.local_detection_iff) (decl := OrlikSolomon.HyperplaneGT.existsUnique_unit_delta_of_local_detection) (decl := OrlikSolomon.HyperplaneGT.unit_smul_lapply_eq_iff)
 For $`n\ge2` and nonzero local $`R`, a functional is $`u\delta_H` for a unit $`u` and a graph $`H` exactly when it is primitive, vanishes under $`p_z`, vanishes at some graph coordinate, and has surjective centralizer projection to $`P_z`.
 The graph and unit are unique, and its centralizer is $`D_H`.
 No stronger quotient-isomorphism hypothesis is added.
+Primitivity is literal surjectivity of the functional, and the centralizer uses the actual universal quadratic relation span.
+The dimension bound is necessary: over geometric $`\mathbb{F}_3` in dimension one and coefficient $`\mathbb{F}_2`, a sum of two distinct point deltas satisfies all four conditions but has two nonzero support coordinates.
 :::
 
 # Recognizing the coordinate spans
