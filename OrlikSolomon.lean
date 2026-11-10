@@ -174,6 +174,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc.Automorphisms
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc.Counterexample
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc.Field
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Realizations
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.Realizations.Reconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Systems
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
 public import OrlikSolomon.Examples.HyperplaneGT.Universal
