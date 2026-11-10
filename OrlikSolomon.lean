@@ -147,6 +147,7 @@ public import OrlikSolomon.Examples.Geometric.NonAffine.Sections
 public import OrlikSolomon.Examples.Geometric.NonAffine.SheafCech
 public import OrlikSolomon.Examples.HyperplaneGT.Collineation
 public import OrlikSolomon.Examples.HyperplaneGT.Coordinates
+public import OrlikSolomon.Examples.HyperplaneGT.DeRhamReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.DegreeOne
 public import OrlikSolomon.Examples.HyperplaneGT.Diagram
 public import OrlikSolomon.Examples.HyperplaneGT.DomainClassification
@@ -228,6 +229,10 @@ public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Examples
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Graded
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Maps
 public import OrlikSolomon.HyperplaneGT.Cohomology.Adapter.Quadratic
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Diagram
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Reconstruction
+public import OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Untwist
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Actions
 public import OrlikSolomon.HyperplaneGT.Cohomology.Main.Classification
