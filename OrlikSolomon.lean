@@ -166,6 +166,10 @@ public import OrlikSolomon.Examples.HyperplaneGT.Projections
 public import OrlikSolomon.Examples.HyperplaneGT.QuadraticKernel
 public import OrlikSolomon.Examples.HyperplaneGT.TheoryReconstruction
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Coefficients
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc.Automorphisms
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc.Counterexample
+public import OrlikSolomon.Examples.HyperplaneGT.Topology.RatFunc.Field
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Realizations
 public import OrlikSolomon.Examples.HyperplaneGT.Topology.Systems
 public import OrlikSolomon.Examples.HyperplaneGT.Trace
