@@ -2536,6 +2536,40 @@ through classification, no cohomology realization is claimed, and no new core im
 acquires rational-function examples. The Krull/pointwise distinction itself holds over any
 constant field, without finite, algebraic, normality or perfectness assumptions.
 
+W09 implements `Topology/Classification/Quadratic` within the approved single-leaf layout.
+The [approved exact T09 statements](https://github.com/adamtopaz/OrlikSolomon/issues/213#issuecomment-6770781523)
+retain the M8 local/domain coefficient hypotheses, `2 ≤ n`, zero among the generating marking
+constants and an arbitrary supplied cofinal system. The three named topology definitions
+`discreteUnitsTopology`, `coefficientGaloisPointwiseTopology` and
+`coefficientGaloisKrullTopology` are explicitly `@[instance_reducible]` so inherited
+Mathlib discrete/product instances see their existing representations. Only the deliberate
+`DiscreteCoefficientUnits` scope registers unit topology instances; there are no global
+Units/equivalence discrete instances or changes to coefficient/field topologies. Both
+parameter topologies are literal products defined before reconstruction. The Krull value
+uses the actual global `krullTopology` even in the pointwise scope.
+
+The six continuous multiplicative equivalences adjoin both continuity proofs to the exact
+old local/domain maps, with public underlying-map, function and inverse-coordinate equations.
+The simultaneous stage-and-target kernel preimage is exactly the unit identity times the
+actual geometric stage kernel. Its raw scalar/Galois version only needs nontrivial
+commutative coefficients, with no dimension or marking restriction; the common target
+forces the unit before basis independence detects labels. The classifier itself retains all
+M8 hypotheses. T02/T05 bases and Mathlib's neighborhood-at-one continuity API prove both
+directions; no compactness argument, incidence reconstruction or fraction-field descent is
+repeated. Pointwise needs no fixing condition or algebraicity; the Krull wrappers use
+exactly the explicit ordinary condition or `Algebra.IsAlgebraic`.
+
+Public imports supply the ContinuousMulEquiv/product data, Basic/Krull and the exact
+`Domain/Descent` maps, which already re-export `LocalRing/Quadratic`. The neighborhood proof
+import is private. There is no cohomology or Examples core import, and no existing M8 map,
+simp attribute or facade changes. Plain expansion rewrites preserve bare two-sided inverse
+cancellation. `Examples/HyperplaneGT/Topology/Coefficients` retains the earlier boundary
+consumers and adds actual nilpotent-local, integer-domain and complex-conjugation fixtures,
+whole marking squares, exact kernel tests and all six inverse-cancellation pairs. The
+zero-ring parameter topology and dimension-zero raw target test do not extend the
+classification to those boundary parameters. W10 will assemble the separate optional
+Classification facade; no additional leaf split was needed for W09.
+
 `Examples/HyperplaneGT/Topology/Infinite/Frobenius` constructs the actual base-field
 Frobenius on `AlgebraicClosure (ZMod p)` for every prime `p`, reusing Mathlib's equivalence
 and iterate APIs. Distinct powers follow from the finite root bound for
@@ -2567,12 +2601,12 @@ retain zero coefficients and dimension zero; ordinary specializations retain the
 existing field and characteristic-zero parameters. Literal restriction/cofinal upgrades
 do not acquire algebraicity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **6 formalized /
-2 partial / 9 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **7 formalized /
+2 partial / 8 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **6 formalized / 2 partial / 9 planned**; T03–T08 are
+unchanged. The current M9 count is **7 formalized / 2 partial / 8 planned**; T03–T09 are
 complete, and T01–T02 cover the pure diagrams while their actual-theory and ordinary clauses
 remain planned.
 
