@@ -1831,7 +1831,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/GaloisAction` | S02 consumers: all-length relators, zero coefficients, dimension zero, full marking squares, a characteristic-two cubic relation and nontrivial complex conjugation on an integral OS generator | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
 | `Examples/HyperplaneGT/Diagram` | A03 consumers: concrete constructors, zero coefficients, characteristic-two relations, Laurent-polynomial marking maps, and dimension-zero target interchange | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `Examples/HyperplaneGT/Trace` | L01–L03 consumers: discarded/merged traces, empty-triangle guard, zero and nilpotent coefficients, low dimensions and a nonzero actual vertical target | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
-| `Examples/HyperplaneGT/Projections` | P01–P02 consumers: actual characteristic-two coefficient detection over `ZMod 4`, semiring restriction, zero/low-dimensional/full-coordinate cases, both inverse cancellations and inverse-three vertical dual action over `ZMod 5` | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
+| `Examples/HyperplaneGT/Projections` | P01–P02 consumers: characteristic-two geometry with a nilpotent `ZMod 4` detector, a nonvacuous `ZMod 2` coefficient recognition test, semiring restriction, zero/low-dimensional/full-coordinate cases, both inverse cancellations and inverse-three vertical dual action over `ZMod 5` | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
 
 `HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
 the actual exterior quotient to `osExteriorSquareMap`, surjective onto the existing internal
@@ -2044,7 +2044,8 @@ introduce no competing universal module, relation span, diagram structure or pro
 assumption, and import no cohomology or de Rham theory. Coefficients and both fields have
 independent universes; no algebraicity, perfectness, local/nonzero coefficient condition or
 dimension lower bound is imposed. The durable examples include a genuine nonzero nilpotent
-coefficient detector over characteristic-two geometry and an inverse-three vertical dual
+coefficient detector over characteristic-two geometry, a nonvacuous recognition test with
+`ZMod 2` coefficients, and an inverse-three vertical dual
 coordinate for an actual scalar-two marked diagram over `ZMod 5`.
 
 The [supervisor's statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)

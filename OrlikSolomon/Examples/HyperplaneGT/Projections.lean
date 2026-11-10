@@ -12,6 +12,7 @@ public import OrlikSolomon.Examples.HyperplaneGT.Dual
 # Coordinate recognition and equivariant restriction consumers
 
 An actual coordinate label over `𝔽₂` gives a nonzero nilpotent-valued detector over `ℤ/4`.
+An outside coordinate fails the full recognition test over `𝔽₂` coefficients.
 Arbitrary supported restrictions work over `ℕ`, while recognition also works over the zero
 ring. Low-dimensional and full-coordinate cases use the literal supported modules. The
 scalar-two marked diagram over `ℤ/5` acts on a nonzero vertical dual coordinate by three,
@@ -55,6 +56,25 @@ theorem binary_nilpotent_detector :
     rw [hc]
     exact hD
   · simpa using he (Finsupp.single (coordinateHyperplane (2 : Fin 3) (0 : ZMod 2)) 2)
+
+/-- Over `𝔽₂` coefficients an outside coordinate fails the full commuting-functional
+recognition test. In particular the converse criterion remains nonvacuous in characteristic two.
+-/
+theorem binary_outside_fails_test :
+    ¬∀ b : Hyperplane (ZMod 2) 3 →₀ ZMod 2,
+      b ∈ coordinatePlane (ZMod 2) (1 : Fin 3) →
+      ∀ φ ψ : Module.Dual (ZMod 2) (Hyperplane (ZMod 2) 3 →₀ ZMod 2),
+        φ ∈ (verticalModule (ZMod 2) ({0} : Finset (Fin 3))).dualAnnihilator →
+        ψ ∈ (verticalModule (ZMod 2) ({0} : Finset (Fin 3))).dualAnnihilator →
+        Commutes (universalQuadraticRelationSpan (ZMod 2)) φ ψ →
+        dualDeterminant φ ψ (exteriorPower.ιMulti (ZMod 2) 2
+          ![Finsupp.single (coordinateHyperplane (2 : Fin 3) (0 : ZMod 2)) 1, b]) = 0 := by
+  intro h
+  have hm := (coordinateSpan_recognition (ZMod 2) ({0} : Finset (Fin 3)) 1
+    (by decide) (Finsupp.single (coordinateHyperplane (2 : Fin 3) (0 : ZMod 2)) 1)).mpr h
+  have hc := (mem_verticalModule (ZMod 2) _ _).mp hm
+    (coordinateHyperplane (2 : Fin 3) (0 : ZMod 2)) (by simp)
+  simp at hc
 
 /-- Restriction to any coordinate-supported span extends functionals even over `ℕ`, where
 subtraction and field-valued dual exactness are unavailable. -/
