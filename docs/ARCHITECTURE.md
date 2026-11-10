@@ -2432,7 +2432,7 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | `H/Topology/Compact/Closed`, `Compact/Finite`, facade `Compact` | Implemented T03: closed constraints and finite-coefficient compactness; W03, [#207](https://github.com/adamtopaz/OrlikSolomon/issues/207) |
 | `H/Topology/Restriction` | Implemented T04: degree-one embedding and inverse-continuity API; W04, [#208](https://github.com/adamtopaz/OrlikSolomon/issues/208) |
 | `H/Topology/Krull/Pointwise`, `Krull/Hyperplanes`, `Krull/Comparison`, facade `Krull` | Generic pointwise topology, normalized geometric tests and exact Krull comparison; W05–W06, [#209](https://github.com/adamtopaz/OrlikSolomon/issues/209), [#210](https://github.com/adamtopaz/OrlikSolomon/issues/210) |
-| `H/Topology/GaloisCompact/FiniteOrbits`, `GaloisCompact/Stages`, facade `GaloisCompact` | Arrangement-free finite-orbit compactness and system/algebraicity corollaries; W07, [#211](https://github.com/adamtopaz/OrlikSolomon/issues/211) |
+| `H/Topology/GaloisCompact/FiniteOrbits`, `GaloisCompact/Stages`, facade `GaloisCompact` | Implemented T07: arrangement-free finite-orbit compactness and system/algebraicity corollaries; W07, [#211](https://github.com/adamtopaz/OrlikSolomon/issues/211) |
 | `H/Topology/Classification/Quadratic`, `Classification/Graded`, facade `Classification` | Exact local/domain quadratic and graded upgrades; W09–W10, [#213](https://github.com/adamtopaz/OrlikSolomon/issues/213), [#214](https://github.com/adamtopaz/OrlikSolomon/issues/214) |
 | `H/Topology/Quotient` | Actual scalar quotient topology and closedness/profiniteness; W11, [#215](https://github.com/adamtopaz/OrlikSolomon/issues/215) |
 | `H/Topology/Cofinal/Restriction`, `Cofinal/Quotient`, facade `Cofinal` | Literal cofinal maps, inverse continuity and scalar quotients; W12, [#216](https://github.com/adamtopaz/OrlikSolomon/issues/216) |
@@ -2506,6 +2506,20 @@ field topology instances. `Examples/HyperplaneGT/Topology/Systems` tests these b
 including trivial automorphism groups without an algebraicity premise, dimension-zero
 coefficient fields, and a nonreal coefficient field whose fixer excludes conjugation.
 
+`Topology/GaloisCompact/FiniteOrbits` proves compactness for the existing pointwise
+field-automorphism group when each actual scalar orbit is finite. The private orbit-product
+model has discrete factors; preserving the field operations and base scalars is a closed
+condition. Orbit-compatible endomorphisms are proved surjective on each finite orbit,
+so the image is exactly the actual automorphism group, with its original evaluation-induced
+topology. No algebraicity, arrangements, classification or `IsGalois` instance enters this
+leaf. `Stages` derives finite scalar orbits from a supplied stable cofinal system with
+`1 ≤ n`, and separately reuses the M8 minimal-polynomial bound under algebraicity.
+Compactness is exposed by named theorems with no new global instance. Together with T05's
+group and separation results this gives the profinite conclusion. The facade activates no
+scope. The `Systems` consumers retain an independent field topology, the three distinct
+input levels and actual binary/complex systems; the complex nonidentity-conjugation fixture
+does not claim an infinite automorphism group. Krull comparison remains a separate result.
+
 W09 implements `Topology/Classification/Quadratic` within the approved single-leaf layout.
 The [approved exact T09 statements](https://github.com/adamtopaz/OrlikSolomon/issues/213#issuecomment-6770781523)
 retain the M8 local/domain coefficient hypotheses, `2 ≤ n`, zero among the generating marking
@@ -2560,12 +2574,12 @@ retain zero coefficients and dimension zero; ordinary specializations retain the
 existing field and characteristic-zero parameters. Literal restriction/cofinal upgrades
 do not acquire algebraicity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **5 formalized /
-2 partial / 10 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **6 formalized /
+2 partial / 9 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **5 formalized / 2 partial / 10 planned**; T03–T06 and T09 are
+unchanged. The current M9 count is **6 formalized / 2 partial / 9 planned**; T03–T07 and T09 are
 complete, and T01–T02 cover the pure diagrams while their actual-theory and ordinary clauses
 remain planned.
 

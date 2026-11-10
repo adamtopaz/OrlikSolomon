@@ -9,6 +9,7 @@ public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import Mathlib.FieldTheory.KrullTopology
 public import OrlikSolomon.HyperplaneGT.Geometry.Galois.Orbits
+public import OrlikSolomon.HyperplaneGT.Topology.GaloisCompact
 public import OrlikSolomon.HyperplaneGT.Topology.Krull
 import Mathlib.Tactic.NormNum
 
@@ -25,7 +26,11 @@ The Krull consumers retain finite-dimensional intermediate fields and use (K) as
 proposition. Actual normalized coefficient fields detect nonreal geometry, while dimension
 zero and trivial automorphism groups expose the hypothesis boundaries.
 
-Blueprint: T05–T06 (`lem:t05`, `thm:t06`).
+Finite scalar orbits, a chosen positive-dimensional stable system, and algebraicity give
+separate compactness consumers. The concrete complex fixture has a nonidentity
+automorphism; the genuine infinite-group example is separate from these consumers.
+
+Blueprint: T05–T07 (`lem:t05`, `thm:t06`, `prop:t07`).
 -/
 
 @[expose] public section
@@ -279,3 +284,66 @@ theorem conjugation_not_in_coefficient_fixer :
     ((mem_fixingSubgroup_iff (ℂ ≃ₐ[ℝ] ℂ)).mp h _ (by simp))
 
 end OrlikSolomon.HyperplaneGT.KrullExamples
+
+namespace OrlikSolomon.HyperplaneGT.GaloisCompactExamples
+
+open Topology
+open scoped GaloisPointwise
+
+variable {k₀ : Type u} {k : Type v} [Field k₀] [Field k] [Algebra k₀ k]
+
+/-- Finite actual scalar orbits combine with the existing group and separation API to give
+a profinite topological group, with no arrangements or algebraicity assumption. -/
+theorem finite_orbit_profinite
+    (hfinite : ∀ a : k, (MulAction.orbit (k ≃ₐ[k₀] k) a).Finite) :
+    CompactSpace (k ≃ₐ[k₀] k) ∧ IsTopologicalGroup (k ≃ₐ[k₀] k) ∧
+      T2Space (k ≃ₐ[k₀] k) ∧ TotallySeparatedSpace (k ≃ₐ[k₀] k) :=
+  ⟨galoisPointwise_compactSpace_of_finite_orbits k₀ k hfinite,
+    inferInstance, inferInstance, inferInstance⟩
+
+/-- A finite automorphism group is enough for compactness; ambient algebraicity and a
+cofinal system are not prerequisites of the general finite-orbit theorem. -/
+theorem finite_group_compact [Finite (k ≃ₐ[k₀] k)] :
+    @CompactSpace (k ≃ₐ[k₀] k) (galoisPointwiseTopology k₀ k) :=
+  galoisPointwise_compactSpace_of_finite_orbits k₀ k (fun _ ↦ Set.finite_range _)
+
+/-- Any chosen positive-dimensional system has compact actual stage-permutation topology.
+This combines the finite-orbit proof with T05's direct topology equality, using no union
+closure or algebraicity. -/
+theorem chosen_stage_compact {n : ℕ} (C : CofinalSystem k₀ k n) (hn : 1 ≤ n) :
+    @CompactSpace (k ≃ₐ[k₀] k) C.galoisStagePermutationTopology := by
+  rw [C.galoisStagePermutationTopology_eq_pointwise hn]
+  exact C.galoisPointwise_compactSpace hn
+
+/-- An independently supplied geometric-field topology remains intact when the algebraic
+corollary provides compactness for the separately named pointwise automorphism topology. -/
+theorem algebraic_compact_with_field_topology [t : TopologicalSpace k]
+    [Algebra.IsAlgebraic k₀ k] :
+    (inferInstance : TopologicalSpace k) = t ∧
+      @CompactSpace (k ≃ₐ[k₀] k) (galoisPointwiseTopology k₀ k) :=
+  ⟨rfl, galoisPointwise_compactSpace_of_isAlgebraic k₀ k⟩
+
+/-- The constructed binary stable system gives a compact stage-permutation group already
+in dimension one. -/
+theorem binary_stage_compact :
+    @CompactSpace (ZMod 2 ≃ₐ[ZMod 2] ZMod 2)
+      (fullCofinalSystem (ZMod 2) (ZMod 2) 1).galoisStagePermutationTopology :=
+  chosen_stage_compact (fullCofinalSystem (ZMod 2) (ZMod 2) 1) (by decide)
+
+/-- The constructed complex stable system has compact stage-permutation topology. -/
+theorem complex_stage_compact :
+    @CompactSpace (ℂ ≃ₐ[ℝ] ℂ)
+      (fullCofinalSystem ℝ ℂ 1).galoisStagePermutationTopology :=
+  chosen_stage_compact (fullCofinalSystem ℝ ℂ 1) (by decide)
+
+/-- The actual compact complex pointwise group is nontrivial: conjugation moves the
+geometric fiber at `I`. This is a finite-group fixture, not an infinite-group claim. -/
+theorem complex_compact_nontrivial :
+    @CompactSpace (ℂ ≃ₐ[ℝ] ℂ) (galoisPointwiseTopology ℝ ℂ) ∧
+      Complex.conjAe ≠ (1 : ℂ ≃ₐ[ℝ] ℂ) := by
+  refine ⟨galoisPointwise_compactSpace_of_isAlgebraic ℝ ℂ, ?_⟩
+  intro h
+  apply PointwiseExamples.conjugation_moves_geometric_fiber
+  rw [h, one_smul]
+
+end OrlikSolomon.HyperplaneGT.GaloisCompactExamples
