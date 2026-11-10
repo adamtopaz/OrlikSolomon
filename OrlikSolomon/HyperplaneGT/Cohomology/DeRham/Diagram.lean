@@ -120,6 +120,17 @@ theorem map_cupKernel (g : DiagramAut C S) (A : C.Stage) :
       LinearMap.ker (cupMap A.val.val) :=
   ((quadraticFamilyEquiv_mem_iff C S g.val).mp g.property).1 A
 
+/-- Every target equivalence automatically preserves its whole actual cup kernel. -/
+theorem map_target_cupKernel (g : DiagramAut C S) :
+    (LinearMap.ker (cupMap (twoPunctureArrangement k))).map
+        (exteriorPower.map 2 g.targetEquiv.toLinearMap) =
+      LinearMap.ker (cupMap (twoPunctureArrangement k)) := by
+  let e := exteriorPower.map 2 g.targetEquiv.toLinearMap
+  have hk := target_cupKernel_eq_top (k := k)
+  have hs : Function.Surjective e := exteriorPower.map_surjective g.targetEquiv.surjective
+  exact (congrArg (Submodule.map e) hk).trans
+    ((Submodule.map_top e).trans ((LinearMap.range_eq_top.mpr hs).trans hk.symm))
+
 /-- Actual ordinary H¹ inclusion pullback commutes with the stage maps. -/
 theorem inclusion_naturality (g : DiagramAut C S) {A B : C.Stage} (h : A ≤ B) :
     (g.stageEquiv B).toLinearMap.comp (componentPull ((Daff).complementInclusion h) 1) =

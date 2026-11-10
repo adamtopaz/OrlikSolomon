@@ -20,6 +20,14 @@ The degree-one coordinates and exterior cup map below have actual ordinary cohom
 carriers. Their complete kernels, inclusion arrows and one common marking target are
 compared with A04 without constructing another theory.
 
+## Main results
+
+* `componentUntwist` and `diagonalUntwist` identify actual diagonal components and the
+  diagonal total algebra with ordinary de Rham cohomology, naturally in actual pullbacks.
+* `cupMap` is actual ordinary multiplication on every pair of H¹ classes.
+* `map_cupKernel_untwist` identifies the entire weighted and ordinary cup kernels.
+* `degreeOneEquiv_marking` and `affineEquiv_marking` identify the actual tagged arrows.
+
 Blueprint: the ordinary/diagonal comparison in E03 (`cor:e03`).
 -/
 
