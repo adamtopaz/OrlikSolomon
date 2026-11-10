@@ -2436,7 +2436,7 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | `H/Topology/Classification/Quadratic`, `Classification/Graded`, facade `Classification` | Implemented T09–T10: exact local/domain quadratic and graded upgrades; W09–W10, [#213](https://github.com/adamtopaz/OrlikSolomon/issues/213), [#214](https://github.com/adamtopaz/OrlikSolomon/issues/214) |
 | `H/Topology/Quotient/Local`, `Quotient/Domain`, facade `Quotient` | Exact local/domain scalar quotient homeomorphisms, literal degree-one quotient restriction and closedness/profiniteness; W11, [#215](https://github.com/adamtopaz/OrlikSolomon/issues/215) |
 | `H/Topology/Cofinal/Restriction`, `Cofinal/Quotient/Basic`, `Cofinal/Quotient`, facade `Cofinal` | Implemented T12: literal cofinal embeddings, inverse continuity and actual scalar quotients; W12, [#216](https://github.com/adamtopaz/OrlikSolomon/issues/216) |
-| `H/Topology/Consequences` | Implemented local compactness and exact finite-unit compactness criterion; W13, [#217](https://github.com/adamtopaz/OrlikSolomon/issues/217) |
+| `H/Topology/Consequences` | Compactness and local compactness; W13, [#217](https://github.com/adamtopaz/OrlikSolomon/issues/217) |
 | `H/Cohomology/Topology/Adapter/Basic`, `Adapter/Comparison`, `Adapter/Quotient`, facade `Adapter` | Direct actual topologies, both adapter directions and quotient comparison; W14, [#218](https://github.com/adamtopaz/OrlikSolomon/issues/218). Quotient imports the existing Main scalar APIs without classification hypotheses |
 | `H/Cohomology/Topology/Main/Classification`, `Main/Cofinal`, `Main/Realization`, facade `Main` | Actual reconstruction/cofinality and two-realization comparisons; W15–W16, [#219](https://github.com/adamtopaz/OrlikSolomon/issues/219), [#220](https://github.com/adamtopaz/OrlikSolomon/issues/220) |
 | `H/Cohomology/DeRham/Topology/Basic`, `Topology/Comparison`, `Topology/Actions`, `Topology/Cofinal`, `Topology/Reconstruction`, facade `H/Cohomology/DeRham/Topology` | Direct ordinary topology, twist comparisons, new algebraic scalar/cofinal wrappers and final ordinary upgrades; W17–W18, [#221](https://github.com/adamtopaz/OrlikSolomon/issues/221), [#222](https://github.com/adamtopaz/OrlikSolomon/issues/222) |
@@ -2621,6 +2621,41 @@ fiber in dimension two; a proved moved scalar makes the clopen stage kernel prop
 Both finite scalar tests and actual selected-stage kernels give the Krull identity basis.
 The three example leaves install no instances and remain outside every core facade.
 
+`Cohomology/DeRham/Topology/Basic` defines the ordinary quadratic and full graded
+finite-stage topologies directly on their original discrete complete H¹ and ordinary
+total-cohomology automorphism products and original subgroups. Both retain the one
+original two-puncture target, independently of dimension or marking availability.
+Named `instance_reducible` values and instances only in the existing parent
+`FiniteStageTopology` scope expose the product/subgroup structure. Group, T2 and total
+separation, whole component continuity and complete-stage-plus-target clopen normal
+kernel bases hold in every dimension, with only the existing characteristic-zero
+field parameters. Downward equality uses the old untwisting/generator comparisons;
+no topology is defined through a classifier or twist.
+
+`Topology/Actions` reuses the OLD ordinary scalar/Galois actions and adds genuinely new
+ordinary scalar ranges, their centrality/normality, Mathlib quotient maps, direct Galois
+sections, quotient twists and algebraic quotient-to-G wrappers. Its direct project
+import is OLD `DeRham/Reconstruction`, where the existing ordinary actions are named;
+its inherited old classification imports are algebraic and introduce no M9 topology
+dependency or new argument. `Topology/Cofinal` similarly imports only OLD
+`DeRham/Reconstruction` and OLD `Cohomology/Main/Cofinal` to name literal ordinary stage
+selection and its algebraic cofinal equivalences. General maps retain all dimensions
+and the identical common target; inverse equivalences retain exactly the old zero-
+marking, field-generation and n≥2 hypotheses, without algebraicity or K.
+
+`Topology/Comparison` imports Basic and Actions, and adjoins both continuity directions
+to the exact OLD quadratic/graded twist MulEquivs and the NEW algebraic scalar-quotient
+twists. Quotient topologies are the literal Mathlib quotient-group topologies, with
+forward/inverse representative formulas obtained from the quotient universal property.
+Untwisting identifies only the actual diagonal with ordinary total cohomology, not the
+whole Laurent algebra or all weight-zero classes. All stage, original target and
+k-linear covariant logarithmic actions remain the old ones. Forward-expansion equations
+remain plain rewrites so ordinary inverse cancellation survives. The two algebraic-only
+wrapper leaves import no new topology leaf. Final reconstruction/classification,
+restriction/cofinal homeomorphisms, Krull/full-system wrappers and the explicit ordinary
+topology facade remain W18/#222; W17 completes only the ordinary T01/T02 clauses and
+records T17 prerequisites without certifying T17.
+
 W11 implements the [approved exact T11 statements](https://github.com/adamtopaz/OrlikSolomon/issues/215#issuecomment-6772281851)
 in the size-only `Topology/Quotient/Local` and `Domain` leaves and a small facade. The
 original four quadratic/full graded scalar quotients carry Mathlib's actual quotient-group
@@ -2646,7 +2681,6 @@ numbers on the original target before its quotient class becomes one, genuine bi
 conjugation classes under the Krull maps and degree-one restriction, and scalar minus one
 over nonlocal `ℤ`.
 
-W13 implements the approved single pure leaf `Topology/Consequences`.
 `Topology/Consequences` derives T13 from the four existing pointwise classifier
 homeomorphisms. The parameter topology remains the literal product of discrete coefficient
 units and the compact pointwise Galois group supplied by T07 from C and positive dimension.
@@ -2705,18 +2739,18 @@ actual non-union-closed subsystem only within Examples, including original targe
 ZMod4 and ℤ, a genuinely nonidentity complex-conjugation class and zero-ring/dimension-zero
 literal continuity.
 
-The fifth blueprint has 17 separately labelled nodes T01–T17, currently **12 formalized /
-2 partial / 3 planned**, separate from all four earlier blueprint counts. The #203
+The fifth blueprint has 17 separately labelled nodes T01–T17, currently **14 formalized /
+0 partial / 3 planned**, separate from all four earlier blueprint counts. The #203
 bootstrap preserves all 188 earlier boxes, statuses and declaration attachments. Its parser
 recognizes the nine tagged-display equation labels as metadata while retaining theorem
 ownership and missing/orphan/duplicate guards. All protected TeX and dependencies stay
-unchanged. The current M9 count is **12 formalized / 2 partial / 3 planned**; T03–T14
-are complete. T01–T02 cover the pure and actual supplied-theory diagrams; their ordinary de Rham
-clauses remain planned.
+unchanged. The current M9 count is **14 formalized / 0 partial / 3 planned**; T01–T14
+are complete. T01–T02 include pure, actual supplied-theory and constructed ordinary de Rham
+diagrams; the ordinary clauses retain the existing characteristic-zero field parameters.
 
-Book coverage is incremental and clause-complete. T01–T02 remain partial until pure,
-actual-theory and ordinary specializations are all present; T14 includes scalar-quotient
-adapter comparisons. A pointwise-only classifier does not complete a node's Krull clause,
+Book coverage is incremental and clause-complete. T01–T02 now include all three pure,
+actual-theory and ordinary specializations; T14 includes scalar-quotient adapter comparisons.
+The new ordinary twist and algebraic scalar/cofinal prerequisites do not complete T17. A pointwise-only classifier does not complete a node's Krull clause,
 and a continuous bijection does not complete a topological-isomorphism node. Review each
 attachment against its entire statement; node counts and standard-axiom checks alone do
 not establish semantic coverage.

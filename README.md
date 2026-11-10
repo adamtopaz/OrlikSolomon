@@ -101,7 +101,7 @@ and point-free-complement coverage is retained.
 
 **Milestone M9:** [topological hyperplane reconstruction](blueprint/topological_reconstruction_blueprint.tex)
 is tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
-Its 17 separately labelled statements T01–T17 include **12 formalized, 2 partly formalized and 3 planned**,
+Its 17 separately labelled statements T01–T17 include **14 formalized, 0 partly formalized and 3 planned**,
 counted separately from the four existing blueprints. The [chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
 describes finite-stage convergence, discrete coefficient units, and the pointwise Galois factor.
 T13 proves local compactness and compactness exactly for finite coefficient units, including
@@ -132,8 +132,13 @@ marking hypotheses. Actual theory-level assertions stay conditional on a supplie
 the de Rham upgrade specializes the constructed characteristic-zero theory. Pure quadratic
 and graded component topologies, group and separation properties, and stage-and-target
 neighborhood bases are proved. Their actual supplied-theory counterparts and both canonical
-group and scalar quotient adapter homeomorphisms are also proved (T14); the ordinary de Rham
-clauses remain planned.
+group and scalar quotient adapter homeomorphisms are also proved (T14). The ordinary
+characteristic-zero component topologies and complete-stage-plus-target bases complete
+T01–T02 in every dimension. Both old ordinary twists and their literal scalar quotient
+twists are homeomorphisms. New algebraic ordinary scalar and cofinal wrappers retain
+exactly the old hypotheses; final ordinary reconstruction topology remains T17/#222.
+Durable constructed ordinary fixtures include a dimension-zero target interchange detected
+by every stage-and-target kernel and a nontrivial complex-conjugation scalar-quotient class.
 Both pure diagram groups are closed in the original ambient products for every commutative
 coefficient ring and compact for finite coefficients, without classification or algebraicity.
 The existing degree-one restriction is a topological embedding for arbitrary coefficients

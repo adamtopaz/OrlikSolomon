@@ -59,10 +59,10 @@ E03 gives unconditional reconstruction for the actual ordinary de Rham diagram i
 Final regression consumers pin binary and nilpotent local coefficients, actual common targets and both scalar quotients. A full disconnected-coefficient counterexample proves that the coefficient hypotheses cannot be replaced by an arbitrary commutative ring.
 {ref "hyperplane-gt"}[Its chapter] explains the proved conditional reconstruction, the unconditional de Rham application and their precise hypotheses.
 
-The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: twelve formalized, two partly formalized and three planned.
+The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: fourteen formalized, zero partly formalized and three planned.
 It proposes direct finite-stage topologies and upgrades of the existing reconstruction maps, scalar quotients, cofinal and realization comparisons, and the ordinary de Rham specialization.
 Coefficient units are discrete; the Krull topology replaces pointwise convergence under the stated fixing condition, in particular for algebraic field extensions.
-The pure and actual supplied-theory diagram topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved.
+The pure, actual supplied-theory and constructed characteristic-zero ordinary diagram topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved in every dimension.
 Both pure groups are closed in their original ambient products for every commutative coefficient ring, and finite coefficients make both compact, without classification or algebraicity.
 
 T05 proves the arrangement-free pointwise topological group and separation properties, exact normalized affine coefficient tests and the finite hyperplane/stage-kernel comparisons for $`n\geq1`.
@@ -76,7 +76,7 @@ T12 proves literal cofinal restriction is a topological embedding for arbitrary 
 T14 proves the exact actual-to-presentation adapters and both scalar quotient homeomorphisms.
 T11 proves the exact local/domain scalar quotient homeomorphisms, closedness and profiniteness, without algebraicity or finiteness of coefficient units for the pointwise result.
 T13 proves local compactness and compactness exactly for finite coefficient units; integral coefficients give compact groups and rational coefficients give noncompact groups with compact scalar quotients.
-The ordinary de Rham clauses and the remaining reconstruction homeomorphisms stay planned; the four earlier blueprint counts are unchanged.
+The exact old ordinary twists and their literal scalar quotient twists are homeomorphisms. New algebraic ordinary scalar and cofinal wrappers retain the old marking and dimension hypotheses. Final ordinary reconstruction, quotient-to-Galois and cofinal topological upgrades stay planned under T17; the four earlier blueprint counts are unchanged.
 {ref "topological-reconstruction"}[Its chapter] records the topology, hypothesis and realization boundaries.
 
 {statusOverview}
