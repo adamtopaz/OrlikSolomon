@@ -315,6 +315,24 @@ Its kernel is clopen, and a {name OrlikSolomon.HyperplaneGT.PrimeClosureExamples
 The scalar-test and selected-stage-kernel identity bases describe the same existing Krull topology.
 The ordinary inferred topology on the automorphism group remains Mathlib's Krull topology.
 
+# Using the interfaces
+
+Import `OrlikSolomon.HyperplaneGT.Topology` for the pure diagram development, or `OrlikSolomon.HyperplaneGT.Cohomology.Topology` for a supplied eligible cohomology theory.
+The constructed characteristic-zero specialization is the separate import `OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology`.
+The import `OrlikSolomon.Examples.HyperplaneGT.Topology` gathers the coefficient, system, realization, rational-function and infinite-Galois acceptance examples.
+The existing algebraic M8 facades keep their original imports.
+
+None of these imports activates a topology scope.
+Use the named `OrlikSolomon.HyperplaneGT.FiniteStageTopology` and `OrlikSolomon.HyperplaneGT.DiscreteCoefficientUnits` scopes for the deliberately chosen diagram and unit-group topologies.
+The additional `OrlikSolomon.HyperplaneGT.GaloisPointwise` scope selects the named pointwise factor; the usual unscoped automorphism-group topology stays Mathlib's Krull topology.
+The pointwise statements use their original hypotheses, while each Krull wrapper carries the exact comparison condition or algebraicity.
+T08 exhibits a supplied stable system with finite orbits for which that comparison fails; finite orbits still give the pointwise compactness conclusion of T07.
+Algebraicity is sufficient for the comparison and is not claimed necessary.
+
+The final coefficient consumer {name OrlikSolomon.HyperplaneGT.TopologyAcceptanceExamples.dual_number_target_and_degree_two}`dual_number_target_and_degree_two` detects the nonidentity dual-number unit on the original target although its whole degree-two action is trivial.
+The finite-extension consumer {name OrlikSolomon.HyperplaneGT.TopologyAcceptanceExamples.complex_krull_finite_discrete}`complex_krull_finite_discrete` uses the actual finite-dimensional complex/real extension and Mathlib's literal Krull topology.
+These complement the original non-union-closed systems, conditional nonfield-coefficient theories, constructed ordinary realizations, prime-closure Frobenius and rational-function counterexample.
+
 # Completion and limits
 
 A box becomes formalized only when proved public declarations cover its whole statement.

@@ -139,7 +139,8 @@ twists are homeomorphisms. New algebraic ordinary scalar and cofinal wrappers re
 exactly the old hypotheses. T17 upgrades all ordinary reconstruction, quotient and cofinal
 homeomorphisms for pointwise convergence and, under the fixing condition or algebraicity,
 Krull. All fourteen full-family specializations retain algebraicity for the old family
-constructor. The characteristic-zero ordinary groups are locally compact and noncompact;
+constructor. Under those marking and dimension hypotheses, the characteristic-zero ordinary groups are
+locally compact and noncompact;
 their literal scalar quotients are profinite, without a field-extension condition on a supplied system.
 Durable constructed ordinary fixtures include a dimension-zero target interchange detected
 by every stage-and-target kernel and a nontrivial complex-conjugation scalar-quotient class.
@@ -164,6 +165,19 @@ comparisons over arbitrary commutative coefficients and dimensions, without clas
 or algebraicity. Independent weight algebras, gradings, admissible domains, cohomology
 universes and the actual common targets are retained, as are the original parameter and
 cofinal squares under their old hypotheses. No adic-coefficient claim is made.
+
+The explicit M9 imports keep the interfaces separate:
+
+| Interface | Import |
+| --- | --- |
+| Pure topological diagrams | `OrlikSolomon.HyperplaneGT.Topology` |
+| Supplied cohomology theory | `OrlikSolomon.HyperplaneGT.Cohomology.Topology` |
+| Constructed ordinary de Rham theory | `OrlikSolomon.HyperplaneGT.Cohomology.DeRham.Topology` |
+| Acceptance examples | `OrlikSolomon.Examples.HyperplaneGT.Topology` |
+
+These imports activate no topology scope. The named pointwise scope and the default
+Mathlib Krull topology retain the distinction described above; coefficient units use
+the deliberately discrete topology.
 
 **The public theorem in one file.**
 [`OrlikSolomon/MainTheorem.lean`](OrlikSolomon/MainTheorem.lean) is the auditable projective
