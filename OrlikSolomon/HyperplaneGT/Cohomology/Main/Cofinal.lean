@@ -16,6 +16,9 @@ commutative coefficient ring. Its compatibility with A04 is componentwise. Recon
 then proves invertibility, preserving the scalar and Galois classification coordinates;
 no extension theorem for arbitrary unclassified diagram families is assumed.
 
+Forward expansion equations are plain rewrite rules, preserving ordinary two-sided
+equivalence cancellation under `simp`.
+
 Blueprint: cofinal independence in E02 (`cor:e02`).
 -/
 
@@ -164,7 +167,6 @@ def cofinalRestrictionEquiv (hC : C'.stages ⊆ C.stages)
       (degreeOneDiagramEquiv T C' S).symm)
 
 /-- The classified actual equivalence has the literal actual restriction as forward map. -/
-@[simp]
 theorem cofinalRestrictionEquiv_apply (hC : C'.stages ⊆ C.stages)
     (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
     (g : DiagramAut T C S) :
@@ -222,7 +224,6 @@ def gradedCofinalRestrictionEquiv (hC : C'.stages ⊆ C.stages)
       (gradedDiagramEquiv T C' S).symm)
 
 /-- The classified actual equivalence has the literal actual restriction as forward map. -/
-@[simp]
 theorem gradedCofinalRestrictionEquiv_apply (hC : C'.stages ⊆ C.stages)
     (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
     (g : GradedDiagramAut T C S) :
@@ -307,7 +308,6 @@ def domainCofinalRestrictionEquiv (hC : C'.stages ⊆ C.stages)
       (degreeOneDiagramEquiv T C' S).symm)
 
 /-- The classified actual equivalence has the literal actual restriction as forward map. -/
-@[simp]
 theorem domainCofinalRestrictionEquiv_apply (hC : C'.stages ⊆ C.stages)
     (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
     (g : DiagramAut T C S) :
@@ -366,7 +366,6 @@ def domainGradedCofinalRestrictionEquiv (hC : C'.stages ⊆ C.stages)
       (gradedDiagramEquiv T C' S).symm)
 
 /-- The classified actual equivalence has the literal actual restriction as forward map. -/
-@[simp]
 theorem domainGradedCofinalRestrictionEquiv_apply (hC : C'.stages ⊆ C.stages)
     (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
     (g : GradedDiagramAut T C S) :

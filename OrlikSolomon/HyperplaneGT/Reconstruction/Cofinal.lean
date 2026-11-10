@@ -17,6 +17,9 @@ coordinates they preserve exactly the coefficient unit and field automorphism, i
 the same common target. The inverse is obtained from classification; arbitrary unclassified
 diagram families are never assumed to extend.
 
+Forward expansion equations are plain rewrite rules, preserving ordinary two-sided
+equivalence cancellation under `simp`.
+
 Blueprint: the pure classification step in E02 (`cor:e02`).
 -/
 
@@ -63,7 +66,6 @@ theorem cofinalRestrictionEquiv_classification (hC : C'.stages ⊆ C.stages)
   simp [cofinalRestrictionEquiv]
 
 /-- The classified equivalence's forward map is the literal stage restriction. -/
-@[simp]
 theorem cofinalRestrictionEquiv_apply (hC : C'.stages ⊆ C.stages)
     (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
     (g : DiagramAut R C S) :
@@ -119,7 +121,6 @@ theorem gradedCofinalRestrictionEquiv_classification (hC : C'.stages ⊆ C.stage
   simp [gradedCofinalRestrictionEquiv]
 
 /-- The classified equivalence's forward map is the literal stage restriction. -/
-@[simp]
 theorem gradedCofinalRestrictionEquiv_apply (hC : C'.stages ⊆ C.stages)
     (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
     (g : GradedDiagramAut R C S) :
@@ -211,7 +212,6 @@ theorem domainCofinalRestrictionEquiv_classification (hC : C'.stages ⊆ C.stage
   simp [domainCofinalRestrictionEquiv]
 
 /-- The classified equivalence's forward map is the literal stage restriction. -/
-@[simp]
 theorem domainCofinalRestrictionEquiv_apply (hC : C'.stages ⊆ C.stages)
     (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
     (g : DiagramAut R C S) :
@@ -267,7 +267,6 @@ theorem domainGradedCofinalRestrictionEquiv_classification (hC : C'.stages ⊆ C
   simp [domainGradedCofinalRestrictionEquiv]
 
 /-- The classified equivalence's forward map is the literal stage restriction. -/
-@[simp]
 theorem domainGradedCofinalRestrictionEquiv_apply (hC : C'.stages ⊆ C.stages)
     (hS : (0 : k₀) ∈ S) (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n)
     (g : GradedDiagramAut R C S) :

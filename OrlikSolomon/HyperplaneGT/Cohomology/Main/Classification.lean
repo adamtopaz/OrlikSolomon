@@ -18,6 +18,9 @@ and on the common target; the Galois factor uses the covariant hyperplane label.
 are by the literal central scalar ranges. All theory content comes from the existing
 C1–C5 ordinary theory, without additional generation or comparison hypotheses.
 
+Forward expansion equations are plain rewrite rules, preserving ordinary two-sided
+equivalence cancellation under `simp`.
+
 Blueprint: E01 (`thm:e01`).
 -/
 
@@ -209,7 +212,6 @@ def localRestrictionEquiv (hS : (0 : k₀) ∈ S)
     ((gradedAutEquiv R C S hS hgen hn).trans (degreeOneDiagramEquiv T C S).symm)
 
 /-- The actual restriction equivalence applies the existing degree-one restriction. -/
-@[simp]
 theorem localRestrictionEquiv_apply (hS : (0 : k₀) ∈ S)
     (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) (g : GradedDiagramAut T C S) :
     localRestrictionEquiv T C S hS hgen hn g = GradedDiagramAut.toQuadratic T C S g := by
@@ -511,7 +513,6 @@ def domainRestrictionEquiv (hS : (0 : k₀) ∈ S)
     ((coefficientDomainGradedAutEquiv R C S hS hgen hn).trans (degreeOneDiagramEquiv T C S).symm)
 
 /-- The actual restriction equivalence applies the existing degree-one restriction. -/
-@[simp]
 theorem domainRestrictionEquiv_apply (hS : (0 : k₀) ∈ S)
     (hgen : Subfield.closure S = ⊤) (hn : 2 ≤ n) (g : GradedDiagramAut T C S) :
     domainRestrictionEquiv T C S hS hgen hn g = GradedDiagramAut.toQuadratic T C S g := by
