@@ -6,7 +6,7 @@ Authors: Adam Topaz, Codex
 import OrlikSolomonBook.Node
 import OrlikSolomon
 
-open Verso.Genre Manual
+open Verso.Genre Manual InlineLean
 open OrlikSolomonBook
 
 #doc (Manual) "Topological hyperplane reconstruction" =>
