@@ -101,7 +101,7 @@ and point-free-complement coverage is retained.
 
 **Milestone M9:** [topological hyperplane reconstruction](blueprint/topological_reconstruction_blueprint.tex)
 is tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
-Its 17 separately labelled statements T01–T17 include **4 formalized, 2 partly formalized and 11 planned**,
+Its 17 separately labelled statements T01–T17 include **5 formalized, 2 partly formalized and 10 planned**,
 counted separately from the four existing blueprints. The [chapter](https://adamtopaz.github.io/OrlikSolomon/topological-reconstruction/)
 describes finite-stage convergence, discrete coefficient units, and the pointwise Galois factor.
 T05 proves the pointwise group topology, finite normalized affine coefficient tests and, for
@@ -111,7 +111,10 @@ the finite-intermediate-field fixing condition; algebraicity suffices. Fields ge
 finite normalized coefficient sets have exactly the hyperplane fixing subgroup and are
 finite dimensional under algebraicity. Cofinal geometric fibers put a stage kernel inside
 any finite intermediate-field fixer for `n ≥ 1`. A supplied cofinal system alone does not
-imply the Krull comparison. Classification upgrades retain M8's local/domain, dimension and
+imply the Krull comparison.
+T07 proves pointwise compactness from finite scalar orbits. A supplied stable cofinal system
+with `n ≥ 1`, or separately algebraicity, supplies this condition without normality or separability.
+Classification upgrades retain M8's local/domain, dimension and
 marking hypotheses. Actual theory-level assertions stay conditional on a supplied eligible theory;
 the de Rham upgrade specializes the constructed characteristic-zero theory. Pure quadratic
 and graded component topologies, group and separation properties, and stage-and-target
