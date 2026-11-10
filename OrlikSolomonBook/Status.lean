@@ -60,7 +60,7 @@ Final regression consumers pin binary and nilpotent local coefficients, actual c
 {ref "hyperplane-gt"}[Its chapter] explains the proved conditional reconstruction, the unconditional de Rham application and their precise hypotheses.
 
 The fifth blueprint, topological hyperplane reconstruction (M9), has seventeen separately labelled statements T01–T17: seventeen formalized, zero partly formalized and zero planned.
-It proposes direct finite-stage topologies and upgrades of the existing reconstruction maps, scalar quotients, cofinal and realization comparisons, and the ordinary de Rham specialization.
+It formalizes direct finite-stage topologies and upgrades of the existing reconstruction maps, scalar quotients, cofinal and realization comparisons, and the ordinary de Rham specialization.
 Coefficient units are discrete; the Krull topology replaces pointwise convergence under the stated fixing condition, in particular for algebraic field extensions.
 The pure, actual supplied-theory and constructed characteristic-zero ordinary diagram topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved in every dimension.
 Both pure groups are closed in their original ambient products for every commutative coefficient ring, and finite coefficients make both compact, without classification or algebraicity.

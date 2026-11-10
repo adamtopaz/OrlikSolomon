@@ -2443,7 +2443,7 @@ The approved module rows below use paths relative to `OrlikSolomon/`; `H/` abbre
 | `Examples/HyperplaneGT/Topology/RatFunc/Field`, `RatFunc/Automorphisms`, `RatFunc/Counterexample`, small `RatFunc` facade | T08's field, finite group, stable system and actual noncontinuous-map example; W08, [#212](https://github.com/adamtopaz/OrlikSolomon/issues/212). No rational-function core imports |
 | `Examples/HyperplaneGT/Topology/Coefficients`, `Systems`, `Realizations`, size-only `Realizations/Ordinary` | Required coefficient/system/actual-realization consumers; W05 begins `Systems` with T05 regressions; W19, [#223](https://github.com/adamtopaz/OrlikSolomon/issues/223) |
 | `Examples/HyperplaneGT/Topology/Infinite/Frobenius`, `Infinite/Acceptance`, small `Infinite` facade | Implemented genuine infinite prime-closure Galois group, explicit pointwise/Krull compactness and nondiscreteness, actual full-system proper clopen kernel; W20, [#224](https://github.com/adamtopaz/OrlikSolomon/issues/224) |
-| `H/Topology`, `H/Cohomology/Topology`, `Examples/HyperplaneGT/Topology` | Additional explicit facades and final acceptance umbrella; W21, [#225](https://github.com/adamtopaz/OrlikSolomon/issues/225) |
+| `H/Topology`, `H/Cohomology/Topology`, `Examples/HyperplaneGT/Topology` | Implemented explicit facades and final acceptance umbrella; W21, [#225](https://github.com/adamtopaz/OrlikSolomon/issues/225) |
 
 Leaves target roughly 250–600 lines and split before 800. Intermediate size-only leaves
 stay within the approved imports and are listed in PR bodies. The ordinary Actions/cofinal
@@ -2829,6 +2829,8 @@ dlogs, a nonidentity conjugation scalar class, and actual characteristic-zero no
 groups with profinite literal scalar quotients. The concrete logarithm alone retains a
 local recursion-depth allowance for its inherited nested scheme/diagonal carriers,
 matching the existing M8 fixture; no core heartbeat or recursion option is added.
+
+W21 completes the four explicit M9 facades `HyperplaneGT/Topology`, `HyperplaneGT/Cohomology/Topology`, `HyperplaneGT/Cohomology/DeRham/Topology` and `Examples/HyperplaneGT/Topology`. The pure facade imports only the pure topology development; the conditional facade adds the actual supplied-theory adapters, reconstruction and realization comparisons without an ordinary de Rham instance or Examples; the separate ordinary facade exposes the constructed characteristic-zero specialization. The Examples facade gathers the durable coefficient, system, realization, rational-function counterexample and genuine infinite-Galois consumers. None of these imports activates a topology scope or changes an existing M8 facade. The final clause-by-clause acceptance checks all seventeen unchanged blueprint statements against their attached declarations and compiled consumers, including the pure, supplied-theory and actual ordinary clauses, both inverse continuities, original component and quotient topologies, exact old maps and common targets, and the distinct pointwise and fixing-condition/algebraic Krull boundaries. The four earlier blueprint counts, protected TeX, dependency pins and M7 interface remain unchanged. Coordinated check, kernel replay, native Book, strict parser and rendered formula/link/exact-source checks certify the reviewed final tree; the completed M9 status is reported separately from the four earlier blueprints.
 
 ### Hypotheses, review and book coverage
 

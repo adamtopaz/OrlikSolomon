@@ -464,8 +464,8 @@ L04 uses only unit cancellation over a commutative ring; L05 detects a unique gr
 Final regression consumers retain binary and nilpotent local coefficients, the original common target and both scalar quotients. A concrete full diagram over disconnected binary coefficients has no common scalar/Galois factorization, demonstrating the need for the local/domain hypothesis.
 The chapter records each of the 41 labelled statements separately and explains the coefficient, dimension and realization limits.
 
-*Topological reconstruction in progress.*
-The fifth blueprint proposes the finite-stage convergence topology on the existing quadratic, graded and actual cohomology diagram groups, retaining the single common target.
+*Topological reconstruction formalized.*
+The fifth blueprint formalizes the finite-stage convergence topology on the existing quadratic, graded and actual cohomology diagram groups, retaining the single common target.
 Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: seventeen formalized, zero partly formalized and zero planned.
 The direct pure, actual supplied-theory and constructed characteristic-zero ordinary topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved in every dimension.
 T05 proves the pointwise topological group and separation properties, normalized affine coefficient stabilizers, arbitrary geometric coordinate fibers and actual finite-stage kernel topology comparison for $`n\geq1`.
