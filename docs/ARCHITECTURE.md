@@ -27,6 +27,7 @@ The blueprint's `ArrangementCohomology.Algebra.RelationQuotient` is therefore
 | `Algebra/HomogeneousRelations` | lowest-degree relation spans and their exterior-quotient kernel specialization, for M8 node `A02` (`thm:a02`) |
 | `Algebra/Exact`                | `lem:basis-ses`, `lem:comparison` |
 | `Algebra/FinsuppKernel`        | the generic discard-and-merge kernel calculation used in `lem:l01`, without its trace geometry |
+| `Algebra/UnitTransfer`        | the three-equation unit-cancellation calculation used in `lem:l04`, over arbitrary commutative rings |
 | `Algebra/ComplexReduction`     | cocycle and primitive reduction through a contractible quotient, for arbitrary-shaped complexes and square-zero total operators; `lem:dr-filtration-reduction` |
 | `Algebra/SymmetricGrading`     | the degree grading of `O(W)`, used by `def:projective` |
 | `Geometry/Hyperplane`          | hyperplanes and equations of `def:arrangement`, `lem:equations` |
@@ -1711,7 +1712,7 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A03, C01–C03, U01–U05, L01–L03 and S02 are formalized, including U04's actual universal
+G01–G06, A01–A03, C01–C03, U01–U05, L01–L05 and S02 are formalized, including U04's actual universal
 configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
 reconstruction theorem remains planned. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
@@ -1805,7 +1806,11 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Reconstruction/Trace/Decomposition` | Coordinate delta inertia, coordinate-defined decomposition and explicit full-product equivalence | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
 | `HyperplaneGT/Reconstruction/Trace/Annihilators` | Four direct evaluation-annihilator equalities and the actual-Q unit-delta centralizer | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
 | `HyperplaneGT/Reconstruction/Trace/Projection` | Derived vertical-trace bijection, supported vertical module and actual dual restriction, including low dimensions | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
-| `HyperplaneGT/Reconstruction/Local` | L04–L05 | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
+| `Algebra/UnitTransfer` | Generic three-equation unit cancellation over arbitrary commutative rings, used by L04 | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
+| `HyperplaneGT/Reconstruction/Local` | L04–L05, formalized: actual centralizer restriction, local transfer and unique unit-supported graph detection | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
+| `HyperplaneGT/Reconstruction/Local/Geometry` | Distinct parallel and meeting graphs and the two guarded vertical transfer triples, over arbitrary fields | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
+| `HyperplaneGT/Reconstruction/Local/Transfer` | Literal actual-Q centralizer restriction and L04 over arbitrary commutative coefficient rings | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
+| `HyperplaneGT/Reconstruction/Local/Detection` | L05 equivalence, coordinate-independent unique graph/unit pair and actual decomposition centralizer | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
 | `HyperplaneGT/Reconstruction/Projections` | P01–P02 | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
 | `HyperplaneGT/Reconstruction/Incidence` | I01–I04 | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
 | `HyperplaneGT/Geometry/Collineation`, with `Span`, `Chart`, and `Field` leaves | C01–C03, formalized: arbitrary projective spans, coordinatewise affine charts, and a unique field automorphism from the prescribed frame | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
@@ -1828,6 +1833,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/GaloisAction` | S02 consumers: all-length relators, zero coefficients, dimension zero, full marking squares, a characteristic-two cubic relation and nontrivial complex conjugation on an integral OS generator | W17, [#169](https://github.com/adamtopaz/OrlikSolomon/issues/169) |
 | `Examples/HyperplaneGT/Diagram` | A03 consumers: concrete constructors, zero coefficients, characteristic-two relations, Laurent-polynomial marking maps, and dimension-zero target interchange | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `Examples/HyperplaneGT/Trace` | L01–L03 consumers: discarded/merged traces, empty-triangle guard, zero and nilpotent coefficients, low dimensions and a nonzero actual vertical target | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
+| `Examples/HyperplaneGT/Local` | L04–L05 consumers: zero-ring transfer, a nonzero actual vertical target over `ZMod 4`, characteristic-two dual numbers with nonzero nilpotents and a dimension-one counterexample satisfying all four actual conditions | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
 
 `HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
 the actual exterior quotient to `osExteriorSquareMap`, surjective onto the existing internal
@@ -1864,6 +1870,8 @@ its inverse evaluates a finite sum, and the dual is the full function product. E
 separates both vectors and functionals. `dualAction` is the homomorphism sending `g` to
 `g.symm.dualMap`, so simultaneous action preserves evaluation. No reflexivity or finite-index
 assumption is used. These APIs work over commutative semirings.
+`unit_smul_lapply_eq_iff` separates unit multiples of coordinate functionals over a nontrivial
+commutative semiring, independently of any chosen geometric coordinate projection.
 
 `Primitive` means literal surjectivity. It is invariant under precomposition by every linear
 equivalence. A unit coordinate is sufficient over any commutative semiring; the converse uses
@@ -1984,7 +1992,7 @@ rings and independent field universes, with no dimension bound, condition on the
 constants, algebraicity/perfectness assumption or union-closure requirement on the cofinal
 family. They import no cohomology theory.
 
-The two generic helper modules use namespace `OrlikSolomon` and carry no hyperplane/cohomology
+The generic helper modules use namespace `OrlikSolomon` and carry no hyperplane/cohomology
 hypotheses. Check Mathlib and existing repository lemmas before adding any helper. Split modules
 before approximately 800 lines; list size-only splits within the approved import boundaries in
 the PR body. Public named objects follow the existing transparency conventions, with `simp`,
@@ -2026,6 +2034,28 @@ and nonvertical hypotheses. No theory imports are added. The durable examples pi
 triangle guard, characteristic two, a unit over `ZMod 4`, zero coefficients, dimension zero,
 dimension-one `D = I`, and a nonzero actual vertical coordinate and its extension.
 
+`Reconstruction/Local` separates generic arithmetic, pure graph witnesses, actual transfer and
+local detection according to the [approved refinement](https://github.com/adamtopaz/OrlikSolomon/issues/164#issuecomment-6754221916).
+`Algebra/UnitTransfer` imports only Mathlib and cancels a supplied unit in three equations over
+any commutative ring. `Local/Geometry` imports only the pure coordinate facade: graph-function
+differences give two distinct actual vertical labels and their guarded dependent triples.
+Adding one gives a parallel graph; a remaining coordinate gives a meeting graph when `2 ≤ n`.
+`Local/Transfer` imports these helpers, `Dual/Configurations` and `Trace/Projection`; its
+`centralizerVerticalRestriction` is literal restriction of the actual universal-Q centralizer
+to the dual of the actual supported vertical module. L04 adds no nonzero, locality or domain
+hypothesis on the coefficients and no dimension lower bound beyond its omitted coordinate.
+It uses no quotient-isomorphism assumption.
+`Local/Detection` adds the generic primitive criterion and `Trace/Annihilators`. L05 retains
+`IsLocalRing R` (including nontriviality), `2 ≤ n` and all four primitive/vertical/zero-graph/
+centralizer-surjectivity conditions. It returns the unique actual graph/unit pair and equality
+of its actual centralizer with decomposition. The generic coordinate-functional uniqueness iff
+lives in the existing geometry-free `Dual/Coordinates` leaf. The facade reexports detection;
+no earlier geometry or algebra leaf imports it, and no cohomology or extra diagram data enters.
+The durable consumers use `ZMod 4`, characteristic-two dual numbers with a nonzero square-zero
+scalar part, an actual nonzero vertical target, and zero-ring transfer. An actual two-supported
+functional in dimension one satisfies all four conditions but is no unit delta, pinning the
+necessary dimension bound.
+
 The [supervisor's statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
 requires Claude's approval before proofs are finalized only for S03–S05, E01–E03 and statements
 that deviate from the blueprint. Non-author Codex reviewers check intermediate statements
@@ -2035,7 +2065,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-24 formalized and 17 planned, separate from the other blueprints. Each
+26 formalized and 15 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
