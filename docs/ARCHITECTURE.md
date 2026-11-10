@@ -1774,9 +1774,9 @@ alternation from graded commutativity alone. E01–E03 transport the classified 
 these comparisons. The de Rham specialization is `k`-linear on logarithmic generators, as in the
 blueprint. The M7 `MainTheorem.lean` interface remains unchanged.
 
-The following modules give the implemented approved layout, relative to `OrlikSolomon/`.
-Their work-item IDs are those of the approved plan; the issue links identify the
-implementation work.
+The following modules give the approved layout, relative to `OrlikSolomon/`. The theorem
+modules are implemented; W24's final acceptance assembly remains in progress. Their work-item
+IDs are those of the approved plan; the issue links identify the implementation work.
 
 | Module | Responsibility | Work item and issue |
 | --- | --- | --- |
