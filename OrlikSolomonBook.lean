@@ -466,7 +466,7 @@ The chapter records each of the 41 labelled statements separately and explains t
 
 *Topological reconstruction in progress.*
 The fifth blueprint proposes the finite-stage convergence topology on the existing quadratic, graded and actual cohomology diagram groups, retaining the single common target.
-Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: two partly formalized and fifteen planned.
+Its seventeen statements T01–T17 are counted independently of the four earlier blueprints in {ref "topological-reconstruction"}[a separate chapter]: one formalized, two partly formalized and fourteen planned.
 The direct pure quadratic and graded topologies, component continuity, group and separation properties, and complete-stage-and-target neighborhood bases are proved; the corresponding actual-theory and ordinary clauses remain planned.
 Coefficient units are discrete, and the Galois factor has pointwise convergence topology.
 The Krull version needs the exact finite-intermediate-field fixing condition; algebraicity suffices, without normality or separability.

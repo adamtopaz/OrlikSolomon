@@ -16,8 +16,9 @@ file := "topological-reconstruction"
 htmlSplit := .never
 %%%
 
-*Two statements are partly formalized; the other fifteen are planned.*
+*One statement is formalized, two are partly formalized, and fourteen are planned.*
 The pure quadratic and graded component topologies, their topological-group and separation properties, and their complete-stage-and-target neighborhood bases are proved.
+The pure groups are closed in their original ambient products, and finite coefficients make both compact.
 The actual-theory and ordinary de Rham clauses of T01–T02 remain planned.
 This chapter follows the [fifth blueprint](https://github.com/adamtopaz/OrlikSolomon/blob/main/blueprint/topological_reconstruction_blueprint.tex), for milestone M9, tracked by [#204](https://github.com/adamtopaz/OrlikSolomon/issues/204).
 Its seventeen named nodes T01–T17 each have one labelled statement and one separate box below.
@@ -61,7 +62,7 @@ Cofinal enlargement controls finitely many stage conditions; union closure and c
 
 ## T03: closedness and finite coefficients
 
-:::node "prop:t03"
+:::node "prop:t03" (decl := OrlikSolomon.HyperplaneGT.DiagramAut.isClosed_subgroup) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.isClosed_subgroup) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.isClosedEmbedding_subtype) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.isClosedEmbedding_subtype) (decl := OrlikSolomon.HyperplaneGT.osGradedAutSubgroup_degreeOne_injective) (decl := OrlikSolomon.HyperplaneGT.finite_osGradedAutSubgroup) (decl := OrlikSolomon.HyperplaneGT.DiagramAut.compactSpace) (decl := OrlikSolomon.HyperplaneGT.GradedDiagramAut.compactSpace)
 The pure quadratic and graded diagram groups are closed subgroups of their ambient products for every commutative coefficient ring.
 For finite coefficients they are compact and therefore profinite, without classification or algebraicity.
 The graded argument uses generation to make each degree-preserving factor finite; it does not claim that every unrestricted algebra-automorphism group is finite.
