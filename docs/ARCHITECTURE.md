@@ -1712,7 +1712,7 @@ M7 introduces no blueprint nodes.
 
 `blueprint/cohomological_hyperplane_gt_blueprint.tex` is authoritative for the mathematics.
 This section records the approved design, implemented generic helpers and blueprint statements.
-G01–G06, A01–A04, C01–C03, U01–U05, L01–L05 and S02 are formalized, including U04's actual universal
+G01–G06, A01–A04, C01–C03, U01–U05, L01–L05, P01–P02 and S02 are formalized, including U04's actual universal
 configuration equations and paired diagram invariance. Pure coordinate reconstruction C01–C03 holds over arbitrary fields. The
 reconstruction theorem remains planned. The book records complete-statement status.
 The generic lowest-degree relation helper is implemented in `Algebra/HomogeneousRelations`, as
@@ -1811,7 +1811,10 @@ approved plan; the issue links identify the implementation work.
 | `HyperplaneGT/Reconstruction/Local/Geometry` | Distinct parallel and meeting graphs and the two guarded vertical transfer triples, over arbitrary fields | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
 | `HyperplaneGT/Reconstruction/Local/Transfer` | Literal actual-Q centralizer restriction and L04 over arbitrary commutative coefficient rings | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
 | `HyperplaneGT/Reconstruction/Local/Detection` | L05 equivalence, coordinate-independent unique graph/unit pair and actual decomposition centralizer | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
-| `HyperplaneGT/Reconstruction/Projections` | P01–P02 | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
+| `HyperplaneGT/Reconstruction/Projections` | P01–P02, formalized: intrinsic coordinate-span recognition and actual equivariant vertical restrictions | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
+| `HyperplaneGT/Reconstruction/Projections/Geometry` | Coordinate level labels and guarded equation-span/trace-exclusion geometry for P01 | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
+| `HyperplaneGT/Reconstruction/Projections/Recognition` | Arbitrary supported restriction, actual coordinate planes, trace-functional coefficient detector and full P01 iff | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
+| `HyperplaneGT/Reconstruction/Projections/Invariance` | Actual marking-plane image equality, P02 induction, restricted universal/dual action homomorphisms and actual restriction square | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
 | `HyperplaneGT/Reconstruction/Incidence` | I01–I04 | W14, [#166](https://github.com/adamtopaz/OrlikSolomon/issues/166) |
 | `HyperplaneGT/Geometry/Collineation`, with `Span`, `Chart`, and `Field` leaves | C01–C03, formalized: arbitrary projective spans, coordinatewise affine charts, and a unique field automorphism from the prescribed frame | W15, [#167](https://github.com/adamtopaz/OrlikSolomon/issues/167) |
 | `HyperplaneGT/Reconstruction/Galois` | C04, S01 | W16, [#168](https://github.com/adamtopaz/OrlikSolomon/issues/168) |
@@ -1841,6 +1844,7 @@ approved plan; the issue links identify the implementation work.
 | `Examples/HyperplaneGT/Diagram` | A03 consumers: concrete constructors, zero coefficients, characteristic-two relations, Laurent-polynomial marking maps, and dimension-zero target interchange | W07, [#159](https://github.com/adamtopaz/OrlikSolomon/issues/159) |
 | `Examples/HyperplaneGT/Trace` | L01–L03 consumers: discarded/merged traces, empty-triangle guard, zero and nilpotent coefficients, low dimensions and a nonzero actual vertical target | W11, [#163](https://github.com/adamtopaz/OrlikSolomon/issues/163) |
 | `Examples/HyperplaneGT/Local` | L04–L05 consumers: zero-ring transfer, a nonzero actual vertical target over `ZMod 4`, characteristic-two dual numbers with nonzero nilpotents and a dimension-one counterexample satisfying all four actual conditions | W12, [#164](https://github.com/adamtopaz/OrlikSolomon/issues/164) |
+| `Examples/HyperplaneGT/Projections` | P01–P02 consumers: characteristic-two geometry with a nilpotent `ZMod 4` detector, a nonvacuous `ZMod 2` coefficient recognition test, semiring restriction, zero/low-dimensional/full-coordinate cases, both inverse cancellations and inverse-three vertical dual action over `ZMod 5` | W13, [#165](https://github.com/adamtopaz/OrlikSolomon/issues/165) |
 
 `HyperplaneGT/Algebra/LowDegrees` joins `DegreeOne` and `QuadraticKernel`. The latter restricts
 the actual exterior quotient to `osExteriorSquareMap`, surjective onto the existing internal
@@ -2100,6 +2104,24 @@ scalar part, an actual nonzero vertical target, and zero-ring transfer. An actua
 functional in dimension one satisfies all four conditions but is no unit delta, pinning the
 necessary dimension bound.
 
+`Reconstruction/Projections` reuses `Trace/Projection`'s literal `verticalModule R z` and
+actual `verticalRestriction R z` for arbitrary finite coordinate subsets. `Geometry` supplies
+coordinate level labels and the guarded equation-span/trace-exclusion facts for P01.
+`Recognition` uses the existing supported Finsupp retraction for restriction surjectivity,
+Mathlib's evaluation annihilator kernel, and L02 trace functionals to prove the full
+commuting-functional recognition criterion over every commutative coefficient ring.
+`Invariance` derives each marking-plane image equality from the existing common-target
+marking square, then proves coordinate-span invariance using P01 and only `0 ∈ S`.
+The induced dual equivalence is inverse precomposition through the actual invariant
+supported submodule, with action homomorphisms and a proved restriction square. These leaves
+introduce no competing universal module, relation span, diagram structure or projection-naturality
+assumption, and import no cohomology or de Rham theory. Coefficients and both fields have
+independent universes; no algebraicity, perfectness, local/nonzero coefficient condition or
+dimension lower bound is imposed. The durable examples include a genuine nonzero nilpotent
+coefficient detector over characteristic-two geometry, a nonvacuous recognition test with
+`ZMod 2` coefficients, and an inverse-three vertical dual
+coordinate for an actual scalar-two marked diagram over `ZMod 5`.
+
 The [supervisor's statement-review condition](https://github.com/adamtopaz/OrlikSolomon/issues/151#issuecomment-6750174454)
 requires Claude's approval before proofs are finalized only for S03–S05, E01–E03 and statements
 that deviate from the blueprint. Non-author Codex reviewers check intermediate statements
@@ -2109,7 +2131,7 @@ process; only Claude scopes a request to Astra.
 
 The book tracks 41 separately labelled statements under 38 logical node IDs. U01, U04 and L02
 each have a definition and a lemma, with separate adjacent boxes. The current M8 count is
-27 formalized and 14 planned, separate from the other blueprints. Each
+29 formalized and 12 planned, separate from the other blueprints. Each
 mathematical PR names declarations only on the boxes it actually covers and records remaining
 work for partial coverage. Keep the prose honest about local/domain hypotheses and conditional
 versus unconditional realizations. W24 adds regression and acceptance coverage incrementally
